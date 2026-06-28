@@ -1,0 +1,289 @@
+[
+  {
+    "name": "Martin Achrainer",
+    "surname": "Achrainer",
+    "voice": "Bariton",
+    "image": "assets/img/solisten/achrainer-martin.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Alexander Aigner",
+    "surname": "Aigner",
+    "voice": "Bariton",
+    "image": "assets/img/solisten/aigner-alexander.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Taisiya Albani",
+    "surname": "Albani",
+    "voice": "Mezzosopran",
+    "image": "assets/img/solisten/albani-taisiya.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Hiroshi Amako",
+    "surname": "Amako",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/amako-hiroshi.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Katrin Auzinger",
+    "surname": "Auzinger",
+    "voice": "Alt",
+    "image": "assets/img/solisten/auzinger-katrin.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Stephen Chaundy",
+    "surname": "Chaundy",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/chaundy-stephen.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Theresa Dax",
+    "surname": "Dax",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/dax-theresa.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Thomas Diestler",
+    "surname": "Diestler",
+    "voice": "Altus",
+    "image": "assets/img/solisten/diestler-thomas.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Christiane Döcker",
+    "surname": "Döcker",
+    "voice": "Mezzosopran",
+    "image": "assets/img/solisten/doecker-christiane.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Simona Eisinger",
+    "surname": "Eisinger",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/eisinger-simona.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Norbert Ernst",
+    "surname": "Ernst",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/ernst-norbert.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Günther Groissböck",
+    "surname": "Groissböck",
+    "voice": "Bass",
+    "image": "assets/img/solisten/groissboeck-guenther.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Franz Gürtelschmied",
+    "surname": "Gürtelschmied",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/guertelschmied-franz.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Regine Hangler",
+    "surname": "Hangler",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/hangler-regine.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Günter Haumer",
+    "surname": "Haumer",
+    "voice": "Bariton",
+    "image": "assets/img/solisten/haumer-guenter.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Gernot Heinrich",
+    "surname": "Heinrich",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/heinrich-gernot.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Cornelia Horak",
+    "surname": "Horak",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/horak-cornelia.jpg",
+    "deceased": false
+  },
+  {
+    "name": "David Jagodic",
+    "surname": "Jagodic",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/jagodic-david.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Andreas Jankowitsch",
+    "surname": "Jankowitsch",
+    "voice": "Bass",
+    "image": "assets/img/solisten/jankowitsch-andreas.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Megan Kahts",
+    "surname": "Kahts",
+    "voice": "Mezzosopran",
+    "image": "assets/img/solisten/kahts-megan.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Alexander Kaimbacher",
+    "surname": "Kaimbacher",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/kaimbacher-alexander.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Clemens Kerschbaumer",
+    "surname": "Kerschbaumer",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/kerschbaumer-clemens.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Johanna Krokovay",
+    "surname": "Krokovay",
+    "voice": "Alt",
+    "image": "assets/img/solisten/krokovay-johanna.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Marcell Krokovay",
+    "surname": "Krokovay",
+    "voice": "Bass",
+    "image": "assets/img/solisten/krokovay-marcell.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Miriam Kutrowatz",
+    "surname": "Kutrowatz",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/kutrowatz-miriam.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Ursula Langmayr",
+    "surname": "Langmayr",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/langmayr-ursula.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Georg Lehner",
+    "surname": "Lehner",
+    "voice": "Bariton",
+    "image": "assets/img/solisten/lehner-georg.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Martin Maier",
+    "surname": "Maier",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/maier-martin.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Sarah Raphaela Mair",
+    "surname": "Mair",
+    "voice": "Mezzosopran",
+    "image": "assets/img/solisten/mair-sarah-raphaela.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Martin Mairinger",
+    "surname": "Mairinger",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/mairinger-martin.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Stephanie Maitland",
+    "surname": "Maitland",
+    "voice": "Mezzosopran",
+    "image": "assets/img/solisten/maitland-stephanie.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Jakob Nistler",
+    "surname": "Nistler",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/nistler-jakob.jpg",
+    "deceased": false
+  },
+  {
+    "name": "KS Annely Peebo",
+    "surname": "Peebo",
+    "voice": "Mezzosopran",
+    "image": "assets/img/solisten/peebo-ks-annely.jpg",
+    "deceased": false
+  },
+  {
+    "name": "RAMOS Gustavo Quaresma",
+    "surname": "Quaresma",
+    "voice": "Tenor",
+    "image": "assets/img/solisten/quaresma-ramos-gustavo.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Monika Riedler",
+    "surname": "Riedler",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/riedler-monika.jpg",
+    "deceased": true
+  },
+  {
+    "name": "Hedwig Ritter",
+    "surname": "Ritter",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/ritter-hedwig.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Klemens Sander",
+    "surname": "Sander",
+    "voice": "Bariton",
+    "image": "assets/img/solisten/sander-klemens.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Eva-Maria Schmid",
+    "surname": "Schmid",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/schmid-eva-maria.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Maximilian Schnabel",
+    "surname": "Schnabel",
+    "voice": "Bariton",
+    "image": "assets/img/solisten/schnabel-maximilian.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Cornelia Sonnleithner",
+    "surname": "Sonnleithner",
+    "voice": "Mezzosopran",
+    "image": "assets/img/solisten/sonnleithner-cornelia.jpg",
+    "deceased": false
+  },
+  {
+    "name": "Katrin Targo",
+    "surname": "Targo",
+    "voice": "Sopran",
+    "image": "assets/img/solisten/targo-katrin.jpg",
+    "deceased": false
+  }
+]
