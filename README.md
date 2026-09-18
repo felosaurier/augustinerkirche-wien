@@ -20,7 +20,7 @@
 
 <br>
 
-[Lokal ansehen](#lokal-ansehen) &nbsp;&nbsp;·&nbsp;&nbsp; [Hochämter pflegen](#hochämter-pflegen) &nbsp;&nbsp;·&nbsp;&nbsp; [Aufbau](#aufbau) &nbsp;&nbsp;·&nbsp;&nbsp; [Gestaltung](#gestaltung)
+[Lokal ansehen](#lokal-ansehen) &nbsp;&nbsp;·&nbsp;&nbsp; [Hochämter pflegen](#hochämter-pflegen) &nbsp;&nbsp;·&nbsp;&nbsp; [Neuigkeiten](#neuigkeiten-und-plakate-pflegen) &nbsp;&nbsp;·&nbsp;&nbsp; [Aufbau](#aufbau) &nbsp;&nbsp;·&nbsp;&nbsp; [Gestaltung](#gestaltung)
 
 <br>
 
@@ -71,6 +71,26 @@ Alle Termine stehen in **[`data/hochaemter.csv`](data/hochaemter.csv)** — eine
 
 Alternativ bearbeitest du die Liste komfortabel im Browser über `pages/hochaemter-verwaltung.html` (Formular mit allen Spalten, CSV-Import und -Export). Die Seite ist bewusst nicht in der Navigation verlinkt.
 
+## Neuigkeiten und Plakate pflegen
+
+Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine Excel-Tabelle. Eine Zeile ist eine Meldung:
+
+| Spalte | Inhalt |
+|---|---|
+| Datum | Veröffentlichungsdatum, TT.MM.JJJJ (bestimmt die Reihenfolge) |
+| Kategorie | z. B. Kirchenmusik, Konzert, Pfarrleben, Hochamt |
+| Titel, Kurztext | erscheinen auf der Karte |
+| Infos | Angaben im Fenster als `Bezeichnung: Wert`, mehrere mit <code>&#124;</code> trennen (z. B. `Zeit: 19:30 Uhr`) |
+| Details | Absätze im Fenster, mehrere mit <code>&#124;</code> trennen |
+| Plakat | ein Bild pro Meldung: erscheint als Vorschau auf der Karte (oberer Ausschnitt) und groß im Fenster |
+| Vorschaubild | nur nötig, wenn es kein Plakat gibt (z. B. ein Foto); ohne beides erscheint das goldene Logo |
+| Link, Linktext | optionale Schaltfläche im Fenster |
+
+- **Startseite:** zeigt immer die **6 neuesten** Meldungen. Ein Klick öffnet ein Fenster mit Plakat, Infos und Details.
+- **Archiv** (`pages/archiv.html`): alle älteren Meldungen wandern **automatisch** dorthin und sind **nach Jahren** geordnet.
+- Jede Meldung hat einen eigenen Link, z. B. `index.html?news=…`, der das Fenster direkt öffnet.
+- **Neues Plakat:** Bild als WebP in den **Jahresordner** legen, passend zum Datum der Meldung: Plakate von 2026 nach `assets/img/news/2026/`, Plakate von 2027 nach `assets/img/news/2027/` usw. Dann eine Zeile in `news.csv` ergänzen und dort den Pfad eintragen, z. B. `assets/img/news/2026/bibelpur-2026-27.webp`. Ein Bild reicht, die Vorschau wird automatisch zugeschnitten.
+
 ## Lokal ansehen
 
 Damit der Hochamt-Kalender seine Tabelle laden kann, braucht die Seite einen lokalen Webserver (Browser blockieren `fetch()` bei direkt geöffneten Dateien):
@@ -92,6 +112,7 @@ pages/
   hochamt.html                Detailseite eines Hochamts
   chronik.html                Geschichte, Zeitstrahl, Orden
   aspersdorf.html             Pfarre Aspersdorf
+  archiv.html                 Archiv der Neuigkeiten, nach Jahren
   impressum.html              Impressum
   datenschutz.html            Datenschutzerklärung
   hochaemter-verwaltung.html  Internes Werkzeug für die Hochamt-Tabelle
@@ -103,15 +124,18 @@ js/
   hochaemter-data.js          Gemeinsames Modul: liest die CSV-Tabelle
   hochaemter.js               Kalender und Archiv auf der Musik-Seite
   hochaemter-start.js         Nächste Hochämter auf der Startseite
+  news.js                     Neuigkeiten: 6 Karten, Fenster mit Plakat, Jahresarchiv
   hochamt-detail.js           Detailseite eines Hochamts
   hochaemter-verwaltung.js    Verwaltungsformular
   solisten.js                 Solistenliste
   instagram.js                Instagram-Bereich mit Fallback
 data/
   hochaemter.csv              Alle Hochamt-Termine inkl. Mitwirkende
+  news.csv                    Neuigkeiten und Plakate
   solisten.json               Solistinnen und Solisten mit Stimmlage
 assets/
   logo.png, img/              Logo und Bilder
+  img/news/2026/, 2027/ …     Plakate der Neuigkeiten, je Jahr ein Ordner
 ```
 
 Alle Pfade sind **relativ**, die Seite funktioniert daher in jedem Unterverzeichnis eines Webservers.

@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" href="favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png"/>
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png"/>
+<meta name="theme-color" content="#10192e"/>
 <title>Augustinerkirche Wien — Pfarre &amp; Kloster St. Augustin</title>
 <meta name="description" content="Die Augustinerkirche Wien: Hofpfarrkirche der Habsburger, lebendige Pfarre St. Augustin und Heimat einer der bedeutendsten Kirchenmusiktraditionen Wiens."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -200,25 +205,11 @@
     <div class="s-label">Aktuelles</div>
     <h2 class="s-title" id="aktuelles-h">Aus der <em>Pfarre</em> und dem <em>Kloster</em></h2>
     <div class="divider-g"></div>
-    <div class="news-grid">
-      <a class="news-item reveal" href="pages/musik.html#p-orgeln">
-        <div class="news-date">50 Jahre Rieger-Orgel</div>
-        <h3 class="news-title">Jubiläum der Hauptorgel</h3>
-        <p class="news-text">Die grosse Rieger-Orgel von St. Augustin wurde 1976 errichtet und begeht in diesem Jahr ihr fünfzigjähriges Bestehen.</p>
-        <span class="link-arr">Mehr erfahren</span>
-      </a>
-      <a class="news-item reveal d1" href="pages/musik.html#p-leitung">
-        <div class="news-date">Kirchenmusik</div>
-        <h3 class="news-title">Neuer Kirchenmusikdirektor</h3>
-        <p class="news-text">Peter Tiefengraber übernimmt die künstlerische Leitung der Kirchenmusik von St. Augustin.</p>
-        <span class="link-arr">Mehr erfahren</span>
-      </a>
-      <a class="news-item reveal d2" href="pages/musik.html#p-chor">
-        <div class="news-date">Pfarrleben</div>
-        <h3 class="news-title">Chor sucht neue Stimmen</h3>
-        <p class="news-text">Der Chor von St. Augustin probt jeden Mittwoch um 19:30 Uhr und freut sich über interessierte Sängerinnen und Sänger.</p>
-        <span class="link-arr">Mehr erfahren</span>
-      </a>
+    <div class="news-grid" id="news-grid" data-base="" aria-live="polite">
+      <p class="s-text">Die aktuellen Neuigkeiten finden Sie im <a class="link-arr" href="pages/archiv.html">Archiv</a>.</p>
+    </div>
+    <div class="news-more" id="news-more">
+      <a class="btn btn-outline" href="pages/archiv.html">Weitere Neuigkeiten im Archiv</a>
     </div>
   </div>
 </section>
@@ -315,5 +306,7 @@
 <script src="js/instagram.js"></script>
 <script src="js/hochaemter-data.js"></script>
 <script src="js/hochaemter-start.js"></script>
+<script src="js/news.js"></script>
+<script src="js/lightbox.js"></script>
 </body>
 </html>
