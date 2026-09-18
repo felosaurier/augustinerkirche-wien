@@ -19,7 +19,7 @@
   function qs(sel,ctx){return (ctx||document).querySelector(sel)}
 
   function monthKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
-  function monthLabel(d){return MONTH_NAMES[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?' '+d.getFullYear():'')}
+  function monthLabel(d){return MONTH_NAMES[d.getMonth()]+' '+d.getFullYear()}
 
   function rowHTML(entry){
     var d=entry.dateObj;
@@ -152,7 +152,15 @@
 
     /* Nach Jahren geordnet, wie im Neuigkeiten-Archiv: neuestes Jahr zuerst.
        Aeltere Jahre liegen in eigenen Dateien und werden erst beim Anklicken geladen. */
+    var yearCount=function(y){return counts[y]||known[y]||0};
     listEl.innerHTML=
+      /* Handy: Jahr als Aufklappmenue (die Reiter sind dort ausgeblendet) */
+      '<div class="kal-select-wrap kal-year-wrap">'+
+        '<label class="kal-select-label" for="kal-year-select">Jahr wählen</label>'+
+        '<select id="kal-year-select" class="kal-select">'+
+          years.map(function(y){return '<option value="'+y+'">'+y+(yearCount(y)?' ('+yearCount(y)+')':'')+'</option>'}).join('')+
+        '</select>'+
+      '</div>'+
       '<div class="news-years" role="group" aria-label="Jahr wählen">'+
         years.map(function(y,i){
           return '<button type="button" class="news-year'+(i===0?' active':'')+'" data-year="'+y+'">'+y+((counts[y]||known[y])?'<span class="news-year-n">'+(counts[y]||known[y])+'</span>':'')+'</button>';
@@ -178,11 +186,17 @@
         if(mine===token)rowsEl.innerHTML='<p class="s-text">Dieses Jahr konnte nicht geladen werden.</p>';
       });
     }
+    var yearSelect=listEl.querySelector('#kal-year-select');
     listEl.addEventListener('click',function(ev){
       var btn=ev.target.closest('.news-year');
       if(!btn)return;
       Array.prototype.forEach.call(listEl.querySelectorAll('.news-year'),function(x){x.classList.toggle('active',x===btn)});
+      if(yearSelect)yearSelect.value=btn.dataset.year;
       showYear(Number(btn.dataset.year));
+    });
+    if(yearSelect)yearSelect.addEventListener('change',function(){
+      var btn=listEl.querySelector('.news-year[data-year="'+yearSelect.value+'"]');
+      if(btn)btn.click();
     });
     showYear(years[0]);
   }

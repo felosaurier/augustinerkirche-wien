@@ -1077,3 +1077,9 @@ html.nd-lock{overflow:hidden}
 .mitbrueder-foto a{display:block;cursor:zoom-in}
 .mitbrueder-foto img{display:block;width:100%;height:auto;border:1px solid var(--line);box-shadow:0 18px 50px rgba(16,25,46,.14);transition:box-shadow .5s var(--ease)}
 .mitbrueder-foto a:hover img{box-shadow:0 24px 60px rgba(16,25,46,.2)}
+
+/* Archiv der Hochämter: Jahr als Aufklappmenü auf dem Handy */
+@media(max-width:768px){
+  #kal-archive-list .news-years{display:none}
+  #kal-archive-list .kal-year-wrap{display:block}
+}
