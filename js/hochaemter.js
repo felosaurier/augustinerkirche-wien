@@ -10,6 +10,7 @@
   'use strict';
 
   var DATA_URL = '../data/hochaemter.csv';
+  var ARCHIVE_DIR = '../data/archiv/';
   var HD = window.HochamtData;
   var MONTH_NAMES = HD.MONTHS;
   var WEEKDAYS = ['So','Mo','Di','Mi','Do','Fr','Sa'];
@@ -132,34 +133,56 @@
     if(groups.length)applyFilter(groups[0].key);
   }
 
-  function renderArchive(entries,listEl){
-    if(!entries.length){
+  function renderArchive(entries,archiveYears,listEl){
+    var sorted=entries.slice().sort(function(a,b){return (b.date+b.time).localeCompare(a.date+a.time)});
+    var counts={};
+    sorted.forEach(function(e){var y=e.dateObj.getFullYear();counts[y]=(counts[y]||0)+1});
+    var years=Object.keys(counts).map(Number);
+    var known={};   /* Anzahl der Termine je Archivjahr (aus data/archiv/jahre.json) */
+    (archiveYears||[]).forEach(function(a){
+      var y=Number(a&&a.jahr!==undefined?a.jahr:a);
+      if(a&&a.anzahl)known[y]=a.anzahl;
+      if(years.indexOf(y)<0)years.push(y);
+    });
+    years.sort(function(a,b){return b-a});
+    if(!years.length){
       listEl.innerHTML='<p class="s-text">Es sind noch keine vergangenen Hochämter erfasst.</p>';
       return;
     }
-    var sorted=entries.slice().sort(function(a,b){return (b.date+b.time).localeCompare(a.date+a.time)});
-    var years=[];
-    sorted.forEach(function(e){var y=e.dateObj.getFullYear();if(years.indexOf(y)<0)years.push(y)});
 
-    /* Nach Jahren geordnet, wie im Neuigkeiten-Archiv: neuestes Jahr zuerst */
+    /* Nach Jahren geordnet, wie im Neuigkeiten-Archiv: neuestes Jahr zuerst.
+       Aeltere Jahre liegen in eigenen Dateien und werden erst beim Anklicken geladen. */
     listEl.innerHTML=
       '<div class="news-years" role="group" aria-label="Jahr wählen">'+
         years.map(function(y,i){
-          var n=sorted.filter(function(e){return e.dateObj.getFullYear()===y}).length;
-          return '<button type="button" class="news-year'+(i===0?' active':'')+'" data-year="'+y+'">'+y+'<span class="news-year-n">'+n+'</span></button>';
+          return '<button type="button" class="news-year'+(i===0?' active':'')+'" data-year="'+y+'">'+y+((counts[y]||known[y])?'<span class="news-year-n">'+(counts[y]||known[y])+'</span>':'')+'</button>';
         }).join('')+
       '</div>'+
       '<div class="kal-archive-rows" aria-live="polite"></div>';
 
     var rowsEl=listEl.querySelector('.kal-archive-rows');
+    var token=0;
+    function fill(list){
+      rowsEl.innerHTML=list.slice().sort(function(a,b){return (b.date+b.time).localeCompare(a.date+a.time)}).map(rowHTML).join('');
+    }
     function showYear(y){
-      rowsEl.innerHTML=sorted.filter(function(e){return e.dateObj.getFullYear()===y}).map(rowHTML).join('');
+      var mine=++token;
+      if(counts[y]){
+        fill(sorted.filter(function(e){return e.dateObj.getFullYear()===y}));
+        return;
+      }
+      rowsEl.innerHTML='<p class="s-text">Wird geladen …</p>';
+      HD.loadYear(ARCHIVE_DIR,y).then(function(list){
+        if(mine===token)fill(list);
+      }).catch(function(){
+        if(mine===token)rowsEl.innerHTML='<p class="s-text">Dieses Jahr konnte nicht geladen werden.</p>';
+      });
     }
     listEl.addEventListener('click',function(ev){
-      var b=ev.target.closest('.news-year');
-      if(!b)return;
-      Array.prototype.forEach.call(listEl.querySelectorAll('.news-year'),function(x){x.classList.toggle('active',x===b)});
-      showYear(Number(b.dataset.year));
+      var btn=ev.target.closest('.news-year');
+      if(!btn)return;
+      Array.prototype.forEach.call(listEl.querySelectorAll('.news-year'),function(x){x.classList.toggle('active',x===btn)});
+      showYear(Number(btn.dataset.year));
     });
     showYear(years[0]);
   }
@@ -170,13 +193,14 @@
     var archiveList=qs('#kal-archive-list');
     if(!monthsEl&&!listEl&&!archiveList)return;
 
-    HD.load(DATA_URL)
-      .then(function(data){
+    Promise.all([HD.load(DATA_URL),archiveList?HD.archiveYears(ARCHIVE_DIR):Promise.resolve([])])
+      .then(function(res){
+        var data=res[0];
         var upcoming=data.filter(HD.isUpcoming);
         var past=data.filter(function(e){return !HD.isUpcoming(e)});
 
         if(monthsEl&&listEl)renderUpcoming(upcoming,monthsEl,listEl);
-        if(archiveList)renderArchive(past,archiveList);
+        if(archiveList)renderArchive(past,res[1],archiveList);
       })
       .catch(function(){
         var message='<p class="s-text">Der Hochamt-Kalender konnte nicht geladen werden. Das vollständige Programm finden Sie unter <a class="link-arr" href="https://hochamt.augustiner.at">hochamt.augustiner.at</a>.</p>';

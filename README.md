@@ -67,6 +67,8 @@ Alle Termine stehen in **[`data/hochaemter.csv`](data/hochaemter.csv)** — eine
 - **Kirchenmusik → Hochämter:** kommende Termine nach Monaten. Jeder Termin führt zur Detailseite; leere Spalten werden dort ausgeblendet.
 - **Archiv:** vergangene Termine erscheinen automatisch unter „Vergangene Hochämter“.
 
+**Archiv nach Jahren:** Die Termine von 2015 bis 2025 (übernommen von hochamt.augustiner.at, inklusive Zelebrant, Besetzung und Programm) liegen je Jahr in einer eigenen Datei: `data/archiv/hochaemter-JJJJ.csv`, mit gleichen Spalten wie `data/hochaemter.csv`. Ein Jahr wird auf der Seite „Vergangene Hochämter“ erst geladen, wenn man es anklickt, das hält die Startseite schnell. Die Liste der Archivjahre steht in `data/archiv/jahre.json` (je Jahr `{"jahr": 2025, "anzahl": 86}`, die Anzahl erscheint hochgestellt am Jahres-Reiter). Zum Jahreswechsel: die Zeilen des Vorjahres aus `hochaemter.csv` in eine neue Datei `data/archiv/hochaemter-JJJJ.csv` verschieben und das Jahr samt Anzahl in `jahre.json` eintragen (neuestes zuerst).
+
 **In Excel speichern:** *Speichern unter → CSV UTF-8 (durch Trennzeichen getrennt)* und `data/hochaemter.csv` ersetzen.
 
 Alternativ bearbeitest du die Liste komfortabel im Browser über `pages/hochaemter-verwaltung.html` (Formular mit allen Spalten, CSV-Import und -Export). Die Seite ist bewusst nicht in der Navigation verlinkt.
@@ -135,7 +137,8 @@ js/
   solisten.js                 Solistenliste
   instagram.js                Instagram-Bereich mit Fallback
 data/
-  hochaemter.csv              Alle Hochamt-Termine inkl. Mitwirkende
+  hochaemter.csv              Hochamt-Termine ab dem laufenden Jahr inkl. Mitwirkende
+  archiv/                     Hochamt-Archiv 2015–2025: hochaemter-JJJJ.csv je Jahr, jahre.json
   news.csv                    Neuigkeiten und Plakate
   solisten.json               Solistinnen und Solisten mit Stimmlage
 assets/

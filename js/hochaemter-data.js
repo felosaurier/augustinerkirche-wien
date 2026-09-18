@@ -136,6 +136,18 @@
     return fetchText(url).then(function(text){return rowsToRaw(parseCSV(text))});
   }
 
+  /* Archiv: je Jahr eine Datei (data/archiv/hochaemter-JJJJ.csv), Jahresliste in jahre.json.
+     Ein Jahr wird erst geladen, wenn es gebraucht wird. */
+  var yearCache = {};
+  function loadYear(dir,year){
+    var k = dir+year;
+    if(!yearCache[k])yearCache[k] = load(dir+'hochaemter-'+year+'.csv');
+    return yearCache[k];
+  }
+  function archiveYears(dir){
+    return fetch(dir+'jahre.json').then(function(r){return r.ok?r.json():[]}).catch(function(){return []});
+  }
+
   function today(){var d=new Date();d.setHours(0,0,0,0);return d}
   function isUpcoming(e){return e.dateObj>=today()}
 
@@ -158,6 +170,6 @@
   w.HochamtData = {
     MONTHS:MONTHS, WEEKDAYS:WEEKDAYS, FIELDS:FIELDS,
     esc:esc, pad:pad, parseCSV:parseCSV, rowsToRaw:rowsToRaw, isoDate:isoDate, isoTime:isoTime,
-    normalize:normalize, load:load, loadRaw:loadRaw, isUpcoming:isUpcoming, today:today, toCSV:toCSV
+    normalize:normalize, load:load, loadRaw:loadRaw, loadYear:loadYear, archiveYears:archiveYears, isUpcoming:isUpcoming, today:today, toCSV:toCSV
   };
 })(window);

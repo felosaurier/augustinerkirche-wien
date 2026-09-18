@@ -69,6 +69,15 @@
   document.addEventListener('DOMContentLoaded',function(){
     var id=new URLSearchParams(location.search).get('id')||'';
     HD.load('../data/hochaemter.csv')
+      .then(function(entries){
+        if(entries.some(function(e){return e.id===id}))return entries;
+        var y=parseInt(id.slice(0,4),10);
+        if(!y)return entries;
+        /* Aeltere Termine liegen im Jahresarchiv */
+        return HD.loadYear('../data/archiv/',y).then(function(older){
+          return older.concat(entries).sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)});
+        }).catch(function(){return entries});
+      })
       .then(function(entries){render(entries,id)})
       .catch(function(){
         qs('#hd-body').innerHTML='<p class="s-text">Die Termine konnten nicht geladen werden. Das vollständige Programm finden Sie unter <a class="link-arr" href="https://hochamt.augustiner.at">hochamt.augustiner.at</a>.</p>';
