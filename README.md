@@ -21,7 +21,7 @@ pages/
   runden/                   Eigenständige Detailseiten je Pfarrgruppe (neues Fenster)
 css/style.css                Zentrales Stylesheet
 js/
-  main.js                   Navigation, Sprache, Sidebar-Tabs, Hash-Routing, Reveal
+  main.js                   Navigation, Sidebar-Tabs, Hash-Routing, Reveal
   instagram.js               Instagram-Feed mit Shimmer-Loading und Fallback
   hochaemter-data.js         Gemeinsames Modul: liest data/hochaemter.csv (Excel-Tabelle)
   hochaemter.js              Hochamt-Kalender und Archiv auf musik.html

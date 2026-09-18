@@ -110,9 +110,6 @@ nav{
 
 /* Nav right */
 .nav-right{display:flex;align-items:center;gap:0.8rem;flex-shrink:0;margin-left:auto}
-.lang-toggle{display:flex;border:1px solid var(--line);overflow:hidden}
-.lang-btn{font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;padding:0.28rem 0.65rem;background:none;border:none;cursor:pointer;color:var(--text-light);transition:all .2s;font-weight:600}
-.lang-btn.active{background:var(--gold);color:var(--white)}
 .nav-cta{font-size:0.72rem;letter-spacing:0.13em;text-transform:uppercase;font-weight:600;padding:0.5rem 1.2rem;background:var(--gold);color:var(--white);text-decoration:none;transition:background .2s;white-space:nowrap}
 .nav-cta:hover{background:var(--gold-h)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
@@ -457,7 +454,7 @@ footer{background:var(--near-black);padding:2.5rem;display:flex;justify-content:
   .insta-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:1360px){
-  .nav-center,.nav-right>.lang-toggle,.nav-cta{display:none}
+  .nav-center,.nav-cta{display:none}
   .hamburger{display:flex}
 }
 @media(max-width:768px){
@@ -510,9 +507,7 @@ nav::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;ba
 .nav-btn.current::after{height:1px}
 .nav-logo-text{font-size:1rem}
 .mega{box-shadow:0 18px 50px rgba(16,25,46,.12);border-top:1px solid var(--gold)}
-.nav-cta,.btn-gold,.lang-btn.active{background:var(--blue);color:#fff}
-.nav-cta:hover,.btn-gold:hover{background:var(--gold);color:#fff}
-.lang-btn.active{background:var(--blue)}
+.nav-cta,.btn-gold,.nav-cta:hover,.btn-gold:hover{background:var(--gold);color:#fff}
 
 /* Buttons: schlank, ohne harte Kanten-Effekte */
 .btn{padding:.95rem 2.2rem;letter-spacing:.2em;font-size:.72rem;transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
@@ -577,8 +572,7 @@ footer{background:var(--blue-deep);border-top:1px solid rgba(216,185,110,.3)}
 /* Barrierefreiheit: sichtbarer Fokus */
 a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .hero a:focus-visible,footer a:focus-visible,.herzgruft a:focus-visible{outline-color:var(--gold-l)}
-.nav-btn,.sidebar-item,.kal-m-btn,.week-filter-btn,.sakr-item,.btn,.lang-btn{cursor:pointer}
-.lang-btn,.week-filter-btn{min-height:36px}
+.nav-btn,.sidebar-item,.kal-m-btn,.week-filter-btn,.sakr-item,.btn,.week-filter-btn{min-height:36px}
 
 @media(max-width:768px){
   .section{padding:4rem 1.5rem}
@@ -673,3 +667,44 @@ a.kal-row:hover .kal-name{color:var(--gold)}
 @media(max-width:768px){
   .sidebar{margin:0 -1.5rem 1.6rem;padding:0 1.5rem}
 }
+
+/* ============================================================
+   HOCHFORMAT — Bilder nie beschneiden, natürliches Seitenverhältnis
+   ============================================================ */
+@media(max-width:1024px){
+  /* Augustinus-Porträt */
+  .aug-img{position:static;aspect-ratio:1200/1637;width:100%;max-width:24rem;margin:0 auto 1rem;background-size:cover}
+  /* Personenfotos (Mitbrüder, Organisten, Dirigenten, Solisten) */
+  .person-card img,.person-card-wide img{aspect-ratio:auto;height:auto;object-fit:contain}
+  .person-card-wide img{max-width:220px}
+  /* Bilder mit fest eingestelltem Ausschnitt (Chor, Orchester, Kirchen, Wallfahrt …) */
+  img[style*="object-fit:cover"]{aspect-ratio:auto!important;height:auto!important;max-height:none!important}
+  /* Herzgruft: Loretokapelle im Originalformat */
+  .herzgruft-img{aspect-ratio:16/9;background-size:contain;background-repeat:no-repeat;background-position:center}
+}
+@media(max-width:768px){
+  /* Galerie: jedes Bild in voller Höhe */
+  .g-item{aspect-ratio:auto}
+  .g-item img{height:auto}
+  .gallery{grid-auto-rows:auto}
+}
+
+/* Ziffern durchgehend als Versalziffern (Cormorant zeigt sonst "1" wie "I") */
+body{font-variant-numeric:lining-nums}
+
+/* Zeitstrahl (Chronik): Punkte mittig auf der Linie, Jahreszahl in Gold */
+.timeline{position:relative;margin-top:2.5rem;padding-left:2.4rem;border-left:none}
+.timeline::before{content:'';position:absolute;left:5px;top:.7rem;bottom:.7rem;width:1px;background:linear-gradient(var(--gold-l),var(--line) 92%,transparent)}
+.timeline-item{position:relative;padding-bottom:2.4rem}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-item::before{content:'';position:absolute;left:calc(-2.4rem + 0px);top:.55rem;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--gold);box-shadow:0 0 0 4px var(--bg)}
+.timeline-year{font-family:var(--serif);font-size:1.7rem;font-weight:600;line-height:1.2;color:var(--gold);letter-spacing:.02em;margin-bottom:.25rem}
+.timeline-text{font-size:.98rem;line-height:1.75;color:var(--text-mid);max-width:38rem;padding-bottom:0}
+
+/* Rechtstexte (Impressum, Datenschutz) */
+.legal{max-width:46rem}
+.legal h2{font-family:var(--serif);font-size:1.5rem;font-weight:500;color:var(--black);margin:2.4rem 0 .6rem;padding-top:1.4rem;border-top:1px solid var(--line)}
+.legal h2:first-child{margin-top:0;padding-top:0;border-top:none}
+.legal p{font-size:1rem;line-height:1.85;color:var(--text-mid);margin-bottom:.9rem}
+.legal a{color:var(--gold);text-underline-offset:3px}
+.legal .todo{background:var(--gold-pale);border-bottom:1px dashed var(--gold);padding:0 .3rem;color:var(--text)}

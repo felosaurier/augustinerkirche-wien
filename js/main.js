@@ -1,7 +1,7 @@
 /* ============================================================
    Augustinerkirche Wien — main.js
    Globale Logik: Navigation, mobile Menue, Sidebar-Tabs,
-   Hash-Routing, Kalender-/Wochenfilter, Sprachumschalter,
+   Hash-Routing, Kalender-/Wochenfilter,
    Scroll-Reveal via IntersectionObserver.
    Alle Module pruefen defensiv, ob die benoetigten DOM-Knoten
    auf der jeweiligen Seite ueberhaupt existieren.
@@ -154,30 +154,6 @@
     });
   }
 
-  /* ---------- Sprachumschalter ---------- */
-  function initLangSwitch(){
-    var buttons=qsa('.lang-btn');
-    if(!buttons.length)return;
-
-    buttons.forEach(function(btn){
-      btn.addEventListener('click',function(){
-        setLang(btn.dataset.lang);
-      });
-    });
-  }
-  function setLang(lang){
-    if(!lang)return;
-    qsa('[data-de]').forEach(function(el){
-      var value=el.getAttribute('data-'+lang);
-      if(value!==null)el.innerHTML=value;
-    });
-    qsa('.lang-btn').forEach(function(b){
-      b.classList.toggle('active',b.dataset.lang===lang);
-    });
-    document.documentElement.setAttribute('lang',lang);
-    try{localStorage.setItem('augustinerkirche-lang',lang)}catch(err){}
-  }
-
   /* ---------- Scroll-Reveal via IntersectionObserver ---------- */
   var revealObserver=null;
   function revealObserve(){
@@ -224,13 +200,9 @@
     initSidebarTabs();
     initSakrItems();
     markCurrentNav();
-    initLangSwitch();
     initAttributeFilter('.kal-m-btn','.kal-row','m');
     initAttributeFilter('.week-filter-btn','.week-row','day');
 
-    var savedLang=null;
-    try{savedLang=localStorage.getItem('augustinerkirche-lang')}catch(err){}
-    if(savedLang&&savedLang!=='de')setLang(savedLang);
 
     routeToHash();
     revealObserve();
