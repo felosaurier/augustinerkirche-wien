@@ -54,11 +54,23 @@
     function applyFilter(key){
       rows.forEach(function(row){row.style.display=(row.dataset.m===key)?'':'none'});
     }
+    /* Wird der Bereich kuerzer, rutscht das klebende Seitenmenue (Querformat) aus dem Bild:
+       dann an den Anfang des Bereichs zurueckscrollen. */
+    function keepSidebarInView(){
+      var sidebar=qs('.sidebar');
+      if(!sidebar||window.innerWidth<=1024)return;
+      var navH=(qs('nav')||{offsetHeight:72}).offsetHeight;
+      if(sidebar.getBoundingClientRect().top<navH){
+        var wrap=sidebar.closest('.with-sidebar')||sidebar;
+        window.scrollTo(0,wrap.getBoundingClientRect().top+window.pageYOffset-navH-16);
+      }
+    }
     buttons.forEach(function(btn){
       btn.addEventListener('click',function(){
         buttons.forEach(function(b){b.classList.remove('active')});
         btn.classList.add('active');
         applyFilter(btn.dataset.filter);
+        keepSidebarInView();
       });
     });
     if(groups.length)applyFilter(groups[0].key);

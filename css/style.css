@@ -32,7 +32,7 @@
   --ease:cubic-bezier(.2,.6,.2,1);
 }
 
-html{scroll-behavior:smooth;font-size:17px}
+html{scroll-behavior:smooth;font-size:18px}
 body{
   font-family:'Source Sans 3',sans-serif;font-weight:400;
   background:var(--bg);color:var(--text);
@@ -57,7 +57,7 @@ nav{
 }
 .nav-logo-text{font-family:'Playfair Display SC',serif;font-size:0.95rem;letter-spacing:0.07em;color:var(--black);line-height:1.2}
 .nav-logo-text span{color:var(--gold)}
-.nav-logo-sub{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);display:block;margin-top:0.05rem}
+.nav-logo-sub{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);display:block;margin-top:0.05rem}
 
 .nav-center{display:flex;align-items:stretch;height:100%;flex:1;justify-content:center}
 .nav-item{position:relative;display:flex;align-items:center}
@@ -93,7 +93,7 @@ nav{
 .mega-group{padding:0.5rem 0}
 .mega-group+.mega-group{border-top:1px solid var(--line)}
 .mega-group-label{
-  font-size:0.58rem;letter-spacing:0.28em;text-transform:uppercase;
+  font-size:0.66rem;letter-spacing:0.28em;text-transform:uppercase;
   color:var(--gold);font-weight:600;
   padding:0.5rem 1.4rem 0.3rem;display:block;
 }
@@ -146,7 +146,7 @@ nav{
 .inner{max-width:var(--max);margin:0 auto}
 .section-soft{background:var(--bg-soft)}
 
-.s-label{font-size:0.65rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold);margin-bottom:0.7rem;font-weight:600;display:flex;align-items:center;gap:0.7rem}
+.s-label{font-size:0.7rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold);margin-bottom:0.7rem;font-weight:600;display:flex;align-items:center;gap:0.7rem}
 .s-label::before{content:'';display:block;width:1.5rem;height:1px;background:var(--gold)}
 .s-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.5vw,2.8rem);font-weight:400;line-height:1.15;color:var(--black)}
 .s-title em{font-style:italic;color:var(--gold)}
@@ -188,7 +188,7 @@ nav{
   background:linear-gradient(to left,var(--gold-pale),transparent);
 }
 .sidebar-group-label{
-  font-size:0.58rem;letter-spacing:0.28em;text-transform:uppercase;
+  font-size:0.66rem;letter-spacing:0.28em;text-transform:uppercase;
   color:var(--text-light);font-weight:600;
   padding:1.2rem 0 0.4rem;display:block;
 }
@@ -212,7 +212,7 @@ nav{
 .person-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
 .person-body{padding:1.5rem}
 .person-name{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--black);margin-bottom:0.2rem}
-.person-role{font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.8rem}
+.person-role{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.8rem}
 .person-bio{font-size:0.85rem;line-height:1.7;color:var(--text-mid);margin-bottom:0.9rem}
 .person-bio:last-child{margin-bottom:0}
 
@@ -229,7 +229,7 @@ nav{
 
 /* ══ HOME ══ */
 .hochamt-strip{background:var(--near-black);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:3rem;padding:2rem 3rem;border-bottom:1px solid rgba(168,130,58,0.3)}
-.hs-tag{font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);font-weight:600;white-space:nowrap}
+.hs-tag{font-size:0.7rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);font-weight:600;white-space:nowrap}
 .hs-piece{font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;color:var(--white);margin-bottom:0.2rem}
 .hs-meta{font-size:0.8rem;color:rgba(255,255,255,0.45)}
 .hs-time{font-family:'Playfair Display',serif;font-size:2rem;font-weight:400;color:var(--white)}
@@ -239,7 +239,7 @@ nav{
 .h3c{padding:2.5rem 2rem;border-right:1px solid var(--line);transition:background .2s;text-decoration:none;display:block}
 .h3c:last-child{border-right:none}
 .h3c:hover{background:var(--gold-pale)}
-.h3c-tag{font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.4rem}
+.h3c-tag{font-size:0.7rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.4rem}
 .h3c-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:400;color:var(--black);margin-bottom:0.3rem}
 .h3c-sub{font-size:0.88rem;color:var(--text-mid)}
 
@@ -249,18 +249,18 @@ nav{
 .hs-block:hover .hs-block-bg{transform:scale(1.03)}
 .hs-block-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(17,17,16,0.72) 0%,transparent 65%)}
 .hs-block-content{position:relative;z-index:2;padding:2.5rem}
-.hs-block-tag{font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.35rem}
+.hs-block-tag{font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.35rem}
 .hs-block-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-style:italic;color:var(--white);margin-bottom:0.8rem}
-.hs-block-link{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.75);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:0.4rem;transition:color .2s,gap .2s}
+.hs-block-link{font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.75);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:0.4rem;transition:color .2s,gap .2s}
 .hs-block-link::after{content:'\2192'}
 .hs-block-link:hover{color:var(--gold);gap:0.7rem}
 
 .quote-band{padding:5rem 2.5rem;background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
 .qt{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,3vw,2.4rem);font-style:italic;font-weight:400;color:var(--black);line-height:1.45;max-width:50rem;margin:0 auto 1rem}
-.qt-src{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.qt-src{font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:600}
 
 .contact-strip{border-top:1px solid var(--line);padding:3.5rem 2.5rem;display:grid;grid-template-columns:repeat(4,1fr);gap:3rem;background:var(--white)}
-.cs-label{font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem;padding-bottom:0.6rem;border-bottom:1px solid var(--line)}
+.cs-label{font-size:0.7rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem;padding-bottom:0.6rem;border-bottom:1px solid var(--line)}
 .cs-val{font-size:0.95rem;line-height:1.9;color:var(--text)}
 .cs-val a{color:var(--text);text-decoration:none}.cs-val a:hover{color:var(--gold)}
 
@@ -280,7 +280,7 @@ nav{
 .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
 .news-item{display:block;border:1px solid var(--line);padding:1.8rem;text-decoration:none;transition:border-color .25s,box-shadow .25s,transform .25s}
 .news-item:hover{border-color:var(--gold);box-shadow:0 4px 24px rgba(0,0,0,0.06);transform:translateY(-2px)}
-.news-date{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem}
+.news-date{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem}
 .news-title{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--black);margin-bottom:0.5rem}
 .news-text{font-size:0.88rem;color:var(--text-mid);line-height:1.7;margin-bottom:0.9rem}
 .news-item .link-arr{pointer-events:none}
@@ -317,7 +317,7 @@ nav{
 .gd-table tr{border-bottom:1px solid var(--line)}
 .gd-table tr:first-child{border-top:1px solid var(--line)}
 .gd-table td{padding:1.1rem 0;font-size:0.95rem;vertical-align:top}
-.gd-day{width:9rem;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);padding-top:1.15rem;padding-right:1rem;font-weight:600;white-space:nowrap}
+.gd-day{width:9rem;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);padding-top:1.15rem;padding-right:1rem;font-weight:600;white-space:nowrap}
 .gd-time{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:400;color:var(--black);width:6rem;padding-right:1rem}
 .gd-name{color:var(--text);font-size:1rem}
 .gd-note{font-size:0.8rem;color:var(--text-light);margin-top:0.15rem}
@@ -328,18 +328,18 @@ nav{
 .fee-table tr:first-child{border-top:1px solid var(--line)}
 .fee-table td{padding:0.65rem 0;font-size:0.9rem;color:var(--text)}
 .fee-table td:last-child{text-align:right;font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--black);white-space:nowrap;padding-left:1rem}
-.fee-table th{text-align:left;padding:1rem 0 0.4rem;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;border-bottom:none}
+.fee-table th{text-align:left;padding:1rem 0 0.4rem;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;border-bottom:none}
 .gd-dot{display:inline-block;width:7px;height:7px;background:var(--gold);border-radius:50%;margin-right:0.4rem;vertical-align:middle}
 
 /* Wochenkalender (gottesdienste.html) */
 .week-filter{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1.5rem}
-.week-filter-btn{font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;padding:0.55rem 1rem;background:none;border:1px solid var(--line);cursor:pointer;color:var(--text-light);transition:all .2s}
+.week-filter-btn{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;padding:0.55rem 1rem;background:none;border:1px solid var(--line);cursor:pointer;color:var(--text-light);transition:all .2s}
 .week-filter-btn:hover{border-color:var(--gold);color:var(--gold)}
 .week-filter-btn.active{background:var(--black);border-color:var(--black);color:var(--gold)}
 .week-row{display:grid;grid-template-columns:7rem 1fr auto;gap:2rem;align-items:center;padding:1.2rem 0;border-bottom:1px solid var(--line);transition:padding .18s,opacity .2s}
 .week-row:first-child{border-top:1px solid var(--line)}
 .week-row:hover{padding-left:0.4rem}
-.week-day{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.week-day{font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
 .week-name{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--black);margin-bottom:0.15rem}
 .week-loc{font-size:0.75rem;color:var(--text-light)}
 .week-time{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--black);white-space:nowrap}
@@ -359,7 +359,7 @@ nav{
 .g-item:hover img{transform:scale(1.05)}
 .g-item:nth-child(1){grid-column:span 2}
 .g-item:nth-child(4){grid-column:span 2}
-.g-cap{position:absolute;bottom:0;left:0;right:0;padding:0.7rem 1rem;background:linear-gradient(transparent,rgba(17,17,16,0.55));font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0);transition:color .3s;font-weight:600}
+.g-cap{position:absolute;bottom:0;left:0;right:0;padding:0.7rem 1rem;background:linear-gradient(transparent,rgba(17,17,16,0.55));font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0);transition:color .3s;font-weight:600}
 .g-item:hover .g-cap{color:var(--white)}
 
 /* Kalender (musik.html — Hochämter) */
@@ -372,9 +372,9 @@ nav{
 .kal-row:first-child{border-top:1px solid var(--line)}
 .kal-row:hover{padding-left:0.4rem}
 .kal-d{font-family:'Playfair Display',serif;font-size:2rem;font-weight:400;color:var(--black);line-height:1;text-align:center}
-.kal-wd{font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-light);text-align:center;margin-top:0.1rem;font-weight:600}
+.kal-wd{font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-light);text-align:center;margin-top:0.1rem;font-weight:600}
 .kal-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:400;color:var(--black);margin-bottom:0.2rem}
-.kal-type{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.kal-type{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600}
 .kal-time{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--black);white-space:nowrap}
 .kal-loc{font-size:0.7rem;color:var(--text-light);text-align:right;margin-top:0.2rem}
 
@@ -390,7 +390,7 @@ nav{
 
 /* Page hero (Unterseiten) */
 .page-hero{padding:4rem 2.5rem 3.5rem;background:var(--bg-soft);border-bottom:1px solid var(--line)}
-.ph-tag{font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.7rem}
+.ph-tag{font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.7rem}
 .ph-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:400;line-height:1.1;color:var(--black)}
 .ph-title em{font-style:italic;color:var(--gold)}
 .ph-sub{margin-top:0.8rem;font-size:1rem;color:var(--text-mid);max-width:42rem;line-height:1.8}
@@ -402,7 +402,7 @@ nav{
 .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);margin:2rem 0}
 .fact{background:var(--bg-soft);padding:1.5rem;text-align:center}
 .fact-n{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:400;color:var(--black)}
-.fact-l{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-light);margin-top:0.3rem;font-weight:600}
+.fact-l{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-light);margin-top:0.3rem;font-weight:600}
 
 /* Timeline (chronik.html) */
 .timeline{margin-top:2.5rem;border-left:1px solid var(--line);padding-left:2rem}
@@ -418,9 +418,9 @@ footer{background:var(--near-black);padding:2.5rem;display:flex;justify-content:
 .f-logo{font-family:'Playfair Display SC',serif;font-size:0.85rem;letter-spacing:0.07em;color:rgba(255,255,255,0.5)}
 .f-logo span{color:var(--gold)}
 .f-links{display:flex;gap:2rem}
-.f-links a{font-size:0.68rem;letter-spacing:0.1em;color:rgba(255,255,255,0.25);text-decoration:none;transition:color .2s}
+.f-links a{font-size:0.7rem;letter-spacing:0.1em;color:rgba(255,255,255,0.25);text-decoration:none;transition:color .2s}
 .f-links a:hover{color:var(--gold)}
-.f-copy{font-size:0.62rem;color:rgba(255,255,255,0.18)}
+.f-copy{font-size:0.7rem;color:rgba(255,255,255,0.18)}
 
 /* Reveal (IntersectionObserver) */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s cubic-bezier(.2,.6,.2,1),transform .65s cubic-bezier(.2,.6,.2,1)}
@@ -458,7 +458,7 @@ footer{background:var(--near-black);padding:2.5rem;display:flex;justify-content:
   .hamburger{display:flex}
 }
 @media(max-width:768px){
-  html{font-size:16px}
+  html{font-size:17px}
   .hero-content,.section,.page-hero{padding-left:1.5rem;padding-right:1.5rem}
   .section{padding-top:3.5rem;padding-bottom:3.5rem}
   .page-hero{padding-top:3rem;padding-bottom:3rem}
@@ -593,7 +593,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offse
 .hs-item:hover{padding-left:.8rem;background:rgba(255,255,255,.04)}
 .hs-when{text-align:center;line-height:1}
 .hs-day{display:block;font-family:var(--serif);font-size:2.4rem;font-weight:500;color:#fff}
-.hs-mon{display:block;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-l);font-weight:600;margin-top:.3rem}
+.hs-mon{display:block;font-size:0.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-l);font-weight:600;margin-top:.3rem}
 .hs-item .hs-piece{font-family:var(--serif);font-size:1.4rem;font-style:italic;color:#fff;margin:0 0 .15rem}
 .hs-item .hs-time{font-family:var(--serif);font-size:1.6rem;color:var(--gold-l)}
 .hs-fallback{color:rgba(255,255,255,.75);font-size:.95rem}
@@ -619,14 +619,14 @@ a.kal-row:hover .kal-name{color:var(--gold)}
 .hd-wrap{max-width:46rem}
 .hd-grid{border-top:1px solid var(--line);margin-top:.5rem}
 .hd-row{display:grid;grid-template-columns:11rem 1fr;gap:2rem;padding:1.3rem 0;border-bottom:1px solid var(--line)}
-.hd-label{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;padding-top:.35rem}
+.hd-label{font-size:0.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;padding-top:.35rem}
 .hd-value p,.hd-value li{font-family:var(--serif);font-size:1.3rem;line-height:1.5;color:var(--black)}
 .hd-value ul{list-style:none}
 .hd-nav{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--line)}
 .hd-nav-link{display:flex;flex-direction:column;gap:.25rem;text-decoration:none;padding:1.2rem 1.4rem;border:1px solid var(--line);transition:border-color .3s,box-shadow .3s,transform .3s}
 .hd-nav-link:hover{border-color:var(--gold);box-shadow:0 10px 30px rgba(16,25,46,.08);transform:translateY(-2px)}
 .hd-next{text-align:right}
-.hd-nav-dir{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.hd-nav-dir{font-size:0.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600}
 .hd-nav-txt{font-family:var(--serif);font-size:1.2rem;color:var(--black)}
 .hd-nav-date{font-size:.8rem;color:var(--text-light)}
 @media(max-width:768px){
@@ -636,7 +636,7 @@ a.kal-row:hover .kal-name{color:var(--gold)}
 }
 
 .kal-yr{margin-top:0}
-.hs-yr{display:block;font-size:.58rem;letter-spacing:.16em;color:rgba(255,255,255,.6);margin-top:.15rem}
+.hs-yr{display:block;font-size:0.66rem;letter-spacing:.16em;color:rgba(255,255,255,.6);margin-top:.15rem}
 
 /* ============================================================
    HOCHFORMAT — Untermenüs als schlanke, wischbare Tab-Leiste
@@ -708,3 +708,27 @@ body{font-variant-numeric:lining-nums}
 .legal p{font-size:1rem;line-height:1.85;color:var(--text-mid);margin-bottom:.9rem}
 .legal a{color:var(--gold);text-underline-offset:3px}
 .legal .todo{background:var(--gold-pale);border-bottom:1px dashed var(--gold);padding:0 .3rem;color:var(--text)}
+
+/* ============================================================
+   MONATSAUSWAHL — Reiter über der Liste, feste Höhe
+   ============================================================ */
+.kal-wrap{display:block}
+.kal-months{
+  display:flex;flex-direction:row;flex-wrap:wrap;gap:0 .3rem;
+  border:none;border-bottom:1px solid var(--line);margin-bottom:.5rem;
+}
+.kal-m-btn{
+  width:auto;padding:.95rem 1.3rem .8rem;margin-bottom:-1px;
+  border:none;border-bottom:2px solid transparent;background:none;
+  font-size:.72rem;letter-spacing:.2em;color:var(--text-light);
+  transition:color .25s,border-color .25s;
+}
+.kal-m-btn:last-child{border-bottom:2px solid transparent}
+.kal-m-btn:hover{background:none;color:var(--gold)}
+.kal-m-btn.active,.kal-m-btn.active:hover{background:none;color:var(--blue);border-bottom-color:var(--gold)}
+.kal-m-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+@media(max-width:768px){
+  .kal-months{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -1.5rem .5rem;padding:0 1.5rem}
+  .kal-months::-webkit-scrollbar{display:none}
+  .kal-m-btn{flex:none;padding:.85rem .95rem .7rem}
+}
