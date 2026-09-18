@@ -137,7 +137,30 @@
       return;
     }
     var sorted=entries.slice().sort(function(a,b){return (b.date+b.time).localeCompare(a.date+a.time)});
-    listEl.innerHTML=sorted.map(rowHTML).join('');
+    var years=[];
+    sorted.forEach(function(e){var y=e.dateObj.getFullYear();if(years.indexOf(y)<0)years.push(y)});
+
+    /* Nach Jahren geordnet, wie im Neuigkeiten-Archiv: neuestes Jahr zuerst */
+    listEl.innerHTML=
+      '<div class="news-years" role="group" aria-label="Jahr wählen">'+
+        years.map(function(y,i){
+          var n=sorted.filter(function(e){return e.dateObj.getFullYear()===y}).length;
+          return '<button type="button" class="news-year'+(i===0?' active':'')+'" data-year="'+y+'">'+y+'<span class="news-year-n">'+n+'</span></button>';
+        }).join('')+
+      '</div>'+
+      '<div class="kal-archive-rows" aria-live="polite"></div>';
+
+    var rowsEl=listEl.querySelector('.kal-archive-rows');
+    function showYear(y){
+      rowsEl.innerHTML=sorted.filter(function(e){return e.dateObj.getFullYear()===y}).map(rowHTML).join('');
+    }
+    listEl.addEventListener('click',function(ev){
+      var b=ev.target.closest('.news-year');
+      if(!b)return;
+      Array.prototype.forEach.call(listEl.querySelectorAll('.news-year'),function(x){x.classList.toggle('active',x===b)});
+      showYear(Number(b.dataset.year));
+    });
+    showYear(years[0]);
   }
 
   function init(){

@@ -134,8 +134,20 @@ data/
   news.csv                    Neuigkeiten und Plakate
   solisten.json               Solistinnen und Solisten mit Stimmlage
 assets/
-  logo.png, img/              Logo und Bilder
-  img/news/2026/, 2027/ …     Plakate der Neuigkeiten, je Jahr ein Ordner
+  logo.png, logo-gold.png     Logo (grün und golden), Favicons, Zierlinie
+  img/
+    kirche/                   Außen- und Innenansichten, Altäre, Loretokapelle, Titelbilder
+    orgeln/                   Rieger- und Reil-Orgel
+    musik/                    Chor und Orchester
+    personen/
+      patres/                 Mitbrüder der Augustiner
+      dirigenten/             Kirchenmusikdirektor und Gastdirigenten
+      organisten/             Organisten
+      solisten/               Solistinnen und Solisten
+      historisch/             Hl. Augustinus
+    runden/                   Bilder der Pfarrgruppen
+    aspersdorf/               Pfarrkirche St. Georg
+    news/2026/, 2027/ …       Plakate der Neuigkeiten, je Jahr ein Ordner
 ```
 
 Alle Pfade sind **relativ**, die Seite funktioniert daher in jedem Unterverzeichnis eines Webservers.
