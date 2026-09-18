@@ -64,6 +64,19 @@
       '<p style="margin-top:2rem"><a class="link-arr" href="musik.html#'+(HD.isUpcoming(e)?'p-hochaemter':'p-hochaemter-archiv')+'">'+(HD.isUpcoming(e)?'Alle Hochämter':'Zum Archiv')+'</a></p>';
 
     qs('#hd-nav').innerHTML=navLink(entries[idx-1],'prev')+navLink(entries[idx+1],'next');
+
+    /* Zurueck-Knopf: zur vorherigen Seite der Website, sonst zur passenden Liste */
+    var back=qs('#hd-back');
+    if(back){
+      back.setAttribute('href','musik.html#'+(HD.isUpcoming(e)?'p-hochaemter':'p-hochaemter-archiv'));
+      back.addEventListener('click',function(ev){
+        var ref=document.referrer;
+        if(ref&&ref.indexOf(location.origin)===0&&ref.indexOf('hochamt.html')<0&&window.history.length>1){
+          ev.preventDefault();
+          window.history.back();
+        }
+      });
+    }
   }
 
   document.addEventListener('DOMContentLoaded',function(){

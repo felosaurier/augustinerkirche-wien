@@ -1065,3 +1065,9 @@ html.nd-lock{overflow:hidden}
 
 .kal-yr{letter-spacing:.08em;white-space:nowrap}
 @media(max-width:560px){a.kal-row{grid-template-columns:4.3rem 1fr 1.2rem}}
+
+/* Zurück-Knopf auf der Hochamt-Detailseite */
+.page-hero{position:relative}
+.hd-back{display:inline-flex;align-items:center;gap:.6rem;margin-bottom:1.4rem;padding:.55rem 1rem .55rem .8rem;border:1px solid var(--line);background:var(--white);color:var(--black);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;text-decoration:none;transition:border-color .25s,color .25s,gap .25s}
+.hd-back:hover{border-color:var(--gold);color:var(--gold);gap:.9rem}
+.hd-back:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
