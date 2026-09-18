@@ -4,28 +4,32 @@
    feine Linien statt Schatten-Spielereien, zurückhaltende
    IntersectionObserver-Animationen.
    ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
   --white:#ffffff;
   --bg:#ffffff;
-  --bg-soft:#f8f7f4;
-  --bg-warm:#f3f0e8;
+  --bg-soft:#faf8f3;
+  --bg-warm:#f4efe3;
   --black:#111110;
   --near-black:#1c1c1a;
   --blue:#1b2a4a;
   --blue-deep:#10192e;
-  --gold:#a8823a;
-  --gold-h:#c09a48;
-  --gold-pale:#f5edda;
+  --gold:#8f6b25;
+  --gold-h:#a8823a;
+  --gold-l:#d8b96e;
+  --gold-pale:#f6efdc;
   --text:#1c1c1a;
   --text-mid:#4c4c47;
-  --text-light:#8c8c84;
-  --line:#e4e0d8;
+  --text-light:#6b6b63;
+  --line:#e6e0d2;
   --nav-h:72px;
   --sidebar:200px;
   --max:1160px;
+  --serif:'Cormorant Garamond','Playfair Display',Georgia,serif;
+  --ease:cubic-bezier(.2,.6,.2,1);
 }
 
 html{scroll-behavior:smooth;font-size:17px}
@@ -475,4 +479,110 @@ footer{background:var(--near-black);padding:2.5rem;display:flex;justify-content:
   .reveal{transition:none;opacity:1;transform:none}
   .hero-img,.hero-eyebrow,.hero-h1,.hero-sub,.hero-actions{animation:none;opacity:1}
   .insta-skel::after{animation:none}
+}
+
+
+/* ============================================================
+   VERFEINERUNG — klassisch & elegant
+   ============================================================ */
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--gold-pale);color:var(--blue)}
+
+/* Überschriften in Cormorant: feiner, festlicher */
+.hero-h1,.s-title,.ph-title,.qt,.hs-block-title,.h3c-title,.card-title,.person-name,
+.news-title,.organ-title,.sakr-name,.fact-n,.timeline-year,.hs-piece,.insta-fallback-title{
+  font-family:var(--serif);font-weight:500;letter-spacing:.005em}
+.hero-h1{font-weight:500;letter-spacing:-.005em}
+.s-title{font-size:clamp(2.2rem,3.8vw,3.1rem)}
+.ph-title{font-size:clamp(2.5rem,5.5vw,4.5rem)}
+.qt{font-weight:400}
+.card-title,.person-name,.news-title,.organ-title,.sakr-name{font-size:1.3rem}
+.h3c-title{font-size:1.6rem}
+.gd-time,.week-time,.kal-time,.kal-d,.hs-time,.week-name,.kal-name,.sakr-nr,.fee-table td:last-child{font-family:var(--serif);font-weight:500}
+.gd-time{font-size:1.7rem}.week-time,.kal-time{font-size:1.45rem}.kal-d{font-size:2.3rem}
+.week-name,.kal-name{font-size:1.2rem}
+.bio-p,.s-text{font-size:1.02rem}
+
+/* Navigation: leiser, feiner Goldstrich */
+nav{box-shadow:none;border-bottom:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:saturate(1.2) blur(8px)}
+nav::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-l),transparent);opacity:.7}
+.nav-btn{font-size:.76rem;letter-spacing:.16em}
+.nav-btn.current::after{height:1px}
+.nav-logo-text{font-size:1rem}
+.mega{box-shadow:0 18px 50px rgba(16,25,46,.12);border-top:1px solid var(--gold)}
+.nav-cta,.btn-gold,.lang-btn.active{background:var(--blue);color:#fff}
+.nav-cta:hover,.btn-gold:hover{background:var(--gold);color:#fff}
+.lang-btn.active{background:var(--blue)}
+
+/* Buttons: schlank, ohne harte Kanten-Effekte */
+.btn{padding:.95rem 2.2rem;letter-spacing:.2em;font-size:.72rem;transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
+.btn-dark{background:var(--blue)}.btn-dark:hover{background:var(--gold)}
+.btn-outline{border:1px solid var(--blue);color:var(--blue)}.btn-outline:hover{background:var(--blue);color:#fff}
+.hero .btn-gold{background:var(--gold-l);color:var(--blue-deep)}.hero .btn-gold:hover{background:#fff}
+.btn-outline-w{border-width:1px}
+
+/* Hero: tiefer Marine-Verlauf statt reinem Schwarz */
+.hero-overlay{background:linear-gradient(to top,rgba(16,25,46,.86) 0%,rgba(16,25,46,.42) 50%,rgba(16,25,46,.08) 100%)}
+.hero-eyebrow{color:var(--gold-l)}.hero-eyebrow::before{background:var(--gold-l)}
+.hero-h1 em{color:var(--gold-l)}
+.hero-sub{color:rgba(255,255,255,.86)}
+
+/* Ornament: Titel-Trenner mit Raute */
+.divider-g{width:5rem;height:1px;background:linear-gradient(90deg,var(--gold),transparent);position:relative;margin:1.4rem 0 2rem}
+.divider-g::before{content:'';position:absolute;left:0;top:-3px;width:7px;height:7px;background:var(--gold);transform:rotate(45deg)}
+.s-label::before{width:2rem}
+
+/* Karten: feine Linien, weiche Schatten */
+.card,.person-card,.person-card-wide{border-top-width:1px;border-top-color:var(--line);box-shadow:0 1px 0 rgba(16,25,46,.03);position:relative}
+.card::before,.person-card::before,.person-card-wide::before{content:'';position:absolute;left:0;right:0;top:-1px;height:2px;background:var(--gold);transform:scaleX(.18);transform-origin:left;transition:transform .5s var(--ease)}
+.person-card,.person-card-wide{position:relative}
+.card:hover::before,.person-card:hover::before,.person-card-wide:hover::before{transform:scaleX(1)}
+.card:hover,.person-card:hover,.news-item:hover{box-shadow:0 14px 40px rgba(16,25,46,.09);transform:translateY(-3px)}
+.card,.person-card,.news-item,.person-card-wide{transition:box-shadow .4s var(--ease),transform .4s var(--ease),border-color .3s}
+.person-role,.news-date,.kal-type,.week-day,.h3c-tag{letter-spacing:.2em}
+.person-bio,.card-text,.news-text{font-size:.93rem}
+.person-card img{filter:saturate(.92)}
+
+/* Abschnitte */
+.section{padding:6rem 2.5rem}
+.page-hero{background:linear-gradient(180deg,var(--bg-warm),var(--bg-soft));padding:5rem 2.5rem 4rem;position:relative}
+.page-hero::after{content:'';position:absolute;left:2.5rem;bottom:-1px;width:6rem;height:2px;background:var(--gold)}
+.quote-band{background:var(--bg-warm);padding:6rem 2.5rem;position:relative}
+.quote-band::before{content:'';display:block;width:56px;height:56px;margin:0 auto 1.6rem;background:var(--gold);
+  -webkit-mask:url('../assets/logo.png') center/contain no-repeat;mask:url('../assets/logo.png') center/contain no-repeat}
+.qt{font-size:clamp(1.7rem,3.2vw,2.7rem)}
+.patron-box{background:var(--bg-warm);border-left-width:2px}
+
+/* Dunkle Flächen: Marine, helleres Gold für Lesbarkeit */
+.hochamt-strip{background:var(--blue-deep);border-bottom:1px solid rgba(216,185,110,.3)}
+.hs-tag,.hs-block-tag,.herzgruft .s-label{color:var(--gold-l)}
+.herzgruft .s-label::before{background:var(--gold-l)}
+.hs-meta,.hs-date{color:rgba(255,255,255,.65)}
+.hs-block-link{color:rgba(255,255,255,.88)}.hs-block-link:hover{color:var(--gold-l)}
+.hs-block-ov{background:linear-gradient(to top,rgba(16,25,46,.82) 0%,transparent 68%)}
+.herzgruft .s-text{color:rgba(255,255,255,.8)}
+.herzgruft-facts .fact-l{color:rgba(255,255,255,.65)}
+.week-filter-btn.active,.kal-m-btn:hover,.kal-m-btn.active{background:var(--blue);border-color:var(--blue);color:var(--gold-l)}
+.sakr-nr{color:#d9d1bd}
+.timeline{border-left-color:var(--gold-l)}
+.timeline-item::before{background:var(--bg);border:2px solid var(--gold);width:11px;height:11px;left:-2.5rem}
+.fact{background:var(--bg-warm)}.fact-n{color:var(--blue)}
+
+/* Footer */
+footer{background:var(--blue-deep);border-top:1px solid rgba(216,185,110,.3)}
+.f-logo{color:rgba(255,255,255,.78)}.f-logo span{color:var(--gold-l)}
+.f-links a{color:rgba(255,255,255,.62);font-size:.72rem}.f-links a:hover{color:var(--gold-l)}
+.f-copy{color:rgba(255,255,255,.5)}
+
+/* Barrierefreiheit: sichtbarer Fokus */
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.hero a:focus-visible,footer a:focus-visible,.herzgruft a:focus-visible{outline-color:var(--gold-l)}
+.nav-btn,.sidebar-item,.kal-m-btn,.week-filter-btn,.sakr-item,.btn,.lang-btn{cursor:pointer}
+.lang-btn,.week-filter-btn{min-height:36px}
+
+@media(max-width:768px){
+  .section{padding:4rem 1.5rem}
+  .page-hero{padding:3.5rem 1.5rem 3rem}
+  .page-hero::after{left:1.5rem}
+  .s-title{font-size:2rem}
 }
