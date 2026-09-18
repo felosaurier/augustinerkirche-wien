@@ -13,6 +13,7 @@
   var HD = window.HochamtData;
   var MONTH_NAMES = HD.MONTHS;
   var WEEKDAYS = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+  var MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 
   function qs(sel,ctx){return (ctx||document).querySelector(sel)}
 
@@ -21,7 +22,7 @@
 
   function rowHTML(entry){
     var d=entry.dateObj;
-    var year='<div class="kal-wd kal-yr">'+d.getFullYear()+'</div>';
+    var year='<div class="kal-wd kal-yr">'+MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear()+'</div>';
     return '<a class="kal-row" data-m="'+monthKey(d)+'" href="hochamt.html?id='+entry.id+'">'+
       '<div><div class="kal-d">'+HD.pad(d.getDate())+'</div><div class="kal-wd">'+WEEKDAYS[d.getDay()]+'</div>'+year+'</div>'+
       '<div><div class="kal-name">'+HD.esc(entry.piece||entry.type)+'</div><div class="kal-type">'+HD.esc(entry.type)+'</div></div>'+

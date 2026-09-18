@@ -1062,3 +1062,6 @@ html.nd-lock{overflow:hidden}
   .kal-months{display:none}
   .kal-select-wrap{display:block}
 }
+
+.kal-yr{letter-spacing:.08em;white-space:nowrap}
+@media(max-width:560px){a.kal-row{grid-template-columns:4.3rem 1fr 1.2rem}}
