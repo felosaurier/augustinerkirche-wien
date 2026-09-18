@@ -5,14 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Pfarre Aspersdorf — Augustinerkirche Wien</title>
 <meta name="description" content="Die Pfarre Aspersdorf im Weinviertel — Pfarrkirche St. Georg, betreut vom Augustiner-Vikariat Wien. Gottesdienste, Sakramente und Pfarrfriedhof."/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,600&family=Playfair+Display+SC:wght@400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="preload" as="image" href="../assets/img/aspersdorf-kirche.webp" fetchpriority="high"/>
 <link rel="stylesheet" href="../css/style.css"/>
 </head>
 <body>
 
 <nav>
   <a class="nav-logo-wrap" href="../index.html">
-    <img class="nav-logo-img" src="../assets/logo.png" alt="Logo der Augustinerkirche Wien" width="38" height="38"/>
+    <img class="nav-logo-img" src="../assets/logo.png" alt="Logo der Augustinerkirche Wien" width="38" height="38" decoding="async"/>
     <div>
       <div class="nav-logo-text">Augustiner<span>kirche</span> Wien</div>
       <span class="nav-logo-sub">Pfarre &amp; Kloster St. Augustin</span>
@@ -169,7 +172,7 @@
 <main>
 
 <section class="hero">
-  <div class="hero-img" style="background-image:url('../assets/img/aspersdorf-kirche.jpg')"></div>
+  <div class="hero-img" style="background-image:url('../assets/img/aspersdorf-kirche.webp')"></div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <p class="hero-eyebrow">Weinviertel · Niederösterreich</p>
@@ -215,7 +218,7 @@
           <div class="s-label">Patrozinium 23. April</div>
           <h2 class="s-title">Pfarrkirche <em>St. Georg</em></h2>
           <div class="divider-g"></div>
-          <img src="../assets/img/aspersdorf-kirche-2.jpg" alt="Pfarrkirche St. Georg, Aspersdorf" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--line);margin-bottom:1.5rem"/>
+          <img src="../assets/img/aspersdorf-kirche-2.webp" alt="Pfarrkirche St. Georg, Aspersdorf" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--line);margin-bottom:1.5rem" width="1152" height="768" decoding="async"/>
           <p class="bio-p">Die Pfarrkirche St. Georg erhebt sich im Süden des Ortes über dem Pfarrfriedhof und den Weinkellern Aspersdorfs. Im Kern eine gotische Chorturmkirche, wurde sie nach 1718 unter der Leitung des bedeutenden Barockarchitekten Johann Lukas von Hildebrandt (1668–1745) zur spätbarocken Saalkirche umgestaltet und am 25. September 1730 neu geweiht.</p>
           <p class="bio-p">Die Kirche zählt zu einer Gruppe Schönborn'scher Patronatskirchen, die Hildebrandt im Weinviertel umgestaltete — gemeinsam mit Göllersdorf, Großstelzendorf, Stranzendorf und Weyerburg. Schutzpatron der Pfarrkirche ist der Hl. Georg, dessen Fest am 23. April gefeiert wird.</p>
           <p class="bio-p">In Wieselsfeld, dem zweiten Ort der Pfarre, steht zudem die kleinere Kapelle Heiligste Dreifaltigkeit, in der etwa einmal monatlich außerhalb der Sommermonate die Heilige Messe gefeiert wird.</p>
@@ -269,15 +272,68 @@
           <h2 class="s-title"><em>Sakramente</em> in Aspersdorf</h2>
           <div class="divider-g"></div>
           <p class="s-text" style="margin-bottom:1.5rem">Taufe, Eucharistie und Erstkommunion, Firmung, Buße, Trauung, Weihe, Krankensalbung und die Begleitung im Sterbefall werden auch in der Pfarre Aspersdorf gespendet. Für Termine und Vorbereitung wenden Sie sich an das Pfarramt Aspersdorf.</p>
-          <div class="sakr-grid">
-            <div class="sakr-item"><div class="sakr-nr">01</div><div class="sakr-name">Taufe</div><div class="sakr-desc">Aufnahme in die Gemeinschaft der Kirche.</div></div>
-            <div class="sakr-item"><div class="sakr-nr">02</div><div class="sakr-name">Eucharistie</div><div class="sakr-desc">Erstkommunion und Feier des Leibes Christi.</div></div>
-            <div class="sakr-item"><div class="sakr-nr">03</div><div class="sakr-name">Firmung</div><div class="sakr-desc">Stärkung durch den Heiligen Geist.</div></div>
-            <div class="sakr-item"><div class="sakr-nr">04</div><div class="sakr-name">Buße</div><div class="sakr-desc">Das Sakrament der Versöhnung.</div></div>
-            <div class="sakr-item"><div class="sakr-nr">05</div><div class="sakr-name">Trauung</div><div class="sakr-desc">Heirat in der Pfarrkirche St. Georg.</div></div>
-            <div class="sakr-item"><div class="sakr-nr">06</div><div class="sakr-name">Weihe</div><div class="sakr-desc">Diakonat und Priestertum.</div></div>
-            <div class="sakr-item"><div class="sakr-nr">07</div><div class="sakr-name">Krankensalbung</div><div class="sakr-desc">Stärkung in Krankheit und Not.</div></div>
-            <div class="sakr-item"><div class="sakr-nr">08</div><div class="sakr-name">Sterbefall</div><div class="sakr-desc">Begleitung und Gestaltung des Requiems.</div></div>
+          <div class="sakr-band sakr-band-inline" aria-label="Zu den Sakramenten springen">
+            <div class="sakr-band-label">Zu den Sakramenten</div>
+            <div class="sakr-marquee"><div class="sakr-track"><div class="sakr-track-group"><button type="button" class="sakr-chip" data-target="as-taufe"><span class="sakr-chip-nr">01</span><span class="sakr-chip-name">Taufe</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-eucharistie"><span class="sakr-chip-nr">02</span><span class="sakr-chip-name">Eucharistie</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-firmung"><span class="sakr-chip-nr">03</span><span class="sakr-chip-name">Firmung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-busse"><span class="sakr-chip-nr">04</span><span class="sakr-chip-name">Buße</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-trauung"><span class="sakr-chip-nr">05</span><span class="sakr-chip-name">Trauung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-weihe"><span class="sakr-chip-nr">06</span><span class="sakr-chip-name">Weihe</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-krankensalbung"><span class="sakr-chip-nr">07</span><span class="sakr-chip-name">Krankensalbung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-sterbefall"><span class="sakr-chip-nr">08</span><span class="sakr-chip-name">Sterbefall</span></button><span class="sakr-dot" aria-hidden="true"></span></div><div class="sakr-track-group" aria-hidden="true"><button type="button" class="sakr-chip" data-target="as-taufe" tabindex="-1"><span class="sakr-chip-nr">01</span><span class="sakr-chip-name">Taufe</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-eucharistie" tabindex="-1"><span class="sakr-chip-nr">02</span><span class="sakr-chip-name">Eucharistie</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-firmung" tabindex="-1"><span class="sakr-chip-nr">03</span><span class="sakr-chip-name">Firmung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-busse" tabindex="-1"><span class="sakr-chip-nr">04</span><span class="sakr-chip-name">Buße</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-trauung" tabindex="-1"><span class="sakr-chip-nr">05</span><span class="sakr-chip-name">Trauung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-weihe" tabindex="-1"><span class="sakr-chip-nr">06</span><span class="sakr-chip-name">Weihe</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-krankensalbung" tabindex="-1"><span class="sakr-chip-nr">07</span><span class="sakr-chip-name">Krankensalbung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-sterbefall" tabindex="-1"><span class="sakr-chip-nr">08</span><span class="sakr-chip-name">Sterbefall</span></button><span class="sakr-dot" aria-hidden="true"></span></div></div></div>
+          </div>
+          <div class="sakr-sec" id="as-taufe">
+            <div class="sakr-sec-nr">01</div>
+            <h3 class="sakr-sec-title">Taufe</h3>
+            <p class="bio-p">Das Wasser ist das älteste und sichtbarste Zeichen der Taufe: Der Täufling wird mit Wasser übergossen oder untergetaucht, „im Namen des Vaters und des Sohnes und des Heiligen Geistes“. Damit gehört er oder sie zu Christus und zur weltweiten Gemeinschaft der Kirche.</p>
+            <p class="bio-p">Getauft werden können Kinder ebenso wie Jugendliche und Erwachsene. Bei Kindern versprechen Eltern und Paten, den Glauben weiterzugeben und das Kind auf seinem Weg zu begleiten.</p>
+            <div class="sakr-facts"><div class="sakr-facts-title">Gut zu wissen</div><ul><li>Eltern und mindestens eine Patin oder ein Pate, in der Regel katholisch und gefirmt, begleiten die Taufe.</li><li>Ein Vorgespräch klärt Ablauf, Lieder und Lesungen.</li><li>Den Termin stimmen Sie mit dem Pfarramt ab.</li></ul></div>
+          </div>
+          <div class="sakr-sec" id="as-eucharistie">
+            <div class="sakr-sec-nr">02</div>
+            <h3 class="sakr-sec-title">Eucharistie</h3>
+            <p class="bio-p">Katholische Christen glauben, dass Jesus Christus in Brot und Wein gegenwärtig ist. In jeder Heiligen Messe wird an sein letztes Abendmahl erinnert; die Gemeinde empfängt die Kommunion als Zeichen der Verbundenheit mit Christus und untereinander.</p>
+            <p class="bio-p">Die Erstkommunion ist der erste bewusste Empfang für Kinder und wird in der Volksschulzeit vorbereitet.</p>
+          </div>
+          <div class="sakr-sec" id="as-firmung">
+            <div class="sakr-sec-nr">03</div>
+            <h3 class="sakr-sec-title">Firmung</h3>
+            <p class="bio-p">Das Wort „Firmung“ kommt vom lateinischen <em>confirmatio</em>, „Bestärkung“. Durch Handauflegung und Salbung mit Chrisam, dem geweihten Öl, wird die Gabe des Heiligen Geistes zugesprochen. Wer gefirmt wird, sagt selbst Ja zum Glauben, das bei der Taufe stellvertretend gesprochen wurde.</p>
+            <p class="bio-p">Gespendet wird die Firmung vom Bischof oder von einem beauftragten Priester. Zur Vorbereitung gehören in der Regel Gespräche, Treffen in der Gruppe und ein Firmpate, der den Weg begleitet.</p>
+          </div>
+          <div class="sakr-sec" id="as-busse">
+            <div class="sakr-sec-nr">04</div>
+            <h3 class="sakr-sec-title">Buße</h3>
+            <p class="bio-p">Zum Sakrament der Buße, oft Beichte genannt, gehören Reue, das Bekenntnis der Schuld, die Lossprechung durch den Priester und eine Buße als Zeichen des Neuanfangs. Es geht nicht um Bestrafung, sondern um Versöhnung mit Gott, mit den Mitmenschen und mit sich selbst.</p>
+            <p class="bio-p">Der Priester unterliegt dem Beichtgeheimnis, das ohne Ausnahme gilt. Ein Gespräch lässt sich jederzeit vereinbaren.</p>
+          </div>
+          <div class="sakr-sec" id="as-trauung">
+            <div class="sakr-sec-nr">05</div>
+            <h3 class="sakr-sec-title">Trauung</h3>
+            <p class="bio-p">Im katholischen Verständnis spenden sich die Brautleute das Sakrament der Ehe gegenseitig. Der Priester begleitet die Feier als Zeuge der Kirche und segnet den Bund. Die Ehe steht für Treue, gegenseitige Hingabe und ein gemeinsames Leben unter dem Segen Gottes.</p>
+            <p class="bio-p">Die Trauung findet in der Pfarrkirche St. Georg statt.</p>
+            <div class="sakr-facts"><div class="sakr-facts-title">Gut zu wissen</div><ul><li>Frühzeitig Kontakt mit dem Pfarramt aufnehmen.</li><li>Ein Traugespräch bereitet auf die Feier vor.</li><li>Welche Unterlagen benötigt werden, etwa ein Taufschein, klärt das Pfarramt.</li></ul></div>
+          </div>
+          <div class="sakr-sec" id="as-weihe">
+            <div class="sakr-sec-nr">06</div>
+            <h3 class="sakr-sec-title">Weihe</h3>
+            <p class="bio-p">Die Weihe gibt es in drei Stufen: Diakon, Priester und Bischof. Der Bischof spendet sie durch Handauflegung und Weihegebet. Die Geweihten stehen im Dienst an Wort, Sakrament und Nächstenliebe.</p>
+            <p class="bio-p">Im Augustinerorden leben die Brüder in Gemeinschaft nach der Regel des heiligen Augustinus: gemeinsames Gebet, gemeinsames Leben und gemeinsame Sendung. Wer sich für diesen Weg interessiert, ist eingeladen, das Gespräch zu suchen.</p>
+          </div>
+          <div class="sakr-sec" id="as-krankensalbung">
+            <div class="sakr-sec-nr">07</div>
+            <h3 class="sakr-sec-title">Krankensalbung</h3>
+            <p class="bio-p">Früher „Letzte Ölung“ genannt, ist die Krankensalbung heute nicht mehr allein für Sterbende gedacht. Sie ist für Menschen bei ernster Krankheit, vor einer Operation und im hohen Alter. Der Priester legt die Hände auf, salbt Stirn und Hände mit geweihtem Öl und betet um Stärkung, Trost und, wenn Gott es will, Heilung.</p>
+            <p class="bio-p">Das Sakrament kann bei erneuter Krankheit wiederholt werden. Auch Angehörige sind eingeladen, dabei zu sein.</p>
+          </div>
+          <div class="sakr-sec" id="as-sterbefall">
+            <div class="sakr-sec-nr">08</div>
+            <h3 class="sakr-sec-title">Sterbefall</h3>
+            <p class="bio-p">Sterbende können das Gebet der Kirche, den Segen, die Krankensalbung und die Kommunion als Wegzehrung empfangen. Wichtiger noch als jedes Zeichen ist, dass Menschen in dieser Zeit nicht allein bleiben.</p>
+            <p class="bio-p">Nach dem Tod begleitet die Pfarre die Angehörigen in ihrer Trauer und feiert mit ihnen das Requiem.</p>
+          </div>
+          <div class="kontakt-card">
+            <div class="kontakt-title">Termine und Vorbereitung</div>
+            <p class="kontakt-text">Für Termine und Vorbereitung wenden Sie sich an das Pfarramt Aspersdorf.</p>
+            <div class="kontakt-rows">
+              <div class="kontakt-row"><span class="kontakt-label">E-Mail</span><span class="kontakt-val"><a href="mailto:pfarre@aspersdorf.at?subject=Sakramente">pfarre@aspersdorf.at</a></span></div>
+              <div class="kontakt-row"><span class="kontakt-label">Telefon</span><span class="kontakt-val"><a href="tel:+43295230198">+43 (0)2952 301 98</a></span></div>
+              <div class="kontakt-row"><span class="kontakt-label">Pfarramt</span><span class="kontakt-val kontakt-hours">Hauptstraße 2, 2020 Aspersdorf</span></div>
+            </div>
           </div>
         </div>
 
@@ -286,10 +342,15 @@
           <h2 class="s-title"><em>Wiedereintritt</em> in die Kirche</h2>
           <div class="divider-g"></div>
           <p class="s-text" style="max-width:50rem;margin-bottom:1.5rem">Auch in Aspersdorf ist der Wiedereintritt in die Kirche unkompliziert und persönlich möglich. Ein vertrauliches Gespräch mit P. Dominic Sadrawetz OSA oder dem Pfarramt genügt als erster Schritt.</p>
-          <div class="card" style="max-width:420px">
-            <div class="card-title">Kontakt aufnehmen</div>
-            <div class="card-text">Pfarramt Aspersdorf, Hauptstraße 2, 2020 Aspersdorf.</div>
-            <div style="margin-top:1.5rem"><a class="btn btn-dark" href="mailto:pfarre@aspersdorf.at">pfarre@aspersdorf.at</a></div>
+          <p class="s-text" style="max-width:50rem;margin-bottom:1rem">Wer aus der Kirche ausgetreten ist, kann jederzeit wieder eintreten. Im Gespräch haben Gründe, Verletzungen und offene Fragen Platz. Der formale Wiedereintritt erfolgt mit einer kurzen schriftlichen Erklärung, die im Gespräch gemeinsam vorbereitet wird.</p>
+          <div class="kontakt-card">
+            <div class="kontakt-title">Kontakt aufnehmen</div>
+            <p class="kontakt-text">Wenden Sie sich vertraulich an das Pfarramt Aspersdorf.</p>
+            <div class="kontakt-rows">
+              <div class="kontakt-row"><span class="kontakt-label">E-Mail</span><span class="kontakt-val"><a href="mailto:pfarre@aspersdorf.at?subject=Wiedereintritt">pfarre@aspersdorf.at</a></span></div>
+              <div class="kontakt-row"><span class="kontakt-label">Telefon</span><span class="kontakt-val"><a href="tel:+43295230198">+43 (0)2952 301 98</a></span></div>
+              <div class="kontakt-row"><span class="kontakt-label">Pfarramt</span><span class="kontakt-val kontakt-hours">Hauptstraße 2, 2020 Aspersdorf</span></div>
+            </div>
           </div>
         </div>
 
@@ -364,7 +425,7 @@
 
 <section class="contact-strip" aria-label="Kontakt Aspersdorf">
   <div><div class="cs-label">Adresse</div><div class="cs-val">Hauptstraße 2<br>2020 Aspersdorf<br><span style="font-size:0.82rem;color:var(--text-light)">Niederösterreich</span></div></div>
-  <div><div class="cs-label">Telefon</div><div class="cs-val"><a href="tel:+4329523019800">+43 (0)2952 301 98</a></div></div>
+  <div><div class="cs-label">Telefon</div><div class="cs-val"><a href="tel:+43295230198">+43 (0)2952 301 98</a></div></div>
   <div><div class="cs-label">E-Mail</div><div class="cs-val"><a href="mailto:pfarre@aspersdorf.at">pfarre@aspersdorf.at</a></div></div>
   <div><div class="cs-label">Vikariat</div><div class="cs-val" style="font-size:0.9rem">Erzdiözese Wien<br>Dekanat Hollabrunn</div></div>
 </section>
@@ -372,7 +433,7 @@
 </main>
 
 <footer>
-  <div class="f-logo-wrap"><img class="f-logo-img" src="../assets/logo.png" alt="Logo der Augustinerkirche Wien" width="28" height="28"/><div class="f-logo">Augustiner<span>kirche</span> Wien</div></div>
+  <div class="f-logo-wrap"><img class="f-logo-img" src="../assets/logo.png" alt="Logo der Augustinerkirche Wien" width="28" height="28" loading="lazy" decoding="async"/><div class="f-logo">Augustiner<span>kirche</span> Wien</div></div>
   <div class="f-links"><a href="aspersdorf.html#p-leitung">Kontakt</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></div>
   <div class="f-copy">© Augustiner-Vikariat Wien 2026</div>
 </footer>

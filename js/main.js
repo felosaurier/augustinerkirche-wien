@@ -25,7 +25,7 @@
       if(!item)return;
       var wasOpen=item.classList.contains('open');
       closeAllDropdowns();
-      if(!wasOpen)item.classList.add('open');
+      if(!wasOpen){item.classList.add('open');btn.setAttribute('aria-expanded','true')}
     });
 
     document.addEventListener('click',function(e){
@@ -38,6 +38,7 @@
   }
   function closeAllDropdowns(){
     qsa('.nav-item.open').forEach(function(i){i.classList.remove('open')});
+    qsa('.nav-btn[aria-expanded="true"]').forEach(function(b){b.setAttribute('aria-expanded','false')});
   }
 
   /* ---------- Mobile Navigation ---------- */
@@ -94,8 +95,23 @@
       e.preventDefault();
       if(activatePane(sidebar,paneId)){
         history.replaceState(null,'',location.pathname+'#'+paneId);
+        bleedBands();
         revealObserve();
       }
+    });
+  }
+
+  /* ---------- Sakramente-Band ueber die volle Bildschirmbreite ----------
+     Das Band liegt im Textbereich (neben dem Seitenmenue) und wird per
+     negativem Rand bis an beide Bildschirmraender gezogen. */
+  function bleedBands(){
+    qsa('.sakr-band-inline').forEach(function(band){
+      if(!band.offsetParent)return;
+      band.style.marginLeft='0px';
+      band.style.width='auto';
+      var left=band.getBoundingClientRect().left;
+      band.style.marginLeft=(-left)+'px';
+      band.style.width=document.documentElement.clientWidth+'px';
     });
   }
 
@@ -180,6 +196,12 @@
   /* ---------- Sakramente: Detailauswahl (sakramente.html) ---------- */
   function initSakrItems(){
     document.addEventListener('click',function(e){
+      var jump=e.target.closest('.sakr-chip[data-target]');
+      if(jump){
+        var target=document.getElementById(jump.dataset.target);
+        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+        return;
+      }
       var item=e.target.closest('.sakr-item[data-pane],.sakr-chip[data-pane]');
       if(!item)return;
       var sidebar=qs('.sidebar');
@@ -205,8 +227,11 @@
 
 
     routeToHash();
+    bleedBands();
+    window.addEventListener('resize',bleedBands);
+    window.addEventListener('load',bleedBands);
     revealObserve();
   });
 
-  window.addEventListener('hashchange',routeToHash);
+  window.addEventListener('hashchange',function(){routeToHash();bleedBands()});
 })();

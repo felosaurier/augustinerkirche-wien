@@ -15,7 +15,7 @@
   function cardHTML(p){
     var name = p.name + (p.deceased ? ' †' : '');
     return '<div class="person-card-wide compact">'+
-      '<img src="../'+p.image+'" alt="'+name+'" loading="lazy"/>'+
+      '<img src="../'+p.image+'" alt="'+name+'" width="300" height="300" loading="lazy" decoding="async"/>'+
       '<div class="person-body">'+
         '<div class="person-name">'+name+'</div>'+
         '<div class="person-role">'+p.voice+'</div>'+
