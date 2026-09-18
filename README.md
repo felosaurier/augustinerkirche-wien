@@ -1,83 +1,141 @@
+<div align="center">
+
+<img src="assets/logo.png" alt="Logo der Augustinerkirche Wien" width="110"/>
+
 # Augustinerkirche Wien
 
-Modulare, statische Multi-Page-Website für die Pfarre und das Kloster St. Augustin (Augustinerkirche Wien), die Kirchenmusik von St. Augustin und die Pfarre Aspersdorf. Refaktoriert aus einer monolithischen HTML-Datei in eine klassisch-elegante, wartbare Projektstruktur ohne Build-Tooling.
+**Pfarre & Kloster St. Augustin**
 
-## Design
+*Hofpfarrkirche der Habsburger · Heimat der Wiener Kirchenmusik*
 
-Zeitlose Typografie (Playfair Display für Überschriften, Source Sans 3 für Fließtext), eine ruhige Farbpalette aus Elfenbein, Anthrazit und Gold, feine Linien statt Schatten-Spielereien, sowie zurückhaltende Scroll- und Hover-Animationen via `IntersectionObserver`. Keine Emojis, keine generischen KI-Website-Muster (keine Neon-Verläufe, keine Wellen-Trenner).
+<br>
 
-## Struktur
+[Website ansehen](#lokal-ansehen) &nbsp;·&nbsp; [Hochämter pflegen](#hochämter-pflegen) &nbsp;·&nbsp; [Aufbau](#aufbau) &nbsp;·&nbsp; [Gestaltung](#gestaltung)
 
-```
-index.html                  Startseite (Aktuelles, Identität, Herzgruft, Instagram)
-pages/
-  gottesdienste.html        Liturgie-Zeiten, Wochenüberblick, Runden in St. Augustin
-  musik.html                Hochämter, Ensembles, Organisten, Orgeln, Patenschaft
-  sakramente.html           Taufe, Eucharistie, Firmung, Trauung, Wiedereintritt ...
-  chronik.html              Geschichte, Herzgruft, Augustinerorden, Mitbrüder
-  aspersdorf.html           Pfarre Aspersdorf, Pfarrkirche St. Georg, Pfarrfriedhof
-  hochamt.html              Detailseite eines Hochamts (Besetzung, Solisten, Programm)
-  hochaemter-verwaltung.html  Internes Werkzeug zur Pflege der Hochamt-Tabelle
-  runden/                   Eigenständige Detailseiten je Pfarrgruppe (neues Fenster)
-css/style.css                Zentrales Stylesheet
-js/
-  main.js                   Navigation, Sidebar-Tabs, Hash-Routing, Reveal
-  instagram.js               Instagram-Feed mit Shimmer-Loading und Fallback
-  hochaemter-data.js         Gemeinsames Modul: liest data/hochaemter.csv (Excel-Tabelle)
-  hochaemter.js              Hochamt-Kalender und Archiv auf musik.html
-  hochaemter-start.js        Nächste Hochämter auf der Startseite
-  hochamt-detail.js          Detailseite eines Hochamts (pages/hochamt.html?id=...)
-  hochaemter-verwaltung.js   Formular-Logik für die interne Verwaltungsseite
-  solisten.js                Lädt und sortiert die Solistenliste aus data/solisten.json
-data/
-  hochaemter.csv             Alle Hochamt-Termine inkl. Mitwirkende (in Excel bearbeitbar)
-  solisten.json              Liste der Solistinnen und Solisten mit Stimmlage
-assets/
-  logo.png, img/             Bilder (teils von den Originalseiten recherchiert)
-```
+</div>
 
-Alle internen Pfade sind **relativ** (nicht root-relative), damit die Seite sowohl per Doppelklick (`file://`) als auch über jeden Webserver funktioniert.
+<br>
 
-## Lokal ansehen
+---
 
-Einfach `index.html` im Browser öffnen. Für die volle Funktionalität (z. B. den dynamischen Hochamt-Kalender, der `data/hochaemter.csv` per `fetch()` lädt) wird ein lokaler Webserver empfohlen, da Browser `fetch()` auf `file://`-Ebene aus Sicherheitsgründen blockieren:
+## Über das Projekt
 
-```bash
-npx serve .
-# oder
-python -m http.server
-```
+Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sakramente, Geschichte der Augustinerkirche, die Kirchenmusik mit dem Hochamt-Programm sowie die Pfarre Aspersdorf. Sie ist bewusst schlicht gebaut — **statisches HTML, CSS und JavaScript ohne Build-Werkzeug** — und lässt sich auf jedem einfachen Webspace betreiben. Die Seite ist ausschließlich auf Deutsch.
+
+## Seiten
+
+| Seite | Inhalt |
+|---|---|
+| **Startseite** | Aktuelles, Identität von Pfarre und Kloster, Herzgruft, die nächsten Hochämter |
+| **Gottesdienste** | Liturgiezeiten, Wochenüberblick, Runden in St. Augustin |
+| **Sakramente** | Taufe, Eucharistie, Firmung, Trauung, Wiedereintritt und mehr |
+| **Kirchenmusik** | Hochämter und Archiv, Chor, Kammerchor, Orchester, Solisten, Organisten, Orgeln |
+| **Hochamt (Detail)** | Zelebrant, Dirigent, Chor, Orchester, Solisten, Organist und weitere Musik je Termin |
+| **Chronik** | Geschichte, Zeitstrahl, Herzgruft, Führungen, Augustinerorden, Mitbrüder |
+| **Aspersdorf** | Pfarre, Pfarrkirche St. Georg, Sakramente, Pfarrfriedhof |
+| **Runden** | Eigene Seiten für Bibelpur, Fensterblick, Fußwallfahrt, Ministranten und weitere Gruppen |
+| **Impressum · Datenschutz** | Rechtliche Angaben |
 
 ## Hochämter pflegen
 
-Alle Termine stehen in **`data/hochaemter.csv`** — einer Tabelle, die sich direkt in Excel öffnen und bearbeiten lässt. Eine Zeile ist ein Termin, die Website liest die Datei live:
+Alle Termine stehen in **[`data/hochaemter.csv`](data/hochaemter.csv)** — einer Tabelle, die sich direkt in Excel öffnen und bearbeiten lässt. Eine Zeile ist ein Termin, die Website liest die Datei live.
 
 | Spalte | Inhalt | Beispiel |
 |---|---|---|
-| Datum | TT.MM.JJJJ | 20.09.2026 |
-| Uhrzeit | HH:MM | 11:00 |
-| Anlass | Art des Termins | Hochamt, Christmette, Adventlichter |
-| Werk | Komponist: Werk | W. A. Mozart: Piccolominimesse |
+| Datum | TT.MM.JJJJ | `20.09.2026` |
+| Uhrzeit | HH:MM | `11:00` |
+| Anlass | Art des Termins | `Hochamt`, `Christmette`, `Adventlichter` |
+| Werk | Komponist: Werk | `W. A. Mozart: Piccolominimesse` |
 | Ort | Standard: Augustinerkirche | |
 | Zelebrant, Dirigent, Chor, Orchester | Freitext | |
-| Solisten, Organist, Weitere Musik | mehrere Einträge mit `|` trennen | Anna Muster (Sopran) \| Max Muster (Tenor) |
+| Solisten, Organist, Weitere Musik | mehrere Einträge mit <code>&#124;</code> trennen | `Anna Muster (Sopran) \| Max Muster (Tenor)` |
 | Hinweis | Freitext | |
 
-- **Startseite:** zeigt automatisch die nächsten drei Termine, mit Pfeil zur Hochamt-Seite.
-- **Musik → Hochämter:** kommende Termine nach Monaten; jeder Termin führt zur Detailseite mit Zelebrant, Dirigent, Chor, Orchester, Solisten, Organist und weiterer Musik. Leere Spalten werden ausgeblendet.
-- **Archiv:** Termine in der Vergangenheit erscheinen automatisch unter „Vergangene Hochämter“.
+**Was daraus entsteht**
 
-**In Excel speichern:** *Speichern unter → CSV UTF-8 (durch Trennzeichen getrennt)* und `data/hochaemter.csv` ersetzen. Alternativ die Datei über `pages/hochaemter-verwaltung.html` bearbeiten (Formular mit allen Spalten, CSV-Import und -Export). Die Seite ist bewusst nicht in der öffentlichen Navigation verlinkt.
+- **Startseite:** die nächsten drei Termine, mit Pfeil zur Hochamt-Seite.
+- **Kirchenmusik → Hochämter:** kommende Termine nach Monaten. Jeder Termin führt zur Detailseite; leere Spalten werden dort ausgeblendet.
+- **Archiv:** vergangene Termine erscheinen automatisch unter „Vergangene Hochämter“.
 
-## Inhaltliche Quellen
+**In Excel speichern:** *Speichern unter → CSV UTF-8 (durch Trennzeichen getrennt)* und `data/hochaemter.csv` ersetzen.
 
-Texte und Bilder wurden, wo möglich, direkt von den offiziellen Seiten recherchiert und übernommen bzw. originalgetreu wiedergegeben:
+Alternativ bearbeitest du die Liste komfortabel im Browser über `pages/hochaemter-verwaltung.html` (Formular mit allen Spalten, CSV-Import und -Export). Die Seite ist bewusst nicht in der Navigation verlinkt.
 
-- https://augustinerkirche.augustiner.at
-- https://hochamt.augustiner.at
-- https://aspersdorf.augustiner.at
-- https://www.augustiner.at
+## Lokal ansehen
+
+Damit der Hochamt-Kalender seine Tabelle laden kann, braucht die Seite einen lokalen Webserver (Browser blockieren `fetch()` bei direkt geöffneten Dateien):
+
+```bash
+python -m http.server 8123
+```
+
+Danach im Browser `http://localhost:8123` öffnen.
+
+## Aufbau
+
+```
+index.html                    Startseite
+pages/
+  gottesdienste.html          Liturgiezeiten, Wochenüberblick, Runden
+  sakramente.html             Sakramente
+  musik.html                  Kirchenmusik: Hochämter, Ensembles, Orgeln
+  hochamt.html                Detailseite eines Hochamts
+  chronik.html                Geschichte, Zeitstrahl, Orden
+  aspersdorf.html             Pfarre Aspersdorf
+  impressum.html              Impressum
+  datenschutz.html            Datenschutzerklärung
+  hochaemter-verwaltung.html  Internes Werkzeug für die Hochamt-Tabelle
+  runden/                     Detailseiten je Pfarrgruppe
+css/
+  style.css                   Zentrales Stylesheet
+js/
+  main.js                     Navigation, Tabs, Hash-Routing, Einblend-Effekte
+  hochaemter-data.js          Gemeinsames Modul: liest die CSV-Tabelle
+  hochaemter.js               Kalender und Archiv auf der Musik-Seite
+  hochaemter-start.js         Nächste Hochämter auf der Startseite
+  hochamt-detail.js           Detailseite eines Hochamts
+  hochaemter-verwaltung.js    Verwaltungsformular
+  solisten.js                 Solistenliste
+  instagram.js                Instagram-Bereich mit Fallback
+data/
+  hochaemter.csv              Alle Hochamt-Termine inkl. Mitwirkende
+  solisten.json               Solistinnen und Solisten mit Stimmlage
+assets/
+  logo.png, img/              Logo und Bilder
+```
+
+Alle Pfade sind **relativ**, die Seite funktioniert daher in jedem Unterverzeichnis eines Webservers.
+
+## Gestaltung
+
+Klassisch, ruhig und festlich — passend zu einer Hofkirche.
+
+| | |
+|---|---|
+| **Überschriften** | Cormorant Garamond, feine Serifenschrift |
+| **Fließtext** | Source Sans 3 |
+| **Logo-Schriftzug** | Playfair Display SC |
+| **Farben** | Marineblau `#1b2a4a` · Gold `#8f6b25` · Elfenbein `#faf8f3` |
+| **Stil** | Feine Linien statt Schatten, zurückhaltende Übergänge, Goldakzente |
+| **Zugänglichkeit** | Lesbare Kontraste, sichtbarer Tastaturfokus, reduzierte Bewegung wird respektiert |
+| **Geräte** | Für Handy im Hochformat, Tablet und Desktop ausgelegt; Bilder werden nicht beschnitten |
+
+## Vor dem Veröffentlichen
+
+Im **Impressum** und in der **Datenschutzerklärung** sind gelb markierte Stellen in eckigen Klammern zu ergänzen, etwa Rechtsform, Registernummer, Hosting-Anbieter und Datenschutz-Kontakt. Beide Texte sollten von der Pfarre bzw. dem Vikariat geprüft werden.
+
+## Quellen
+
+Texte und Bilder wurden, wo möglich, von den offiziellen Seiten übernommen:
+
+[augustinerkirche.augustiner.at](https://augustinerkirche.augustiner.at) &nbsp;·&nbsp; [hochamt.augustiner.at](https://hochamt.augustiner.at) &nbsp;·&nbsp; [aspersdorf.augustiner.at](https://aspersdorf.augustiner.at) &nbsp;·&nbsp; [augustiner.at](https://www.augustiner.at)
 
 ## Lizenz
 
-Kein offenes Lizenzmodell vorgesehen — Inhalte und Bilder gehören der Pfarre St. Augustin / dem Augustiner-Vikariat Wien bzw. den jeweiligen Bildquellen.
+Kein offenes Lizenzmodell. Inhalte und Bilder gehören der Pfarre St. Augustin bzw. dem Augustiner-Vikariat Wien und den jeweiligen Bildquellen.
+
+<br>
+
+<div align="center">
+<sub>Augustinerstraße 3 · 1010 Wien · © Augustiner-Vikariat Wien</sub>
+</div>
