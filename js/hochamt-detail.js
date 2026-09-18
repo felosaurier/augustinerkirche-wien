@@ -51,7 +51,7 @@
       row('Orchester',e.orchestra)+
       row('Solisten',e.soloists)+
       row('Organist',e.organist)+
-      row('Weitere Musik',e.extra)+
+      row('Programm',e.extra)+
       row('Hinweis',e.note);
 
     body.innerHTML=
