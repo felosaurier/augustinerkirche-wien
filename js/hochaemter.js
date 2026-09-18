@@ -47,6 +47,18 @@
       return '<button class="kal-m-btn'+(i===0?' active':'')+'" data-filter="'+g.key+'">'+g.label+'</button>';
     }).join('');
 
+    /* Handy: Monatsauswahl als Aufklappmenue (die Reiter sind dort ausgeblendet) */
+    var oldSel=monthsEl.parentNode.querySelector('.kal-select-wrap');
+    if(oldSel)oldSel.parentNode.removeChild(oldSel);
+    var selWrap=document.createElement('div');
+    selWrap.className='kal-select-wrap';
+    selWrap.innerHTML='<label class="kal-select-label" for="kal-select">Monat wählen</label>'+
+      '<select id="kal-select" class="kal-select">'+groups.map(function(g){
+        return '<option value="'+g.key+'">'+g.label+'</option>';
+      }).join('')+'</select>';
+    monthsEl.parentNode.insertBefore(selWrap,monthsEl);
+    var select=selWrap.querySelector('select');
+
     listEl.innerHTML=entries.map(rowHTML).join('');
 
     var rows=Array.prototype.slice.call(listEl.querySelectorAll('.kal-row'));
@@ -69,9 +81,52 @@
       btn.addEventListener('click',function(){
         buttons.forEach(function(b){b.classList.remove('active')});
         btn.classList.add('active');
+        select.value=btn.dataset.filter;
+        showActive();
         applyFilter(btn.dataset.filter);
         keepSidebarInView();
       });
+    });
+    /* Monatszeile (Querformat): eine Zeile, seitlich verschiebbar (Wischen, Ziehen, Trackpad) */
+    function updateEdges(){
+      var max=monthsEl.scrollWidth-monthsEl.clientWidth;
+      monthsEl.classList.toggle('has-left',monthsEl.scrollLeft>2);
+      monthsEl.classList.toggle('has-right',monthsEl.scrollLeft<max-2);
+    }
+    function showActive(){
+      var a=monthsEl.querySelector('.kal-m-btn.active');
+      if(!a||monthsEl.scrollWidth<=monthsEl.clientWidth)return;
+      var left=a.offsetLeft-(monthsEl.clientWidth-a.offsetWidth)/2;
+      if(monthsEl.scrollTo)monthsEl.scrollTo({left:left,behavior:'smooth'});else monthsEl.scrollLeft=left;
+    }
+    monthsEl.addEventListener('scroll',updateEdges);
+    window.addEventListener('resize',updateEdges);
+    updateEdges();
+    (function(){
+      var down=false,startX=0,startLeft=0,moved=false;
+      monthsEl.addEventListener('pointerdown',function(e){
+        if(e.pointerType!=='mouse'||e.button!==0)return;
+        down=true;moved=false;startX=e.clientX;startLeft=monthsEl.scrollLeft;
+      });
+      window.addEventListener('pointermove',function(e){
+        if(!down)return;
+        var dx=e.clientX-startX;
+        if(Math.abs(dx)>5){moved=true;monthsEl.classList.add('dragging')}
+        if(moved)monthsEl.scrollLeft=startLeft-dx;
+      });
+      window.addEventListener('pointerup',function(){
+        if(!down)return;
+        down=false;monthsEl.classList.remove('dragging');
+      });
+      /* Nach dem Ziehen keinen Monat versehentlich anklicken */
+      monthsEl.addEventListener('click',function(e){
+        if(moved){e.preventDefault();e.stopPropagation();moved=false}
+      },true);
+    })();
+
+    select.addEventListener('change',function(){
+      var btn=buttons.filter(function(b){return b.dataset.filter===select.value})[0];
+      if(btn)btn.click();
     });
     if(groups.length)applyFilter(groups[0].key);
   }

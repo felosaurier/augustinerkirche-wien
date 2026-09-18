@@ -713,10 +713,21 @@ body{font-variant-numeric:lining-nums}
    ============================================================ */
 .kal-wrap{display:block}
 .kal-months{
-  display:flex;flex-direction:row;flex-wrap:wrap;gap:0 .3rem;
-  border:none;border-bottom:1px solid var(--line);margin-bottom:.5rem;
+  --fl:0px;--fr:0px;
+  display:flex;flex-direction:row;flex-wrap:nowrap;gap:0 .3rem;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  cursor:grab;user-select:none;
+  padding-bottom:1px;border:none;border-bottom:1px solid var(--line);margin-bottom:.5rem;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);
 }
+.kal-months::-webkit-scrollbar{display:none}
+.kal-months.has-left{--fl:2.4rem}
+.kal-months.has-right{--fr:2.4rem}
+.kal-months.dragging{cursor:grabbing}
+.kal-months.dragging .kal-m-btn{pointer-events:none}
 .kal-m-btn{
+  flex:none;white-space:nowrap;
   width:auto;padding:.95rem 1.3rem .8rem;margin-bottom:-1px;
   border:none;border-bottom:2px solid transparent;background:none;
   font-size:.72rem;letter-spacing:.2em;color:var(--text-light);
@@ -726,11 +737,6 @@ body{font-variant-numeric:lining-nums}
 .kal-m-btn:hover{background:none;color:var(--gold)}
 .kal-m-btn.active,.kal-m-btn.active:hover{background:none;color:var(--blue);border-bottom-color:var(--gold)}
 .kal-m-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
-@media(max-width:768px){
-  .kal-months{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -1.5rem .5rem;padding:0 1.5rem}
-  .kal-months::-webkit-scrollbar{display:none}
-  .kal-m-btn{flex:none;padding:.85rem .95rem .7rem}
-}
 
 /* ============================================================
    KONTAKTKARTE (Sakramente) — kompakt
@@ -1021,4 +1027,38 @@ html.nd-lock{overflow:hidden}
 }
 @media(prefers-reduced-motion:reduce){
   .lightbox[open],.lightbox::backdrop{animation:none}
+}
+
+/* Navigation auf dem Handy: passender Rand, Logo und Menü-Symbol vollständig sichtbar */
+@media(max-width:768px){
+  nav{padding:0 1.1rem;gap:1rem}
+  .nav-right{gap:.4rem}
+  .hamburger{padding:.7rem .55rem;margin-right:-.55rem}
+  .nav-logo-wrap{min-width:0;gap:.7rem}
+  .nav-logo-wrap>div{min-width:0}
+}
+@media(max-width:480px){
+  .nav-logo-img{width:34px;height:34px}
+  .nav-logo-wrap>div{height:34px}
+  .nav-logo-text{font-size:.82rem;letter-spacing:.05em;white-space:nowrap}
+  .nav-logo-sub{font-size:.6rem;letter-spacing:.1em;margin-top:.25rem;white-space:nowrap}
+}
+@media(max-width:340px){
+  .nav-logo-text{font-size:.72rem}
+  .nav-logo-sub{font-size:.54rem;letter-spacing:.06em}
+}
+
+/* Monatsauswahl: Reiter (Querformat/Desktop) oder Aufklappmenü (Handy) */
+.kal-select-wrap{display:none;position:relative;margin:0 0 1.4rem}
+.kal-select-label{display:block;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.5rem}
+.kal-select{-webkit-appearance:none;appearance:none;width:100%;border-radius:0;cursor:pointer;
+  font-family:var(--serif);font-size:1.4rem;font-weight:500;line-height:1.2;color:var(--black);
+  background:var(--white);border:1px solid var(--line);border-bottom:2px solid var(--gold);
+  padding:.85rem 3rem .85rem 1.1rem}
+.kal-select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.kal-select-wrap::after{content:'';position:absolute;right:1.25rem;bottom:1.35rem;width:9px;height:9px;
+  border-right:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);transform:rotate(45deg);pointer-events:none}
+@media(max-width:768px){
+  .kal-months{display:none}
+  .kal-select-wrap{display:block}
 }
