@@ -1,22 +1,32 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Logo der Augustinerkirche Wien" width="110"/>
+<br>
 
-# Augustinerkirche Wien
-
-**Pfarre & Kloster St. Augustin**
-
-*Hofpfarrkirche der Habsburger · Heimat der Wiener Kirchenmusik*
+<img src="assets/logo-gold.png" alt="Goldenes Logo der Augustinerkirche Wien" width="130"/>
 
 <br>
 
-[Website ansehen](#lokal-ansehen) &nbsp;·&nbsp; [Hochämter pflegen](#hochämter-pflegen) &nbsp;·&nbsp; [Aufbau](#aufbau) &nbsp;·&nbsp; [Gestaltung](#gestaltung)
+# Augustinerkirche Wien
+
+<sub>P F A R R E &nbsp; & &nbsp; K L O S T E R &nbsp;&nbsp; S T .&nbsp; A U G U S T I N</sub>
+
+<br>
+
+<img src="assets/divider-gold.svg" alt="" width="300"/>
+
+<br>
+
+*Hofpfarrkirche der Habsburger — Heimat der Wiener Kirchenmusik*
+
+<br>
+
+[Lokal ansehen](#lokal-ansehen) &nbsp;&nbsp;·&nbsp;&nbsp; [Hochämter pflegen](#hochämter-pflegen) &nbsp;&nbsp;·&nbsp;&nbsp; [Aufbau](#aufbau) &nbsp;&nbsp;·&nbsp;&nbsp; [Gestaltung](#gestaltung)
+
+<br>
 
 </div>
 
 <br>
-
----
 
 ## Über das Projekt
 
@@ -137,5 +147,13 @@ Kein offenes Lizenzmodell. Inhalte und Bilder gehören der Pfarre St. Augustin b
 <br>
 
 <div align="center">
+
+<img src="assets/divider-gold.svg" alt="" width="300"/>
+
+<br>
+
+<img src="assets/logo-gold.png" alt="" width="48"/>
+
 <sub>Augustinerstraße 3 · 1010 Wien · © Augustiner-Vikariat Wien</sub>
+
 </div>

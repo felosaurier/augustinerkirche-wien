@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="14" viewBox="0 0 360 14" role="img" aria-label="Zierlinie">
+  <defs>
+    <linearGradient id="l" x1="0" x2="1"><stop offset="0" stop-color="#a8823a" stop-opacity="0"/><stop offset="1" stop-color="#a8823a"/></linearGradient>
+    <linearGradient id="r" x1="0" x2="1"><stop offset="0" stop-color="#a8823a"/><stop offset="1" stop-color="#a8823a" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect x="0" y="6.5" width="166" height="1" fill="url(#l)"/>
+  <rect x="194" y="6.5" width="166" height="1" fill="url(#r)"/>
+  <rect x="175.5" y="2.5" width="9" height="9" transform="rotate(45 180 7)" fill="#a8823a"/>
+</svg>
