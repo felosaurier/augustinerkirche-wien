@@ -70,7 +70,13 @@
 
     qsa('.sidebar-item',sidebar).forEach(function(b){b.classList.remove('active')});
     var match=qsa('.sidebar-item',sidebar).filter(function(b){return b.dataset.pane===paneId})[0];
-    if(match)match.classList.add('active');
+    if(match){
+      match.classList.add('active');
+      /* Horizontale Tab-Leiste (Hochformat): aktiven Reiter mittig zeigen */
+      if(sidebar.scrollWidth>sidebar.clientWidth){
+        sidebar.scrollTo({left:match.offsetLeft-(sidebar.clientWidth-match.offsetWidth)/2,behavior:'smooth'});
+      }
+    }
 
     qsa('.tab-pane',area).forEach(function(p){p.classList.remove('active')});
     pane.classList.add('active');

@@ -8,19 +8,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,600&family=Playfair+Display+SC:wght@400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
-  .verw-wrap{max-width:920px;margin:0 auto;padding:3rem 2.5rem 6rem}
-  .verw-form{display:grid;grid-template-columns:1fr 1fr 2fr 1fr 1fr auto;gap:0.8rem;align-items:end;background:var(--bg-soft);border:1px solid var(--line);padding:1.5rem;margin-bottom:2rem}
+  .verw-wrap{max-width:1400px;margin:0 auto;padding:3rem 2.5rem 6rem}
+  .verw-form{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.8rem;align-items:end;background:var(--bg-soft);border:1px solid var(--line);padding:1.5rem;margin-bottom:2rem}
   .verw-field{display:flex;flex-direction:column;gap:0.3rem}
+  .verw-field.wide{grid-column:span 2}
   .verw-field label{font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-light);font-weight:600}
-  .verw-field input,.verw-field select{font:inherit;font-size:0.88rem;padding:0.55rem 0.6rem;border:1px solid var(--line);background:var(--white)}
-  .verw-table{width:100%;border-collapse:collapse;margin-bottom:2rem}
-  .verw-table th{text-align:left;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);padding:0.6rem 0.5rem;border-bottom:1px solid var(--line)}
-  .verw-table td{padding:0.6rem 0.5rem;border-bottom:1px solid var(--line);font-size:0.88rem;vertical-align:middle}
-  .verw-table input,.verw-table select{font:inherit;font-size:0.85rem;width:100%;padding:0.4rem 0.5rem;border:1px solid var(--line);background:var(--white)}
+  .verw-field input{font:inherit;font-size:0.88rem;padding:0.55rem 0.6rem;border:1px solid var(--line);background:var(--white)}
+  .verw-scroll{overflow-x:auto;margin-bottom:2rem;border:1px solid var(--line)}
+  .verw-table{width:100%;border-collapse:collapse}
+  .verw-table th{text-align:left;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);padding:0.6rem 0.5rem;border-bottom:1px solid var(--line);white-space:nowrap}
+  .verw-table td{padding:0.5rem;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+  .verw-table input{font:inherit;font-size:0.85rem;width:100%;min-width:8rem;padding:0.4rem 0.5rem;border:1px solid var(--line);background:var(--white)}
+  .verw-table input.wide{min-width:16rem}
   .verw-del{background:none;border:1px solid var(--line);color:var(--text-light);padding:0.4rem 0.7rem;cursor:pointer;font-size:0.78rem;transition:all .2s}
   .verw-del:hover{border-color:#a33;color:#a33}
   .verw-actions{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
-  .verw-note{background:var(--bg-warm);border-left:3px solid var(--gold);padding:1.2rem 1.5rem;font-size:0.88rem;line-height:1.7;color:var(--text-mid);margin-bottom:2rem}
+  .verw-note{background:var(--bg-warm);border-left:2px solid var(--gold);padding:1.2rem 1.5rem;font-size:0.88rem;line-height:1.7;color:var(--text-mid);margin-bottom:2rem;max-width:60rem}
   .verw-status{font-size:0.85rem;color:var(--gold);margin-left:0.5rem}
 </style>
 </head>
@@ -29,42 +32,31 @@
 <div class="verw-wrap">
   <div class="ph-tag" style="margin-top:2rem">Internes Werkzeug</div>
   <h1 class="ph-title" style="font-size:2.2rem">Hochämter <em>verwalten</em></h1>
-  <p class="ph-sub" style="margin-bottom:2rem">Diese Seite ist nicht über die öffentliche Navigation verlinkt. Sie dient ausschließlich dazu, die Termine in <code>data/hochaemter.json</code> bequem über ein Formular statt direkt im Code zu pflegen.</p>
+  <p class="ph-sub" style="margin-bottom:2rem">Diese Seite ist nicht über die öffentliche Navigation verlinkt. Sie dient dazu, die Termine in <code>data/hochaemter.csv</code> bequem im Browser zu pflegen. Alternativ lässt sich die Datei direkt in Excel öffnen und bearbeiten.</p>
 
   <div class="verw-note">
-    Diese Website hat keinen Server-Hintergrund, der Dateien selbst speichern kann. Nach dem Bearbeiten der Liste klicken Sie auf <strong>„JSON-Datei herunterladen"</strong> — die heruntergeladene Datei ersetzt anschließend <code>data/hochaemter.json</code> im Projektordner. Erst danach erscheinen die Änderungen auf der Musik-Seite.
+    <strong>So funktioniert es:</strong> Die Termine stehen in <code>data/hochaemter.csv</code> (öffnet in Excel). Mehrere Namen in einer Zelle (Solisten, Organist, Weitere Musik) werden mit <code>|</code> getrennt. Diese Website hat keinen Server, der Dateien speichern kann: Nach dem Bearbeiten auf <strong>„CSV herunterladen"</strong> klicken und <code>data/hochaemter.csv</code> im Projektordner damit ersetzen.
   </div>
 
-  <form class="verw-form" id="verw-form">
-    <div class="verw-field"><label for="f-date">Datum</label><input type="date" id="f-date" required/></div>
-    <div class="verw-field"><label for="f-time">Uhrzeit</label><input type="time" id="f-time" value="11:00" required/></div>
-    <div class="verw-field"><label for="f-piece">Werk</label><input type="text" id="f-piece" placeholder="z.B. Mozart — Krönungsmesse KV 317" required/></div>
-    <div class="verw-field">
-      <label for="f-type">Typ</label>
-      <select id="f-type">
-        <option>Hochamt</option>
-        <option>Hochfest</option>
-        <option>Saisoneröffnung</option>
-      </select>
-    </div>
-    <div class="verw-field"><label for="f-location">Ort</label><input type="text" id="f-location" value="Augustinerkirche"/></div>
-    <button type="submit" class="btn btn-dark">Hinzufügen</button>
-  </form>
+  <form class="verw-form" id="verw-form"></form>
 
-  <table class="verw-table" id="verw-table">
-    <thead>
-      <tr><th>Datum</th><th>Uhrzeit</th><th>Werk</th><th>Typ</th><th>Ort</th><th></th></tr>
-    </thead>
-    <tbody id="verw-tbody"></tbody>
-  </table>
+  <div class="verw-scroll">
+    <table class="verw-table" id="verw-table">
+      <thead id="verw-thead"></thead>
+      <tbody id="verw-tbody"></tbody>
+    </table>
+  </div>
 
   <div class="verw-actions">
-    <button type="button" class="btn btn-gold" id="verw-download">JSON-Datei herunterladen</button>
+    <button type="button" class="btn btn-gold" id="verw-download">CSV herunterladen</button>
+    <label class="btn btn-outline" for="verw-import">CSV aus Excel importieren</label>
+    <input type="file" id="verw-import" accept=".csv,text/csv" hidden/>
     <button type="button" class="btn btn-outline" id="verw-reload">Aus Datei neu laden</button>
-    <span class="verw-status" id="verw-status"></span>
+    <span class="verw-status" id="verw-status" role="status"></span>
   </div>
 </div>
 
+<script src="../js/hochaemter-data.js"></script>
 <script src="../js/hochaemter-verwaltung.js"></script>
 </body>
 </html>

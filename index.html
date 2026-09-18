@@ -186,15 +186,13 @@
   </div>
 </section>
 
-<section class="hochamt-strip" aria-label="Nächstes Hochamt">
-  <div class="hs-tag">Nächstes Hochamt</div>
-  <div>
-    <div class="hs-piece">W. A. Mozart — Krönungsmesse C-Dur, KV 317</div>
-    <div class="hs-meta">Chor · Orchester · Solisten von St. Augustin</div>
+<section class="hochamt-strip" aria-labelledby="hs-h">
+  <div class="hs-head">
+    <div class="hs-tag" id="hs-h">Nächste Hochämter</div>
+    <a class="hs-all" href="pages/musik.html#p-hochaemter">Alle Hochämter <span aria-hidden="true">&rarr;</span></a>
   </div>
-  <div>
-    <div class="hs-time">11:00</div>
-    <div class="hs-date">Sonntag, 5. Juli 2026</div>
+  <div class="hs-list" id="hs-list" aria-live="polite">
+    <p class="hs-fallback">Die kommenden Hochämter finden Sie unter <a href="pages/musik.html#p-hochaemter">Kirchenmusik &rarr; Hochämter</a>.</p>
   </div>
 </section>
 
@@ -316,5 +314,7 @@
 
 <script src="js/main.js"></script>
 <script src="js/instagram.js"></script>
+<script src="js/hochaemter-data.js"></script>
+<script src="js/hochaemter-start.js"></script>
 </body>
 </html>
