@@ -86,6 +86,8 @@ Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine
 | Vorschaubild | nur nötig, wenn es kein Plakat gibt (z. B. ein Foto); ohne beides erscheint das goldene Logo |
 | Link, Linktext | optionale Schaltfläche im Fenster |
 
+**Am einfachsten über die Verwaltungsseite** `pages/news-verwaltung.html` (nicht in der Navigation verlinkt): Formular für Titel, Kurztext, Infos, Beschreibung, Link und Bild, dazu eine Liste aller Meldungen zum Bearbeiten und Entfernen. In Chrome oder Edge einmal den Projektordner verbinden, dann werden `news.csv` und das Bild (automatisch im richtigen Jahresordner, in voller Größe) direkt gespeichert. In anderen Browsern gibt es Downloads mit Anleitung, wohin die Dateien gehören.
+
 - **Startseite:** zeigt immer die **6 neuesten** Meldungen. Ein Klick öffnet ein Fenster mit Plakat, Infos und Details.
 - **Archiv** (`pages/archiv.html`): alle älteren Meldungen wandern **automatisch** dorthin und sind **nach Jahren** geordnet.
 - Jede Meldung hat einen eigenen Link, z. B. `index.html?news=…`, der das Fenster direkt öffnet.
@@ -116,6 +118,7 @@ pages/
   impressum.html              Impressum
   datenschutz.html            Datenschutzerklärung
   hochaemter-verwaltung.html  Internes Werkzeug für die Hochamt-Tabelle
+  news-verwaltung.html        Internes Werkzeug: Neuigkeiten und Plakate anlegen
   runden/                     Detailseiten je Pfarrgruppe
 css/
   style.css                   Zentrales Stylesheet
@@ -125,6 +128,8 @@ js/
   hochaemter.js               Kalender und Archiv auf der Musik-Seite
   hochaemter-start.js         Nächste Hochämter auf der Startseite
   news.js                     Neuigkeiten: 6 Karten, Fenster mit Plakat, Jahresarchiv
+  news-verwaltung.js          Verwaltungsseite für Neuigkeiten
+  lightbox.js                 Plakate vergrößern (Hintergrund unscharf)
   hochamt-detail.js           Detailseite eines Hochamts
   hochaemter-verwaltung.js    Verwaltungsformular
   solisten.js                 Solistenliste

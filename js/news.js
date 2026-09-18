@@ -186,7 +186,7 @@
         return '<div class="nd-info"><div class="nd-info-label">'+esc(r.label||'Info')+'</div><div class="nd-info-value">'+linkify(r.value)+'</div></div>';
       }).join('')+'</div>':'')+
       (e.details.length?'<div class="nd-details">'+e.details.map(function(p){return '<p>'+linkify(p)+'</p>'}).join('')+'</div>':'')+
-      (e.link?'<div class="nd-actions"><a class="btn btn-dark" href="'+esc(base+e.link)+'">'+esc(e.linktext||'Mehr erfahren')+'</a>'+
+      (e.link?'<div class="nd-actions"><a class="btn btn-dark" href="'+esc(/^(https?:|mailto:)/i.test(e.link)?e.link:base+e.link)+'"'+(/^https?:/i.test(e.link)?' target="_blank" rel="noopener"':'')+'>'+esc(e.linktext||'Mehr erfahren')+'</a>'+
         (e.poster?'<a class="btn btn-outline" href="'+esc(base+e.poster)+'" target="_blank" rel="noopener" data-lightbox>Plakat vergrößern</a>':'')+'</div>':'');
 
     content.scrollTop = 0;
