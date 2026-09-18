@@ -180,7 +180,7 @@
   /* ---------- Sakramente: Detailauswahl (sakramente.html) ---------- */
   function initSakrItems(){
     document.addEventListener('click',function(e){
-      var item=e.target.closest('.sakr-item[data-pane]');
+      var item=e.target.closest('.sakr-item[data-pane],.sakr-chip[data-pane]');
       if(!item)return;
       var sidebar=qs('.sidebar');
       if(!sidebar)return;
