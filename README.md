@@ -126,7 +126,7 @@ css/
   style.css                   Zentrales Stylesheet
 js/
   main.js                     Navigation, Tabs, Hash-Routing, Einblend-Effekte
-  hochaemter-data.js          Gemeinsames Modul: liest die CSV-Tabelle
+  hochaemter-data.js          Gemeinsames Modul: CSV-Tabelle, HTML-Escaping, sichere Links
   hochaemter.js               Kalender und Archiv auf der Musik-Seite
   hochaemter-start.js         Nächste Hochämter auf der Startseite
   news.js                     Neuigkeiten: 6 Karten, Fenster mit Plakat, Jahresarchiv
@@ -160,6 +160,8 @@ assets/
 
 Alle Pfade sind **relativ**, die Seite funktioniert daher in jedem Unterverzeichnis eines Webservers.
 
+**Sicherheit:** Jede Seite trägt im `<head>` eine Content-Security-Policy (nur eigene Skripte, keine Inline-Skripte). Inhalte aus den Tabellen werden vor der Ausgabe escaped, Links und Bildpfade nur mit `http(s)`, `mailto` oder als relativer Pfad übernommen. Wird später ein Instagram-Endpunkt in `js/instagram.js` eingetragen, muss seine Adresse in der Richtlinie unter `connect-src` ergänzt werden.
+
 ## Gestaltung
 
 Klassisch, ruhig und festlich — passend zu einer Hofkirche.
@@ -171,7 +173,7 @@ Klassisch, ruhig und festlich — passend zu einer Hofkirche.
 | **Logo-Schriftzug** | Playfair Display SC |
 | **Farben** | Marineblau `#1b2a4a` · Gold `#8f6b25` · Elfenbein `#faf8f3` |
 | **Stil** | Feine Linien statt Schatten, zurückhaltende Übergänge, Goldakzente |
-| **Zugänglichkeit** | Lesbare Kontraste, sichtbarer Tastaturfokus, reduzierte Bewegung wird respektiert |
+| **Zugänglichkeit** | Lesbare Kontraste, sichtbarer Tastaturfokus, Sprunglink zum Inhalt, Menüs per Tastatur (Escape schließt), reduzierte Bewegung wird respektiert |
 | **Geräte** | Für Handy im Hochformat, Tablet und Desktop ausgelegt; Bilder werden nicht beschnitten |
 
 ## Vor dem Veröffentlichen

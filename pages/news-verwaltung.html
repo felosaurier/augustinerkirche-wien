@@ -2,6 +2,9 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="theme-color" content="#10192e"/>
+<meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="../favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
@@ -13,7 +16,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
-  [hidden]{display:none!important}
   .nv-wrap{max-width:1100px;margin:0 auto;padding:3rem 2rem 6rem}
   .nv-note{background:var(--bg-warm);border-left:2px solid var(--gold);padding:1.2rem 1.5rem;font-size:.95rem;line-height:1.7;color:var(--text-mid);margin-bottom:1.6rem}
   .nv-note ol{margin:.5rem 0 0 1.2rem}
@@ -69,7 +71,7 @@
 </head>
 <body style="padding-top:0">
 
-<div class="nv-wrap">
+<main class="nv-wrap">
   <div class="ph-tag" style="margin-top:1rem">Internes Werkzeug</div>
   <h1 class="ph-title" style="font-size:2.4rem">Neuigkeiten <em>verwalten</em></h1>
   <p class="ph-sub" style="margin-bottom:1.6rem">Diese Seite ist nicht in der Navigation verlinkt. Hier legst du neue Meldungen samt Plakat an, bearbeitest oder entfernst sie. Auf der Startseite stehen immer die 6 neuesten, die übrigen wandern automatisch ins Jahresarchiv.</p>
@@ -198,7 +200,7 @@
       <tbody id="nv-tbody"></tbody>
     </table>
   </section>
-</div>
+</main>
 
 <script src="../js/hochaemter-data.js"></script>
 <script src="../js/news-verwaltung.js"></script>

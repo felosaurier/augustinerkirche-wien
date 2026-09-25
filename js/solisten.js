@@ -1,83 +1,76 @@
 /* ============================================================
    Augustinerkirche Wien — solisten.js
-   Isolierte Logik fuer die vollstaendige Solistenliste auf
-   musik.html. Laedt data/solisten.json und erlaubt Sortierung
-   alphabetisch (nach Nachname) oder nach Stimmlage.
+   Vollstaendige Solistenliste auf musik.html. Laedt
+   data/solisten.json und erlaubt Sortierung alphabetisch
+   (nach Nachname) oder nach Stimmlage.
+   Benoetigt js/hochaemter-data.js (HTML-Escaping, sichere Pfade).
    ============================================================ */
-(function(){
+(function () {
   'use strict';
 
-  var DATA_URL = '../data/solisten.json';
-  var VOICE_ORDER = ['Sopran','Mezzosopran','Alt','Altus','Tenor','Bariton','Bass'];
+  const HD = window.HochamtData;
+  if (!HD) return;
 
-  function qs(sel){return document.querySelector(sel)}
+  const DATA_URL = '../data/solisten.json';
+  /* Stimmlagen von hoch nach tief; unbekannte Angaben ans Ende */
+  const VOICE_ORDER = ['Sopran', 'Mezzosopran', 'Alt', 'Altus', 'Tenor', 'Bariton', 'Bass'];
+  const collator = new Intl.Collator('de');
 
-  function cardHTML(p){
-    var name = p.name + (p.deceased ? ' †' : '');
-    return '<div class="person-card-wide compact">'+
-      '<img src="../'+p.image+'" alt="'+name+'" width="300" height="300" loading="lazy" decoding="async"/>'+
-      '<div class="person-body">'+
-        '<div class="person-name">'+name+'</div>'+
-        '<div class="person-role">'+p.voice+'</div>'+
-      '</div>'+
+  const qs = (sel) => document.querySelector(sel);
+  const { esc } = HD;
+
+  function cardHTML(p) {
+    const name = esc(p.name) + (p.deceased ? ' †' : '');
+    return '<div class="person-card-wide compact">' +
+      `<img src="${esc(HD.safeUrl(p.image, '../'))}" alt="${name}" width="300" height="300" loading="lazy" decoding="async"/>` +
+      '<div class="person-body">' +
+        `<div class="person-name">${name}</div>` +
+        `<div class="person-role">${esc(p.voice)}</div>` +
+      '</div>' +
     '</div>';
   }
 
-  function render(list, container){
-    container.innerHTML = list.map(cardHTML).join('');
-  }
+  const bySurname = (a, b) => collator.compare(a.surname, b.surname);
+  const voiceRank = (p) => {
+    const i = VOICE_ORDER.indexOf(p.voice);
+    return i === -1 ? VOICE_ORDER.length : i;
+  };
+  const SORTS = {
+    alpha: (data) => data.slice().sort(bySurname),
+    voice: (data) => data.slice().sort((a, b) => voiceRank(a) - voiceRank(b) || bySurname(a, b))
+  };
 
-  function sortAlpha(data){
-    return data.slice().sort(function(a,b){return a.surname.localeCompare(b.surname,'de')});
-  }
-  function sortVoice(data){
-    return data.slice().sort(function(a,b){
-      var ai = VOICE_ORDER.indexOf(a.voice), bi = VOICE_ORDER.indexOf(b.voice);
-      if(ai===-1)ai=99;
-      if(bi===-1)bi=99;
-      if(ai!==bi)return ai-bi;
-      return a.surname.localeCompare(b.surname,'de');
-    });
-  }
+  async function init() {
+    const container = qs('#solisten-list');
+    if (!container) return;
+    const status = qs('#solisten-status');
+    const buttons = { alpha: qs('#solisten-sort-alpha'), voice: qs('#solisten-sort-voice') };
 
-  function init(){
-    var container = qs('#solisten-list');
-    var sortAlphaBtn = qs('#solisten-sort-alpha');
-    var sortVoiceBtn = qs('#solisten-sort-voice');
-    var status = qs('#solisten-status');
-    if(!container)return;
+    let data;
+    try {
+      const res = await fetch(DATA_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      data = await res.json();
+      if (!Array.isArray(data) || !data.length) throw new Error('Leere Liste');
+    } catch {
+      container.innerHTML = '<p class="s-text">Die Solistenliste konnte nicht geladen werden.</p>';
+      return;
+    }
 
-    fetch(DATA_URL)
-      .then(function(res){
-        if(!res.ok)throw new Error('HTTP '+res.status);
-        return res.json();
-      })
-      .then(function(data){
-        if(!Array.isArray(data)||!data.length)throw new Error('Leere Liste');
+    function show(mode) {
+      container.innerHTML = SORTS[mode](data).map(cardHTML).join('');
+      for (const [key, btn] of Object.entries(buttons)) {
+        if (!btn) continue;
+        btn.classList.toggle('active', key === mode);
+        btn.setAttribute('aria-pressed', String(key === mode));
+      }
+    }
 
-        if(status)status.textContent = data.length + ' Sängerinnen und Sänger';
-
-        render(sortAlpha(data), container);
-        if(sortAlphaBtn)sortAlphaBtn.classList.add('active');
-
-        if(sortAlphaBtn){
-          sortAlphaBtn.addEventListener('click', function(){
-            render(sortAlpha(data), container);
-            sortAlphaBtn.classList.add('active');
-            if(sortVoiceBtn)sortVoiceBtn.classList.remove('active');
-          });
-        }
-        if(sortVoiceBtn){
-          sortVoiceBtn.addEventListener('click', function(){
-            render(sortVoice(data), container);
-            sortVoiceBtn.classList.add('active');
-            if(sortAlphaBtn)sortAlphaBtn.classList.remove('active');
-          });
-        }
-      })
-      .catch(function(){
-        container.innerHTML = '<p class="s-text">Die Solistenliste konnte nicht geladen werden.</p>';
-      });
+    if (status) status.textContent = `${data.length} Sängerinnen und Sänger`;
+    for (const [key, btn] of Object.entries(buttons)) {
+      if (btn) btn.addEventListener('click', () => show(key));
+    }
+    show('alpha');
   }
 
   document.addEventListener('DOMContentLoaded', init);

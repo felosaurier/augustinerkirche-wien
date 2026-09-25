@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="../favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
@@ -36,7 +38,7 @@
 </head>
 <body style="padding-top:0">
 
-<div class="verw-wrap">
+<main class="verw-wrap">
   <div class="ph-tag" style="margin-top:2rem">Internes Werkzeug</div>
   <h1 class="ph-title" style="font-size:2.2rem">Hochämter <em>verwalten</em></h1>
   <p class="ph-sub" style="margin-bottom:2rem">Diese Seite ist nicht über die öffentliche Navigation verlinkt. Sie dient dazu, die Termine in <code>data/hochaemter.csv</code> bequem im Browser zu pflegen. Alternativ lässt sich die Datei direkt in Excel öffnen und bearbeiten.</p>
@@ -61,7 +63,7 @@
     <button type="button" class="btn btn-outline" id="verw-reload">Aus Datei neu laden</button>
     <span class="verw-status" id="verw-status" role="status"></span>
   </div>
-</div>
+</main>
 
 <script src="../js/hochaemter-data.js"></script>
 <script src="../js/hochaemter-verwaltung.js"></script>

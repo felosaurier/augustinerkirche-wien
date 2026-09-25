@@ -5,122 +5,135 @@
    importiert eine in Excel bearbeitete CSV und exportiert die
    Liste wieder als Excel-taugliche CSV-Datei.
    ============================================================ */
-(function(){
+(function () {
   'use strict';
 
-  var HD = window.HochamtData;
-  var DATA_URL = '../data/hochaemter.csv';
-  var FIELDS = HD.FIELDS;
-  var LONG = {piece:1,soloists:1,organist:1,extra:1,note:1};
-  var entries = [];
+  const HD = window.HochamtData;
+  const DATA_URL = '../data/hochaemter.csv';
+  const { FIELDS } = HD;
+  /* Felder mit viel Text bekommen breitere Eingabefelder */
+  const LONG = new Set(['piece', 'soloists', 'organist', 'extra', 'note']);
+  /* Vorbelegung neuer Eintraege */
+  const DEFAULTS = { time: '11:00', location: 'Augustinerkirche', type: 'Hochamt' };
 
-  function qs(sel){return document.querySelector(sel)}
-  function status(msg){var el=qs('#verw-status');if(el)el.textContent=msg}
+  let entries = [];
 
-  function inputType(key){return key==='date'?'date':key==='time'?'time':'text'}
+  const qs = (sel) => document.querySelector(sel);
+  function status(msg) {
+    const el = qs('#verw-status');
+    if (el) el.textContent = msg;
+  }
+
+  const inputType = (key) => (key === 'date' ? 'date' : key === 'time' ? 'time' : 'text');
 
   /* Roh-Eintrag -> Formularwerte (ISO-Datum, HH:MM) */
-  function prepare(o){
-    var e={};
-    FIELDS.forEach(function(f){e[f[0]]=o[f[0]]||''});
-    e.date=HD.isoDate(e.date);
-    e.time=HD.isoTime(e.time)||'11:00';
+  function prepare(o) {
+    const e = {};
+    for (const [key] of FIELDS) e[key] = o[key] || '';
+    e.date = HD.isoDate(e.date);
+    e.time = HD.isoTime(e.time) || DEFAULTS.time;
     return e;
   }
-  function sortEntries(){
-    entries.sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)});
-  }
-  function setEntries(raw){
-    entries=raw.map(prepare).filter(function(e){return e.date});
+  const sortEntries = () => entries.sort(HD.byDateTime);
+  function setEntries(raw) {
+    entries = raw.map(prepare).filter((e) => e.date);
     sortEntries();
     render();
   }
 
-  function load(){
-    HD.loadRaw(DATA_URL)
-      .then(function(raw){setEntries(raw);status('Aktuelle Liste geladen ('+entries.length+' Einträge).')})
-      .catch(function(){entries=[];render();status('Konnte data/hochaemter.csv nicht laden — die Liste ist leer.')});
+  async function load() {
+    try {
+      setEntries(await HD.loadRaw(DATA_URL));
+      status(`Aktuelle Liste geladen (${entries.length} Einträge).`);
+    } catch {
+      entries = [];
+      render();
+      status('Konnte data/hochaemter.csv nicht laden — die Liste ist leer.');
+    }
   }
 
-  function buildForm(){
-    var form=qs('#verw-form');
-    form.innerHTML=FIELDS.map(function(f){
-      var k=f[0];
-      return '<div class="verw-field'+(LONG[k]?' wide':'')+'"><label for="f-'+k+'">'+f[1]+'</label>'+
-        '<input type="'+inputType(k)+'" id="f-'+k+'"'+(k==='date'||k==='piece'?' required':'')+
-        (k==='time'?' value="11:00"':'')+(k==='location'?' value="Augustinerkirche"':'')+
-        (k==='type'?' value="Hochamt"':'')+'/></div>';
-    }).join('')+'<button type="submit" class="btn btn-dark">Hinzufügen</button>';
+  function resetFormDefaults() {
+    for (const [key, value] of Object.entries(DEFAULTS)) qs(`#f-${key}`).value = value;
+  }
 
-    form.addEventListener('submit',function(e){
+  function buildForm() {
+    const form = qs('#verw-form');
+    form.innerHTML = FIELDS.map(([key, label]) =>
+      `<div class="verw-field${LONG.has(key) ? ' wide' : ''}"><label for="f-${key}">${label}</label>` +
+        `<input type="${inputType(key)}" id="f-${key}"${key === 'date' || key === 'piece' ? ' required' : ''}` +
+        (DEFAULTS[key] ? ` value="${HD.esc(DEFAULTS[key])}"` : '') + '/></div>'
+    ).join('') + '<button type="submit" class="btn btn-dark">Hinzufügen</button>';
+
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      var o={};
-      FIELDS.forEach(function(f){o[f[0]]=qs('#f-'+f[0]).value});
+      const o = {};
+      for (const [key] of FIELDS) o[key] = qs(`#f-${key}`).value;
       entries.push(prepare(o));
       sortEntries();
       render();
       form.reset();
-      qs('#f-time').value='11:00';qs('#f-location').value='Augustinerkirche';qs('#f-type').value='Hochamt';
+      resetFormDefaults();
       qs('#f-date').focus();
     });
   }
 
-  function render(){
-    var head=qs('#verw-thead'),tbody=qs('#verw-tbody');
-    if(!tbody)return;
-    head.innerHTML='<tr>'+FIELDS.map(function(f){return '<th>'+f[1]+'</th>'}).join('')+'<th></th></tr>';
-    tbody.innerHTML='';
-    entries.forEach(function(entry,i){
-      var tr=document.createElement('tr');
-      tr.innerHTML=FIELDS.map(function(f){
-        var k=f[0];
-        return '<td><input type="'+inputType(k)+'" data-field="'+k+'" value="'+HD.esc(entry[k])+'"'+(LONG[k]?' class="wide"':'')+'/></td>';
-      }).join('')+'<td><button type="button" class="verw-del" data-index="'+i+'">Entfernen</button></td>';
-      tbody.appendChild(tr);
+  function render() {
+    const head = qs('#verw-thead');
+    const tbody = qs('#verw-tbody');
+    if (!tbody) return;
+    head.innerHTML = `<tr>${FIELDS.map(([, label]) => `<th scope="col">${label}</th>`).join('')}<th scope="col"><span class="visually-hidden">Aktion</span></th></tr>`;
+    /* Jede Zelle ist ein Eingabefeld; aria-label nennt Spalte und Datum,
+       weil es keine sichtbare Beschriftung direkt am Feld gibt. */
+    tbody.innerHTML = entries.map((entry, i) => '<tr>' +
+      FIELDS.map(([key, label]) =>
+        `<td><input type="${inputType(key)}" data-field="${key}" value="${HD.esc(entry[key])}"` +
+        ` aria-label="${HD.esc(`${label} (${entry.date || 'neu'})`)}"${LONG.has(key) ? ' class="wide"' : ''}/></td>`
+      ).join('') +
+      `<td><button type="button" class="verw-del" data-index="${i}">Entfernen</button></td></tr>`
+    ).join('');
+  }
+
+  /* Event-Delegation: Aenderungen und Loeschen fuer alle Zeilen an einer Stelle */
+  function initTable() {
+    const tbody = qs('#verw-tbody');
+    tbody.addEventListener('change', (ev) => {
+      const input = ev.target.closest('input[data-field]');
+      if (!input) return;
+      const index = Array.prototype.indexOf.call(tbody.children, input.closest('tr'));
+      if (entries[index]) entries[index][input.dataset.field] = input.value;
     });
-    Array.prototype.forEach.call(tbody.querySelectorAll('input'),function(input){
-      input.addEventListener('change',function(){
-        var index=Array.prototype.indexOf.call(tbody.children,input.closest('tr'));
-        entries[index][input.dataset.field]=input.value;
-      });
-    });
-    Array.prototype.forEach.call(tbody.querySelectorAll('.verw-del'),function(btn){
-      btn.addEventListener('click',function(){entries.splice(Number(btn.dataset.index),1);render()});
+    tbody.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('.verw-del');
+      if (!btn) return;
+      entries.splice(Number(btn.dataset.index), 1);
+      render();
     });
   }
 
-  function initDownload(){
-    qs('#verw-download').addEventListener('click',function(){
+  function initDownload() {
+    qs('#verw-download').addEventListener('click', () => {
       sortEntries();
-      var blob=new Blob([HD.toCSV(entries)],{type:'text/csv;charset=utf-8'});
-      var url=URL.createObjectURL(blob);
-      var a=document.createElement('a');
-      a.href=url;a.download='hochaemter.csv';
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      HD.download(new Blob([HD.toCSV(entries)], { type: 'text/csv;charset=utf-8' }), 'hochaemter.csv');
       status('Datei heruntergeladen — bitte data/hochaemter.csv damit ersetzen.');
     });
   }
 
-  function initImport(){
-    qs('#verw-import').addEventListener('change',function(ev){
-      var file=ev.target.files[0];
-      if(!file)return;
-      var reader=new FileReader();
-      reader.onload=function(){
-        setEntries(HD.rowsToRaw(HD.parseCSV(reader.result)));
-        status('„'+file.name+'“ importiert ('+entries.length+' Einträge). Zum Übernehmen bitte wieder herunterladen.');
-        ev.target.value='';
-      };
-      reader.readAsText(file,'utf-8');
+  function initImport() {
+    qs('#verw-import').addEventListener('change', async (ev) => {
+      const file = ev.target.files[0];
+      if (!file) return;
+      setEntries(HD.rowsToRaw(HD.parseCSV(await file.text())));
+      status(`„${file.name}“ importiert (${entries.length} Einträge). Zum Übernehmen bitte wieder herunterladen.`);
+      ev.target.value = '';
     });
   }
 
-  document.addEventListener('DOMContentLoaded',function(){
+  document.addEventListener('DOMContentLoaded', () => {
     buildForm();
+    initTable();
     initDownload();
     initImport();
-    qs('#verw-reload').addEventListener('click',load);
+    qs('#verw-reload').addEventListener('click', load);
     load();
   });
 })();

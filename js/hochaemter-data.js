@@ -4,172 +4,266 @@
    Kalender/Archiv auf musik.html, Detailseite hochamt.html und
    Verwaltung). Quelle ist data/hochaemter.csv — eine Tabelle, die
    sich direkt in Excel bearbeiten laesst (Semikolon-getrennt).
+
+   Stellt ausserdem die Hilfen bereit, die mehrere Skripte teilen
+   (HTML-Escaping, sichere URLs, CSV-Zellen, Download, Kurzlink-Slug).
+   Muss daher vor news.js, solisten.js und den Verwaltungsseiten
+   geladen werden.
    ============================================================ */
-(function(w){
+(function (w) {
   'use strict';
 
-  var MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-  var WEEKDAYS = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+  const MONTHS_SHORT = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+  const WEEKDAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+  const WEEKDAYS_SHORT = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
   /* Spaltenueberschriften (frei benennbar) -> interne Feldnamen */
-  var ALIASES = {
-    datum:'date', uhrzeit:'time', zeit:'time', beginn:'time',
-    anlass:'type', typ:'type', werk:'piece', musik:'piece',
-    ort:'location', zelebrant:'celebrant', dirigent:'conductor',
-    chor:'choir', orchester:'orchestra', solisten:'soloists',
-    organist:'organist', organisten:'organist',
-    weiteremusik:'extra', weiterestücke:'extra', weiterelieder:'extra', extralieder:'extra', lieder:'extra',
-    hinweis:'note', hinweise:'note', bemerkung:'note'
+  const ALIASES = {
+    datum: 'date', uhrzeit: 'time', zeit: 'time', beginn: 'time',
+    anlass: 'type', typ: 'type', werk: 'piece', musik: 'piece',
+    ort: 'location', zelebrant: 'celebrant', dirigent: 'conductor',
+    chor: 'choir', orchester: 'orchestra', solisten: 'soloists',
+    organist: 'organist', organisten: 'organist',
+    weiteremusik: 'extra', weiterestücke: 'extra', weiterelieder: 'extra', extralieder: 'extra', lieder: 'extra',
+    hinweis: 'note', hinweise: 'note', bemerkung: 'note'
   };
-  var FIELDS = [
-    ['date','Datum'],['time','Uhrzeit'],['type','Anlass'],['piece','Werk'],['location','Ort'],
-    ['celebrant','Zelebrant'],['conductor','Dirigent'],['choir','Chor'],['orchestra','Orchester'],
-    ['soloists','Solisten'],['organist','Organist'],['extra','Weitere Musik'],['note','Hinweis']
+  /* Reihenfolge und Beschriftung der Spalten beim Export */
+  const FIELDS = [
+    ['date', 'Datum'], ['time', 'Uhrzeit'], ['type', 'Anlass'], ['piece', 'Werk'], ['location', 'Ort'],
+    ['celebrant', 'Zelebrant'], ['conductor', 'Dirigent'], ['choir', 'Chor'], ['orchestra', 'Orchester'],
+    ['soloists', 'Solisten'], ['organist', 'Organist'], ['extra', 'Weitere Musik'], ['note', 'Hinweis']
   ];
 
-  function pad(n){return String(n).padStart(2,'0')}
+  /* Nur diese Protokolle duerfen in href/src landen (kein javascript:, data: …) */
+  const SAFE_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
 
-  function esc(s){
-    return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  /* ---------- Allgemeine Hilfen ---------- */
+  const pad = (n) => String(n).padStart(2, '0');
+
+  const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  /* Text fuer den Einbau in HTML (Inhalt und Attribute) unschaedlich machen */
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESC_MAP[c]);
+
+  /* Prueft eine Adresse aus den Tabellen, bevor sie in href/src landet.
+     Relative Pfade erhalten das Praefix `base`; absolute Adressen muessen ein
+     erlaubtes Protokoll haben. Die Pruefung laeuft ueber den URL-Parser des
+     Browsers, damit Tricks wie "java\tscript:" ebenfalls erkannt werden.
+     Liefert '' fuer alles Unsichere. */
+  function safeUrl(url, base = '') {
+    const raw = String(url ?? '').trim();
+    if (!raw) return '';
+    const hasScheme = /^[a-z][a-z\d+.-]*:/i.test(raw.replace(/[\u0000- \u007f]/g, ''));
+    const candidate = hasScheme || raw.startsWith('//') ? raw : base + raw;
+    try {
+      return SAFE_PROTOCOLS.includes(new URL(candidate, location.href).protocol) ? candidate : '';
+    } catch {
+      return '';
+    }
   }
 
-  /* CSV -> Zeilen (Anfuehrungszeichen, Zeilenumbrueche in Zellen, Trennzeichen-Erkennung) */
-  function parseCSV(text){
-    text = String(text).replace(/^﻿/,'');
-    var firstLine = text.split(/\r?\n/,1)[0];
-    var delim = ';', best = -1;
-    [';',',','\t'].forEach(function(d){
-      var c = firstLine.split(d).length;
-      if(c>best){best=c;delim=d}
-    });
-    var rows=[], row=[], cell='', inQ=false, i, ch;
-    for(i=0;i<text.length;i++){
-      ch=text[i];
-      if(inQ){
-        if(ch==='"'){
-          if(text[i+1]==='"'){cell+='"';i++}else inQ=false;
-        }else cell+=ch;
-      }else if(ch==='"'){inQ=true}
-      else if(ch===delim){row.push(cell);cell=''}
-      else if(ch==='\n'||ch==='\r'){
-        if(ch==='\r'&&text[i+1]==='\n')i++;
-        row.push(cell);cell='';
-        rows.push(row);row=[];
-      }else cell+=ch;
+  /* Titel -> URL-taugliche Kennung (Umlaute ausgeschrieben) */
+  function slug(s, maxLength = 40) {
+    return String(s).toLowerCase()
+      .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, maxLength);
+  }
+
+  /* Eine CSV-Zelle: nur bei Trennzeichen, Anfuehrungszeichen oder Zeilenumbruch quoten */
+  function csvCell(v) {
+    const s = String(v ?? '');
+    return /[;"\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  }
+  /* Zeilen -> Excel-taugliche CSV (Semikolon, CRLF, UTF-8-BOM fuer die Umlaute) */
+  const csvText = (rows) => '﻿' + rows.map((r) => r.map(csvCell).join(';')).join('\r\n') + '\r\n';
+
+  /* Blob als Datei anbieten; die Objekt-URL wird danach wieder freigegeben */
+  function download(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement('a'), { href: url, download: name });
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  /* ---------- CSV lesen ----------
+     Kleiner Zustandsautomat statt split(): Zellen duerfen in Anfuehrungs-
+     zeichen stehen und dann Trennzeichen, Zeilenumbrueche und verdoppelte
+     Anfuehrungszeichen ("") enthalten. Das Trennzeichen (; , Tab) wird an
+     der Kopfzeile erkannt, weil Excel je nach Sprache anders speichert. */
+  function parseCSV(text) {
+    text = String(text).replace(/^﻿/, '');
+    const firstLine = text.split(/\r?\n/, 1)[0];
+    let delim = ';';
+    let best = -1;
+    for (const d of [';', ',', '\t']) {
+      const count = firstLine.split(d).length;
+      if (count > best) { best = count; delim = d; }
     }
-    if(cell!==''||row.length){row.push(cell);rows.push(row)}
+
+    const rows = [];
+    let row = [];
+    let cell = '';
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (text[i + 1] === '"') { cell += '"'; i++; } else inQuotes = false;
+        } else cell += ch;
+      } else if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === delim) {
+        row.push(cell); cell = '';
+      } else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && text[i + 1] === '\n') i++;
+        row.push(cell); cell = '';
+        rows.push(row); row = [];
+      } else cell += ch;
+    }
+    if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
     return rows;
   }
 
+  /* Kopfzeile -> Schluessel ueber eine Alias-Tabelle; Gross-/Kleinschreibung,
+     Leer- und Sonderzeichen in den Ueberschriften spielen keine Rolle. */
+  const headerKey = (h, aliases) => aliases[String(h).toLowerCase().replace(/[^a-zäöüß]/g, '')] || null;
+
   /* Datum 'TT.MM.JJJJ' oder 'JJJJ-MM-TT' -> 'JJJJ-MM-TT' ('' wenn ungueltig) */
-  function isoDate(s){
-    s=String(s||'').trim();
-    var m=s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
-    if(m){var y=+m[3];if(y<100)y+=2000;return y+'-'+pad(m[2])+'-'+pad(m[1])}
-    m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if(m)return m[1]+'-'+pad(m[2])+'-'+pad(m[3]);
-    return '';
+  function isoDate(s) {
+    s = String(s || '').trim();
+    let m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
+    if (m) {
+      let y = Number(m[3]);
+      if (y < 100) y += 2000;
+      return `${y}-${pad(m[2])}-${pad(m[1])}`;
+    }
+    m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    return m ? `${m[1]}-${pad(m[2])}-${pad(m[3])}` : '';
   }
-  function isoTime(s){
-    var m=String(s||'').match(/(\d{1,2})\s*[:.hH]\s*(\d{2})/);
-    return m?pad(m[1])+':'+m[2]:'';
+  /* Uhrzeit '11:00', '11.00' oder '11h00' -> 'HH:MM' ('' wenn ungueltig) */
+  function isoTime(s) {
+    const m = String(s || '').match(/(\d{1,2})\s*[:.hH]\s*(\d{2})/);
+    return m ? `${pad(m[1])}:${m[2]}` : '';
+  }
+  /* 'JJJJ-MM-TT' -> lokales Datum um Mitternacht */
+  function dateFromIso(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d);
   }
 
-  /* Zeilen -> Roh-Objekte (Textfelder, interne Feldnamen) */
-  function rowsToRaw(rows){
-    if(!rows.length)return [];
-    var keys=rows[0].map(function(h){
-      return ALIASES[String(h).toLowerCase().replace(/[^a-zäöüß]/g,'')]||null;
-    });
-    var out=[];
-    rows.slice(1).forEach(function(r){
-      var o={};
-      keys.forEach(function(k,i){if(k)o[k]=(r[i]||'').trim()});
-      if(Object.keys(o).some(function(k){return o[k]}))out.push(o);
-    });
+  /* Zeilen -> Roh-Objekte (Textfelder, interne Feldnamen); leere Zeilen fallen weg */
+  function rowsToRaw(rows, aliases = ALIASES) {
+    if (!rows.length) return [];
+    const keys = rows[0].map((h) => headerKey(h, aliases));
+    const out = [];
+    for (const r of rows.slice(1)) {
+      const o = {};
+      keys.forEach((k, i) => { if (k) o[k] = (r[i] || '').trim(); });
+      if (Object.values(o).some(Boolean)) out.push(o);
+    }
     return out;
   }
 
-  function list(s){
-    return String(s||'').split(/\s*(?:\||\r?\n)\s*/).map(function(x){return x.trim()}).filter(Boolean);
-  }
+  /* Mehrere Eintraege in einer Zelle: mit | oder Zeilenumbruch getrennt */
+  const list = (s) => String(s || '').split(/\s*(?:\||\r?\n)\s*/).map((x) => x.trim()).filter(Boolean);
 
-  function normalize(o){
-    var date=isoDate(o.date);
-    if(!date)return null;
-    var time=isoTime(o.time)||'11:00';
-    var p=date.split('-').map(Number);
+  function normalize(o) {
+    const date = isoDate(o.date);
+    if (!date) return null;
+    const time = isoTime(o.time) || '11:00';
     return {
-      id: date+'-'+time.replace(':',''),
-      date: date, time: time,
-      dateObj: new Date(p[0],p[1]-1,p[2]),
-      type: o.type||'Hochamt',
-      piece: o.piece||'',
-      location: o.location||'Augustinerkirche',
-      celebrant: o.celebrant||'',
-      conductor: o.conductor||'',
-      choir: o.choir||'',
-      orchestra: o.orchestra||'',
+      id: `${date}-${time.replace(':', '')}`,
+      date, time,
+      dateObj: dateFromIso(date),
+      type: o.type || 'Hochamt',
+      piece: o.piece || '',
+      location: o.location || 'Augustinerkirche',
+      celebrant: o.celebrant || '',
+      conductor: o.conductor || '',
+      choir: o.choir || '',
+      orchestra: o.orchestra || '',
       soloists: list(o.soloists),
       organist: list(o.organist),
       extra: list(o.extra),
-      note: o.note||''
+      note: o.note || ''
     };
   }
 
-  function sortEntries(a,b){return (a.date+a.time).localeCompare(b.date+b.time)}
+  /* Sortierung nach Datum und Uhrzeit (ISO-Strings sind direkt vergleichbar) */
+  const byDateTime = (a, b) => (a.date + a.time).localeCompare(b.date + b.time);
+  const byDateTimeDesc = (a, b) => byDateTime(b, a);
 
-  function fetchText(url){
-    return fetch(url).then(function(res){
-      if(!res.ok)throw new Error('HTTP '+res.status);
-      return res.text();
-    });
+  async function fetchText(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.text();
   }
 
   /* Laedt die Tabelle; liefert normalisierte, chronologisch sortierte Eintraege */
-  function load(url){
-    return fetchText(url).then(function(text){
-      return rowsToRaw(parseCSV(text)).map(normalize).filter(Boolean).sort(sortEntries);
-    });
+  async function load(url) {
+    const text = await fetchText(url);
+    return rowsToRaw(parseCSV(text)).map(normalize).filter(Boolean).sort(byDateTime);
   }
-  function loadRaw(url){
-    return fetchText(url).then(function(text){return rowsToRaw(parseCSV(text))});
+  async function loadRaw(url) {
+    return rowsToRaw(parseCSV(await fetchText(url)));
   }
 
   /* Archiv: je Jahr eine Datei (data/archiv/hochaemter-JJJJ.csv), Jahresliste in jahre.json.
-     Ein Jahr wird erst geladen, wenn es gebraucht wird. */
-  var yearCache = {};
-  function loadYear(dir,year){
-    var k = dir+year;
-    if(!yearCache[k])yearCache[k] = load(dir+'hochaemter-'+year+'.csv');
-    return yearCache[k];
+     Ein Jahr wird erst geladen, wenn es gebraucht wird; das Promise wird
+     zwischengespeichert, damit mehrfaches Anklicken nur einmal laedt. */
+  const yearCache = new Map();
+  function loadYear(dir, year) {
+    const key = dir + year;
+    if (!yearCache.has(key)) yearCache.set(key, load(`${dir}hochaemter-${year}.csv`));
+    return yearCache.get(key);
   }
-  function archiveYears(dir){
-    return fetch(dir+'jahre.json').then(function(r){return r.ok?r.json():[]}).catch(function(){return []});
-  }
-
-  function today(){var d=new Date();d.setHours(0,0,0,0);return d}
-  function isUpcoming(e){return e.dateObj>=today()}
-
-  function toCSV(raws){
-    function q(v){
-      v=String(v==null?'':v);
-      return /[;"\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
+  async function archiveYears(dir) {
+    try {
+      const res = await fetch(`${dir}jahre.json`);
+      return res.ok ? await res.json() : [];
+    } catch {
+      return [];
     }
-    var lines=[FIELDS.map(function(f){return f[1]}).join(';')];
-    raws.forEach(function(o){
-      lines.push(FIELDS.map(function(f){
-        var v=o[f[0]]||'';
-        if(f[0]==='date'){var iso=isoDate(v);if(iso){var p=iso.split('-');v=p[2]+'.'+p[1]+'.'+p[0]}}
-        return q(v);
-      }).join(';'));
-    });
-    return '﻿'+lines.join('\r\n')+'\r\n';
+  }
+
+  function today() {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  /* Kommend = heute oder spaeter */
+  const isUpcoming = (e) => e.dateObj >= today();
+
+  /* Teilt eine Liste in kommende und vergangene Termine ("heute" nur einmal berechnet) */
+  function splitByDate(entries) {
+    const ref = today();
+    const upcoming = [];
+    const past = [];
+    for (const e of entries) (e.dateObj >= ref ? upcoming : past).push(e);
+    return { upcoming, past };
+  }
+
+  /* Roh-Eintraege -> CSV im Format von data/hochaemter.csv (Datum als TT.MM.JJJJ) */
+  function toCSV(raws) {
+    const rows = [FIELDS.map((f) => f[1])];
+    for (const o of raws) {
+      rows.push(FIELDS.map(([key]) => {
+        const v = o[key] || '';
+        if (key !== 'date') return v;
+        const iso = isoDate(v);
+        return iso ? iso.split('-').reverse().join('.') : v;
+      }));
+    }
+    return csvText(rows);
   }
 
   w.HochamtData = {
-    MONTHS:MONTHS, WEEKDAYS:WEEKDAYS, FIELDS:FIELDS,
-    esc:esc, pad:pad, parseCSV:parseCSV, rowsToRaw:rowsToRaw, isoDate:isoDate, isoTime:isoTime,
-    normalize:normalize, load:load, loadRaw:loadRaw, loadYear:loadYear, archiveYears:archiveYears, isUpcoming:isUpcoming, today:today, toCSV:toCSV
+    MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
+    esc, pad, safeUrl, slug, csvText, download,
+    parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, list,
+    normalize, byDateTime, byDateTimeDesc,
+    load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV
   };
 })(window);

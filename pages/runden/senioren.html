@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="../../favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png"/>
@@ -16,10 +18,11 @@
 <link rel="stylesheet" href="../../css/style.css"/>
 </head>
 <body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
 
-<nav>
+<nav aria-label="Hauptnavigation">
   <a class="nav-logo-wrap" href="../../index.html">
-    <img class="nav-logo-img" src="../../assets/logo.png" alt="Logo der Augustinerkirche Wien" width="38" height="38" decoding="async"/>
+    <img class="nav-logo-img" src="../../assets/logo.png" alt="" width="38" height="38" decoding="async"/>
     <div>
       <div class="nav-logo-text">Augustiner<span>kirche</span> Wien</div>
       <span class="nav-logo-sub">Pfarre &amp; Kloster St. Augustin</span>
@@ -28,11 +31,11 @@
 
   <div class="nav-center">
     <div class="nav-item" id="ni-aug">
-      <button class="nav-btn" aria-expanded="false">
+      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-aug-menu">
         Augustiner
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
-      <div class="mega">
+      <div class="mega" id="ni-aug-menu">
         <div class="mega-group">
           <span class="mega-group-label">Über den Orden</span>
           <a href="../chronik.html#p-augustinus">Hl. Augustinus</a>
@@ -44,11 +47,11 @@
     </div>
 
     <div class="nav-item" id="ni-kirche">
-      <button class="nav-btn" aria-expanded="false">
+      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-kirche-menu">
         Augustinerkirche
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
-      <div class="mega">
+      <div class="mega" id="ni-kirche-menu">
         <div class="mega-group">
           <span class="mega-group-label">Pfarre &amp; Kloster</span>
           <a href="../../index.html#pfarre">Pfarre St. Augustin</a>
@@ -71,11 +74,11 @@
     </div>
 
     <div class="nav-item" id="ni-musik">
-      <button class="nav-btn" aria-expanded="false">
+      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-musik-menu">
         Kirchenmusik
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
-      <div class="mega">
+      <div class="mega" id="ni-musik-menu">
         <div class="mega-group">
           <span class="mega-group-label">Veranstaltungen</span>
           <a href="../musik.html#p-hochaemter">Hochämter</a>
@@ -103,11 +106,11 @@
     </div>
 
     <div class="nav-item" id="ni-aspersdorf">
-      <button class="nav-btn" aria-expanded="false">
+      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-aspersdorf-menu">
         Aspersdorf
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
-      <div class="mega">
+      <div class="mega" id="ni-aspersdorf-menu">
         <div class="mega-group">
           <span class="mega-group-label">Pfarre Aspersdorf</span>
           <a href="../aspersdorf.html#p-leitung">Leitung</a>
@@ -131,13 +134,13 @@
 
   <div class="nav-right">
     <a href="../gottesdienste.html" class="nav-cta">Gottesdienste</a>
-    <button class="hamburger" id="hamburger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mob-menu">
+    <button type="button" class="hamburger" id="hamburger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mob-menu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
-<div class="mobile-menu" id="mob-menu">
+<div class="mobile-menu" id="mob-menu" role="navigation" aria-label="Menü">
   <div class="mob-group">
     <span class="mob-group-title">Augustiner</span>
     <a class="mob-sub" href="../chronik.html#p-augustinus">Hl. Augustinus</a>
@@ -172,7 +175,7 @@
   </div>
 </div>
 
-<main>
+<main id="main">
 
 <header class="page-hero">
   <div class="inner">
@@ -212,7 +215,7 @@
 </main>
 
 <footer>
-  <div class="f-logo-wrap"><img class="f-logo-img" src="../../assets/logo.png" alt="Logo der Augustinerkirche Wien" width="28" height="28" loading="lazy" decoding="async"/><div class="f-logo">Augustiner<span>kirche</span> Wien</div></div>
+  <div class="f-logo-wrap"><img class="f-logo-img" src="../../assets/logo.png" alt="" width="28" height="28" loading="lazy" decoding="async"/><div class="f-logo">Augustiner<span>kirche</span> Wien</div></div>
   <div class="f-links"><a href="../../index.html#kontakt">Kontakt</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a></div>
   <div class="f-copy">© Augustiner-Vikariat Wien 2026</div>
 </footer>

@@ -1,131 +1,141 @@
 /* ============================================================
    Augustinerkirche Wien — instagram.js
-   Isolierte Logik fuer die Instagram-Integration auf index.html.
+   Instagram-Bereich auf index.html.
 
    Architektur:
    - INSTAGRAM_API_ENDPOINT ist eine konfigurierbare Konstante.
      Sobald ein eigener Proxy/Serverless-Endpunkt (der das
      Instagram-Graph-API-Access-Token serverseitig haelt) zur
      Verfuegung steht, reicht es, die Konstante zu setzen.
+     Wichtig: die Adresse dann auch in der Content-Security-Policy
+     (connect-src) aller Seiten ergaenzen.
    - Ohne konfigurierten Endpunkt rendert das Modul einen
-     redaktionell gepflegten, semantisch gleichwertigen
-     Fallback-Grid mit Verweis auf das echte Profil.
+     redaktionell gepflegten Hinweis mit Verweis auf das Profil.
    - Ist ein Endpunkt konfiguriert, wird per fetch() mit Timeout
      (AbortController) geladen; bei Fehlschlag erscheint ein
      textbasierter Fehlerhinweis statt eines kaputten Layouts.
+   - Beitraege werden ausschliesslich per DOM-API (textContent)
+     aufgebaut, Adressen muessen https sein: fremde Daten koennen
+     so kein HTML oder Skript einschleusen.
    ============================================================ */
-(function(){
+(function () {
   'use strict';
 
-  var INSTAGRAM_API_ENDPOINT = ''; // z.B. 'https://api.augustinerkirche.at/instagram/latest'
-  var INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/augustinerkirche/';
-  var FETCH_TIMEOUT_MS = 6000;
-  var POST_COUNT = 8;
+  const INSTAGRAM_API_ENDPOINT = ''; // z. B. 'https://api.augustinerkirche.at/instagram/latest'
+  const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/augustinerkirche/';
+  const FETCH_TIMEOUT_MS = 6000;
+  const POST_COUNT = 8;
 
-  function qs(sel,ctx){return (ctx||document).querySelector(sel)}
-
-  function renderSkeleton(grid,count){
-    grid.innerHTML='';
-    for(var i=0;i<count;i++){
-      var skel=document.createElement('div');
-      skel.className='insta-skel';
-      skel.setAttribute('aria-hidden','true');
-      grid.appendChild(skel);
+  /* Nur https-Adressen aus der API uebernehmen, sonst '' */
+  function httpsUrl(value) {
+    try {
+      const u = new URL(String(value || ''));
+      return u.protocol === 'https:' ? u.href : '';
+    } catch {
+      return '';
     }
   }
 
-  function renderFallback(grid){
-    grid.innerHTML='';
-    var box=document.createElement('div');
-    box.className='insta-fallback';
-    box.innerHTML=
-      '<div class="insta-fallback-title">Aktuelle Beitraege auf Instagram</div>'+
-      '<p class="insta-fallback-text">Die Live-Einbindung des Instagram-Feeds erfordert ein serverseitig verwaltetes Zugriffstoken. '+
-      'Bis ein eigener Proxy-Dienst eingerichtet ist, folgen Sie uns direkt auf Instagram.</p>'+
-      '<a class="btn btn-dark" href="'+INSTAGRAM_PROFILE_URL+'" target="_blank" rel="noopener">Zum Instagram-Profil</a>';
-    grid.appendChild(box);
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
   }
 
-  function renderError(grid,message){
-    grid.innerHTML='';
-    var box=document.createElement('div');
-    box.className='insta-error';
-    box.textContent=message;
-    grid.appendChild(box);
+  /* Inhalt ersetzen und dem Screenreader melden, dass das Laden beendet ist */
+  function finish(grid, ...nodes) {
+    grid.replaceChildren(...nodes);
+    grid.setAttribute('aria-busy', 'false');
   }
 
-  function renderPosts(grid,posts){
-    grid.innerHTML='';
-    posts.slice(0,POST_COUNT).forEach(function(post){
-      var card=document.createElement('article');
-      card.className='insta-card';
-
-      if(post.imageUrl){
-        var img=document.createElement('img');
-        img.src=post.imageUrl;
-        img.alt=post.caption||'Beitrag von Augustinerkirche auf Instagram';
-        img.loading='lazy';
-        card.appendChild(img);
-      }
-
-      var cap=document.createElement('div');
-      cap.className='insta-cap';
-      cap.textContent=post.caption||'';
-      card.appendChild(cap);
-
-      var link=document.createElement('a');
-      link.href=post.permalink||INSTAGRAM_PROFILE_URL;
-      link.target='_blank';
-      link.rel='noopener';
-      link.setAttribute('aria-label',post.caption||'Instagram-Beitrag oeffnen');
-      card.appendChild(link);
-
-      grid.appendChild(card);
+  function renderSkeleton(grid, count) {
+    const skeletons = Array.from({ length: count }, () => {
+      const skel = el('div', 'insta-skel');
+      skel.setAttribute('aria-hidden', 'true');
+      return skel;
     });
+    grid.replaceChildren(...skeletons);
+    grid.setAttribute('aria-busy', 'true');
   }
 
-  function fetchWithTimeout(url,timeoutMs){
-    var controller=('AbortController' in window)?new AbortController():null;
-    var timer=setTimeout(function(){if(controller)controller.abort()},timeoutMs);
-
-    return fetch(url,{signal:controller?controller.signal:undefined})
-      .then(function(res){
-        clearTimeout(timer);
-        if(!res.ok)throw new Error('HTTP '+res.status);
-        return res.json();
-      })
-      .catch(function(err){
-        clearTimeout(timer);
-        throw err;
-      });
+  function renderFallback(grid) {
+    const box = el('div', 'insta-fallback');
+    const link = el('a', 'btn btn-dark', 'Zum Instagram-Profil');
+    Object.assign(link, { href: INSTAGRAM_PROFILE_URL, target: '_blank', rel: 'noopener' });
+    box.append(
+      el('div', 'insta-fallback-title', 'Aktuelle Beiträge auf Instagram'),
+      el('p', 'insta-fallback-text',
+        'Die Live-Einbindung des Instagram-Feeds erfordert ein serverseitig verwaltetes Zugriffstoken. ' +
+        'Bis ein eigener Proxy-Dienst eingerichtet ist, folgen Sie uns direkt auf Instagram.'),
+      link
+    );
+    finish(grid, box);
   }
 
-  function loadInstagramFeed(gridSelector){
-    var grid=qs(gridSelector);
-    if(!grid)return;
+  function renderError(grid, message) {
+    finish(grid, el('div', 'insta-error', message));
+  }
 
-    renderSkeleton(grid,POST_COUNT);
+  function renderPosts(grid, posts) {
+    const cards = posts.slice(0, POST_COUNT).map((post) => {
+      const caption = String(post.caption || '');
+      const card = el('article', 'insta-card');
 
-    if(!INSTAGRAM_API_ENDPOINT){
-      setTimeout(function(){renderFallback(grid)},450);
+      const imageUrl = httpsUrl(post.imageUrl);
+      if (imageUrl) {
+        const img = el('img');
+        Object.assign(img, { src: imageUrl, alt: caption || 'Beitrag von Augustinerkirche auf Instagram', loading: 'lazy' });
+        card.append(img);
+      }
+      card.append(el('div', 'insta-cap', caption));
+
+      /* Unsichtbarer Link ueber der ganzen Karte (siehe .insta-card a) */
+      const link = el('a');
+      Object.assign(link, { href: httpsUrl(post.permalink) || INSTAGRAM_PROFILE_URL, target: '_blank', rel: 'noopener' });
+      link.setAttribute('aria-label', caption || 'Instagram-Beitrag öffnen');
+      card.append(link);
+      return card;
+    });
+    finish(grid, ...cards);
+  }
+
+  async function fetchWithTimeout(url, timeoutMs) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { signal: controller.signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  async function loadInstagramFeed(gridSelector) {
+    const grid = document.querySelector(gridSelector);
+    if (!grid) return;
+
+    renderSkeleton(grid, POST_COUNT);
+
+    if (!INSTAGRAM_API_ENDPOINT) {
+      /* kurze Verzoegerung, damit der Platzhalter nicht nur aufblitzt */
+      setTimeout(() => renderFallback(grid), 450);
       return;
     }
 
-    fetchWithTimeout(INSTAGRAM_API_ENDPOINT,FETCH_TIMEOUT_MS)
-      .then(function(data){
-        var posts=Array.isArray(data)?data:(data&&data.posts);
-        if(!posts||!posts.length)throw new Error('Leere Antwort');
-        renderPosts(grid,posts);
-      })
-      .catch(function(err){
-        var isTimeout=err&&err.name==='AbortError';
-        renderError(grid,isTimeout
-          ? 'Die Instagram-Beitraege konnten nicht rechtzeitig geladen werden. Bitte besuchen Sie unser Profil direkt: '+INSTAGRAM_PROFILE_URL
-          : 'Die Instagram-Beitraege sind derzeit nicht verfuegbar. Bitte besuchen Sie unser Profil direkt: '+INSTAGRAM_PROFILE_URL);
-      });
+    try {
+      const data = await fetchWithTimeout(INSTAGRAM_API_ENDPOINT, FETCH_TIMEOUT_MS);
+      const posts = Array.isArray(data) ? data : data && data.posts;
+      if (!Array.isArray(posts) || !posts.length) throw new Error('Leere Antwort');
+      renderPosts(grid, posts);
+    } catch (err) {
+      const reason = err && err.name === 'AbortError'
+        ? 'Die Instagram-Beiträge konnten nicht rechtzeitig geladen werden.'
+        : 'Die Instagram-Beiträge sind derzeit nicht verfügbar.';
+      renderError(grid, `${reason} Bitte besuchen Sie unser Profil direkt: ${INSTAGRAM_PROFILE_URL}`);
+    }
   }
 
-  document.addEventListener('DOMContentLoaded',function(){
-    loadInstagramFeed('#insta-grid');
-  });
+  document.addEventListener('DOMContentLoaded', () => loadInstagramFeed('#insta-grid'));
 })();

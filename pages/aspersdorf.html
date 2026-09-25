@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="../favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
@@ -17,10 +19,11 @@
 <link rel="stylesheet" href="../css/style.css"/>
 </head>
 <body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
 
-<nav>
+<nav aria-label="Hauptnavigation">
   <a class="nav-logo-wrap" href="../index.html">
-    <img class="nav-logo-img" src="../assets/logo.png" alt="Logo der Augustinerkirche Wien" width="38" height="38" decoding="async"/>
+    <img class="nav-logo-img" src="../assets/logo.png" alt="" width="38" height="38" decoding="async"/>
     <div>
       <div class="nav-logo-text">Augustiner<span>kirche</span> Wien</div>
       <span class="nav-logo-sub">Pfarre &amp; Kloster St. Augustin</span>
@@ -29,11 +32,11 @@
 
   <div class="nav-center">
     <div class="nav-item" id="ni-aug">
-      <button class="nav-btn" aria-expanded="false">
+      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-aug-menu">
         Augustiner
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
-      <div class="mega">
+      <div class="mega" id="ni-aug-menu">
         <div class="mega-group">
           <span class="mega-group-label">Über den Orden</span>
           <a href="chronik.html#p-augustinus">Hl. Augustinus</a>
@@ -45,11 +48,11 @@
     </div>
 
     <div class="nav-item" id="ni-kirche">
-      <button class="nav-btn" aria-expanded="false">
+      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-kirche-menu">
         Augustinerkirche
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
-      <div class="mega">
+      <div class="mega" id="ni-kirche-menu">
         <div class="mega-group">
           <span class="mega-group-label">Pfarre &amp; Kloster</span>
           <a href="../index.html#pfarre">Pfarre St. Augustin</a>
@@ -72,11 +75,11 @@
     </div>
 
     <div class="nav-item" id="ni-musik">
-      <button class="nav-btn" aria-expanded="false">
+      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-musik-menu">
         Kirchenmusik
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
-      <div class="mega">
+      <div class="mega" id="ni-musik-menu">
         <div class="mega-group">
           <span class="mega-group-label">Veranstaltungen</span>
           <a href="musik.html#p-hochaemter">Hochämter</a>
@@ -105,11 +108,11 @@
     </div>
 
     <div class="nav-item" id="ni-aspersdorf">
-      <button class="nav-btn" aria-expanded="false">
+      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-aspersdorf-menu">
         Aspersdorf
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
-      <div class="mega">
+      <div class="mega" id="ni-aspersdorf-menu">
         <div class="mega-group">
           <span class="mega-group-label">Pfarre Aspersdorf</span>
           <a href="aspersdorf.html#p-leitung">Leitung</a>
@@ -133,13 +136,13 @@
 
   <div class="nav-right">
     <a href="gottesdienste.html" class="nav-cta">Gottesdienste</a>
-    <button class="hamburger" id="hamburger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mob-menu">
+    <button type="button" class="hamburger" id="hamburger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mob-menu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
-<div class="mobile-menu" id="mob-menu">
+<div class="mobile-menu" id="mob-menu" role="navigation" aria-label="Menü">
   <div class="mob-group">
     <span class="mob-group-title">Augustiner</span>
     <a class="mob-sub" href="chronik.html#p-augustinus">Hl. Augustinus</a>
@@ -174,7 +177,7 @@
   </div>
 </div>
 
-<main>
+<main id="main">
 
 <section class="hero">
   <div class="hero-img" style="background-image:url('../assets/img/aspersdorf/aspersdorf-kirche.webp')"></div>
@@ -191,18 +194,18 @@
     <div class="with-sidebar">
       <aside class="sidebar" aria-label="Aspersdorf Unterseiten">
         <span class="sidebar-group-label">Pfarre Aspersdorf</span>
-        <button class="sidebar-item active" data-pane="p-leitung">Leitung</button>
-        <button class="sidebar-item" data-pane="p-kirche">Pfarrkirche St. Georg</button>
-        <button class="sidebar-item" data-pane="p-gottesdienste">Gottesdienste &amp; Kalender</button>
+        <button type="button" class="sidebar-item active" data-pane="p-leitung">Leitung</button>
+        <button type="button" class="sidebar-item" data-pane="p-kirche">Pfarrkirche St. Georg</button>
+        <button type="button" class="sidebar-item" data-pane="p-gottesdienste">Gottesdienste &amp; Kalender</button>
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Sakramente &amp; Pfarrleben</span>
-        <button class="sidebar-item" data-pane="p-sakramente">Sakramente</button>
-        <button class="sidebar-item" data-pane="p-wiedereintritt">Wiedereintritt</button>
-        <button class="sidebar-item" data-pane="p-dienste">Dienste &amp; Mitarbeiter</button>
-        <button class="sidebar-item" data-pane="p-frauenbewegung">Katholische Frauenbewegung</button>
+        <button type="button" class="sidebar-item" data-pane="p-sakramente">Sakramente</button>
+        <button type="button" class="sidebar-item" data-pane="p-wiedereintritt">Wiedereintritt</button>
+        <button type="button" class="sidebar-item" data-pane="p-dienste">Dienste &amp; Mitarbeiter</button>
+        <button type="button" class="sidebar-item" data-pane="p-frauenbewegung">Katholische Frauenbewegung</button>
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Friedhof</span>
-        <button class="sidebar-item" data-pane="p-friedhof">Pfarrfriedhof</button>
+        <button type="button" class="sidebar-item" data-pane="p-friedhof">Pfarrfriedhof</button>
       </aside>
 
       <div class="tab-content-area">
@@ -277,7 +280,7 @@
           <h2 class="s-title"><em>Sakramente</em> in Aspersdorf</h2>
           <div class="divider-g"></div>
           <p class="s-text" style="margin-bottom:1.5rem">Taufe, Eucharistie und Erstkommunion, Firmung, Buße, Trauung, Weihe, Krankensalbung und die Begleitung im Sterbefall werden auch in der Pfarre Aspersdorf gespendet. Für Termine und Vorbereitung wenden Sie sich an das Pfarramt Aspersdorf.</p>
-          <div class="sakr-band sakr-band-inline" aria-label="Zu den Sakramenten springen">
+          <div class="sakr-band sakr-band-inline" role="group" aria-label="Zu den Sakramenten springen">
             <div class="sakr-band-label">Zu den Sakramenten</div>
             <div class="sakr-marquee"><div class="sakr-track"><div class="sakr-track-group"><button type="button" class="sakr-chip" data-target="as-taufe"><span class="sakr-chip-nr">01</span><span class="sakr-chip-name">Taufe</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-eucharistie"><span class="sakr-chip-nr">02</span><span class="sakr-chip-name">Eucharistie</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-firmung"><span class="sakr-chip-nr">03</span><span class="sakr-chip-name">Firmung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-busse"><span class="sakr-chip-nr">04</span><span class="sakr-chip-name">Buße</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-trauung"><span class="sakr-chip-nr">05</span><span class="sakr-chip-name">Trauung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-weihe"><span class="sakr-chip-nr">06</span><span class="sakr-chip-name">Weihe</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-krankensalbung"><span class="sakr-chip-nr">07</span><span class="sakr-chip-name">Krankensalbung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-sterbefall"><span class="sakr-chip-nr">08</span><span class="sakr-chip-name">Sterbefall</span></button><span class="sakr-dot" aria-hidden="true"></span></div><div class="sakr-track-group" aria-hidden="true"><button type="button" class="sakr-chip" data-target="as-taufe" tabindex="-1"><span class="sakr-chip-nr">01</span><span class="sakr-chip-name">Taufe</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-eucharistie" tabindex="-1"><span class="sakr-chip-nr">02</span><span class="sakr-chip-name">Eucharistie</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-firmung" tabindex="-1"><span class="sakr-chip-nr">03</span><span class="sakr-chip-name">Firmung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-busse" tabindex="-1"><span class="sakr-chip-nr">04</span><span class="sakr-chip-name">Buße</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-trauung" tabindex="-1"><span class="sakr-chip-nr">05</span><span class="sakr-chip-name">Trauung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-weihe" tabindex="-1"><span class="sakr-chip-nr">06</span><span class="sakr-chip-name">Weihe</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-krankensalbung" tabindex="-1"><span class="sakr-chip-nr">07</span><span class="sakr-chip-name">Krankensalbung</span></button><span class="sakr-dot" aria-hidden="true"></span><button type="button" class="sakr-chip" data-target="as-sterbefall" tabindex="-1"><span class="sakr-chip-nr">08</span><span class="sakr-chip-name">Sterbefall</span></button><span class="sakr-dot" aria-hidden="true"></span></div></div></div>
           </div>
@@ -438,7 +441,7 @@
 </main>
 
 <footer>
-  <div class="f-logo-wrap"><img class="f-logo-img" src="../assets/logo.png" alt="Logo der Augustinerkirche Wien" width="28" height="28" loading="lazy" decoding="async"/><div class="f-logo">Augustiner<span>kirche</span> Wien</div></div>
+  <div class="f-logo-wrap"><img class="f-logo-img" src="../assets/logo.png" alt="" width="28" height="28" loading="lazy" decoding="async"/><div class="f-logo">Augustiner<span>kirche</span> Wien</div></div>
   <div class="f-links"><a href="aspersdorf.html#p-leitung">Kontakt</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></div>
   <div class="f-copy">© Augustiner-Vikariat Wien 2026</div>
 </footer>

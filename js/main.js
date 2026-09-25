@@ -1,101 +1,142 @@
 /* ============================================================
    Augustinerkirche Wien — main.js
-   Globale Logik: Navigation, mobile Menue, Sidebar-Tabs,
-   Hash-Routing, Kalender-/Wochenfilter,
-   Scroll-Reveal via IntersectionObserver.
+   Globale Logik: Navigation, mobiles Menue, Sidebar-Tabs,
+   Hash-Routing, Wochenfilter, Scroll-Reveal via IntersectionObserver.
    Alle Module pruefen defensiv, ob die benoetigten DOM-Knoten
    auf der jeweiligen Seite ueberhaupt existieren.
    ============================================================ */
-(function(){
+(function () {
   'use strict';
 
   /* ---------- Hilfsfunktionen ---------- */
-  function qs(sel,ctx){return (ctx||document).querySelector(sel)}
-  function qsa(sel,ctx){return Array.prototype.slice.call((ctx||document).querySelectorAll(sel))}
+  const qs = (sel, ctx = document) => ctx.querySelector(sel);
+  const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+  /* Weiches Scrollen nur, wenn die Nutzerin/der Nutzer Bewegung nicht reduziert hat */
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const scrollBehavior = () => (reducedMotion.matches ? 'auto' : 'smooth');
+
+  /* Ab dieser Breite ersetzt das Hamburger-Menue die Dropdowns (siehe style.css) */
+  const mobileNavQuery = window.matchMedia('(max-width: 1360px)');
 
   /* ---------- Dropdown-Menues (Event-Delegation) ---------- */
-  function initDropdowns(){
-    var nav=qs('nav');
-    if(!nav)return;
-
-    nav.addEventListener('click',function(e){
-      var btn=e.target.closest('.nav-btn');
-      if(!btn)return;
-      var item=btn.closest('.nav-item');
-      if(!item)return;
-      var wasOpen=item.classList.contains('open');
-      closeAllDropdowns();
-      if(!wasOpen){item.classList.add('open');btn.setAttribute('aria-expanded','true')}
-    });
-
-    document.addEventListener('click',function(e){
-      if(!e.target.closest('.nav-item'))closeAllDropdowns();
-    });
-
-    document.addEventListener('keydown',function(e){
-      if(e.key==='Escape')closeAllDropdowns();
-    });
+  function closeAllDropdowns() {
+    for (const item of qsa('.nav-item.open')) item.classList.remove('open');
+    for (const btn of qsa('.nav-btn[aria-expanded="true"]')) btn.setAttribute('aria-expanded', 'false');
   }
-  function closeAllDropdowns(){
-    qsa('.nav-item.open').forEach(function(i){i.classList.remove('open')});
-    qsa('.nav-btn[aria-expanded="true"]').forEach(function(b){b.setAttribute('aria-expanded','false')});
+
+  function initDropdowns() {
+    const nav = qs('nav');
+    if (!nav) return;
+
+    nav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.nav-btn');
+      const item = btn && btn.closest('.nav-item');
+      if (!item) return;
+      const wasOpen = item.classList.contains('open');
+      closeAllDropdowns();
+      if (!wasOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    /* Tastatur: verlaesst der Fokus ein offenes Menue, schliesst es sich */
+    nav.addEventListener('focusout', (e) => {
+      const item = e.target.closest('.nav-item.open');
+      if (item && !item.contains(e.relatedTarget)) closeAllDropdowns();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.nav-item')) closeAllDropdowns();
+    });
+
+    /* Escape schliesst und setzt den Fokus zurueck auf den ausloesenden Knopf */
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const open = qs('.nav-item.open');
+      if (!open) return;
+      closeAllDropdowns();
+      const btn = qs('.nav-btn', open);
+      if (btn && open.contains(document.activeElement)) btn.focus();
+    });
   }
 
   /* ---------- Mobile Navigation ---------- */
-  function initMobileNav(){
-    var burger=qs('#hamburger');
-    var menu=qs('#mob-menu');
-    if(!burger||!menu)return;
+  function initMobileNav() {
+    const burger = qs('#hamburger');
+    const menu = qs('#mob-menu');
+    if (!burger || !menu) return;
 
-    burger.setAttribute('aria-expanded','false');
-    burger.addEventListener('click',function(){
-      var open=menu.classList.toggle('open');
-      burger.setAttribute('aria-expanded',open?'true':'false');
+    const setOpen = (open) => {
+      menu.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+    };
+
+    setOpen(false);
+    burger.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
+
+    /* Ein Klick auf einen Link schliesst das Menue (Sprungziele auf derselben Seite) */
+    menu.addEventListener('click', (e) => {
+      if (e.target.closest('a')) setOpen(false);
     });
 
-    qsa('.mob-sub',menu).forEach(function(link){
-      link.addEventListener('click',function(){
-        menu.classList.remove('open');
-        burger.setAttribute('aria-expanded','false');
-      });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.classList.contains('open')) {
+        setOpen(false);
+        burger.focus();
+      }
+    });
+
+    /* Wird das Fenster breiter als der Handy-Umbruch, darf das Menue nicht offen bleiben */
+    mobileNavQuery.addEventListener('change', (e) => {
+      if (!e.matches) setOpen(false);
     });
   }
 
   /* ---------- Sidebar-Tabs ---------- */
-  function activatePane(sidebar,paneId){
-    if(!sidebar)return;
-    var area=sidebar.nextElementSibling;
-    if(!area)return;
-    var pane=document.getElementById(paneId);
-    if(!pane||!area.contains(pane))return false;
+  /* Schaltet in einer Sidebar auf den Bereich paneId um; true bei Erfolg */
+  function activatePane(sidebar, paneId) {
+    const area = sidebar && sidebar.nextElementSibling;
+    const pane = document.getElementById(paneId);
+    if (!area || !pane || !area.contains(pane)) return false;
 
-    qsa('.sidebar-item',sidebar).forEach(function(b){b.classList.remove('active')});
-    var match=qsa('.sidebar-item',sidebar).filter(function(b){return b.dataset.pane===paneId})[0];
-    if(match){
-      match.classList.add('active');
+    for (const btn of qsa('.sidebar-item', sidebar)) {
+      const isMatch = btn.dataset.pane === paneId;
+      btn.classList.toggle('active', isMatch);
+      if (isMatch) btn.setAttribute('aria-current', 'true');
+      else btn.removeAttribute('aria-current');
+
       /* Horizontale Tab-Leiste (Hochformat): aktiven Reiter mittig zeigen */
-      if(sidebar.scrollWidth>sidebar.clientWidth){
-        sidebar.scrollTo({left:match.offsetLeft-(sidebar.clientWidth-match.offsetWidth)/2,behavior:'smooth'});
+      if (isMatch && sidebar.scrollWidth > sidebar.clientWidth) {
+        sidebar.scrollTo({
+          left: btn.offsetLeft - (sidebar.clientWidth - btn.offsetWidth) / 2,
+          behavior: scrollBehavior()
+        });
       }
     }
 
-    qsa('.tab-pane',area).forEach(function(p){p.classList.remove('active')});
-    pane.classList.add('active');
+    for (const p of qsa('.tab-pane', area)) p.classList.toggle('active', p === pane);
     return true;
   }
 
-  function initSidebarTabs(){
-    document.addEventListener('click',function(e){
-      var btn=e.target.closest('.sidebar-item');
-      if(!btn)return;
-      var sidebar=btn.closest('.sidebar');
-      if(!sidebar)return;
-      var paneId=btn.dataset.pane;
-      if(!paneId)return;
+  function initSidebarTabs() {
+    /* Knoepfe mit ihrem Bereich verknuepfen, damit Screenreader den Zusammenhang kennen */
+    for (const btn of qsa('.sidebar-item[data-pane]')) {
+      btn.setAttribute('aria-controls', btn.dataset.pane);
+      if (btn.classList.contains('active')) btn.setAttribute('aria-current', 'true');
+    }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.sidebar-item');
+      const sidebar = btn && btn.closest('.sidebar');
+      const paneId = btn && btn.dataset.pane;
+      if (!sidebar || !paneId) return;
       e.preventDefault();
-      if(activatePane(sidebar,paneId)){
-        history.replaceState(null,'',location.pathname+'#'+paneId);
-        bleedBands();
+      if (activatePane(sidebar, paneId)) {
+        history.replaceState(null, '', `${location.pathname}#${paneId}`);
+        scheduleBleed();
         revealObserve();
       }
     });
@@ -103,135 +144,144 @@
 
   /* ---------- Sakramente-Band ueber die volle Bildschirmbreite ----------
      Das Band liegt im Textbereich (neben dem Seitenmenue) und wird per
-     negativem Rand bis an beide Bildschirmraender gezogen. */
-  function bleedBands(){
-    qsa('.sakr-band-inline').forEach(function(band){
-      if(!band.offsetParent)return;
-      band.style.marginLeft='0px';
-      band.style.width='auto';
-      var left=band.getBoundingClientRect().left;
-      band.style.marginLeft=(-left)+'px';
-      band.style.width=document.documentElement.clientWidth+'px';
+     negativem Rand bis an beide Bildschirmraender gezogen. Dazu wird der
+     Rand zuerst zurueckgesetzt, die natuerliche linke Kante gemessen und
+     dann genau um diesen Betrag nach links verschoben. */
+  function bleedBands() {
+    for (const band of qsa('.sakr-band-inline')) {
+      if (!band.offsetParent) continue; /* verborgener Tab: nichts zu messen */
+      band.style.marginLeft = '0px';
+      band.style.width = 'auto';
+      const left = band.getBoundingClientRect().left;
+      band.style.marginLeft = `${-left}px`;
+      band.style.width = `${document.documentElement.clientWidth}px`;
+    }
+  }
+  /* Beim Ziehen des Fensters feuert resize sehr oft: hoechstens einmal pro Frame messen */
+  let bleedFrame = 0;
+  function scheduleBleed() {
+    if (bleedFrame) return;
+    bleedFrame = requestAnimationFrame(() => {
+      bleedFrame = 0;
+      bleedBands();
     });
   }
 
   /* ---------- URL-Hash-Routing ---------- */
-  function routeToHash(){
-    var id=location.hash.replace('#','');
-    if(!id)return;
-    var pane=document.getElementById(id);
-    if(!pane||!pane.classList.contains('tab-pane'))return;
-    var area=pane.closest('.tab-content-area');
-    var sidebar=area?area.previousElementSibling:null;
-    if(!sidebar)return;
+  function routeToHash() {
+    const id = location.hash.slice(1);
+    if (!id) return;
+    const pane = document.getElementById(id);
+    if (!pane || !pane.classList.contains('tab-pane')) return;
+    const area = pane.closest('.tab-content-area');
+    const sidebar = area && area.previousElementSibling;
+    if (!sidebar) return;
 
-    if(activatePane(sidebar,id)){
-      setTimeout(function(){
-        var section=sidebar.closest('.with-sidebar')||pane;
-        section.scrollIntoView({behavior:'smooth',block:'start'});
-      },60);
+    if (activatePane(sidebar, id)) {
+      /* kurz warten, bis der Bereich sichtbar und vermessen ist */
+      setTimeout(() => {
+        const section = sidebar.closest('.with-sidebar') || pane;
+        section.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+      }, 60);
     }
   }
 
   /* ---------- Markiert den aktiven Navigationspunkt ---------- */
-  function markCurrentNav(){
-    var path=location.pathname.split('?')[0].replace(/\/+$/,'');
-    var current=path.split('/').pop()||'index.html';
-    qsa('.mega a, .mob-sub').forEach(function(a){
-      var href=a.getAttribute('href')||'';
-      var page=href.split('#')[0].split('/').pop();
-      if(page&&page===current){
-        a.classList.add('current');
-        var navItem=a.closest('.nav-item');
-        if(navItem){
-          var btn=qs('.nav-btn',navItem);
-          if(btn)btn.classList.add('current');
-        }
-      }
-    });
+  function markCurrentNav() {
+    const path = location.pathname.replace(/\/+$/, '');
+    const current = path.split('/').pop() || 'index.html';
+    for (const a of qsa('.mega a, .mob-sub')) {
+      const page = (a.getAttribute('href') || '').split('#')[0].split('/').pop();
+      if (!page || page !== current) continue;
+      a.classList.add('current');
+      const navItem = a.closest('.nav-item');
+      const btn = navItem && qs('.nav-btn', navItem);
+      if (btn) btn.classList.add('current');
+    }
   }
 
-  /* ---------- Kalender- und Wochenfilter (generisch, ueber data-Attribute) ---------- */
-  function initAttributeFilter(buttonSelector,rowSelector,attr){
-    var buttons=qsa(buttonSelector);
-    var rows=qsa(rowSelector);
-    if(!buttons.length||!rows.length)return;
+  /* ---------- Filter ueber data-Attribute (z. B. Wochenueberblick) ----------
+     Knoepfe tragen data-filter, Zeilen das Attribut data-<attr>; 'alle'/'all' zeigt alles. */
+  function initAttributeFilter(buttonSelector, rowSelector, attr) {
+    const buttons = qsa(buttonSelector);
+    const rows = qsa(rowSelector);
+    if (!buttons.length || !rows.length) return;
 
-    buttons.forEach(function(btn){
-      btn.addEventListener('click',function(){
-        buttons.forEach(function(b){b.classList.remove('active')});
-        btn.classList.add('active');
-        var value=btn.dataset.filter;
-        var showAll=(value==='alle'||value==='all');
-        rows.forEach(function(row){
-          row.style.display=(showAll||row.dataset[attr]===value)?'':'none';
-        });
+    for (const btn of buttons) {
+      btn.setAttribute('aria-pressed', String(btn.classList.contains('active')));
+      btn.addEventListener('click', () => {
+        for (const b of buttons) {
+          b.classList.toggle('active', b === btn);
+          b.setAttribute('aria-pressed', String(b === btn));
+        }
+        const value = btn.dataset.filter;
+        const showAll = value === 'alle' || value === 'all';
+        for (const row of rows) row.style.display = showAll || row.dataset[attr] === value ? '' : 'none';
       });
-    });
+    }
   }
 
   /* ---------- Scroll-Reveal via IntersectionObserver ---------- */
-  var revealObserver=null;
-  function revealObserve(){
-    var targets=qsa('.reveal:not(.in)');
-    if(!targets.length)return;
+  let revealObserver = null;
+  function revealObserve() {
+    const targets = qsa('.reveal:not(.in)');
+    if (!targets.length) return;
 
-    if(!('IntersectionObserver' in window)){
-      targets.forEach(function(el){el.classList.add('in')});
+    if (!('IntersectionObserver' in window)) {
+      for (const el of targets) el.classList.add('in');
       return;
     }
-    if(!revealObserver){
-      revealObserver=new IntersectionObserver(function(entries){
-        entries.forEach(function(entry){
-          if(entry.isIntersecting){
-            entry.target.classList.add('in');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      },{threshold:0.12});
+    if (!revealObserver) {
+      revealObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('in');
+          revealObserver.unobserve(entry.target);
+        }
+      }, { threshold: 0.12 });
     }
-    targets.forEach(function(el){revealObserver.observe(el)});
+    for (const el of targets) revealObserver.observe(el);
   }
 
-  /* ---------- Sakramente: Detailauswahl (sakramente.html) ---------- */
-  function initSakrItems(){
-    document.addEventListener('click',function(e){
-      var jump=e.target.closest('.sakr-chip[data-target]');
-      if(jump){
-        var target=document.getElementById(jump.dataset.target);
-        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+  /* ---------- Sakramente-Band: Sprung zu Bereich oder Abschnitt ---------- */
+  function initSakrChips() {
+    document.addEventListener('click', (e) => {
+      /* Aspersdorf: Sprung zu einem Abschnitt innerhalb desselben Bereichs */
+      const jump = e.target.closest('.sakr-chip[data-target]');
+      if (jump) {
+        const target = document.getElementById(jump.dataset.target);
+        if (target) target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
         return;
       }
-      var item=e.target.closest('.sakr-item[data-pane],.sakr-chip[data-pane]');
-      if(!item)return;
-      var sidebar=qs('.sidebar');
-      if(!sidebar)return;
-      if(activatePane(sidebar,item.dataset.pane)){
-        history.replaceState(null,'',location.pathname+'#'+item.dataset.pane);
-        var section=sidebar.closest('.with-sidebar');
-        if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
-        revealObserve();
-      }
+      /* Sakramente: den passenden Tab oeffnen */
+      const chip = e.target.closest('.sakr-chip[data-pane]');
+      const sidebar = chip && qs('.sidebar');
+      if (!sidebar || !activatePane(sidebar, chip.dataset.pane)) return;
+      history.replaceState(null, '', `${location.pathname}#${chip.dataset.pane}`);
+      const section = sidebar.closest('.with-sidebar');
+      if (section) section.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+      revealObserve();
     });
   }
 
   /* ---------- Init ---------- */
-  document.addEventListener('DOMContentLoaded',function(){
+  document.addEventListener('DOMContentLoaded', () => {
     initDropdowns();
     initMobileNav();
     initSidebarTabs();
-    initSakrItems();
+    initSakrChips();
     markCurrentNav();
-    initAttributeFilter('.kal-m-btn','.kal-row','m');
-    initAttributeFilter('.week-filter-btn','.week-row','day');
-
+    initAttributeFilter('.week-filter-btn[data-filter]', '.week-row', 'day');
 
     routeToHash();
     bleedBands();
-    window.addEventListener('resize',bleedBands);
-    window.addEventListener('load',bleedBands);
+    window.addEventListener('resize', scheduleBleed);
+    window.addEventListener('load', bleedBands);
     revealObserve();
   });
 
-  window.addEventListener('hashchange',function(){routeToHash();bleedBands()});
+  window.addEventListener('hashchange', () => {
+    routeToHash();
+    bleedBands();
+  });
 })();

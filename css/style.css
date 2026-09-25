@@ -41,6 +41,9 @@ body{
 
 img{max-width:100%;height:auto}
 
+/* Das hidden-Attribut gilt immer, auch wenn eine Klasse display setzt */
+[hidden]{display:none!important}
+
 /* ══ NAV ══ */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:300;
@@ -83,11 +86,14 @@ nav{
   border-top:2px solid var(--gold);
   box-shadow:0 12px 40px rgba(0,0,0,0.12);
   min-width:240px;width:max-content;
-  opacity:0;pointer-events:none;
-  transition:opacity .2s,transform .2s;
+  /* visibility zusaetzlich zu opacity: geschlossene Menues sind so auch
+     fuer Tastatur und Screenreader verborgen. Beim Oeffnen sofort sichtbar
+     (Delay 0), beim Schliessen erst nach dem Ausblenden (Delay .2s). */
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .2s,transform .2s,visibility 0s linear .2s;
   z-index:400;
 }
-.nav-item.open .mega{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0)}
+.nav-item.open .mega{opacity:1;visibility:visible;pointer-events:all;transform:translateX(-50%) translateY(0);transition-delay:0s}
 
 .mega-group{padding:0.5rem 0}
 .mega-group+.mega-group{border-top:1px solid var(--line)}
@@ -126,7 +132,8 @@ nav{
 .mob-sub:hover{color:var(--gold);padding-left:2.7rem}
 
 /* ══ HERO ══ */
-.hero{position:relative;height:calc(100vh - var(--nav-h));min-height:520px;display:flex;align-items:flex-end;overflow:hidden}
+/* svh = sichtbare Hoehe auf dem Handy (ohne eingeblendete Adressleiste); aeltere Browser nutzen vh */
+.hero{position:relative;height:calc(100vh - var(--nav-h));height:calc(100svh - var(--nav-h));min-height:520px;display:flex;align-items:flex-end;overflow:hidden}
 .hero-img{position:absolute;inset:0;background-size:cover;background-position:center top;animation:hero-zoom 22s ease-out forwards}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(17,17,16,0.78) 0%,rgba(17,17,16,0.35) 55%,rgba(17,17,16,0.05) 100%)}
 .hero-content{position:relative;z-index:2;padding:3.5rem 3rem;width:100%;max-width:860px}
@@ -143,7 +150,6 @@ nav{
 /* ══ SHARED ══ */
 .section{padding:5rem 2.5rem}
 .inner{max-width:var(--max);margin:0 auto}
-.section-soft{background:var(--bg-soft)}
 
 .s-label{font-size:0.7rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold);margin-bottom:0.7rem;font-weight:600;display:flex;align-items:center;gap:0.7rem}
 .s-label::before{content:'';display:block;width:1.5rem;height:1px;background:var(--gold)}
@@ -194,21 +200,18 @@ nav{
 .sidebar-group-label:first-child{padding-top:0}
 .sidebar-divider{height:1px;background:var(--line);margin:0.5rem 0}
 
-.tab-content-area{padding:0 0 0 3rem}
+/* min-width:0: Grid-Spalten wachsen sonst mit breitem Inhalt mit (z. B. der
+   einzeiligen Monatsleiste) und schieben Uhrzeit/Ort rechts aus dem Bild */
+.tab-content-area{padding:0 0 0 3rem;min-width:0}
 .tab-pane{display:none}
 .tab-pane.active{display:block;animation:pane-in .45s ease-out}
 @keyframes pane-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* Cards */
 .cards-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
 .cards-stack{display:flex;flex-direction:column;gap:1.5rem;max-width:46rem}
 
 /* Personenkarten (Mitbrueder, Organisten, Gastdirigenten, Solisten ...) */
-.people-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-.person-card{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--gold);overflow:hidden;transition:box-shadow .25s,transform .25s}
-.person-card:hover{box-shadow:0 4px 24px rgba(0,0,0,0.07);transform:translateY(-2px)}
-.person-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
 .person-body{padding:1.5rem}
 .person-name{font-family:var(--serif);font-size:1.05rem;color:var(--black);margin-bottom:0.2rem}
 .person-role{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.8rem}
@@ -232,7 +235,6 @@ nav{
 .hs-piece{font-family:var(--serif);font-size:1.2rem;font-style:italic;color:var(--white);margin-bottom:0.2rem}
 .hs-meta{font-size:0.8rem;color:rgba(255,255,255,0.45)}
 .hs-time{font-family:var(--serif);font-size:2rem;font-weight:400;color:var(--white)}
-.hs-date{font-size:0.72rem;color:rgba(255,255,255,0.4);text-align:right;margin-top:0.2rem}
 
 .home-3col{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
 .h3c{padding:2.5rem 2rem;border-right:1px solid var(--line);transition:background .2s;text-decoration:none;display:block}
@@ -241,18 +243,6 @@ nav{
 .h3c-tag{font-size:0.7rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.4rem}
 .h3c-title{font-family:var(--serif);font-size:1.4rem;font-weight:400;color:var(--black);margin-bottom:0.3rem}
 .h3c-sub{font-size:0.88rem;color:var(--text-mid)}
-
-.home-split{display:grid;grid-template-columns:1fr 1fr}
-.hs-block{position:relative;overflow:hidden;min-height:420px;display:flex;align-items:flex-end}
-.hs-block-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s}
-.hs-block:hover .hs-block-bg{transform:scale(1.03)}
-.hs-block-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(17,17,16,0.72) 0%,transparent 65%)}
-.hs-block-content{position:relative;z-index:2;padding:2.5rem}
-.hs-block-tag{font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.35rem}
-.hs-block-title{font-family:var(--serif);font-size:1.8rem;font-style:italic;color:var(--white);margin-bottom:0.8rem}
-.hs-block-link{font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.75);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:0.4rem;transition:color .2s,gap .2s}
-.hs-block-link::after{content:'\2192'}
-.hs-block-link:hover{color:var(--gold);gap:0.7rem}
 
 .quote-band{padding:5rem 2.5rem;background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
 .qt{font-family:var(--serif);font-size:clamp(1.5rem,3vw,2.4rem);font-style:italic;font-weight:400;color:var(--black);line-height:1.45;max-width:50rem;margin:0 auto 1rem}
@@ -277,12 +267,6 @@ nav{
 
 /* Aktuelles */
 .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
-.news-item{display:block;border:1px solid var(--line);padding:1.8rem;text-decoration:none;transition:border-color .25s,box-shadow .25s,transform .25s}
-.news-item:hover{border-color:var(--gold);box-shadow:0 4px 24px rgba(0,0,0,0.06);transform:translateY(-2px)}
-.news-date{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem}
-.news-title{font-family:var(--serif);font-size:1.15rem;color:var(--black);margin-bottom:0.5rem}
-.news-text{font-size:0.88rem;color:var(--text-mid);line-height:1.7;margin-bottom:0.9rem}
-.news-item .link-arr{pointer-events:none}
 
 /* ══ INSTAGRAM ══ */
 .insta-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem}
@@ -342,14 +326,6 @@ nav{
 .week-name{font-family:var(--serif);font-size:1.05rem;color:var(--black);margin-bottom:0.15rem}
 .week-loc{font-size:0.75rem;color:var(--text-light)}
 .week-time{font-family:var(--serif);font-size:1.3rem;color:var(--black);white-space:nowrap}
-
-/* Sakramente */
-.sakr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);margin-top:2rem}
-.sakr-item{background:var(--white);padding:1.8rem;border-left:3px solid transparent;transition:border-color .25s,background .25s;cursor:pointer;text-align:left;width:100%;display:block;font:inherit;color:inherit}
-.sakr-item:hover,.sakr-item.active{border-color:var(--gold);background:var(--gold-pale)}
-.sakr-nr{font-family:var(--serif);font-size:1.8rem;font-weight:400;color:var(--line);margin-bottom:0.3rem}
-.sakr-name{font-family:var(--serif);font-size:1.05rem;font-weight:400;color:var(--black);margin-bottom:0.3rem}
-.sakr-desc{font-size:0.85rem;color:var(--text-mid);line-height:1.7}
 
 /* Galerie */
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:200px;gap:0.6rem;margin-top:2rem}
@@ -424,7 +400,7 @@ footer{background:var(--near-black);padding:2.5rem;display:flex;justify-content:
 /* Reveal (IntersectionObserver) */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s cubic-bezier(.2,.6,.2,1),transform .65s cubic-bezier(.2,.6,.2,1)}
 .reveal.in{opacity:1;transform:none}
-.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:1024px){
@@ -437,14 +413,11 @@ footer{background:var(--near-black);padding:2.5rem;display:flex;justify-content:
   .aug-grid,.organ-grid{grid-template-columns:1fr;gap:2rem}
   .aug-img{position:static;aspect-ratio:16/9}
   .home-3col,.hochamt-strip{grid-template-columns:1fr}
-  .home-split{grid-template-columns:1fr}
   .contact-strip{grid-template-columns:1fr 1fr}
   .kal-wrap{grid-template-columns:1fr;gap:1.5rem}
   .kal-months{flex-direction:row;flex-wrap:wrap}
   .kal-m-btn{width:auto}
   .facts{grid-template-columns:repeat(3,1fr)}
-  .sakr-grid{grid-template-columns:1fr}
-  .people-grid{grid-template-columns:1fr}
   .person-card-wide{grid-template-columns:1fr}
   .person-card-wide img{aspect-ratio:3/4;max-width:200px}
   .herzgruft{grid-template-columns:1fr;gap:2rem}
@@ -461,7 +434,7 @@ footer{background:var(--near-black);padding:2.5rem;display:flex;justify-content:
   .hero-content,.section,.page-hero{padding-left:1.5rem;padding-right:1.5rem}
   .section{padding-top:3.5rem;padding-bottom:3.5rem}
   .page-hero{padding-top:3rem;padding-bottom:3rem}
-  .cards-2,.cards-3{grid-template-columns:1fr}
+  .cards-2{grid-template-columns:1fr}
   .gallery{display:flex;flex-direction:column}
   .g-item{aspect-ratio:4/3}
   .contact-strip{grid-template-columns:1fr;padding:2.5rem 1.5rem}
@@ -485,16 +458,15 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 ::selection{background:var(--gold-pale);color:var(--blue)}
 
 /* Überschriften in Cormorant: feiner, festlicher */
-.hero-h1,.s-title,.ph-title,.qt,.hs-block-title,.h3c-title,.card-title,.person-name,
-.news-title,.organ-title,.sakr-name,.fact-n,.timeline-year,.hs-piece,.insta-fallback-title{
+.hero-h1,.s-title,.ph-title,.qt,.h3c-title,.card-title,.person-name,.organ-title,.fact-n,.timeline-year,.hs-piece,.insta-fallback-title{
   font-family:var(--serif);font-weight:500;letter-spacing:.005em}
 .hero-h1{font-weight:500;letter-spacing:-.005em}
 .s-title{font-size:clamp(2.2rem,3.8vw,3.1rem)}
 .ph-title{font-size:clamp(2.5rem,5.5vw,4.5rem)}
 .qt{font-weight:400}
-.card-title,.person-name,.news-title,.organ-title,.sakr-name{font-size:1.3rem}
+.card-title,.person-name,.organ-title{font-size:1.3rem}
 .h3c-title{font-size:1.6rem}
-.gd-time,.week-time,.kal-time,.kal-d,.hs-time,.week-name,.kal-name,.sakr-nr,.fee-table td:last-child{font-family:var(--serif);font-weight:500}
+.gd-time,.week-time,.kal-time,.kal-d,.hs-time,.week-name,.kal-name,.fee-table td:last-child{font-family:var(--serif);font-weight:500}
 .gd-time{font-size:1.7rem}.week-time,.kal-time{font-size:1.45rem}.kal-d{font-size:2.3rem}
 .week-name,.kal-name{font-size:1.2rem}
 .bio-p,.s-text{font-size:1.02rem}
@@ -527,15 +499,14 @@ nav::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;ba
 .s-label::before{width:2rem}
 
 /* Karten: feine Linien, weiche Schatten */
-.card,.person-card,.person-card-wide{border-top-width:1px;border-top-color:var(--line);box-shadow:0 1px 0 rgba(16,25,46,.03);position:relative}
-.card::before,.person-card::before,.person-card-wide::before{content:'';position:absolute;left:0;right:0;top:-1px;height:2px;background:var(--gold);transform:scaleX(.18);transform-origin:left;transition:transform .5s var(--ease)}
-.person-card,.person-card-wide{position:relative}
-.card:hover::before,.person-card:hover::before,.person-card-wide:hover::before{transform:scaleX(1)}
-.card:hover,.person-card:hover,.news-item:hover{box-shadow:0 14px 40px rgba(16,25,46,.09);transform:translateY(-3px)}
-.card,.person-card,.news-item,.person-card-wide{transition:box-shadow .4s var(--ease),transform .4s var(--ease),border-color .3s}
-.person-role,.news-date,.kal-type,.week-day,.h3c-tag{letter-spacing:.2em}
-.person-bio,.card-text,.news-text{font-size:.93rem}
-.person-card img{filter:saturate(.92)}
+.card,.person-card-wide{border-top-width:1px;border-top-color:var(--line);box-shadow:0 1px 0 rgba(16,25,46,.03);position:relative}
+.card::before,.person-card-wide::before{content:'';position:absolute;left:0;right:0;top:-1px;height:2px;background:var(--gold);transform:scaleX(.18);transform-origin:left;transition:transform .5s var(--ease)}
+.person-card-wide{position:relative}
+.card:hover::before,.person-card-wide:hover::before{transform:scaleX(1)}
+.card:hover{box-shadow:0 14px 40px rgba(16,25,46,.09);transform:translateY(-3px)}
+.card,.person-card-wide{transition:box-shadow .4s var(--ease),transform .4s var(--ease),border-color .3s}
+.person-role,.kal-type,.week-day,.h3c-tag{letter-spacing:.2em}
+.person-bio,.card-text{font-size:.93rem}
 
 /* Abschnitte */
 .section{padding:6rem 2.5rem}
@@ -549,15 +520,12 @@ nav::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;ba
 
 /* Dunkle Flächen: Marine, helleres Gold für Lesbarkeit */
 .hochamt-strip{background:var(--blue-deep);border-bottom:1px solid rgba(216,185,110,.3)}
-.hs-tag,.hs-block-tag,.herzgruft .s-label{color:var(--gold-l)}
+.hs-tag,.herzgruft .s-label{color:var(--gold-l)}
 .herzgruft .s-label::before{background:var(--gold-l)}
-.hs-meta,.hs-date{color:rgba(255,255,255,.65)}
-.hs-block-link{color:rgba(255,255,255,.88)}.hs-block-link:hover{color:var(--gold-l)}
-.hs-block-ov{background:linear-gradient(to top,rgba(16,25,46,.82) 0%,transparent 68%)}
+.hs-meta{color:rgba(255,255,255,.65)}
 .herzgruft .s-text{color:rgba(255,255,255,.8)}
 .herzgruft-facts .fact-l{color:rgba(255,255,255,.65)}
 .week-filter-btn.active,.kal-m-btn:hover,.kal-m-btn.active{background:var(--blue);border-color:var(--blue);color:var(--gold-l)}
-.sakr-nr{color:#d9d1bd}
 .timeline{border-left-color:var(--gold-l)}
 .timeline-item::before{background:var(--bg);border:2px solid var(--gold);width:11px;height:11px;left:-2.5rem}
 .fact{background:var(--bg-warm)}.fact-n{color:var(--blue)}
@@ -571,7 +539,7 @@ footer{background:var(--blue-deep);border-top:1px solid rgba(216,185,110,.3)}
 /* Barrierefreiheit: sichtbarer Fokus */
 a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .hero a:focus-visible,footer a:focus-visible,.herzgruft a:focus-visible{outline-color:var(--gold-l)}
-.nav-btn,.sidebar-item,.kal-m-btn,.week-filter-btn,.sakr-item,.btn,.week-filter-btn{min-height:36px}
+.nav-btn,.sidebar-item,.kal-m-btn,.week-filter-btn,.btn{min-height:36px}
 
 @media(max-width:768px){
   .section{padding:4rem 1.5rem}
@@ -674,7 +642,7 @@ a.kal-row:hover .kal-name{color:var(--gold)}
   /* Augustinus-Porträt */
   .aug-img{position:static;aspect-ratio:1200/1637;width:100%;max-width:24rem;margin:0 auto 1rem;background-size:cover}
   /* Personenfotos (Mitbrüder, Organisten, Dirigenten, Solisten) */
-  .person-card img,.person-card-wide img{aspect-ratio:auto;height:auto;object-fit:contain}
+  .person-card-wide img{aspect-ratio:auto;height:auto;object-fit:contain}
   .person-card-wide img{max-width:220px}
   /* Bilder mit fest eingestelltem Ausschnitt (Chor, Orchester, Kirchen, Wallfahrt …) */
   img[style*="object-fit:cover"]{aspect-ratio:auto!important;height:auto!important;max-height:none!important}
@@ -828,17 +796,12 @@ body{font-variant-numeric:lining-nums}
 
 /* Tablet: Personenkarten in zwei Spalten */
 @media(min-width:601px) and (max-width:1024px){
-  .people-grid{grid-template-columns:repeat(2,1fr)}
   .person-card-wide{grid-template-columns:150px minmax(0,1fr);gap:1.5rem}
   .person-card-wide.compact{grid-template-columns:110px minmax(0,1fr)}
 }
 
 /* Smartphone: Foto klein links, Text daneben */
 @media(max-width:600px){
-  .people-grid{grid-template-columns:1fr;gap:1rem}
-  .person-card{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:start}
-  .person-card:hover{transform:none}
-  .person-card img{height:100%;aspect-ratio:3/4;max-width:none}
   .person-body{padding:1rem 1.1rem;min-width:0}
   .person-name{font-size:1.2rem}
   .person-card-wide{grid-template-columns:96px minmax(0,1fr);gap:1rem;padding:1rem;align-items:start}
@@ -850,7 +813,6 @@ body{font-variant-numeric:lining-nums}
 
   /* Aktuelles: eine Spalte, Fußzeile umbrechen */
   .news-grid{grid-template-columns:1fr;gap:1rem}
-  .news-item{padding:1.4rem}
   .f-links{flex-wrap:wrap;justify-content:center;gap:.5rem 1.4rem}
   footer{gap:1.2rem}
 
@@ -859,8 +821,6 @@ body{font-variant-numeric:lining-nums}
   .patron-box{padding:1.6rem 1.4rem}
   .contact-strip{gap:1.6rem}
   .h3c{padding:1.8rem 1.5rem}
-  .hs-block{min-height:300px}
-  .hs-block-content{padding:1.6rem}
   .herzgruft{padding:3.5rem 1.5rem}
   .quote-band{padding:3.5rem 1.5rem}
 }
@@ -888,7 +848,6 @@ body{font-variant-numeric:lining-nums}
 .news-card-text{font-size:.93rem;line-height:1.65;color:var(--text-mid);margin-bottom:1rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .news-card .link-arr{margin-top:auto}
 .news-more{display:flex;justify-content:center;margin-top:2.6rem}
-.news-more[hidden]{display:none}
 
 /* Fenster */
 html.nd-lock{overflow:hidden}
@@ -1082,4 +1041,31 @@ html.nd-lock{overflow:hidden}
 @media(max-width:768px){
   #kal-archive-list .news-years{display:none}
   #kal-archive-list .kal-year-wrap{display:block}
+}
+
+/* ============================================================
+   BARRIEREFREIHEIT — ohne Einfluss auf das normale Erscheinungsbild
+   ============================================================ */
+/* Nur für Screenreader: optisch unsichtbar, aber vorgelesen */
+.visually-hidden{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* Sprunglink: erscheint erst beim Ansteuern mit der Tastatur */
+.skip-link{position:fixed;left:1rem;top:.75rem;z-index:1000;padding:.7rem 1.2rem;background:var(--blue-deep);color:#fff;
+  font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;text-decoration:none;
+  transform:translateY(-200%);transition:transform .2s var(--ease)}
+.skip-link:focus{transform:none;outline:2px solid var(--gold-l);outline-offset:2px}
+/* Sprungziel nicht unter der festen Navigation verstecken */
+#main{scroll-margin-top:var(--nav-h)}
+
+/* Reduzierte Bewegung: auch weiches Scrollen und Einblendungen der Tabs abschalten */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .tab-pane.active{animation:none}
+  .skip-link{transition:none}
+}
+
+/* Windows-Kontrastmodus: Hintergrundfarben entfallen dort, Linien-Symbole brauchen eine Systemfarbe */
+@media(forced-colors:active){
+  .hamburger span,.nav-btn.current::after,.divider-g,.divider-g::before{background:CanvasText}
+  .kal-m-btn.active,.news-year.active,.sidebar-item.active,.week-filter-btn.active{border-color:Highlight}
 }

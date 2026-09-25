@@ -6,222 +6,262 @@
    hochamt.html. Kommende Termine mit Monatsfilter in #p-hochaemter,
    vergangene in #p-hochaemter-archiv.
    ============================================================ */
-(function(){
+(function () {
   'use strict';
 
-  var DATA_URL = '../data/hochaemter.csv';
-  var ARCHIVE_DIR = '../data/archiv/';
-  var HD = window.HochamtData;
-  var MONTH_NAMES = HD.MONTHS;
-  var WEEKDAYS = ['So','Mo','Di','Mi','Do','Fr','Sa'];
-  var MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  const HD = window.HochamtData;
+  if (!HD) return;
 
-  function qs(sel,ctx){return (ctx||document).querySelector(sel)}
+  const DATA_URL = '../data/hochaemter.csv';
+  const ARCHIVE_DIR = '../data/archiv/';
+  /* Gleicher Umbruch wie in style.css: darunter ist das Seitenmenue eine Tab-Leiste */
+  const wideLayout = window.matchMedia('(min-width: 1025px)');
 
-  function monthKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
-  function monthLabel(d){return MONTH_NAMES[d.getMonth()]+' '+d.getFullYear()}
+  const qs = (sel, ctx = document) => ctx.querySelector(sel);
+  const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-  function rowHTML(entry){
-    var d=entry.dateObj;
-    var year='<div class="kal-wd kal-yr">'+MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear()+'</div>';
-    return '<a class="kal-row" data-m="'+monthKey(d)+'" href="hochamt.html?id='+entry.id+'">'+
-      '<div><div class="kal-d">'+HD.pad(d.getDate())+'</div><div class="kal-wd">'+WEEKDAYS[d.getDay()]+'</div>'+year+'</div>'+
-      '<div><div class="kal-name">'+HD.esc(entry.piece||entry.type)+'</div><div class="kal-type">'+HD.esc(entry.type)+'</div></div>'+
-      '<div><div class="kal-time">'+entry.time+'</div><div class="kal-loc">'+HD.esc(entry.location)+'</div></div>'+
-      '<div class="kal-go" aria-hidden="true">&rarr;</div>'+
+  const monthKey = (d) => `${d.getFullYear()}-${HD.pad(d.getMonth() + 1)}`;
+  const monthLabel = (d) => `${HD.MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+
+  /* Aktiven Knopf einer Gruppe markieren (Optik ueber .active, Screenreader ueber aria-pressed) */
+  function setPressed(buttons, active) {
+    for (const b of buttons) {
+      b.classList.toggle('active', b === active);
+      b.setAttribute('aria-pressed', String(b === active));
+    }
+  }
+
+  function rowHTML(entry) {
+    const d = entry.dateObj;
+    return `<a class="kal-row" data-m="${monthKey(d)}" href="hochamt.html?id=${encodeURIComponent(entry.id)}">` +
+      `<div><div class="kal-d">${HD.pad(d.getDate())}</div><div class="kal-wd">${HD.WEEKDAYS_SHORT[d.getDay()]}</div>` +
+        `<div class="kal-wd kal-yr">${HD.MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}</div></div>` +
+      `<div><div class="kal-name">${HD.esc(entry.piece || entry.type)}</div><div class="kal-type">${HD.esc(entry.type)}</div></div>` +
+      `<div><div class="kal-time">${HD.esc(entry.time)}</div><div class="kal-loc">${HD.esc(entry.location)}</div></div>` +
+      '<div class="kal-go" aria-hidden="true">&rarr;</div>' +
     '</a>';
   }
 
-  function renderUpcoming(entries,monthsEl,listEl){
-    if(!entries.length){
-      listEl.innerHTML='<p class="s-text">Derzeit sind keine kommenden Hochämter eingetragen.</p>';
+  /* Auswahlfeld fuer das Handy (dort sind die Reiter ausgeblendet) */
+  function selectHTML(id, label, options) {
+    return `<label class="kal-select-label" for="${id}">${label}</label>` +
+      `<select id="${id}" class="kal-select">` +
+        options.map((o) => `<option value="${HD.esc(o.value)}">${HD.esc(o.label)}</option>`).join('') +
+      '</select>';
+  }
+
+  /* Monatszeile (Querformat): eine Zeile, seitlich verschiebbar per Wischen,
+     Trackpad oder Ziehen mit der Maus. Blendkanten zeigen, dass es weitergeht. */
+  function initMonthScroller(monthsEl) {
+    function updateEdges() {
+      const max = monthsEl.scrollWidth - monthsEl.clientWidth;
+      monthsEl.classList.toggle('has-left', monthsEl.scrollLeft > 2);
+      monthsEl.classList.toggle('has-right', monthsEl.scrollLeft < max - 2);
+    }
+    monthsEl.addEventListener('scroll', updateEdges, { passive: true });
+    window.addEventListener('resize', updateEdges);
+    updateEdges();
+
+    /* Ziehen mit der Maus (Touch und Trackpad scrollen nativ) */
+    let down = false;
+    let moved = false;
+    let startX = 0;
+    let startLeft = 0;
+    monthsEl.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      down = true;
+      moved = false;
+      startX = e.clientX;
+      startLeft = monthsEl.scrollLeft;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 5) {
+        moved = true;
+        monthsEl.classList.add('dragging');
+      }
+      if (moved) monthsEl.scrollLeft = startLeft - dx;
+    });
+    window.addEventListener('pointerup', () => {
+      if (!down) return;
+      down = false;
+      monthsEl.classList.remove('dragging');
+    });
+    /* Nach dem Ziehen keinen Monat versehentlich anklicken (Capture-Phase faengt den Klick ab) */
+    monthsEl.addEventListener('click', (e) => {
+      if (!moved) return;
+      e.preventDefault();
+      e.stopPropagation();
+      moved = false;
+    }, true);
+
+    /* Aktiven Reiter in die Mitte der Zeile holen */
+    return function showActive() {
+      const active = qs('.kal-m-btn.active', monthsEl);
+      if (!active || monthsEl.scrollWidth <= monthsEl.clientWidth) return;
+      monthsEl.scrollTo({ left: active.offsetLeft - (monthsEl.clientWidth - active.offsetWidth) / 2, behavior: 'smooth' });
+    };
+  }
+
+  /* Wird der Bereich kuerzer, rutscht das klebende Seitenmenue (Querformat) aus dem Bild:
+     dann an den Anfang des Bereichs zurueckscrollen. */
+  function keepSidebarInView() {
+    const sidebar = qs('.sidebar');
+    if (!sidebar || !wideLayout.matches) return;
+    const navH = (qs('nav') || { offsetHeight: 72 }).offsetHeight;
+    if (sidebar.getBoundingClientRect().top < navH) {
+      const wrap = sidebar.closest('.with-sidebar') || sidebar;
+      window.scrollTo(0, wrap.getBoundingClientRect().top + window.pageYOffset - navH - 16);
+    }
+  }
+
+  function renderUpcoming(entries, monthsEl, listEl) {
+    if (!entries.length) {
+      listEl.innerHTML = '<p class="s-text">Derzeit sind keine kommenden Hochämter eingetragen.</p>';
       return;
     }
-    var groups=[];
-    var seen={};
-    entries.forEach(function(entry){
-      var d=entry.dateObj;
-      var key=monthKey(d);
-      if(!seen[key]){seen[key]=true;groups.push({key:key,label:monthLabel(d)})}
-    });
 
-    monthsEl.innerHTML=groups.map(function(g,i){
-      return '<button class="kal-m-btn'+(i===0?' active':'')+'" data-filter="'+g.key+'">'+g.label+'</button>';
-    }).join('');
-
-    /* Handy: Monatsauswahl als Aufklappmenue (die Reiter sind dort ausgeblendet) */
-    var oldSel=monthsEl.parentNode.querySelector('.kal-select-wrap');
-    if(oldSel)oldSel.parentNode.removeChild(oldSel);
-    var selWrap=document.createElement('div');
-    selWrap.className='kal-select-wrap';
-    selWrap.innerHTML='<label class="kal-select-label" for="kal-select">Monat wählen</label>'+
-      '<select id="kal-select" class="kal-select">'+groups.map(function(g){
-        return '<option value="'+g.key+'">'+g.label+'</option>';
-      }).join('')+'</select>';
-    monthsEl.parentNode.insertBefore(selWrap,monthsEl);
-    var select=selWrap.querySelector('select');
-
-    listEl.innerHTML=entries.map(rowHTML).join('');
-
-    var rows=Array.prototype.slice.call(listEl.querySelectorAll('.kal-row'));
-    var buttons=Array.prototype.slice.call(monthsEl.querySelectorAll('.kal-m-btn'));
-    function applyFilter(key){
-      rows.forEach(function(row){row.style.display=(row.dataset.m===key)?'':'none'});
+    /* Monate in der Reihenfolge ihres ersten Termins */
+    const groups = new Map();
+    for (const { dateObj } of entries) {
+      const key = monthKey(dateObj);
+      if (!groups.has(key)) groups.set(key, monthLabel(dateObj));
     }
-    /* Wird der Bereich kuerzer, rutscht das klebende Seitenmenue (Querformat) aus dem Bild:
-       dann an den Anfang des Bereichs zurueckscrollen. */
-    function keepSidebarInView(){
-      var sidebar=qs('.sidebar');
-      if(!sidebar||window.innerWidth<=1024)return;
-      var navH=(qs('nav')||{offsetHeight:72}).offsetHeight;
-      if(sidebar.getBoundingClientRect().top<navH){
-        var wrap=sidebar.closest('.with-sidebar')||sidebar;
-        window.scrollTo(0,wrap.getBoundingClientRect().top+window.pageYOffset-navH-16);
-      }
-    }
-    buttons.forEach(function(btn){
-      btn.addEventListener('click',function(){
-        buttons.forEach(function(b){b.classList.remove('active')});
-        btn.classList.add('active');
-        select.value=btn.dataset.filter;
+    const months = [...groups].map(([value, label]) => ({ value, label }));
+
+    monthsEl.innerHTML = months.map((g, i) =>
+      `<button type="button" class="kal-m-btn${i === 0 ? ' active' : ''}" data-filter="${g.value}" aria-pressed="${i === 0}">${g.label}</button>`
+    ).join('');
+
+    const oldSelect = qs('.kal-select-wrap', monthsEl.parentNode);
+    if (oldSelect) oldSelect.remove();
+    const selWrap = document.createElement('div');
+    selWrap.className = 'kal-select-wrap';
+    selWrap.innerHTML = selectHTML('kal-select', 'Monat wählen', months);
+    monthsEl.before(selWrap);
+    const select = qs('select', selWrap);
+
+    listEl.innerHTML = entries.map(rowHTML).join('');
+
+    const rows = qsa('.kal-row', listEl);
+    const buttons = qsa('.kal-m-btn', monthsEl);
+    const applyFilter = (key) => {
+      for (const row of rows) row.style.display = row.dataset.m === key ? '' : 'none';
+    };
+    const showActive = initMonthScroller(monthsEl);
+
+    for (const btn of buttons) {
+      btn.addEventListener('click', () => {
+        setPressed(buttons, btn);
+        select.value = btn.dataset.filter;
         showActive();
         applyFilter(btn.dataset.filter);
         keepSidebarInView();
       });
-    });
-    /* Monatszeile (Querformat): eine Zeile, seitlich verschiebbar (Wischen, Ziehen, Trackpad) */
-    function updateEdges(){
-      var max=monthsEl.scrollWidth-monthsEl.clientWidth;
-      monthsEl.classList.toggle('has-left',monthsEl.scrollLeft>2);
-      monthsEl.classList.toggle('has-right',monthsEl.scrollLeft<max-2);
     }
-    function showActive(){
-      var a=monthsEl.querySelector('.kal-m-btn.active');
-      if(!a||monthsEl.scrollWidth<=monthsEl.clientWidth)return;
-      var left=a.offsetLeft-(monthsEl.clientWidth-a.offsetWidth)/2;
-      if(monthsEl.scrollTo)monthsEl.scrollTo({left:left,behavior:'smooth'});else monthsEl.scrollLeft=left;
-    }
-    monthsEl.addEventListener('scroll',updateEdges);
-    window.addEventListener('resize',updateEdges);
-    updateEdges();
-    (function(){
-      var down=false,startX=0,startLeft=0,moved=false;
-      monthsEl.addEventListener('pointerdown',function(e){
-        if(e.pointerType!=='mouse'||e.button!==0)return;
-        down=true;moved=false;startX=e.clientX;startLeft=monthsEl.scrollLeft;
-      });
-      window.addEventListener('pointermove',function(e){
-        if(!down)return;
-        var dx=e.clientX-startX;
-        if(Math.abs(dx)>5){moved=true;monthsEl.classList.add('dragging')}
-        if(moved)monthsEl.scrollLeft=startLeft-dx;
-      });
-      window.addEventListener('pointerup',function(){
-        if(!down)return;
-        down=false;monthsEl.classList.remove('dragging');
-      });
-      /* Nach dem Ziehen keinen Monat versehentlich anklicken */
-      monthsEl.addEventListener('click',function(e){
-        if(moved){e.preventDefault();e.stopPropagation();moved=false}
-      },true);
-    })();
-
-    select.addEventListener('change',function(){
-      var btn=buttons.filter(function(b){return b.dataset.filter===select.value})[0];
-      if(btn)btn.click();
+    select.addEventListener('change', () => {
+      const btn = buttons.find((b) => b.dataset.filter === select.value);
+      if (btn) btn.click();
     });
-    if(groups.length)applyFilter(groups[0].key);
+    applyFilter(months[0].value);
   }
 
-  function renderArchive(entries,archiveYears,listEl){
-    var sorted=entries.slice().sort(function(a,b){return (b.date+b.time).localeCompare(a.date+a.time)});
-    var counts={};
-    sorted.forEach(function(e){var y=e.dateObj.getFullYear();counts[y]=(counts[y]||0)+1});
-    var years=Object.keys(counts).map(Number);
-    var known={};   /* Anzahl der Termine je Archivjahr (aus data/archiv/jahre.json) */
-    (archiveYears||[]).forEach(function(a){
-      var y=Number(a&&a.jahr!==undefined?a.jahr:a);
-      if(a&&a.anzahl)known[y]=a.anzahl;
-      if(years.indexOf(y)<0)years.push(y);
-    });
-    years.sort(function(a,b){return b-a});
-    if(!years.length){
-      listEl.innerHTML='<p class="s-text">Es sind noch keine vergangenen Hochämter erfasst.</p>';
+  function renderArchive(entries, archiveYears, listEl) {
+    /* Anzahl je Jahr: aus den geladenen Terminen, sonst aus data/archiv/jahre.json */
+    const counts = new Map();
+    for (const e of entries) {
+      const y = e.dateObj.getFullYear();
+      counts.set(y, (counts.get(y) || 0) + 1);
+    }
+    const known = new Map();
+    for (const a of archiveYears || []) {
+      const y = Number(a && a.jahr !== undefined ? a.jahr : a);
+      if (!y) continue;
+      if (a && a.anzahl) known.set(y, a.anzahl);
+      if (!counts.has(y)) counts.set(y, 0);
+    }
+    const years = [...counts.keys()].sort((a, b) => b - a);
+    if (!years.length) {
+      listEl.innerHTML = '<p class="s-text">Es sind noch keine vergangenen Hochämter erfasst.</p>';
       return;
     }
+    const yearCount = (y) => counts.get(y) || known.get(y) || 0;
 
     /* Nach Jahren geordnet, wie im Neuigkeiten-Archiv: neuestes Jahr zuerst.
        Aeltere Jahre liegen in eigenen Dateien und werden erst beim Anklicken geladen. */
-    var yearCount=function(y){return counts[y]||known[y]||0};
-    listEl.innerHTML=
-      /* Handy: Jahr als Aufklappmenue (die Reiter sind dort ausgeblendet) */
-      '<div class="kal-select-wrap kal-year-wrap">'+
-        '<label class="kal-select-label" for="kal-year-select">Jahr wählen</label>'+
-        '<select id="kal-year-select" class="kal-select">'+
-          years.map(function(y){return '<option value="'+y+'">'+y+(yearCount(y)?' ('+yearCount(y)+')':'')+'</option>'}).join('')+
-        '</select>'+
-      '</div>'+
-      '<div class="news-years" role="group" aria-label="Jahr wählen">'+
-        years.map(function(y,i){
-          return '<button type="button" class="news-year'+(i===0?' active':'')+'" data-year="'+y+'">'+y+((counts[y]||known[y])?'<span class="news-year-n">'+(counts[y]||known[y])+'</span>':'')+'</button>';
-        }).join('')+
-      '</div>'+
+    listEl.innerHTML =
+      `<div class="kal-select-wrap kal-year-wrap">${selectHTML('kal-year-select', 'Jahr wählen',
+        years.map((y) => ({ value: y, label: yearCount(y) ? `${y} (${yearCount(y)})` : String(y) })))}</div>` +
+      '<div class="news-years" role="group" aria-label="Jahr wählen">' +
+        years.map((y, i) =>
+          `<button type="button" class="news-year${i === 0 ? ' active' : ''}" data-year="${y}" aria-pressed="${i === 0}">${y}` +
+          (yearCount(y) ? `<span class="news-year-n">${yearCount(y)}</span>` : '') + '</button>'
+        ).join('') +
+      '</div>' +
       '<div class="kal-archive-rows" aria-live="polite"></div>';
 
-    var rowsEl=listEl.querySelector('.kal-archive-rows');
-    var token=0;
-    function fill(list){
-      rowsEl.innerHTML=list.slice().sort(function(a,b){return (b.date+b.time).localeCompare(a.date+a.time)}).map(rowHTML).join('');
-    }
-    function showYear(y){
-      var mine=++token;
-      if(counts[y]){
-        fill(sorted.filter(function(e){return e.dateObj.getFullYear()===y}));
+    const rowsEl = qs('.kal-archive-rows', listEl);
+    const yearSelect = qs('#kal-year-select', listEl);
+    const buttons = qsa('.news-year', listEl);
+    const fill = (list) => { rowsEl.innerHTML = list.slice().sort(HD.byDateTimeDesc).map(rowHTML).join(''); };
+
+    /* Wird schnell zwischen Jahren gewechselt, darf eine spaet eintreffende
+       Antwort das zuletzt gewaehlte Jahr nicht ueberschreiben: jede Anfrage
+       bekommt eine laufende Nummer, nur die neueste wird angezeigt. */
+    let request = 0;
+    async function showYear(y) {
+      const mine = ++request;
+      const own = entries.filter((e) => e.dateObj.getFullYear() === y);
+      if (own.length) {
+        fill(own);
         return;
       }
-      rowsEl.innerHTML='<p class="s-text">Wird geladen …</p>';
-      HD.loadYear(ARCHIVE_DIR,y).then(function(list){
-        if(mine===token)fill(list);
-      }).catch(function(){
-        if(mine===token)rowsEl.innerHTML='<p class="s-text">Dieses Jahr konnte nicht geladen werden.</p>';
-      });
+      rowsEl.innerHTML = '<p class="s-text">Wird geladen …</p>';
+      try {
+        const list = await HD.loadYear(ARCHIVE_DIR, y);
+        if (mine === request) fill(list);
+      } catch {
+        if (mine === request) rowsEl.innerHTML = '<p class="s-text">Dieses Jahr konnte nicht geladen werden.</p>';
+      }
     }
-    var yearSelect=listEl.querySelector('#kal-year-select');
-    listEl.addEventListener('click',function(ev){
-      var btn=ev.target.closest('.news-year');
-      if(!btn)return;
-      Array.prototype.forEach.call(listEl.querySelectorAll('.news-year'),function(x){x.classList.toggle('active',x===btn)});
-      if(yearSelect)yearSelect.value=btn.dataset.year;
+
+    listEl.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('.news-year');
+      if (!btn) return;
+      setPressed(buttons, btn);
+      if (yearSelect) yearSelect.value = btn.dataset.year;
       showYear(Number(btn.dataset.year));
     });
-    if(yearSelect)yearSelect.addEventListener('change',function(){
-      var btn=listEl.querySelector('.news-year[data-year="'+yearSelect.value+'"]');
-      if(btn)btn.click();
-    });
+    if (yearSelect) {
+      yearSelect.addEventListener('change', () => {
+        const btn = buttons.find((b) => b.dataset.year === yearSelect.value);
+        if (btn) btn.click();
+      });
+    }
     showYear(years[0]);
   }
 
-  function init(){
-    var monthsEl=qs('#kal-months');
-    var listEl=qs('#kal-list');
-    var archiveList=qs('#kal-archive-list');
-    if(!monthsEl&&!listEl&&!archiveList)return;
+  async function init() {
+    const monthsEl = qs('#kal-months');
+    const listEl = qs('#kal-list');
+    const archiveList = qs('#kal-archive-list');
+    if (!monthsEl && !listEl && !archiveList) return;
 
-    Promise.all([HD.load(DATA_URL),archiveList?HD.archiveYears(ARCHIVE_DIR):Promise.resolve([])])
-      .then(function(res){
-        var data=res[0];
-        var upcoming=data.filter(HD.isUpcoming);
-        var past=data.filter(function(e){return !HD.isUpcoming(e)});
-
-        if(monthsEl&&listEl)renderUpcoming(upcoming,monthsEl,listEl);
-        if(archiveList)renderArchive(past,res[1],archiveList);
-      })
-      .catch(function(){
-        var message='<p class="s-text">Der Hochamt-Kalender konnte nicht geladen werden. Das vollständige Programm finden Sie unter <a class="link-arr" href="https://hochamt.augustiner.at">hochamt.augustiner.at</a>.</p>';
-        if(listEl)listEl.innerHTML=message;
-        if(archiveList)archiveList.innerHTML=message;
-      });
+    try {
+      const [data, years] = await Promise.all([
+        HD.load(DATA_URL),
+        archiveList ? HD.archiveYears(ARCHIVE_DIR) : []
+      ]);
+      const { upcoming, past } = HD.splitByDate(data);
+      if (monthsEl && listEl) renderUpcoming(upcoming, monthsEl, listEl);
+      if (archiveList) renderArchive(past, years, archiveList);
+    } catch {
+      const message = '<p class="s-text">Der Hochamt-Kalender konnte nicht geladen werden. Das vollständige Programm finden Sie unter <a class="link-arr" href="https://hochamt.augustiner.at">hochamt.augustiner.at</a>.</p>';
+      if (listEl) listEl.innerHTML = message;
+      if (archiveList) archiveList.innerHTML = message;
+    }
   }
 
-  document.addEventListener('DOMContentLoaded',init);
+  document.addEventListener('DOMContentLoaded', init);
 })();
