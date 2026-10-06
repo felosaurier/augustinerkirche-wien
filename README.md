@@ -20,7 +20,7 @@
 
 <br>
 
-[Lokal ansehen](#lokal-ansehen) &nbsp;&nbsp;·&nbsp;&nbsp; [Hochämter pflegen](#hochämter-pflegen) &nbsp;&nbsp;·&nbsp;&nbsp; [Neuigkeiten](#neuigkeiten-und-plakate-pflegen) &nbsp;&nbsp;·&nbsp;&nbsp; [Aufbau](#aufbau) &nbsp;&nbsp;·&nbsp;&nbsp; [Gestaltung](#gestaltung)
+[Lokal ansehen](#lokal-ansehen) &nbsp;&nbsp;·&nbsp;&nbsp; [Verwaltung](#verwaltung) &nbsp;&nbsp;·&nbsp;&nbsp; [Hochämter pflegen](#hochämter-pflegen) &nbsp;&nbsp;·&nbsp;&nbsp; [Neuigkeiten](#neuigkeiten-und-plakate-pflegen) &nbsp;&nbsp;·&nbsp;&nbsp; [Aufbau](#aufbau) &nbsp;&nbsp;·&nbsp;&nbsp; [Gestaltung](#gestaltung)
 
 <br>
 
@@ -39,12 +39,40 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 | **Startseite** | Aktuelles, Identität von Pfarre und Kloster, Herzgruft, die nächsten Hochämter |
 | **Gottesdienste** | Liturgiezeiten, Wochenüberblick, Runden in St. Augustin |
 | **Sakramente** | Taufe, Eucharistie, Firmung, Trauung, Wiedereintritt und mehr |
-| **Kirchenmusik** | Hochämter und Archiv, Chor, Kammerchor, Orchester, Solisten, Organisten, Orgeln |
+| **Kirchenmusik** | Hochämter und Archiv, Chor, Kammerchor, Repertoire des Chores (mit Suche), Orchester, Solisten, Organisten, Orgeln |
 | **Hochamt (Detail)** | Zelebrant, Dirigent, Chor, Orchester, Solisten, Organist und weitere Musik je Termin |
 | **Chronik** | Geschichte, Zeitstrahl, Herzgruft, Führungen, Augustinerorden, Mitbrüder |
 | **Aspersdorf** | Pfarre, Pfarrkirche St. Georg, Sakramente, Pfarrfriedhof |
 | **Runden** | Eigene Seiten für Bibelpur, Fensterblick, Fußwallfahrt, Ministranten und weitere Gruppen |
 | **Impressum · Datenschutz** | Rechtliche Angaben |
+
+## Verwaltung
+
+Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B. `http://localhost:8123/admin/`). Sie ist im Stil der Website gestaltet, nicht in der öffentlichen Navigation verlinkt und nur mit **Benutzername und Passwort** erreichbar.
+
+| Bereich | Was du dort machst |
+|---|---|
+| **Übersicht** | Stand aller Bereiche, nächstes Hochamt, neueste Meldung, „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel) und die letzten Änderungen auf diesem Gerät |
+| **Hochämter** | Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
+| **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
+| **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick), dazu Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
+| **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl, „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
+| **Personen** | Mitbrüder, Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto, Aufgabe und Text |
+| **Solisten** | Liste für Kirchenmusik → Solisten: Foto (wird quadratisch zugeschnitten, Ausschnitt verschiebbar), Stimmlage, verstorben |
+| **Repertoire** | Repertoire des Chores nach Komponisten, mit Werken und Hinweisen (z. B. Uraufführungen in der Augustinerkirche) |
+| **Zugänge** | Nur für Admins: Zugang anlegen, Rolle, Name oder Passwort ändern, entfernen |
+
+**Rollen:** *Admin* darf zusätzlich Zugänge verwalten, *Redaktion* pflegt alle Inhalte. Es gibt immer mindestens einen Admin; der erste Zugang aus der Ersteinrichtung ist Admin.
+
+**Texte formatieren:** In Texten von Runden und Personen wird `[Text](pages/chronik.html)` zum Link, `*Wort*` kursiv; E-Mail- und https-Adressen werden automatisch verlinkt.
+
+**Erster Aufruf:** Gibt es noch keinen Zugang, führt die Anmeldeseite durch die Ersteinrichtung: Projektordner verbinden, Namen und Passwort festlegen. Weitere Zugänge legst du danach unter „Zugänge“ an.
+
+**Speichern:** In Chrome oder Edge am Computer einmal den **Projektordner verbinden**; die Verbindung gilt für alle Bereiche, nach einem Neustart des Browsers genügt ein Klick auf „Zugriff erlauben“. Dann landet jede Änderung sofort in der richtigen Datei, Bilder im richtigen Ordner. In anderen Browsern erscheint unten eine Leiste mit den geänderten Dateien zum Herunterladen und dem Ordner, in den sie gehören. Zum Veröffentlichen die Änderungen hochladen (commit und push).
+
+**Sicherheit:** Die Zugänge stehen in `admin/zugaenge.json`, Passwörter nur als Prüfsumme (PBKDF2-SHA256 mit Salz, 600 000 Runden), nie im Klartext. Nach fünf falschen Versuchen gibt es eine Wartezeit, eine Sitzung endet nach vier Stunden ohne Aktivität. Weil die Website statisch ist, prüft der Browser das Passwort, nicht ein Server: Die Anmeldung hält Unbefugte von der Verwaltung fern, ist aber kein Ersatz für einen Server-Schutz. Ändern lässt sich die öffentliche Website ohnehin nur über den Projektordner. Das gilt auch für die Rollen: Sie steuern, was die Verwaltung anzeigt, ersetzen aber keine Rechte am Server. Wer zusätzlich absichern möchte, schützt den Ordner `admin/` am Webserver mit einem Passwort (z. B. `.htaccess` bei Apache) oder lädt ihn gar nicht erst hoch.
+
+**Inhalte aus Datendateien:** Gottesdienste, Runden, Personen, Kontakt und Repertoire stehen in `data/*.json` und werden von `js/inhalte.js` auf die Seiten gezeichnet. Der Inhalt im HTML bleibt als Rückfall stehen, falls eine Datei einmal nicht geladen werden kann; maßgeblich sind die Datendateien.
 
 ## Hochämter pflegen
 
@@ -67,11 +95,11 @@ Alle Termine stehen in **[`data/hochaemter.csv`](data/hochaemter.csv)** — eine
 - **Kirchenmusik → Hochämter:** kommende Termine nach Monaten. Jeder Termin führt zur Detailseite; leere Spalten werden dort ausgeblendet.
 - **Archiv:** vergangene Termine erscheinen automatisch unter „Vergangene Hochämter“.
 
-**Archiv nach Jahren:** Die Termine von 2015 bis 2025 (übernommen von hochamt.augustiner.at, inklusive Zelebrant, Besetzung und Programm) liegen je Jahr in einer eigenen Datei: `data/archiv/hochaemter-JJJJ.csv`, mit gleichen Spalten wie `data/hochaemter.csv`. Ein Jahr wird auf der Seite „Vergangene Hochämter“ erst geladen, wenn man es anklickt, das hält die Startseite schnell. Die Liste der Archivjahre steht in `data/archiv/jahre.json` (je Jahr `{"jahr": 2025, "anzahl": 86}`, die Anzahl erscheint hochgestellt am Jahres-Reiter). Zum Jahreswechsel: die Zeilen des Vorjahres aus `hochaemter.csv` in eine neue Datei `data/archiv/hochaemter-JJJJ.csv` verschieben und das Jahr samt Anzahl in `jahre.json` eintragen (neuestes zuerst).
+**Archiv nach Jahren:** Die Termine von 2015 bis 2025 (übernommen von hochamt.augustiner.at, inklusive Zelebrant, Besetzung und Programm) liegen je Jahr in einer eigenen Datei: `data/archiv/hochaemter-JJJJ.csv`, mit gleichen Spalten wie `data/hochaemter.csv`. Ein Jahr wird auf der Seite „Vergangene Hochämter“ erst geladen, wenn man es anklickt, das hält die Startseite schnell. Die Liste der Archivjahre steht in `data/archiv/jahre.json` (je Jahr `{"jahr": 2025, "anzahl": 86}`, die Anzahl erscheint hochgestellt am Jahres-Reiter). Zum Jahreswechsel: In der Verwaltung unter „Hochämter“ erscheint ab Jänner ein Hinweis, ein Klick auf „Ins Archiv verschieben“ erledigt alles. Von Hand: die Zeilen des Vorjahres aus `hochaemter.csv` in eine neue Datei `data/archiv/hochaemter-JJJJ.csv` verschieben und das Jahr samt Anzahl in `jahre.json` eintragen (neuestes zuerst).
 
 **In Excel speichern:** *Speichern unter → CSV UTF-8 (durch Trennzeichen getrennt)* und `data/hochaemter.csv` ersetzen.
 
-Alternativ bearbeitest du die Liste komfortabel im Browser über `pages/hochaemter-verwaltung.html` (Formular mit allen Spalten, CSV-Import und -Export). Die Seite ist bewusst nicht in der Navigation verlinkt.
+Am bequemsten bearbeitest du die Liste in der [Verwaltung](#verwaltung) unter „Hochämter“.
 
 ## Neuigkeiten und Plakate pflegen
 
@@ -80,18 +108,20 @@ Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine
 | Spalte | Inhalt |
 |---|---|
 | Datum | Veröffentlichungsdatum, TT.MM.JJJJ (bestimmt die Reihenfolge) |
+| Bis | Letzter Tag auf der Startseite, TT.MM.JJJJ; danach steht die Meldung im Archiv. In der Verwaltung Pflichtfeld; leer = ohne Ende |
 | Kategorie | z. B. Kirchenmusik, Konzert, Pfarrleben, Hochamt |
 | Titel, Kurztext | erscheinen auf der Karte |
 | Infos | Angaben im Fenster als `Bezeichnung: Wert`, mehrere mit <code>&#124;</code> trennen (z. B. `Zeit: 19:30 Uhr`) |
 | Details | Absätze im Fenster, mehrere mit <code>&#124;</code> trennen |
 | Plakat | ein Bild pro Meldung: erscheint als Vorschau auf der Karte (oberer Ausschnitt) und groß im Fenster |
 | Vorschaubild | nur nötig, wenn es kein Plakat gibt (z. B. ein Foto); ohne beides erscheint das goldene Logo |
-| Link, Linktext | optionale Schaltfläche im Fenster |
+| Link, Linktext | optionale Schaltfläche im Fenster. In der Verwaltung wählt man das Ziel aus Listen (Hochamt oder Konzert, Runde, Seite der Website, andere Website) statt eine Adresse einzutippen; liegt am Enddatum ein Termin, wird er zum Verknüpfen vorgeschlagen. Ist eine Meldung mit einem Hochamt verknüpft (`pages/hochamt.html?id=…`), erscheint ihr Plakat auch auf der Seite dieses Termins. Die Verknüpfung lässt sich in der Meldung oder im Fenster des Termins wieder aufheben; wird ein Termin verschoben, zieht die Meldung mit |
+| Weiterer Link, Weiterer Linktext | optionale zweite Schaltfläche, z. B. „Karten beim Musikverein“ zum Kartenverkauf; ist die Meldung mit einem Termin verknüpft, steht sie auch unter dem Plakat auf dessen Seite |
 
-**Am einfachsten über die Verwaltungsseite** `pages/news-verwaltung.html` (nicht in der Navigation verlinkt): Formular für Titel, Kurztext, Infos, Beschreibung, Link und Bild, dazu eine Liste aller Meldungen zum Bearbeiten und Entfernen. In Chrome oder Edge einmal den Projektordner verbinden, dann werden `news.csv` und das Bild (automatisch im richtigen Jahresordner, in voller Größe) direkt gespeichert. In anderen Browsern gibt es Downloads mit Anleitung, wohin die Dateien gehören.
+**Am einfachsten in der [Verwaltung](#verwaltung) unter „Neuigkeiten“:** Formular für Titel, Kurztext, Infos, Beschreibung, Link und Bild mit Vorschau der Karte, dazu eine Liste aller Meldungen zum Bearbeiten und Löschen. Mit verbundenem Projektordner werden `news.csv` und das Bild (automatisch im richtigen Jahresordner, in voller Größe) direkt gespeichert, sonst gibt es Downloads mit Angabe, wohin die Dateien gehören.
 
-- **Startseite:** zeigt immer die **6 neuesten** Meldungen. Ein Klick öffnet ein Fenster mit Plakat, Infos und Details.
-- **Archiv** (`pages/archiv.html`): alle älteren Meldungen wandern **automatisch** dorthin und sind **nach Jahren** geordnet.
+- **Startseite:** zeigt die **6 neuesten** Meldungen, deren Enddatum („Bis“) noch nicht vorbei ist. Ein Klick öffnet ein Fenster mit Plakat, Infos und Details.
+- **Archiv** (`pages/archiv.html`): ältere und abgelaufene Meldungen wandern **automatisch** dorthin und sind **nach Jahren** geordnet.
 - Jede Meldung hat einen eigenen Link, z. B. `index.html?news=…`, der das Fenster direkt öffnet.
 - **Neues Plakat:** Bild als WebP in den **Jahresordner** legen, passend zum Datum der Meldung: Plakate von 2026 nach `assets/img/news/2026/`, Plakate von 2027 nach `assets/img/news/2027/` usw. Dann eine Zeile in `news.csv` ergänzen und dort den Pfad eintragen, z. B. `assets/img/news/2026/bibelpur-2026-27.webp`. Ein Bild reicht, die Vorschau wird automatisch zugeschnitten.
 
@@ -119,28 +149,56 @@ pages/
   archiv.html                 Archiv der Neuigkeiten, nach Jahren
   impressum.html              Impressum
   datenschutz.html            Datenschutzerklärung
-  hochaemter-verwaltung.html  Internes Werkzeug für die Hochamt-Tabelle
-  news-verwaltung.html        Internes Werkzeug: Neuigkeiten und Plakate anlegen
-  runden/                     Detailseiten je Pfarrgruppe
+  hochaemter-verwaltung.html  Weiterleitung zur neuen Verwaltung
+  news-verwaltung.html        Weiterleitung zur neuen Verwaltung
+  runden/                     Detailseiten je Pfarrgruppe; runde.html?id=… für neu angelegte Runden
+admin/                        Verwaltung (nur mit Anmeldung)
+  index.html                  Anmeldung und Ersteinrichtung
+  uebersicht.html             Übersicht
+  hochaemter.html             Hochämter pflegen
+  neuigkeiten.html            Neuigkeiten und Plakate pflegen
+  solisten.html               Solisten pflegen
+  gottesdienste.html          Wochenplan, Pfarrkanzlei und Kontakt pflegen
+  runden.html                 Runden pflegen
+  personen.html               Mitbrüder, Leitung, Gastdirigenten, Organisten pflegen
+  repertoire.html             Repertoire des Chores pflegen
+  zugaenge.html               Zugänge und Rollen verwalten (nur Admin)
+  zugaenge.json               Zugänge (Passwörter nur als Prüfsumme)
 css/
   style.css                   Zentrales Stylesheet
+  admin.css                   Zusätze für die Verwaltung
 js/
   main.js                     Navigation, Tabs, Hash-Routing, Einblend-Effekte
   hochaemter-data.js          Gemeinsames Modul: CSV-Tabelle, HTML-Escaping, sichere Links
   hochaemter.js               Kalender und Archiv auf der Musik-Seite
   hochaemter-start.js         Nächste Hochämter auf der Startseite
   news.js                     Neuigkeiten: 6 Karten, Fenster mit Plakat, Jahresarchiv
-  news-verwaltung.js          Verwaltungsseite für Neuigkeiten
   lightbox.js                 Plakate vergrößern (Hintergrund unscharf)
   hochamt-detail.js           Detailseite eines Hochamts
-  hochaemter-verwaltung.js    Verwaltungsformular
   solisten.js                 Solistenliste
+  admin.js                    Verwaltung: Anmeldung, Kopfleiste, Projektordner, Speichern, Fenster
+  admin-anmeldung.js          Anmeldung und Ersteinrichtung
+  admin-uebersicht.js         Übersicht
+  admin-hochaemter.js         Hochämter pflegen, Jahreswechsel
+  admin-neuigkeiten.js        Neuigkeiten pflegen
+  admin-solisten.js           Solisten pflegen
+  admin-gottesdienste.js      Wochenplan, Pfarrkanzlei und Kontakt
+  admin-runden.js             Runden pflegen
+  admin-personen.js           Personen pflegen
+  admin-repertoire.js         Repertoire pflegen
+  admin-zugaenge.js           Zugänge und Rollen verwalten
+  inhalte.js                  Zeichnet Gottesdienste, Runden, Personen, Kontakt und Repertoire aus data/
   instagram.js                Instagram-Bereich mit Fallback
 data/
   hochaemter.csv              Hochamt-Termine ab dem laufenden Jahr inkl. Mitwirkende
   archiv/                     Hochamt-Archiv 2015–2025: hochaemter-JJJJ.csv je Jahr, jahre.json
   news.csv                    Neuigkeiten und Plakate
   solisten.json               Solistinnen und Solisten mit Stimmlage
+  gottesdienste.json          Wochenplan der Gottesdienste
+  runden.json                 Runden: Übersicht und Inhalt der Seiten
+  personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten
+  kontakt.json                Adresse, Telefon, E-Mail, Öffnungszeiten der Pfarrkanzlei
+  repertoire.json             Repertoire des Chores
 assets/
   logo.png, logo-gold.png     Logo (grün und golden), Favicons, Zierlinie
   img/

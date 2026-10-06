@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Personen — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-personen.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title" id="ps-title">Personen <em>pflegen</em></h1>
+      <p class="ph-sub" id="ps-sub">Mit Foto, Aufgabe und Text.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="ps-new" data-icon="plus">Person hinzufügen</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <div class="adm-toolbar">
+    <div class="adm-seg" role="group" aria-label="Gruppe wählen" id="ps-groups"></div>
+    <a class="adm-act" id="ps-view" href="../pages/chronik.html#p-wien" target="_blank" rel="noopener" data-icon="external">Auf der Website ansehen</a>
+  </div>
+  <p class="adm-count" id="ps-count" role="status" style="margin-bottom:1rem"></p>
+  <div id="ps-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Person bearbeiten -->
+<dialog class="adm-dialog" id="ps-dlg" aria-labelledby="ps-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="ps-dlg-tag">Person hinzufügen</div>
+      <h2 class="adm-dlg-title" id="ps-dlg-title">Neue Person</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="ps-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Person</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="f-gruppe">Gruppe<span class="adm-req">Pflichtfeld</span></label>
+          <select class="adm-input" id="f-gruppe"></select>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-rolle">Aufgabe</label>
+          <input class="adm-input" type="text" id="f-rolle" placeholder="z. B. Organistin von St. Augustin"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-name">Name mit Titeln<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-name" placeholder="z. B. P. Mag. Matthias Schlögl OSA" required/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-text">Text</label>
+          <textarea class="adm-input" id="f-text" rows="7" aria-describedby="f-text-hint"></textarea>
+          <span class="adm-hint" id="f-text-hint">Ein Absatz pro Zeile. Links: <code>[Text](pages/chronik.html#p-wien)</code>; <code>*Wort*</code> wird kursiv.</span>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="adm-fs">
+      <legend>Foto</legend>
+      <div class="adm-image">
+        <div class="adm-image-prev" id="ps-prev"></div>
+        <div class="adm-field">
+          <label class="adm-drop" id="ps-drop">
+            <span data-icon="image"></span>
+            <span class="adm-drop-main">Foto hierher ziehen oder <u>auswählen</u></span>
+            <span class="adm-hint">Hochformat passt am besten; wird auf höchstens 1000 Pixel verkleinert</span>
+            <input type="file" id="f-file" accept="image/*" aria-describedby="ps-imginfo"/>
+          </label>
+          <span class="adm-hint" id="ps-imginfo"></span>
+          <div><button type="button" class="adm-act danger" id="ps-img-remove" data-icon="close" hidden>Foto entfernen</button></div>
+        </div>
+      </div>
+      <div class="adm-field" style="margin-top:1rem">
+        <label class="adm-label" for="f-bildtext">Bildbeschreibung und Fotonachweis</label>
+        <input class="adm-input" type="text" id="f-bildtext" placeholder="z. B. Peter Tiefengraber | © Franz Josef Rupprecht"/>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="ps-delete" data-icon="trash">Entfernen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="ps-form" class="btn btn-dark" id="ps-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

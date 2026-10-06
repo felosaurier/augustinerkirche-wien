@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de" data-adm="public">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Anmelden — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-anmeldung.js" defer></script>
+</head>
+<body class="adm">
+
+<main class="login">
+  <div class="login-art">
+    <figure class="login-quote">
+      <blockquote><p>Unruhig ist unser Herz, bis es Ruhe findet in dir.</p></blockquote>
+      <figcaption><span>Hl. Augustinus · Confessiones I, 1</span></figcaption>
+    </figure>
+  </div>
+
+  <div class="login-panel">
+    <div class="login-box">
+      <a class="nav-logo-wrap login-brand" href="../index.html">
+        <img class="nav-logo-img" src="../assets/logo.png" alt="" width="38" height="38"/>
+        <div><div class="nav-logo-text">Augustiner<span>kirche</span> Wien</div><span class="nav-logo-sub">Verwaltung</span></div>
+      </a>
+
+      <p class="adm-muted" id="login-loading">Wird geladen …</p>
+
+      <!-- Anmelden -->
+      <section id="login-view" aria-labelledby="login-h" hidden>
+        <div class="ph-tag">Verwaltung</div>
+        <h1 class="ph-title" id="login-h">Willkommen</h1>
+        <p class="ph-sub">Bitte mit Benutzername und Passwort anmelden.</p>
+        <div id="login-msg"></div>
+        <form id="login-form" class="login-form" novalidate>
+          <div class="adm-field">
+            <label class="adm-label" for="l-user">Benutzername</label>
+            <input class="adm-input" id="l-user" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="l-pw">Passwort</label>
+            <div class="adm-pw">
+              <input class="adm-input" id="l-pw" name="password" type="password" autocomplete="current-password" required/>
+              <button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-dark" id="l-submit">Anmelden</button>
+        </form>
+        <p class="adm-hint" style="margin-top:1.4rem">Passwort vergessen? Jemand mit Zugang kann dir unter „Zugänge“ ein neues Passwort geben.</p>
+      </section>
+
+      <!-- Ersteinrichtung: noch kein Zugang vorhanden -->
+      <section id="setup-view" aria-labelledby="setup-h" hidden>
+        <div class="ph-tag">Ersteinrichtung</div>
+        <h1 class="ph-title" id="setup-h">Ersten <em>Zugang</em> anlegen</h1>
+        <p class="ph-sub">Es gibt noch keinen Zugang zur Verwaltung. In zwei Schritten legst du den ersten an.</p>
+        <div id="setup-msg"></div>
+        <div class="login-form">
+          <div class="login-step" id="setup-step1">
+            <span class="login-step-n" aria-hidden="true">1</span>
+            <div class="login-step-body">
+              <b>Projektordner verbinden</b>
+              <span id="setup-step1-txt">Den Ordner wählen, in dem <code>index.html</code> liegt. Dort wird der Zugang gespeichert.</span>
+              <div><button type="button" class="btn btn-gold btn-sm" id="setup-connect">Projektordner verbinden</button></div>
+            </div>
+          </div>
+          <div class="login-step">
+            <span class="login-step-n" aria-hidden="true">2</span>
+            <div class="login-step-body"><b>Deine Anmeldedaten</b>Das Passwort wird nirgends im Klartext gespeichert, bitte gut merken.</div>
+          </div>
+        </div>
+        <form id="setup-form" class="login-form" novalidate style="margin-top:1.15rem">
+          <div class="adm-field">
+            <label class="adm-label" for="s-name">Dein Name</label>
+            <input class="adm-input" id="s-name" type="text" autocomplete="name" placeholder="z. B. Maria Huber" required/>
+            <span class="adm-hint">Erscheint oben in der Verwaltung.</span>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="s-user">Benutzername</label>
+            <input class="adm-input" id="s-user" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required/>
+            <span class="adm-hint">Kleinbuchstaben, ohne Leerzeichen, z. B. <code>maria</code>.</span>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="s-pw">Passwort</label>
+            <div class="adm-pw">
+              <input class="adm-input" id="s-pw" type="password" autocomplete="new-password" aria-describedby="s-pw-hint" required/>
+              <button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+            <div class="adm-strength" id="s-pw-meter" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <span class="adm-hint" id="s-pw-hint">Mindestens 10 Zeichen.</span>
+            <div><button type="button" class="adm-list-add" id="s-suggest">Sicheres Passwort vorschlagen</button></div>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="s-pw2">Passwort wiederholen</label>
+            <input class="adm-input" id="s-pw2" type="password" autocomplete="new-password" required/>
+          </div>
+          <button type="submit" class="btn btn-dark" id="s-submit">Zugang anlegen</button>
+        </form>
+      </section>
+
+      <a class="login-back" href="../index.html"><span aria-hidden="true">&larr;</span> Zur Website</a>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

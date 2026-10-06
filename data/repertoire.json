@@ -1,0 +1,962 @@
+{
+  "titel": "Repertoire",
+  "einleitung": "Auszug aus dem ständigen Repertoire des Chores von St. Augustin.",
+  "komponisten": [
+    {
+      "name": "Jehan Alain",
+      "sortierung": "Alain",
+      "lebensdaten": "1911–1940",
+      "werke": [
+        {
+          "titel": "„Messe modale“, Messe modale en septuor, JA 136",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Johann Georg Albrechtsberger",
+      "sortierung": "Albrechtsberger",
+      "lebensdaten": "1736–1809",
+      "werke": [
+        {
+          "titel": "„Missa Sancti Josephi“",
+          "hinweis": ""
+        },
+        {
+          "titel": "Messe D-Dur",
+          "hinweis": ""
+        },
+        {
+          "titel": "Messe Es-Dur",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Anonymus",
+      "sortierung": "Anonymus",
+      "lebensdaten": "",
+      "werke": [
+        {
+          "titel": "„Zauberflötenmesse“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Ludwig van Beethoven",
+      "sortierung": "Beethoven",
+      "lebensdaten": "1770–1827",
+      "werke": [
+        {
+          "titel": "„Christus am Ölberge“, op. 85",
+          "hinweis": ""
+        },
+        {
+          "titel": "Große Messe C-Dur, op. 86",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Antonio Bertali",
+      "sortierung": "Bertali",
+      "lebensdaten": "1605–1669",
+      "werke": [
+        {
+          "titel": "„Missa semiminima“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Anton Bruckner",
+      "sortierung": "Bruckner",
+      "lebensdaten": "1824–1896",
+      "werke": [
+        {
+          "titel": "Choral-Messe F-Dur, WAB 9",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Windhaager-Messe“, Messe C-Dur, WAB 25",
+          "hinweis": ""
+        },
+        {
+          "titel": "Große Messe d-Moll, Messe Nr. 1, WAB 26",
+          "hinweis": ""
+        },
+        {
+          "titel": "Große Messe e-Moll, Messe Nr. 2, WAB 27",
+          "hinweis": ""
+        },
+        {
+          "titel": "Große Messe f-Moll, Messe Nr. 3, WAB 28",
+          "hinweis": "Uraufführung am 16.06.1872 in der Augustinerkirche"
+        }
+      ]
+    },
+    {
+      "name": "William Byrd",
+      "sortierung": "Byrd",
+      "lebensdaten": "~1543–1623",
+      "werke": [
+        {
+          "titel": "Mass for four voices",
+          "hinweis": ""
+        },
+        {
+          "titel": "Mass for five voices",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Antonio Caldara",
+      "sortierung": "Caldara",
+      "lebensdaten": "1670–1736",
+      "werke": [
+        {
+          "titel": "Messe B-Dur",
+          "hinweis": ""
+        },
+        {
+          "titel": "Messe G-Dur",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa rorate",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Missa Clementiae“",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Missa Sancti Francisci“",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Missa Sancti Josephi“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Marc-Antoine Charpentier",
+      "sortierung": "Charpentier",
+      "lebensdaten": "~1643–1704",
+      "werke": [
+        {
+          "titel": "„Messe de minuit pour noël“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Peter Cornelius",
+      "sortierung": "Cornelius",
+      "lebensdaten": "1824–1874",
+      "werke": [
+        {
+          "titel": "Messe d-Moll",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Leo Delibes",
+      "sortierung": "Delibes",
+      "lebensdaten": "1836–1891",
+      "werke": [
+        {
+          "titel": "Messe brève",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Anton Diabelli",
+      "sortierung": "Diabelli",
+      "lebensdaten": "1781–1858",
+      "werke": [
+        {
+          "titel": "„Landmesse“, Messe Es-Dur, op. 107",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Maurice Duruflé",
+      "sortierung": "Duruflé",
+      "lebensdaten": "1902–1986",
+      "werke": [
+        {
+          "titel": "Requiem, op. 9",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Missa cum iubilo“, op. 11",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Antonín Dvořák",
+      "sortierung": "Dvořák",
+      "lebensdaten": "1841–1904",
+      "werke": [
+        {
+          "titel": "Große Messe D-Dur, op. 86",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Petr Eben",
+      "sortierung": "Eben",
+      "lebensdaten": "1929–2007",
+      "werke": [
+        {
+          "titel": "Missa adventus et quadragesimæ",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Joseph Eybler",
+      "sortierung": "Eybler",
+      "lebensdaten": "1785–1846",
+      "werke": [
+        {
+          "titel": "„Leopoldsmesse“, Missa de Sancto Leopoldo D-Dur",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Gabriel Fauré",
+      "sortierung": "Fauré",
+      "lebensdaten": "1845–1924",
+      "werke": [
+        {
+          "titel": "„Messe basse“",
+          "hinweis": ""
+        },
+        {
+          "titel": "Requiem, op. 48",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Gabriel Fauré & André Messager",
+      "sortierung": "Fauré Messager",
+      "lebensdaten": "1845–1924 / 1853–1929",
+      "werke": [
+        {
+          "titel": "„Messe des pêcheurs de Villerville“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "César Franck",
+      "sortierung": "Franck",
+      "lebensdaten": "1822–1890",
+      "werke": [
+        {
+          "titel": "„Die Sieben Worte Christi am Kreuz“",
+          "hinweis": ""
+        },
+        {
+          "titel": "Messe A-Dur, op. 12",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Johann Joseph Fux",
+      "sortierung": "Fux",
+      "lebensdaten": "1660–1741",
+      "werke": [
+        {
+          "titel": "„Missa Corporis Christi“",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa solemnis",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Andrea Gabrieli",
+      "sortierung": "Gabrieli",
+      "lebensdaten": "1533–1585",
+      "werke": [
+        {
+          "titel": "Missa brevis",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Jacobus Gallus",
+      "sortierung": "Gallus",
+      "lebensdaten": "1550–1591",
+      "werke": [
+        {
+          "titel": "Messe G-Dur",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa canonica",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa sopra „Un gay bergier“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Johann Baptist Gänsbacher",
+      "sortierung": "Gänsbacher",
+      "lebensdaten": "1778–1844",
+      "werke": [
+        {
+          "titel": "„Harmoniemesse“, Missa in Es „für Bozen“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Charles Gounod",
+      "sortierung": "Gounod",
+      "lebensdaten": "1818–1893",
+      "werke": [
+        {
+          "titel": "„Messe aux cathédrales“, Messe brève G-Dur, op. 6",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Messe aux chapelles“, Messe brève C-Dur, op. 7",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Cäcilienmesse“, Messe solennelle de Sainte Cécile G-Dur, op. 12",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Félix Alexandre Guilmant",
+      "sortierung": "Guilmant",
+      "lebensdaten": "1837–1911",
+      "werke": [
+        {
+          "titel": "Messe solennelle, op. 11",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Hans Leo Hassler",
+      "sortierung": "Hassler",
+      "lebensdaten": "1564–1612",
+      "werke": [
+        {
+          "titel": "Missa secunda",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa tertia",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Missa Dixit Maria“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Johann Michael Haydn",
+      "sortierung": "Haydn",
+      "lebensdaten": "1737–1806",
+      "werke": [
+        {
+          "titel": "Requiem c-Moll, MH 154",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Oboenmesse“, Missa Sancti Hieronymi, MH 254",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Jubiläumsmesse“, Missa in honorem Sancti Ruperti C-Dur, MH 290",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Chiemseemesse“, Missa in honorem Sanctae Ursulae, MH 546",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa quadragesimalis a-Moll, MH 552",
+          "hinweis": ""
+        },
+        {
+          "titel": "Deutsches Hochamt, MH 560",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Franz Joseph Haydn",
+      "sortierung": "Haydn",
+      "lebensdaten": "1732–1809",
+      "werke": [
+        {
+          "titel": "„Jugendmesse“, Missa brevis F-Dur, Hob. XXII:1",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa „Rorate coeli desuper“, Missa brevis G-Dur, Hob. XXII:3",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Große Orgelsolomesse“, Missa solemnis in honorem B.V.M. Es-Dur, Hob. XXII:4",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Nicolaimesse“, Missa Sancti Nicolai G-Dur, Hob. XXII:5",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Cäcilienmesse“, Missa Cellensis in honorem B.V.M. B-Dur, Hob. XXII:6",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Kleine Orgelsolomesse“, Missa brevis Sancti Joannis de Deo B-Dur, Hob. XXII:7",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Mariazellermesse“, Missa Cellensis C-Dur, Hob. XXII:8",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Paukenmesse“, Missa in tempore belli C-Dur, Hob. XXII:9",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Heiligmesse“, Missa Sancti Bernardi de Offida B-Dur, Hob. XXII:10",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Nelsonmesse“, Missa in angustiis d-Moll, Hob. XXII:11",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Theresienmesse“, Missa B-Dur, Hob. XXII:12",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Schöpfungsmesse“, Missa solemnis B-Dur, Hob. XXII:13",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Harmoniemesse“, Missa solemnis B-Dur, Hob. XXII:14",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Die Schöpfung“, Hob. XXI:2",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Johann Nepomuk Hummel",
+      "sortierung": "Hummel",
+      "lebensdaten": "1778–1837",
+      "werke": [
+        {
+          "titel": "Messe B-Dur, Messe Nr. 1, op. 77",
+          "hinweis": ""
+        },
+        {
+          "titel": "Große Messe Es-Dur, Messe Nr. 2, op. 80",
+          "hinweis": ""
+        },
+        {
+          "titel": "Große Messe d-Moll, Messe Nr. 5, WoO 13",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Zoltán Kodály",
+      "sortierung": "Kodály",
+      "lebensdaten": "1882–1967",
+      "werke": [
+        {
+          "titel": "Missa brevis",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Jean Langlais",
+      "sortierung": "Langlais",
+      "lebensdaten": "1907–1991",
+      "werke": [
+        {
+          "titel": "Messe solennelle",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa „Misericordiæ Domini“",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa „Salve Regina“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Orlando di Lasso",
+      "sortierung": "Lasso",
+      "lebensdaten": "1532–1594",
+      "werke": [
+        {
+          "titel": "Missa secundi toni",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa super Bella Amfitrit' altera",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Kaiser Leopold I.",
+      "sortierung": "Leopold I.",
+      "lebensdaten": "1640–1705",
+      "werke": [
+        {
+          "titel": "Requiem",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Franz Liszt",
+      "sortierung": "Liszt",
+      "lebensdaten": "1811–1886",
+      "werke": [
+        {
+          "titel": "Missa choralis",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Pietro Mascagni",
+      "sortierung": "Mascagni",
+      "lebensdaten": "1863–1945",
+      "werke": [
+        {
+          "titel": "Messa di Gloria",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Felix Mendelssohn-Bartholdy",
+      "sortierung": "Mendelssohn-Bartholdy",
+      "lebensdaten": "1809–1847",
+      "werke": [
+        {
+          "titel": "Chöre zur deutschen Liturgie",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Lobgesang“, Sinfonie Nr. 2, op. 52",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Claudio Monteverdi",
+      "sortierung": "Monteverdi",
+      "lebensdaten": "1567–1643",
+      "werke": [
+        {
+          "titel": "Messa a quattro voci da cappella",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa in illo tempore",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Leopold Mozart",
+      "sortierung": "Mozart",
+      "lebensdaten": "1719–1787",
+      "werke": [
+        {
+          "titel": "Missa solemnis C-Dur",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Wolfgang Amadeus Mozart",
+      "sortierung": "Mozart",
+      "lebensdaten": "1756–1791",
+      "werke": [
+        {
+          "titel": "„Ursulinenmesse“, Missa brevis G-Dur, KV 49",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa brevis d-Moll, KV 65",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Dominicusmesse“, Missa C-Dur, KV 66",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Waisenhausmesse“, Missa solemnis c-Moll, KV 139",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Pastoralmesse“, Missa brevis G-Dur, KV 140",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Trinitatismesse“, Missa C-Dur, KV 167",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Kleine Credomesse“, Missa brevis F-Dur, KV 192",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa brevis D-Dur, KV 194",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Spatzenmesse“, Missa brevis C-Dur, KV 220",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Große Credomesse“, Missa C-Dur, KV 257",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Piccolominimesse“, Missa C-Dur, KV 258",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Orgelsolomesse“, Missa C-Dur, KV 259",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Loretomesse“, Missa brevis B-Dur, KV 275",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Krönungsmesse“, Missa C-Dur, KV 317",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa solemnis C-Dur, KV 337",
+          "hinweis": ""
+        },
+        {
+          "titel": "Requiem d-Moll, KV 626",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Vesperæ solennes de confessore“, KV 339",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Vesperæ solennes de Dominica“, KV 321",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Otto Nicolai",
+      "sortierung": "Nicolai",
+      "lebensdaten": "1810–1849",
+      "werke": [
+        {
+          "titel": "Missa solemnis D-Dur",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Giovanni Pierluigi da Palestrina",
+      "sortierung": "Palestrina",
+      "lebensdaten": "1525–1594",
+      "werke": [
+        {
+          "titel": "Missa brevis",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa „Æterna Christi munera“",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa „Papæ Marcelli“",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa „Pater noster“",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa „Viri Galilei“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Giovanni Battista Pergolesi",
+      "sortierung": "Pergolesi",
+      "lebensdaten": "1710–1736",
+      "werke": [
+        {
+          "titel": "„Salve Regina“",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Stabat mater“",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Giacomo Puccini",
+      "sortierung": "Puccini",
+      "lebensdaten": "1858–1924",
+      "werke": [
+        {
+          "titel": "Messa di Gloria",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Benedict Randhartinger",
+      "sortierung": "Randhartinger",
+      "lebensdaten": "1802–1893",
+      "werke": [
+        {
+          "titel": "Missa solemnis C-Dur, Messe Nr. 1",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa solemnis E-Dur, Messe Nr. 3",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Joseph Gabriel Rheinberger",
+      "sortierung": "Rheinberger",
+      "lebensdaten": "1839–1901",
+      "werke": [
+        {
+          "titel": "Messe E-Dur, op. 109",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Pastoralmesse“, Missa in Nativitate Domini A-Dur, op. 126",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Missa Sanctæ Crucis“, Messe G-Dur, op. 151",
+          "hinweis": ""
+        },
+        {
+          "titel": "Messe Es-Dur, op. 155",
+          "hinweis": ""
+        },
+        {
+          "titel": "Messe f-Moll, op. 159",
+          "hinweis": ""
+        },
+        {
+          "titel": "Missa solemnis C-Dur, op. 169",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Camille Saint-Saëns",
+      "sortierung": "Saint-Saëns",
+      "lebensdaten": "1835–1921",
+      "werke": [
+        {
+          "titel": "„Oratorio de Noël“, op. 12",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Antonio Salieri",
+      "sortierung": "Salieri",
+      "lebensdaten": "1750–1825",
+      "werke": [
+        {
+          "titel": "„Hofkapellmeistermesse“ oder „Kaisermesse“, Messe D-Dur",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Jakob von Schgraffer",
+      "sortierung": "Schgraffer",
+      "lebensdaten": "1799–1859",
+      "werke": [
+        {
+          "titel": "„Harmoniemesse“ Es-Dur",
+          "hinweis": "Wiener Uraufführung am 23.09.2018 in der Augustinerkirche"
+        }
+      ]
+    },
+    {
+      "name": "Ferdinand Schubert",
+      "sortierung": "Schubert",
+      "lebensdaten": "1794–1859",
+      "werke": [
+        {
+          "titel": "Messe F-Dur, op. 10",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Hirtenmesse“, Messe B-Dur, op. 13",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Franz Schubert",
+      "sortierung": "Schubert",
+      "lebensdaten": "1797–1828",
+      "werke": [
+        {
+          "titel": "Große Messe F-Dur, D 105",
+          "hinweis": "Uraufführung am 4.10.1814 in der Augustinerkirche"
+        },
+        {
+          "titel": "Messe G-Dur, D 167",
+          "hinweis": ""
+        },
+        {
+          "titel": "Messe B-Dur, D 324",
+          "hinweis": ""
+        },
+        {
+          "titel": "Messe C-Dur, D 452",
+          "hinweis": ""
+        },
+        {
+          "titel": "Deutsches Requiem g-Moll, D 621",
+          "hinweis": ""
+        },
+        {
+          "titel": "Große Messe As-Dur, D 678",
+          "hinweis": ""
+        },
+        {
+          "titel": "Deutsche Messe F-Dur, D 872",
+          "hinweis": ""
+        },
+        {
+          "titel": "Große Messe Es-Dur, D 950",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Robert Schumann",
+      "sortierung": "Schumann",
+      "lebensdaten": "1810–1856",
+      "werke": [
+        {
+          "titel": "Missa sacra c-Moll, op. 147",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Franz Xaver Süssmayr",
+      "sortierung": "Süssmayr",
+      "lebensdaten": "1766–1803",
+      "werke": [
+        {
+          "titel": "Missa solemnis D-Dur",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Ernst Tittel",
+      "sortierung": "Tittel",
+      "lebensdaten": "1910–1969",
+      "werke": [
+        {
+          "titel": "Kleine Festmesse, op. 37",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Louis Vierne",
+      "sortierung": "Vierne",
+      "lebensdaten": "1870–1937",
+      "werke": [
+        {
+          "titel": "Messe solennelle cis-Moll, op. 16",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Carl Maria von Weber",
+      "sortierung": "Weber",
+      "lebensdaten": "1786–1826",
+      "werke": [
+        {
+          "titel": "„Freischützmesse“, Messe Nr. 1 Es-Dur, op. 75a",
+          "hinweis": ""
+        },
+        {
+          "titel": "„Jubelmesse“, Messe Nr. 2 G-Dur, op. 76",
+          "hinweis": ""
+        }
+      ]
+    },
+    {
+      "name": "Charles-Marie Widor",
+      "sortierung": "Widor",
+      "lebensdaten": "1844–1937",
+      "werke": [
+        {
+          "titel": "Messe solennelle fis-Moll, op. 36",
+          "hinweis": ""
+        }
+      ]
+    }
+  ]
+}

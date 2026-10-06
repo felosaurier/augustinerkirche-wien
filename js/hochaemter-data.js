@@ -62,6 +62,33 @@
     }
   }
 
+  /* Freitext aus den Datendateien -> sicheres HTML. [Text](Adresse) wird ein
+     Link (Adressen der Website relativ zur Wurzel, Praefix `base`), *Wort*
+     kursiv; E-Mail- und https-Adressen werden automatisch verlinkt. */
+  const RICH = /\[([^\]\n]+)\]\(([^)\s]+)\)|\*([^*\n]+)\*|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])/g;
+  function richText(s, base = '') {
+    const text = String(s ?? '');
+    let html = '';
+    let last = 0;
+    for (const m of text.matchAll(RICH)) {
+      html += esc(text.slice(last, m.index));
+      if (m[1]) {
+        const u = safeUrl(m[2], base);
+        html += u ? `<a href="${esc(u)}"${/^https?:/i.test(u) ? ' target="_blank" rel="noopener"' : ''}>${esc(m[1])}</a>` : esc(m[1]);
+      } else if (m[3]) {
+        html += `<em>${esc(m[3])}</em>`;
+      } else if (m[4]) {
+        html += `<a href="mailto:${esc(m[4])}">${esc(m[4])}</a>`;
+      } else {
+        html += `<a href="${esc(m[5])}" target="_blank" rel="noopener">${esc(m[5])}</a>`;
+      }
+      last = m.index + m[0].length;
+    }
+    return html + esc(text.slice(last));
+  }
+  /* Telefonnummer -> tel:-Adresse ("+43 (0)1 533 70 99" -> "tel:+43153370099") */
+  const telHref = (s) => `tel:${String(s).replace(/\(0\)/g, '').replace(/[^\d+]/g, '')}`;
+
   /* Titel -> URL-taugliche Kennung (Umlaute ausgeschrieben) */
   function slug(s, maxLength = 40) {
     return String(s).toLowerCase()
@@ -261,7 +288,7 @@
 
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
-    esc, pad, safeUrl, slug, csvText, download,
+    esc, pad, safeUrl, richText, telHref, slug, csvText, download,
     parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV

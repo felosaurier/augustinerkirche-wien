@@ -84,11 +84,13 @@
         <div class="mega-group">
           <span class="mega-group-label">Veranstaltungen</span>
           <a href="musik.html#p-hochaemter">Hochämter</a>
+          <a href="musik.html#p-hochaemter-archiv">Vergangene Hochämter</a>
         </div>
         <div class="mega-group">
           <span class="mega-group-label">Ensemble</span>
           <a href="musik.html#p-chor">Chor von St. Augustin</a>
           <a href="musik.html#p-kammerchor">Kammerchor</a>
+          <a href="musik.html#p-repertoire">Repertoire</a>
           <a href="musik.html#p-solisten">Solisten</a>
           <a href="musik.html#p-orchester">Orchester</a>
         </div>
@@ -200,6 +202,7 @@
         <span class="sidebar-group-label">Ensemble</span>
         <button type="button" class="sidebar-item" data-pane="p-chor">Chor von St. Augustin</button>
         <button type="button" class="sidebar-item" data-pane="p-kammerchor">Kammerchor</button>
+        <button type="button" class="sidebar-item" data-pane="p-repertoire">Repertoire</button>
         <button type="button" class="sidebar-item" data-pane="p-solisten">Solisten</button>
         <button type="button" class="sidebar-item" data-pane="p-orchester">Orchester</button>
         <div class="sidebar-divider"></div>
@@ -243,7 +246,7 @@
           <p class="s-text" style="max-width:50rem;margin-bottom:2rem">Der Chor von St. Augustin besteht aus engagierten Sängerinnen und Sängern und begleitet die wöchentlichen Hochämter sowie besondere Konzerte des Kirchenjahres.</p>
           <div class="cards-2" style="max-width:680px">
             <div class="card"><div class="card-title">Probe</div><div class="card-text">Der Chor probt jeden Mittwoch um 19:30 Uhr. Interessierte Sängerinnen und Sänger sind herzlich willkommen.</div></div>
-            <div class="card"><div class="card-title">Repertoire</div><div class="card-text">Von der Renaissance über Barock bis zur Romantik — passend zum jeweiligen Hochamt.</div></div>
+            <a class="card" href="#p-repertoire"><div class="card-title">Repertoire</div><div class="card-text">Von der Renaissance über Barock bis zur Romantik — passend zum jeweiligen Hochamt.</div><span class="link-arr" style="margin-top:1rem">Zum Repertoire</span></a>
           </div>
         </div>
 
@@ -253,6 +256,18 @@
           <div class="divider-g"></div>
           <img src="../assets/img/musik/kammerchor-gruppe.webp" alt="Kammerchor von St. Augustin" loading="lazy" style="width:100%;aspect-ratio:16/10;object-fit:cover;border:1px solid var(--line);margin-bottom:1.5rem" width="800" height="500" decoding="async"/>
           <p class="s-text" style="max-width:50rem">Der Kammerchor widmet sich kammermusikalischen Programmen und a-cappella-Werken bei besonderen Anlässen des Kirchenjahres.</p>
+        </div>
+
+        <div class="tab-pane" id="p-repertoire">
+          <div class="s-label">Chor von St. Augustin</div>
+          <h2 class="s-title">Das <em>Repertoire</em></h2>
+          <div class="divider-g"></div>
+          <p class="s-text" style="max-width:50rem;margin-bottom:1.6rem" data-inhalt="repertoire-text">Auszug aus dem ständigen Repertoire des Chores von St. Augustin.</p>
+          <div class="rep-head" hidden>
+            <input type="search" class="rep-search" data-rep-suche placeholder="Komponist oder Werk suchen …" aria-label="Repertoire durchsuchen" autocomplete="off"/>
+            <span class="rep-count" data-rep-anzahl role="status"></span>
+          </div>
+          <div class="rep-list" data-inhalt="repertoire"><p class="s-text">Das Repertoire finden Sie auch unter <a class="link-arr" href="https://hochamt.augustiner.at/chor-von-st-augustin/repertoire/">hochamt.augustiner.at</a></p></div>
         </div>
 
         <div class="tab-pane" id="p-solisten">
@@ -283,7 +298,7 @@
           <div class="s-label">Künstlerische &amp; geistliche Leitung</div>
           <h2 class="s-title"><em>Leitung</em> der Kirchenmusik</h2>
           <div class="divider-g"></div>
-          <div class="people-stack">
+          <div class="people-stack" data-personen="leitung">
             <div class="person-card-wide">
               <img src="../assets/img/personen/dirigenten/kmd-tiefengraber.webp" alt="Peter Tiefengraber | © Franz Josef Rupprecht" loading="lazy" width="706" height="1000" decoding="async"/>
               <div class="person-body">
@@ -310,7 +325,7 @@
           <h2 class="s-title"><em>Gastdirigenten</em> von St. Augustin</h2>
           <div class="divider-g"></div>
           <p class="s-text" style="margin-bottom:1.5rem">Neben dem Kirchenmusikdirektor gestalten erfahrene Gastdirigenten regelmäßig die Hochämter von St. Augustin mit.</p>
-          <div class="people-stack">
+          <div class="people-stack" data-personen="gastdirigenten" data-kompakt>
             <div class="person-card-wide compact">
               <img src="../assets/img/personen/dirigenten/dirigent-boettcher.webp" alt="Mag. Thomas Böttcher | © Franz Josef Rupprecht" loading="lazy" width="800" height="1000" decoding="async"/>
               <div class="person-body">
@@ -342,7 +357,7 @@
           <div class="s-label">An den Orgeln</div>
           <h2 class="s-title"><em>Organisten</em> von St. Augustin</h2>
           <div class="divider-g"></div>
-          <div class="people-stack">
+          <div class="people-stack" data-personen="organisten" data-kompakt>
             <div class="person-card-wide compact">
               <img src="../assets/img/personen/organisten/organist-capek.webp" alt="Wolfgang Capek (Foto: © Wolfgang Capek)" loading="lazy" width="361" height="500" decoding="async"/>
               <div class="person-body">
@@ -463,5 +478,6 @@
 <script src="../js/hochaemter-data.js"></script>
 <script src="../js/hochaemter.js"></script>
 <script src="../js/solisten.js"></script>
+<script src="../js/inhalte.js"></script>
 </body>
 </html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Runden — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-runden.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Runden <em>pflegen</em></h1>
+      <p class="ph-sub">Gruppen und Angebote der Pfarre: Übersicht unter Gottesdienste → Runden und je Runde eine eigene Seite mit Terminen, Infos und Kontakt.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="rd-new" data-icon="plus">Neue Runde</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <p class="adm-count" id="rd-count" role="status" style="margin-bottom:1rem"></p>
+  <div id="rd-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Runde bearbeiten -->
+<dialog class="adm-dialog" id="rd-dlg" aria-labelledby="rd-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="rd-dlg-tag">Neue Runde</div>
+      <h2 class="adm-dlg-title" id="rd-dlg-title">Neue Runde</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="rd-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>In der Übersicht</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-titel">Name der Runde<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-titel" required/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-kurztext">Kurzbeschreibung<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-kurztext" aria-describedby="f-kurztext-hint" required/>
+          <span class="adm-hint" id="f-kurztext-hint">Ein Satz für die Karte in der Übersicht.</span>
+        </div>
+        <div class="adm-field full" role="radiogroup" aria-labelledby="f-art-l">
+          <span class="adm-label" id="f-art-l">Was öffnet sich beim Anklicken?</span>
+          <div class="adm-choice">
+            <label><input type="radio" name="art" value="seite" checked/><span><b>Eigene Seite</b><span>Mit Texten, Terminen, Infos und Kontakt (unten ausfüllen).</span></span></label>
+            <label><input type="radio" name="art" value="link"/><span><b>Andere Seite</b><span>Zum Beispiel der Chor unter Kirchenmusik.</span></span></label>
+          </div>
+        </div>
+        <div class="adm-field full" id="f-link-field" hidden>
+          <label class="adm-label" for="f-link">Adresse der anderen Seite</label>
+          <input class="adm-input" type="text" id="f-link" list="dl-rd-link" placeholder="z. B. pages/musik.html#p-chor"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-check"><input type="checkbox" id="f-sichtbar" checked/>In der Übersicht zeigen</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <div id="rd-page">
+      <fieldset class="adm-fs">
+        <legend>Kopf der Seite</legend>
+        <div class="adm-grid">
+          <div class="adm-field">
+            <label class="adm-label" for="f-zeile">Zeile über dem Titel</label>
+            <input class="adm-input" type="text" id="f-zeile" placeholder="z. B. Die Bibelrunde"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="f-betonung">Betonung im Titel</label>
+            <input class="adm-input" type="text" id="f-betonung" aria-describedby="f-betonung-hint"/>
+            <span class="adm-hint" id="f-betonung-hint">Teil des Namens in Gold-kursiv, z. B. „pur“.</span>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-label" for="f-untertitel">Untertitel</label>
+            <textarea class="adm-input" id="f-untertitel" rows="2"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="adm-fs">
+        <legend>Texte</legend>
+        <p class="adm-hint" style="margin-bottom:.9rem">Ein Absatz pro Zeile. Links: <code>[Text](pages/sakramente.html)</code> oder einfach die Adresse; <code>*Wort*</code> wird kursiv.</p>
+        <div class="adm-grid">
+          <div class="adm-field full">
+            <label class="adm-label" for="f-einleitung">Einleitung</label>
+            <textarea class="adm-input" id="f-einleitung" rows="4"></textarea>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="f-sp-label">Hervorgehobener Kasten: Überschrift klein</label>
+            <input class="adm-input" type="text" id="f-sp-label" placeholder="z. B. Thema 2026/27"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="f-sp-titel">Titel im Kasten</label>
+            <input class="adm-input" type="text" id="f-sp-titel"/>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-label" for="f-sp-text">Text im Kasten</label>
+            <textarea class="adm-input" id="f-sp-text" rows="3"></textarea>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-label" for="f-text">Weiterer Text</label>
+            <textarea class="adm-input" id="f-text" rows="3"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="adm-fs">
+        <legend>Termine</legend>
+        <p class="adm-hint" style="margin-bottom:.9rem">Der Wochentag erscheint automatisch. Vergangene Termine werden auf der Seite blass gezeigt.</p>
+        <div class="adm-blocks" id="rd-blocks"></div>
+        <button type="button" class="adm-list-add" id="rd-add-block" data-icon="plus" style="margin-top:.8rem">Terminreihe hinzufügen</button>
+      </fieldset>
+
+      <fieldset class="adm-fs">
+        <legend>Auf einen Blick</legend>
+        <p class="adm-hint" style="margin-bottom:.9rem">Zum Beispiel Zeit, Ort, Leitung. Die dritte Spalte erscheint klein darunter.</p>
+        <div id="rd-fakten"></div>
+      </fieldset>
+
+      <fieldset class="adm-fs">
+        <legend>Kontakt</legend>
+        <div class="adm-grid">
+          <div class="adm-field">
+            <label class="adm-label" for="f-k-titel">Überschrift</label>
+            <input class="adm-input" type="text" id="f-k-titel" placeholder="Kontakt"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="f-k-text">Wer</label>
+            <input class="adm-input" type="text" id="f-k-text" placeholder="z. B. Pfarre St. Augustin"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="f-k-email">E-Mail</label>
+            <input class="adm-input" type="email" id="f-k-email"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="f-k-telefon">Telefon</label>
+            <input class="adm-input" type="text" id="f-k-telefon"/>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-label" for="f-k-anschrift">Anschrift</label>
+            <input class="adm-input" type="text" id="f-k-anschrift"/>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="adm-fs">
+        <legend>Bild</legend>
+        <div class="adm-image">
+          <div class="adm-image-prev" id="rd-prev"></div>
+          <div class="adm-field">
+            <label class="adm-drop" id="rd-drop">
+              <span data-icon="image"></span>
+              <span class="adm-drop-main">Plakat oder Foto hierher ziehen oder <u>auswählen</u></span>
+              <span class="adm-hint">WebP, JPG oder PNG</span>
+              <input type="file" id="f-file" accept="image/*" aria-describedby="rd-imginfo"/>
+            </label>
+            <span class="adm-hint" id="rd-imginfo"></span>
+            <div><button type="button" class="adm-act danger" id="rd-img-remove" data-icon="close" hidden>Bild entfernen</button></div>
+          </div>
+        </div>
+        <div class="adm-grid" style="margin-top:1rem">
+          <div class="adm-field full" role="radiogroup" aria-labelledby="f-bildart-l">
+            <span class="adm-label" id="f-bildart-l">Art des Bildes</span>
+            <div class="adm-choice">
+              <label><input type="radio" name="bildart" value="plakat" checked/><span><b>Plakat</b><span>Lässt sich auf der Seite vergrößern.</span></span></label>
+              <label><input type="radio" name="bildart" value="foto"/><span><b>Foto</b><span>Wird nur angezeigt.</span></span></label>
+            </div>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-label" for="f-alt">Bildbeschreibung <span class="adm-opt">für Menschen, die das Bild nicht sehen</span></label>
+            <input class="adm-input" type="text" id="f-alt" placeholder="z. B. Plakat BIBELpur 2026/27"/>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="rd-delete" data-icon="trash">Löschen</button>
+      <a class="adm-act" id="rd-view" href="../pages/gottesdienste.html#p-runden" target="_blank" rel="noopener" data-icon="external">Auf der Website ansehen</a>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="rd-form" class="btn btn-dark" id="rd-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-rd-link">
+  <option value="pages/musik.html#p-chor"></option>
+  <option value="pages/musik.html#p-kammerchor"></option>
+  <option value="pages/sakramente.html"></option>
+  <option value="pages/aspersdorf.html"></option>
+</datalist>
+<datalist id="dl-rd-fakt"><option value="Zeit"></option><option value="Ort"></option><option value="Leitung"></option><option value="Wann"></option><option value="Termine"></option><option value="Anmeldung"></option><option value="Ansprechperson"></option><option value="Kosten"></option></datalist>
+
+</body>
+</html>

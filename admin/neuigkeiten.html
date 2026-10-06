@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Neuigkeiten — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-neuigkeiten.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Neuigkeiten <em>pflegen</em></h1>
+      <p class="ph-sub">Meldungen mit Plakat oder Foto. Jede Meldung steht bis zu ihrem Enddatum auf der Startseite (höchstens die sechs neuesten), danach von selbst im Archiv.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="nv-new" data-icon="plus">Neue Meldung</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-search" data-icon="search">
+      <input type="search" id="nv-search" placeholder="Suchen: Titel, Kategorie, Datum …" aria-label="Meldungen durchsuchen" autocomplete="off"/>
+    </div>
+    <span class="adm-count" id="nv-count" role="status"></span>
+  </div>
+
+  <div id="nv-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog wide" id="nv-dlg" aria-labelledby="nv-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="nv-dlg-tag">Neue Meldung</div>
+      <h2 class="adm-dlg-title" id="nv-dlg-title">Neue Meldung</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <div class="adm-dlg-body">
+    <div class="adm-split">
+      <form id="nv-form" novalidate autocomplete="off">
+        <fieldset class="adm-fs">
+          <legend>Meldung</legend>
+          <div class="adm-grid">
+            <div class="adm-field">
+              <label class="adm-label" for="f-date">Datum der Meldung<span class="adm-req">Pflichtfeld</span></label>
+              <input class="adm-input" type="date" id="f-date" aria-describedby="f-date-hint" required/>
+              <span class="adm-hint" id="f-date-hint">Bestimmt die Reihenfolge: neueste zuerst.</span>
+            </div>
+            <div class="adm-field">
+              <label class="adm-label" for="f-bis">Auf der Startseite bis<span class="adm-req">Pflichtfeld</span></label>
+              <input class="adm-input" type="date" id="f-bis" aria-describedby="f-bis-hint" required/>
+              <span class="adm-hint" id="f-bis-hint">Danach wandert die Meldung ins Archiv. Bei Veranstaltungen: der Tag der Veranstaltung.</span>
+              <div class="adm-quick" role="group" aria-label="Schnellwahl für das Enddatum">
+                <button type="button" class="adm-act" data-bis="14">2 Wochen</button>
+                <button type="button" class="adm-act" data-bis="30">1 Monat</button>
+                <button type="button" class="adm-act" data-bis="91">3 Monate</button>
+                <button type="button" class="adm-act" data-bis="juni">Ende Juni</button>
+              </div>
+            </div>
+            <div class="adm-field full" id="nv-suggest" aria-live="polite" hidden></div>
+            <div class="adm-field full">
+              <label class="adm-label" for="f-cat">Kategorie</label>
+              <input class="adm-input" type="text" id="f-cat" list="dl-cat" aria-describedby="f-cat-hint"/>
+              <span class="adm-hint" id="f-cat-hint">z. B. Kirchenmusik, Konzert, Pfarrleben</span>
+            </div>
+            <div class="adm-field full">
+              <label class="adm-label" for="f-title">Titel<span class="adm-req">Pflichtfeld</span></label>
+              <input class="adm-input" type="text" id="f-title" required/>
+            </div>
+            <div class="adm-field full">
+              <label class="adm-label" for="f-teaser">Kurztext<span class="adm-req">Pflichtfeld</span></label>
+              <textarea class="adm-input" id="f-teaser" rows="3" aria-describedby="f-teaser-hint f-teaser-count" required></textarea>
+              <span class="adm-hint" id="f-teaser-hint">Ein bis zwei Sätze. Erscheint auf der Karte der Startseite.</span>
+              <span class="adm-counter" id="f-teaser-count" aria-live="polite"></span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="adm-fs">
+          <legend>Bild</legend>
+          <div class="adm-image">
+            <div class="adm-image-prev" id="nv-prev"></div>
+            <div class="adm-field">
+              <label class="adm-drop" id="nv-drop">
+                <span data-icon="image"></span>
+                <span class="adm-drop-main">Plakat oder Foto hierher ziehen oder <u>auswählen</u></span>
+                <span class="adm-hint">WebP, JPG oder PNG, in voller Größe</span>
+                <input type="file" id="f-file" accept="image/*" aria-describedby="nv-imginfo"/>
+              </label>
+              <span class="adm-hint" id="nv-imginfo"></span>
+              <div><button type="button" class="adm-act danger" id="nv-img-remove" data-icon="close" hidden>Bild entfernen</button></div>
+            </div>
+          </div>
+          <div class="adm-grid" style="margin-top:1.1rem">
+            <div class="adm-field full" role="radiogroup" aria-labelledby="f-kind-l">
+              <span class="adm-label" id="f-kind-l">Art des Bildes</span>
+              <div class="adm-choice">
+                <label><input type="radio" name="kind" value="poster" checked/><span><b>Plakat</b><span>Karte zeigt den oberen Teil, im Fenster ganz.</span></span></label>
+                <label><input type="radio" name="kind" value="photo"/><span><b>Foto</b><span>Karte zeigt die Bildmitte.</span></span></label>
+              </div>
+            </div>
+            <div class="adm-field full" id="nv-filename-field" hidden>
+              <label class="adm-label" for="f-filename">Dateiname</label>
+              <input class="adm-input" type="text" id="f-filename" aria-describedby="f-filename-hint"/>
+              <span class="adm-hint" id="f-filename-hint">Wird aus dem Titel erzeugt. Das Bild kommt nach <code>assets/img/news/JAHR/</code>.</span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="adm-fs">
+          <legend>Im Fenster der Meldung</legend>
+          <div class="adm-grid">
+            <div class="adm-field full" role="group" aria-labelledby="f-infos-l">
+              <span class="adm-label" id="f-infos-l">Infos <span class="adm-opt">Termin, Ort, Leitung …</span></span>
+              <div id="f-infos"></div>
+            </div>
+            <div class="adm-field full">
+              <label class="adm-label" for="f-details">Beschreibung</label>
+              <textarea class="adm-input" id="f-details" rows="5" aria-describedby="f-details-hint"></textarea>
+              <span class="adm-hint" id="f-details-hint">Ein Absatz pro Zeile.</span>
+            </div>
+            <div class="adm-field full">
+              <label class="adm-label" for="f-ziel">Wohin führt die Schaltfläche im Fenster?</label>
+              <select class="adm-input" id="f-ziel">
+                <option value="">Keine Schaltfläche</option>
+                <option value="hochamt">Zu einem Hochamt oder Konzert</option>
+                <option value="runde">Zu einer Runde</option>
+                <option value="seite">Zu einer Seite der Website</option>
+                <option value="extern">Zu einer anderen Website</option>
+              </select>
+            </div>
+            <div class="adm-field full" data-ziel="hochamt" hidden>
+              <label class="adm-label" for="f-ziel-hochamt">Welcher Termin?</label>
+              <select class="adm-input" id="f-ziel-hochamt" aria-describedby="f-ziel-hochamt-hint"></select>
+              <span class="adm-hint" id="f-ziel-hochamt-hint">Das Plakat erscheint dann auch auf der Seite dieses Termins.</span>
+              <div><button type="button" class="adm-act danger" data-unlink data-icon="close">Verknüpfung aufheben</button></div>
+            </div>
+            <div class="adm-field full" data-ziel="runde" hidden>
+              <label class="adm-label" for="f-ziel-runde">Welche Runde?</label>
+              <select class="adm-input" id="f-ziel-runde"></select>
+            </div>
+            <div class="adm-field full" data-ziel="seite" hidden>
+              <label class="adm-label" for="f-ziel-seite">Welche Seite?</label>
+              <select class="adm-input" id="f-ziel-seite"></select>
+            </div>
+            <div class="adm-field full" data-ziel="extern" hidden>
+              <label class="adm-label" for="f-ziel-extern">Adresse der Website</label>
+              <input class="adm-input" type="text" id="f-ziel-extern" inputmode="url" placeholder="z. B. www.musikverein.at" aria-describedby="f-ziel-extern-hint"/>
+              <span class="adm-hint" id="f-ziel-extern-hint">Am besten aus dem Browser kopieren und hier einfügen.</span>
+            </div>
+            <div class="adm-field full" id="nv-linktext-field" hidden>
+              <label class="adm-label" for="f-linktext">Text der Schaltfläche</label>
+              <input class="adm-input" type="text" id="f-linktext" aria-describedby="f-linktext-hint"/>
+              <span class="adm-hint" id="f-linktext-hint">Wird passend vorgeschlagen, lässt sich aber ändern.</span>
+            </div>
+            <div class="adm-field full" role="group" aria-labelledby="f-link2-l">
+              <span class="adm-label" id="f-link2-l">Zweite Schaltfläche <span class="adm-opt">optional, z. B. Kartenverkauf oder Anmeldung</span></span>
+              <div class="adm-grid">
+                <div class="adm-field">
+                  <label class="adm-label" for="f-linktext2">Text</label>
+                  <input class="adm-input" type="text" id="f-linktext2" list="dl-linktext2" placeholder="z. B. Karten kaufen"/>
+                </div>
+                <div class="adm-field">
+                  <label class="adm-label" for="f-link2">Adresse</label>
+                  <input class="adm-input" type="text" id="f-link2" inputmode="url" placeholder="z. B. www.musikverein.at" aria-describedby="f-link2-hint"/>
+                  <span class="adm-hint" id="f-link2-hint">Am besten aus dem Browser kopieren und hier einfügen.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+
+      <aside class="adm-split-side" aria-label="Vorschau">
+        <div class="adm-side-label">So sieht die Karte aus</div>
+        <div id="nv-card"></div>
+        <p class="adm-hint" id="nv-where" style="margin-top:.9rem"></p>
+      </aside>
+    </div>
+  </div>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="nv-delete" data-icon="trash">Löschen</button>
+      <a class="adm-act" id="nv-view" href="../index.html" target="_blank" rel="noopener" data-icon="external">Auf der Website ansehen</a>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="nv-form" class="btn btn-dark" id="nv-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-linktext2"><option value="Karten kaufen"></option><option value="Karten beim Musikverein"></option><option value="Zur Anmeldung"></option><option value="Mehr Informationen"></option><option value="Programm als PDF"></option></datalist>
+<datalist id="dl-cat"><option value="Kirchenmusik"></option><option value="Konzert"></option><option value="Hochamt"></option><option value="Pfarrleben"></option><option value="Gottesdienst"></option><option value="Aktuelles"></option><option value="Aspersdorf"></option></datalist>
+<datalist id="dl-label"><option value="Termin"></option><option value="Termine"></option><option value="Zeit"></option><option value="Ort"></option><option value="Leitung"></option><option value="Zelebrant"></option><option value="Musik"></option><option value="Mitwirkende"></option><option value="Programm"></option><option value="Anmeldung"></option><option value="Eintritt"></option><option value="Information"></option></datalist>
+</body>
+</html>

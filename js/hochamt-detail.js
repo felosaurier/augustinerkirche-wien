@@ -3,6 +3,8 @@
    Detailseite eines Hochamts (pages/hochamt.html?id=JJJJ-MM-TT-HHMM).
    Zeigt Zelebrant, Dirigent, Chor, Orchester, Solisten, Organist
    und weitere Musik aus data/hochaemter.csv bzw. dem Jahresarchiv.
+   Ist eine Meldung (data/news.csv) mit diesem Termin verknuepft
+   (Link pages/hochamt.html?id=…), erscheint ihr Plakat daneben.
    ============================================================ */
 (function () {
   'use strict';
@@ -89,6 +91,42 @@
     }
   }
 
+  /* Plakat der verknuepften Meldung neben dem Programm zeigen */
+  const NEWS_KEYS = {
+    datum: 'date', titel: 'title', plakat: 'poster', vorschaubild: 'thumb', link: 'link',
+    weitererlink: 'link2', weitererlinktext: 'linktext2'
+  };
+  async function showPoster(id) {
+    const aside = qs('#hd-poster');
+    if (!aside || !id) return;
+    let rows;
+    try {
+      const res = await fetch('../data/news.csv');
+      if (!res.ok) return;
+      rows = HD.rowsToRaw(HD.parseCSV(await res.text()), NEWS_KEYS);
+    } catch {
+      return;
+    }
+    const target = `pages/hochamt.html?id=${id}`;
+    const n = rows.find((r) => (r.poster || r.thumb) && decodeURIComponent(String(r.link || '').trim()) === target);
+    const src = n && HD.safeUrl(n.poster || n.thumb, '../');
+    if (!src) return;
+    const newsId = `${HD.isoDate(n.date)}-${HD.slug(n.title)}`;
+    const img = `<img src="${HD.esc(src)}" alt="${HD.esc(`Plakat: ${n.title}`)}" loading="lazy" decoding="async"/>`;
+    aside.innerHTML = n.poster
+      ? `<a href="${HD.esc(src)}" target="_blank" rel="noopener" title="Plakat in voller Größe öffnen" data-lightbox>${img}</a><div class="runde-side-cap">Plakat vergrößern</div>`
+      : img;
+    /* Zweite Schaltflaeche der Meldung, z. B. Kartenverkauf */
+    const link2 = HD.safeUrl(n.link2, '../');
+    if (link2) {
+      const ext = /^https?:/i.test(link2) ? ' target="_blank" rel="noopener"' : '';
+      aside.insertAdjacentHTML('beforeend', `<a class="btn btn-gold hd-poster-btn" href="${HD.esc(link2)}"${ext}>${HD.esc(n.linktext2 || 'Mehr Informationen')}</a>`);
+    }
+    aside.insertAdjacentHTML('beforeend', `<a class="link-arr" href="../index.html?news=${encodeURIComponent(newsId)}">Zur Meldung</a>`);
+    aside.hidden = false;
+    qs('#hd-layout').classList.add('has-poster');
+  }
+
   /* Aktuelle Tabelle laden; fehlt der Termin, im Archiv seines Jahres nachsehen */
   async function loadEntries(id) {
     const entries = await HD.load('../data/hochaemter.csv');
@@ -108,6 +146,7 @@
     const id = new URLSearchParams(location.search).get('id') || '';
     try {
       render(await loadEntries(id), id);
+      showPoster(id);
     } catch {
       qs('#hd-body').innerHTML = FALLBACK;
     }

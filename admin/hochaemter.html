@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Hochämter — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-hochaemter.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Hochämter <em>pflegen</em></h1>
+      <p class="ph-sub">Termine, Werke und Mitwirkende. Alles hier erscheint auf der Startseite, unter Kirchenmusik → Hochämter und auf der Seite jedes Termins.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="ha-new" data-icon="plus">Neues Hochamt</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <div id="ha-archive"></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-search" data-icon="search">
+      <input type="search" id="ha-search" placeholder="Suchen: Werk, Name, Datum …" aria-label="Hochämter durchsuchen" autocomplete="off"/>
+    </div>
+    <div class="adm-seg" role="group" aria-label="Welche Termine anzeigen">
+      <button type="button" class="week-filter-btn active" data-filter="upcoming" aria-pressed="true">Kommende <span class="n" id="ha-n-upcoming"></span></button>
+      <button type="button" class="week-filter-btn" data-filter="past" aria-pressed="false">Vergangene <span class="n" id="ha-n-past"></span></button>
+      <button type="button" class="week-filter-btn" data-filter="all" aria-pressed="false">Alle <span class="n" id="ha-n-all"></span></button>
+    </div>
+  </div>
+  <p class="adm-count" id="ha-count" role="status"></p>
+
+  <div id="ha-list"><p class="adm-muted">Wird geladen …</p></div>
+
+  <details class="adm-more">
+    <summary>Weitere Aktionen: Excel, neu laden</summary>
+    <div class="adm-more-body">
+      <div class="adm-more-item">
+        <p><b>Tabelle herunterladen.</b> Die komplette Liste als Datei für Excel (<code>hochaemter.csv</code>).</p>
+        <button type="button" class="btn btn-quiet btn-sm" id="ha-export" data-icon="download">Herunterladen</button>
+      </div>
+      <div class="adm-more-item">
+        <p><b>Aus Excel übernehmen.</b> Eine in Excel bearbeitete Tabelle einlesen. Sie ersetzt die aktuelle Liste.</p>
+        <button type="button" class="btn btn-quiet btn-sm" id="ha-import-btn" data-icon="upload">Datei wählen</button>
+        <input type="file" id="ha-import" accept=".csv,text/csv" hidden/>
+      </div>
+      <div class="adm-more-item">
+        <p><b>Neu laden.</b> Die gespeicherte Tabelle neu einlesen, z. B. nach einer Änderung in Excel.</p>
+        <button type="button" class="btn btn-quiet btn-sm" id="ha-reload" data-icon="refresh">Neu laden</button>
+      </div>
+    </div>
+  </details>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog" id="ha-dlg" aria-labelledby="ha-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="ha-dlg-tag">Hochamt</div>
+      <h2 class="adm-dlg-title" id="ha-dlg-title">Neues Hochamt</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="ha-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <div id="ha-poster" aria-live="polite" hidden></div>
+    <fieldset class="adm-fs">
+      <legend>Termin</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="f-date">Datum<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="date" id="f-date" required/>
+          <span class="adm-hint" id="f-date-day"></span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-time">Beginn</label>
+          <input class="adm-input" type="time" id="f-time" step="300"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-type">Anlass</label>
+          <input class="adm-input" type="text" id="f-type" list="dl-type" aria-describedby="f-type-hint"/>
+          <span class="adm-hint" id="f-type-hint">z. B. Hochamt, Christmette, Orgelkonzert</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-location">Ort</label>
+          <input class="adm-input" type="text" id="f-location" list="dl-location"/>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Musik</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-piece">Werk<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-piece" list="dl-piece" aria-describedby="f-piece-hint" required/>
+          <span class="adm-hint" id="f-piece-hint">Komponist: Werk, z. B. „W. A. Mozart: Krönungsmesse“. Erscheint als Titel.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-conductor">Dirigent</label>
+          <input class="adm-input" type="text" id="f-conductor" list="dl-conductor"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-choir">Chor</label>
+          <input class="adm-input" type="text" id="f-choir" list="dl-choir"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-orchestra">Orchester</label>
+          <input class="adm-input" type="text" id="f-orchestra" list="dl-orchestra"/>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Mitwirkende</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-celebrant">Zelebrant</label>
+          <input class="adm-input" type="text" id="f-celebrant" list="dl-celebrant"/>
+        </div>
+        <div class="adm-field full" role="group" aria-labelledby="f-soloists-l">
+          <span class="adm-label" id="f-soloists-l">Solisten <span class="adm-opt">Name und Stimme</span></span>
+          <div id="f-soloists"></div>
+          <span class="adm-hint">Bekannte Namen werden vorgeschlagen, die Stimme wird dann ergänzt.</span>
+        </div>
+        <div class="adm-field full" role="group" aria-labelledby="f-organist-l">
+          <span class="adm-label" id="f-organist-l">Organist</span>
+          <div id="f-organist"></div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Programm und Hinweis</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-extra">Weitere Musik</label>
+          <textarea class="adm-input" id="f-extra" rows="4" aria-describedby="f-extra-hint"></textarea>
+          <span class="adm-hint" id="f-extra-hint">Ein Stück pro Zeile, z. B. „J. S. Bach: Toccata d-Moll, BWV 565“.</span>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-note">Hinweis</label>
+          <textarea class="adm-input" id="f-note" rows="3" aria-describedby="f-note-hint"></textarea>
+          <span class="adm-hint" id="f-note-hint">Zum Beispiel Festtag, geänderte Beginnzeit oder Ende ca. 12:30 Uhr.</span>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="ha-delete" data-icon="trash">Löschen</button>
+      <a class="adm-act" id="ha-view" href="../pages/musik.html" target="_blank" rel="noopener" data-icon="external">Auf der Website ansehen</a>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="ha-form" class="btn btn-dark" id="ha-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-type"></datalist>
+<datalist id="dl-location"></datalist>
+<datalist id="dl-piece"></datalist>
+<datalist id="dl-conductor"></datalist>
+<datalist id="dl-choir"></datalist>
+<datalist id="dl-orchestra"></datalist>
+<datalist id="dl-celebrant"></datalist>
+<datalist id="dl-organist"></datalist>
+<datalist id="dl-soloist"></datalist>
+<datalist id="dl-voice"></datalist>
+
+</body>
+</html>

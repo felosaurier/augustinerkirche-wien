@@ -118,6 +118,7 @@
     }
 
     for (const p of qsa('.tab-pane', area)) p.classList.toggle('active', p === pane);
+    markCurrentNav();
     return true;
   }
 
@@ -187,16 +188,23 @@
   }
 
   /* ---------- Markiert den aktiven Navigationspunkt ---------- */
+  /* Seiten mit Reitern (z. B. Kirchenmusik): nur der Eintrag des geoeffneten
+     Bereichs gilt als aktuell, nicht jeder Link auf diese Seite. */
   function markCurrentNav() {
     const path = location.pathname.replace(/\/+$/, '');
     const current = path.split('/').pop() || 'index.html';
+    const activePane = qs('.tab-pane.active');
     for (const a of qsa('.mega a, .mob-sub')) {
-      const page = (a.getAttribute('href') || '').split('#')[0].split('/').pop();
-      if (!page || page !== current) continue;
-      a.classList.add('current');
+      const [href, hash] = (a.getAttribute('href') || '').split('#');
+      const page = href.split('/').pop();
+      const onPage = Boolean(page) && page === current;
+      const isCurrent = onPage && (!hash || !activePane || !document.getElementById(hash) || hash === activePane.id);
+      a.classList.toggle('current', isCurrent);
+      if (isCurrent) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
       const navItem = a.closest('.nav-item');
       const btn = navItem && qs('.nav-btn', navItem);
-      if (btn) btn.classList.add('current');
+      if (btn && onPage) btn.classList.add('current');
     }
   }
 
@@ -204,8 +212,7 @@
      Knoepfe tragen data-filter, Zeilen das Attribut data-<attr>; 'alle'/'all' zeigt alles. */
   function initAttributeFilter(buttonSelector, rowSelector, attr) {
     const buttons = qsa(buttonSelector);
-    const rows = qsa(rowSelector);
-    if (!buttons.length || !rows.length) return;
+    if (!buttons.length) return;
 
     for (const btn of buttons) {
       btn.setAttribute('aria-pressed', String(btn.classList.contains('active')));
@@ -216,7 +223,8 @@
         }
         const value = btn.dataset.filter;
         const showAll = value === 'alle' || value === 'all';
-        for (const row of rows) row.style.display = showAll || row.dataset[attr] === value ? '' : 'none';
+        /* Zeilen erst beim Klick suchen: sie koennen nachgeladen sein (js/inhalte.js) */
+        for (const row of qsa(rowSelector)) row.style.display = showAll || row.dataset[attr] === value ? '' : 'none';
       });
     }
   }

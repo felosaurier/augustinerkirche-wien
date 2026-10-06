@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de" data-adm-rolle="admin">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Zugänge — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-zugaenge.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Zugänge <em>verwalten</em></h1>
+      <p class="ph-sub">Wer sich in der Verwaltung anmelden darf und was er darf. Passwörter werden nur als Prüfsumme gespeichert, niemand kann sie auslesen.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="zg-new" data-icon="plus">Neuer Zugang</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div id="zg-list"><p class="adm-muted">Wird geladen …</p></div>
+
+  <div class="adm-alert info" style="margin-top:1.6rem">
+    <span data-icon="info"></span>
+    <div>
+      <b>Gut zu wissen</b>
+      <ul>
+        <li>Am besten bekommt jede Person einen eigenen Zugang. Wer nicht mehr mitarbeitet, wird einfach entfernt.</li>
+        <li><b>Admin</b> darf Zugänge verwalten, <b>Redaktion</b> nur Inhalte pflegen. Es muss immer mindestens einen Admin geben.</li>
+        <li>Passwort vergessen? Hier ein neues vergeben. Das alte lässt sich nicht anzeigen.</li>
+        <li>Änderungen gelten sofort, sobald <code>admin/zugaenge.json</code> im Projektordner gespeichert ist; auf der veröffentlichten Website nach dem Veröffentlichen.</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<!-- Zugang anlegen oder bearbeiten -->
+<dialog class="adm-dialog small" id="zg-dlg" aria-labelledby="zg-dlg-title" style="width:min(600px,calc(100vw - 2rem))">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="zg-dlg-tag">Neuer Zugang</div>
+      <h2 class="adm-dlg-title" id="zg-dlg-title">Zugang anlegen</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="zg-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Person</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-name">Name<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-name" autocomplete="off" required/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-user">Benutzername<span class="adm-req" id="f-user-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-user" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="f-user-hint" required/>
+          <span class="adm-hint" id="f-user-hint">Kleinbuchstaben, ohne Leerzeichen, z. B. <code>maria</code>.</span>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="adm-fs">
+      <legend>Rolle</legend>
+      <div class="adm-choice" role="radiogroup" aria-label="Rolle">
+        <label><input type="radio" name="rolle" value="redaktion" checked/><span><b>Redaktion</b><span>Pflegt Inhalte: Hochämter, Neuigkeiten, Gottesdienste, Runden, Personen …</span></span></label>
+        <label><input type="radio" name="rolle" value="admin"/><span><b>Admin</b><span>Darf zusätzlich Zugänge anlegen, ändern und entfernen.</span></span></label>
+      </div>
+      <p class="adm-hint" id="zg-role-hint" style="margin-top:.6rem"></p>
+    </fieldset>
+    <fieldset class="adm-fs">
+      <legend id="zg-pw-legend">Passwort</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-pw" id="f-pw-label">Passwort</label>
+          <div class="adm-pw">
+            <input class="adm-input" type="password" id="f-pw" autocomplete="new-password" aria-describedby="f-pw-hint"/>
+            <button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false" data-icon="eye"></button>
+          </div>
+          <div class="adm-strength" id="f-pw-meter" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <span class="adm-hint" id="f-pw-hint">Mindestens 10 Zeichen.</span>
+          <div><button type="button" class="adm-list-add" id="zg-suggest" data-icon="dice">Sicheres Passwort vorschlagen</button></div>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-pw2">Passwort wiederholen</label>
+          <input class="adm-input" type="password" id="f-pw2" autocomplete="new-password"/>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="zg-delete" data-icon="trash">Zugang entfernen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="zg-form" class="btn btn-dark" id="zg-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

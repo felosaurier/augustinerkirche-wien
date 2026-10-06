@@ -89,6 +89,7 @@
           <span class="mega-group-label">Ensemble</span>
           <a href="musik.html#p-chor">Chor von St. Augustin</a>
           <a href="musik.html#p-kammerchor">Kammerchor</a>
+          <a href="musik.html#p-repertoire">Repertoire</a>
           <a href="musik.html#p-solisten">Solisten</a>
           <a href="musik.html#p-orchester">Orchester</a>
         </div>
@@ -206,7 +207,7 @@
           <h2 class="s-title">Heilige <em>Messe</em> &amp; Hochamt</h2>
           <div class="divider-g"></div>
           <div style="max-width:680px">
-            <table class="gd-table">
+            <table class="gd-table" data-inhalt="liturgie">
               <tr><td class="gd-day">Sonntag</td><td class="gd-time">11:00</td><td><div class="gd-name"><span class="gd-dot"></span>Hochamt mit Chor, Solisten &amp; Orchester</div><div class="gd-note">Augustinerkirche</div></td></tr>
               <tr><td class="gd-day">Sonntag</td><td class="gd-time">18:30</td><td><div class="gd-name">Heilige Messe</div><div class="gd-note">Augustinerkirche</div></td></tr>
               <tr><td class="gd-day">Dienstag</td><td class="gd-time">18:30</td><td><div class="gd-name">Heilige Messe</div><div class="gd-note">Augustinerkirche</div></td></tr>
@@ -235,7 +236,7 @@
             <button type="button" class="week-filter-btn" data-filter="so">So</button>
           </div>
 
-          <div id="week-list">
+          <div id="week-list" data-inhalt="woche">
             <div class="week-row" data-day="so"><div class="week-day">Sonntag</div><div><div class="week-name">Hochamt mit Chor, Solisten &amp; Orchester</div><div class="week-loc">Augustinerkirche</div></div><div class="week-time">11:00</div></div>
             <div class="week-row" data-day="so"><div class="week-day">Sonntag</div><div><div class="week-name">Heilige Messe</div><div class="week-loc">Augustinerkirche</div></div><div class="week-time">18:30</div></div>
             <div class="week-row" data-day="di"><div class="week-day">Dienstag</div><div><div class="week-name">Heilige Messe</div><div class="week-loc">Augustinerkirche</div></div><div class="week-time">18:30</div></div>
@@ -251,7 +252,7 @@
           <h2 class="s-title">Runden in <em>St. Augustin</em></h2>
           <div class="divider-g"></div>
           <p class="s-text" style="margin-bottom:1.5rem">Jede Runde öffnet sich in einem neuen Fenster mit ausführlicheren Informationen und Kontakt.</p>
-          <div class="cards-stack">
+          <div class="cards-stack" data-inhalt="runden">
             <a class="card" href="runden/fusswallfahrt.html" target="_blank" rel="noopener"><div class="card-title">Augustiner-Fußwallfahrt</div><div class="card-text">Jährliche Fußwallfahrt nach Mariazell auf den Spuren der Augustiner.</div><span class="link-arr">Mehr erfahren (neues Fenster)</span></a>
             <a class="card" href="runden/bibelpur.html" target="_blank" rel="noopener"><div class="card-title">BIBELpur</div><div class="card-text">Die Bibelrunde in St. Augustin.</div><span class="link-arr">Mehr erfahren (neues Fenster)</span></a>
             <a class="card" href="musik.html#p-chor" target="_blank" rel="noopener"><div class="card-title">Chor von St. Augustin</div><div class="card-text">Vokalensemble der Hochämter — Proben jeden Mittwoch.</div><span class="link-arr">Mehr erfahren (neues Fenster)</span></a>
@@ -282,5 +283,7 @@
 </footer>
 
 <script src="../js/main.js"></script>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/inhalte.js"></script>
 </body>
 </html>

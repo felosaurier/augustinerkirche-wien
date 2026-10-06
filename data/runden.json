@@ -1,0 +1,475 @@
+{
+  "runden": [
+    {
+      "id": "fusswallfahrt",
+      "titel": "Augustiner-Fußwallfahrt",
+      "kurztext": "Jährliche Fußwallfahrt nach Mariazell auf den Spuren der Augustiner.",
+      "sichtbar": true,
+      "seite": "pages/runden/fusswallfahrt.html",
+      "kopf": {
+        "zeile": "Wallfahren als Lebensbild",
+        "titel": "Augustiner-Fußwallfahrt",
+        "betonung": "Fußwallfahrt",
+        "untertitel": "Eine 120 Kilometer lange Fußwallfahrt nach Mariazell — vier Tage unterwegs, getragen von Gemeinschaft und Stille."
+      },
+      "einleitung": [
+        "Einmal jährlich, im Mai oder Juni, bricht eine Gruppe von 25 bis 40 Pilgerinnen und Pilgern von Wien aus zu Fuß nach Mariazell auf — Österreichs bedeutendstem Marienwallfahrtsort. Die Strecke von rund 120 Kilometern wird in vier Tagen zurückgelegt, mit kleineren Gnadenorten wie Maria Raisenmarkt und Unterberg als Stationen am Weg.",
+        "Wallfahren verstehen die Organisatoren als Sinnbild des menschlichen Lebens selbst: das Verlassen des Alltags, die Suche nach neuer Einsicht, die Begegnung mit Weggefährten und das Zugehen auf ein Ziel. Gemeinsames Gehen, Momente der Stille und das Teilen der Mahlzeiten in den abendlichen Quartieren prägen die Tage.",
+        "Zwei Begleitfahrzeuge unterstützen die Gruppe, und gegenseitige Rücksichtnahme hilft allen Teilnehmenden, die fordernde Strecke zu bewältigen. Geleitet wird die Fußwallfahrt von P. Nikolaus Schachtner OSA gemeinsam mit Diakon Michael Schimpl."
+      ],
+      "schwerpunkt": null,
+      "text": [],
+      "termine": [],
+      "fakten": [
+        {
+          "label": "Wann",
+          "wert": "Einmal jährlich, im Mai oder Juni",
+          "zusatz": ""
+        },
+        {
+          "label": "Dauer",
+          "wert": "Vier Tage",
+          "zusatz": ""
+        },
+        {
+          "label": "Strecke",
+          "wert": "Rund 120 Kilometer nach Mariazell",
+          "zusatz": ""
+        },
+        {
+          "label": "Gruppe",
+          "wert": "25 bis 40 Pilgerinnen und Pilger",
+          "zusatz": ""
+        },
+        {
+          "label": "Leitung",
+          "wert": "P. Nikolaus Schachtner OSA und Diakon Michael Schimpl",
+          "zusatz": ""
+        }
+      ],
+      "kontakt": {
+        "titel": "Anmeldung & Auskunft",
+        "text": "P. Nikolaus Schachtner OSA",
+        "email": "p.nikolaus@augustiner.at",
+        "telefon": "",
+        "anschrift": ""
+      },
+      "bild": {
+        "pfad": "assets/img/runden/fusswallfahrt.webp",
+        "art": "foto",
+        "alt": "Start der Augustiner-Fußwallfahrt nach Mariazell",
+        "breite": 1000,
+        "hoehe": 500
+      }
+    },
+    {
+      "id": "bibelpur",
+      "titel": "BIBELpur",
+      "kurztext": "Die Bibelrunde in St. Augustin.",
+      "sichtbar": true,
+      "seite": "pages/runden/bibelpur.html",
+      "kopf": {
+        "zeile": "Die Bibelrunde",
+        "titel": "Bibelpur",
+        "betonung": "pur",
+        "untertitel": "Gemeinsames Lesen und Besprechen biblischer Texte — offen für alle, unabhängig von Vorwissen."
+      },
+      "einleitung": [
+        "Bibelpur ist die Bibelrunde der Pfarre St. Augustin. In regelmäßigen Treffen werden biblische Texte gemeinsam gelesen, ausgelegt und im Gespräch auf das eigene Leben bezogen — ganz ohne Vorwissen vorauszusetzen.",
+        "Die Runde versteht sich als offener Ort der Auseinandersetzung mit der Heiligen Schrift, fernab akademischer Distanz, und richtet sich an alle, die ihren Glauben durch die Beschäftigung mit der Bibel vertiefen möchten."
+      ],
+      "schwerpunkt": {
+        "label": "Thema 2026/27",
+        "titel": "Glauben & Lernen — Neutestamentliche Impulse für eine Theologie der Bildung",
+        "text": "Der christliche Glaube gibt zu denken. Bildung gehört zum Glauben und Glaube zur Bildung. Jede Generation an Christ/innen ist herausgefordert, dieses enge Wechselverhältnis in einem Bildungsprogramm abzubilden."
+      },
+      "text": [
+        "Hinter der Bezeichnung BIBELpur steht eine offene Gruppe von Bibel-Interessierten, die in regelmäßigen Abständen zusammenkommt, um in der Heiligen Schrift zu lesen, sich darüber und über eigene Glaubenserfahrungen auszutauschen und den eigenen Glauben zu reflektieren. Dazu kommen Referate zu verschiedenen biblischen Themen unter diversen Gesichtspunkten (exegetisch, bibeltheologisch, moraltheologisch, ethisch etc.)."
+      ],
+      "termine": [
+        {
+          "label": "Termine 2026/27 · donnerstags",
+          "daten": [
+            "2026-10-01",
+            "2026-10-29",
+            "2026-11-26",
+            "2026-12-17",
+            "2027-01-21",
+            "2027-02-25",
+            "2027-03-18",
+            "2027-04-15",
+            "2027-05-13",
+            "2027-06-03"
+          ]
+        }
+      ],
+      "fakten": [
+        {
+          "label": "Zeit",
+          "wert": "19:30 Uhr",
+          "zusatz": "18:30 Uhr Hl. Messe"
+        },
+        {
+          "label": "Ort",
+          "wert": "Pfarrsaal, Augustinerstraße 3, links",
+          "zusatz": ""
+        },
+        {
+          "label": "Leitung",
+          "wert": "P. MMag. Nikolaus Schachtner OSA",
+          "zusatz": ""
+        }
+      ],
+      "kontakt": {
+        "titel": "Kontakt",
+        "text": "Pfarre St. Augustin",
+        "email": "info@augustinerkirche.at",
+        "telefon": "+43 (0)1 533 70 99",
+        "anschrift": "Augustinerstraße 3, 1010 Wien"
+      },
+      "bild": {
+        "pfad": "assets/img/news/2026/bibelpur-2026-27.webp",
+        "art": "plakat",
+        "alt": "Plakat BIBELpur 2026/27",
+        "breite": 1413,
+        "hoehe": 2000
+      }
+    },
+    {
+      "id": "chor",
+      "titel": "Chor von St. Augustin",
+      "kurztext": "Vokalensemble der Hochämter — Proben jeden Mittwoch.",
+      "sichtbar": true,
+      "link": "pages/musik.html#p-chor"
+    },
+    {
+      "id": "fensterblick",
+      "titel": "Fensterblick",
+      "kurztext": "Runde für Menschen in der Lebensmitte.",
+      "sichtbar": true,
+      "seite": "pages/runden/fensterblick.html",
+      "kopf": {
+        "zeile": "Für Menschen in der Lebensmitte",
+        "titel": "Fensterblick",
+        "betonung": "blick",
+        "untertitel": "Raum für Austausch über Glauben, Beruf und Lebensfragen — speziell für Menschen in der Mitte des Lebens."
+      },
+      "einleitung": [
+        "Fensterblick richtet sich an Menschen in der Lebensmitte und bietet einen geschützten Rahmen, um über Glaubens-, Lebens- und Berufsfragen ins Gespräch zu kommen.",
+        "Ausgehend von einer ehemaligen „Jugendgruppe“ in St. Augustin sind die Teilnehmenden weiter im Leben und Glauben gereift. Das Interesse am Austausch und Weiterlernen über Themen des Glaubens und Lebens ist geblieben."
+      ],
+      "schwerpunkt": {
+        "label": "Der Name",
+        "titel": "Ein Blick aus dem Fenster",
+        "text": "Benannt ist »FensterBlick« von einer Erfahrung, die der hl. Augustinus in seinen Bekenntnissen beschreibt, als er mit seiner Mutter Monika in Ostia am Tiber an ein Fenster gelehnt in den Garten blickte: „Wir unterhielten uns in herzlichen Gesprächen, vergaßen, was hinter uns lag, und streckten uns nach dem, was vor uns war.“"
+      },
+      "text": [
+        "Ausgehend von verschiedenen Texten Augustins und/oder der Bibel und/oder anderen theologischen Werken werden Erfahrungen ausgetauscht, Gedanken gewälzt und Gespräche über „Gott und die Welt“ geführt. Es wird diskutiert, voneinander gelernt, es werden Aktionen gesetzt und Gemeinschaft gepflegt. Alle interessierten Menschen in der Lebensmitte sind zu den Treffen herzlich eingeladen!"
+      ],
+      "termine": [
+        {
+          "label": "Termine 2026/27 · donnerstags",
+          "daten": [
+            "2026-09-24",
+            "2026-10-15",
+            "2026-11-19",
+            "2026-12-10",
+            "2027-01-14",
+            "2027-02-18",
+            "2027-03-04",
+            "2027-04-08",
+            "2027-05-20",
+            "2027-06-10"
+          ]
+        }
+      ],
+      "fakten": [
+        {
+          "label": "Zeit",
+          "wert": "19:30 Uhr",
+          "zusatz": "18:30 Uhr Hl. Messe"
+        },
+        {
+          "label": "Ort",
+          "wert": "Pfarrsaal, Wien I, Augustinerstraße 3",
+          "zusatz": ""
+        },
+        {
+          "label": "Leitung",
+          "wert": "P. MMag. Nikolaus Schachtner OSA",
+          "zusatz": ""
+        }
+      ],
+      "kontakt": {
+        "titel": "Kontakt",
+        "text": "Informationen bei P. Nikolaus Schachtner OSA",
+        "email": "p.nikolaus@augustiner.at",
+        "telefon": "+43 (0)1 533 70 99",
+        "anschrift": "Augustinerstraße 3, 1010 Wien"
+      },
+      "bild": {
+        "pfad": "assets/img/news/2026/fensterblick-2026-27.webp",
+        "art": "plakat",
+        "alt": "Plakat FensterBlick 2026/27",
+        "breite": 1413,
+        "hoehe": 2000
+      }
+    },
+    {
+      "id": "glaube-konkret",
+      "titel": "Glaube konkret",
+      "kurztext": "Gesprächsrunde zu Glaubensfragen des Alltags.",
+      "sichtbar": true,
+      "seite": "pages/runden/glaube-konkret.html",
+      "kopf": {
+        "zeile": "Seit dem Jahr des Glaubens 2012",
+        "titel": "Glaube konkret",
+        "betonung": "konkret",
+        "untertitel": "Eine rund zwanzigköpfige Gesprächsrunde, die sich seit dem Jahr des Glaubens mit zentralen Themen des katholischen Glaubens auseinandersetzt."
+      },
+      "einleitung": [
+        "Glaube konkret entstand 2012 im Jahr des Glaubens unter Papst Benedikt XVI. und versammelt seither rund zwanzig Teilnehmerinnen und Teilnehmer zu einer vertiefenden Auseinandersetzung mit dem katholischen Glauben.",
+        "Vergangene Themen waren unter anderem die sieben Sakramente, die Geschichte der Kirchenkonzile und Formen des Gebets. Aktuell widmet sich die Runde, im Sinn von Papst Franziskus, dem Wert und der Bedeutung der Familie.",
+        "Geleitet wird Glaube konkret von P. Mag. Matthias Schlögl OSA. Die Treffen finden im Pfarrsaal, Augustinerstraße 3, Erdgeschoss links, statt; aktuelle Termine sind bei der Pfarrkanzlei zu erfragen."
+      ],
+      "schwerpunkt": null,
+      "text": [],
+      "termine": [],
+      "fakten": [
+        {
+          "label": "Seit",
+          "wert": "2012, dem Jahr des Glaubens",
+          "zusatz": ""
+        },
+        {
+          "label": "Teilnehmende",
+          "wert": "Rund zwanzig",
+          "zusatz": ""
+        },
+        {
+          "label": "Ort",
+          "wert": "Pfarrsaal, Augustinerstraße 3, Erdgeschoss links",
+          "zusatz": ""
+        },
+        {
+          "label": "Leitung",
+          "wert": "P. Mag. Matthias Schlögl OSA",
+          "zusatz": ""
+        },
+        {
+          "label": "Termine",
+          "wert": "bei der Pfarrkanzlei zu erfragen",
+          "zusatz": ""
+        }
+      ],
+      "kontakt": {
+        "titel": "Kontakt",
+        "text": "Pfarre St. Augustin",
+        "email": "info@augustinerkirche.at",
+        "telefon": "+43 (0)1 533 70 99",
+        "anschrift": "Augustinerstraße 3, 1010 Wien"
+      },
+      "bild": null
+    },
+    {
+      "id": "ministranten",
+      "titel": "Ministranten",
+      "kurztext": "Dienst am Altar für Buben und junge Männer.",
+      "sichtbar": true,
+      "seite": "pages/runden/ministranten.html",
+      "kopf": {
+        "zeile": "Dienst am Altar",
+        "titel": "Ministranten",
+        "betonung": "tranten",
+        "untertitel": "Ministrant kommt vom lateinischen Wort für dienen — Buben und junge Männer unterstützen die Liturgie der Augustinerkirche."
+      },
+      "einleitung": [
+        "Ministrantinnen und Ministranten — von lateinisch *ministrare*, dienen — unterstützen die Feier der Heiligen Messe, besonders beim Sonntags-Hochamt um 11:00 Uhr und an Feiertagen, aber auch bei den Werktagsmessen.",
+        "Der Dienst am Altar setzt nach Überzeugung der Gemeinschaft schon ein Zeichen für das, was im Glauben wesentlich ist: dass uns der Mensch neben uns nicht gleichgültig ist. Dieses Verständnis von Dienst reicht über die Liturgie hinaus bis in Familie, Schule und Gesellschaft.",
+        "Interessierte Buben und junge Männer sind eingeladen, sich nach den Heiligen Messen in der Sakristei bei den Ministranten zu melden oder direkt Diakon Michael Schimpl zu kontaktieren."
+      ],
+      "schwerpunkt": null,
+      "text": [],
+      "termine": [],
+      "fakten": [
+        {
+          "label": "Wann",
+          "wert": "Sonntags-Hochamt um 11:00 Uhr, Feiertage und Werktagsmessen",
+          "zusatz": ""
+        },
+        {
+          "label": "Mitmachen",
+          "wert": "nach den Heiligen Messen in der Sakristei",
+          "zusatz": ""
+        },
+        {
+          "label": "Ansprechperson",
+          "wert": "Diakon Michael Schimpl",
+          "zusatz": ""
+        }
+      ],
+      "kontakt": {
+        "titel": "Mitmachen",
+        "text": "Diakon Michael Schimpl",
+        "email": "diakon@augustinerkirche.at",
+        "telefon": "",
+        "anschrift": ""
+      },
+      "bild": {
+        "pfad": "assets/img/runden/ministranten.webp",
+        "art": "foto",
+        "alt": "Ministranten von St. Augustin",
+        "breite": 1024,
+        "hoehe": 576
+      }
+    },
+    {
+      "id": "oekumenekreis",
+      "titel": "Ökumenekreis Innere Stadt",
+      "kurztext": "Ökumenischer Austausch in der Inneren Stadt.",
+      "sichtbar": true,
+      "seite": "pages/runden/oekumenekreis.html",
+      "kopf": {
+        "zeile": "Christen verschiedener Konfessionen",
+        "titel": "Ökumenekreis Innere Stadt",
+        "betonung": "Innere Stadt",
+        "untertitel": "Christinnen und Christen verschiedener Konfessionen aus der Wiener Innenstadt treffen sich zu gemeinsamem Gebet und Austausch."
+      },
+      "einleitung": [
+        "Der Ökumenekreis Innere Stadt versammelt Gläubige unterschiedlicher christlicher Konfessionen aus dem ersten Wiener Gemeindebezirk zu regelmäßigem Gebet und Gespräch.",
+        "Besondere Bedeutung hat die Gebetswoche für die Einheit der Christen im Januar, zu der der Kreis traditionell ökumenische Gottesdienste mitgestaltet. Auskunft über aktuelle Termine erteilt die Pfarrkanzlei der Augustinerkirche."
+      ],
+      "schwerpunkt": null,
+      "text": [],
+      "termine": [],
+      "fakten": [
+        {
+          "label": "Wer",
+          "wert": "Christinnen und Christen verschiedener Konfessionen",
+          "zusatz": ""
+        },
+        {
+          "label": "Wo",
+          "wert": "Erster Wiener Gemeindebezirk",
+          "zusatz": ""
+        },
+        {
+          "label": "Höhepunkt",
+          "wert": "Gebetswoche für die Einheit der Christen im Januar",
+          "zusatz": ""
+        },
+        {
+          "label": "Termine",
+          "wert": "bei der Pfarrkanzlei zu erfragen",
+          "zusatz": ""
+        }
+      ],
+      "kontakt": {
+        "titel": "Kontakt",
+        "text": "Pfarre St. Augustin",
+        "email": "info@augustinerkirche.at",
+        "telefon": "+43 (0)1 533 70 99",
+        "anschrift": "Augustinerstraße 3, 1010 Wien"
+      },
+      "bild": null
+    },
+    {
+      "id": "senioren",
+      "titel": "Senioren in St. Augustin",
+      "kurztext": "Seniorennachmittage und Ausflüge.",
+      "sichtbar": true,
+      "seite": "pages/runden/senioren.html",
+      "kopf": {
+        "zeile": "Gemeinschaft im Ruhestand",
+        "titel": "Senioren in St. Augustin",
+        "betonung": "St. Augustin",
+        "untertitel": "Regelmäßige Seniorennachmittage mit Kaffee, Vortrag und Gespräch sowie gelegentliche gemeinsame Ausflüge."
+      },
+      "einleitung": [
+        "Die Runde Senioren in St. Augustin lädt ältere Pfarrmitglieder zu regelmäßigen Nachmittagen mit Kaffee, Vortrag und Gespräch in den Pfarrsaal ein.",
+        "Über das Jahr verteilt ergänzen gemeinsame Ausflüge das Programm und stärken die Gemeinschaft der Seniorinnen und Senioren der Pfarre."
+      ],
+      "schwerpunkt": {
+        "label": "Zwei Angebote",
+        "titel": "Nachmittag und Unterwegs",
+        "text": "Beim Nachmittag in St. Augustin sind alle um 16:00 Uhr zum gemütlichen Beisammensein in den Pfarrsaal eingeladen (für das leibliche Wohl wird gesorgt), um 18:30 Uhr folgt die Hl. Messe gemeinsam mit der Gemeinde. „Unterwegs mit St. Augustin“ lädt zum Ausflug; das Programm steht im Sonntagsblatt bzw. im Wochenkalender."
+      },
+      "text": [
+        "Wir freuen uns auf Ihr Kommen!"
+      ],
+      "termine": [
+        {
+          "label": "Seniorennachmittage 2026/27 · mittwochs",
+          "daten": [
+            "2026-09-09",
+            "2026-10-07",
+            "2026-11-04",
+            "2026-12-02",
+            "2027-01-13",
+            "2027-02-17",
+            "2027-03-03",
+            "2027-04-14",
+            "2027-05-12",
+            "2027-06-09"
+          ]
+        },
+        {
+          "label": "Unterwegs 2026/27 · mittwochs",
+          "daten": [
+            "2026-09-23",
+            "2026-10-21",
+            "2026-11-18",
+            "2026-12-09",
+            "2027-01-27",
+            "2027-02-24",
+            "2027-03-17",
+            "2027-04-28",
+            "2027-05-26",
+            "2027-06-23"
+          ]
+        }
+      ],
+      "fakten": [
+        {
+          "label": "Nachmittag",
+          "wert": "16:00 Uhr, Pfarrsaal, Augustinerstraße 3",
+          "zusatz": "anschließend 18:30 Uhr Hl. Messe"
+        },
+        {
+          "label": "Leitung",
+          "wert": "Christine Hummer, Ulrike Komarek & Pfarrer P. Matthias",
+          "zusatz": ""
+        },
+        {
+          "label": "Unterwegs",
+          "wert": "Zeit, Ort & Ziel: siehe Wochenkalender",
+          "zusatz": ""
+        },
+        {
+          "label": "Leitung",
+          "wert": "Gerda Loidl, Edith Schiavon, Ulrike Komarek & Pfarrer P. Matthias",
+          "zusatz": ""
+        },
+        {
+          "label": "Anmeldung",
+          "wert": "Ausflug: gerda.loidl@chello.at bzw. 0699 11 69 35 19",
+          "zusatz": ""
+        }
+      ],
+      "kontakt": {
+        "titel": "Kontakt",
+        "text": "Pfarre St. Augustin",
+        "email": "info@augustinerkirche.at",
+        "telefon": "+43 (0)1 533 70 99",
+        "anschrift": "Augustinerstraße 3, 1010 Wien"
+      },
+      "bild": {
+        "pfad": "assets/img/news/2026/seniorennachmittag-2026-27.webp",
+        "art": "plakat",
+        "alt": "Plakat Seniorennachmittag 2026/27",
+        "breite": 1272,
+        "hoehe": 1800
+      }
+    }
+  ]
+}

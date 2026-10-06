@@ -1,8 +1,9 @@
 /* ============================================================
    Augustinerkirche Wien — news.js
    Neuigkeiten aus data/news.csv (Excel-Tabelle):
-   - Startseite (#news-grid): die 6 neuesten Meldungen als Karten
-   - Archiv (#news-archive): alle aelteren Meldungen, nach Jahren
+   - Startseite (#news-grid): die 6 neuesten Meldungen als Karten;
+     Meldungen mit abgelaufenem "Bis"-Datum stehen dort nicht mehr
+   - Archiv (#news-archive): alle uebrigen Meldungen, nach Jahren
    - Klick auf eine Meldung oeffnet ein Fenster mit allen Infos
    Aufruf mit ?news=ID oeffnet die Meldung direkt (teilbarer Link).
    Benoetigt js/hochaemter-data.js (CSV-Parser und Hilfen).
@@ -15,8 +16,9 @@
 
   const LATEST = 6;
   const KEYS = {
-    datum: 'date', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
-    details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext'
+    datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
+    details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',
+    weitererlink: 'link2', weitererlinktext: 'linktext2'
   };
   const CLOSE_ICON = '<svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
 
@@ -47,15 +49,26 @@
       return {
         id: `${iso}-${HD.slug(o.title)}`,
         iso, order,
+        until: HD.isoDate(o.until),
         dateObj: HD.dateFromIso(iso),
         cat: o.cat || '', title: o.title, teaser: o.teaser || '',
         infos: splitPipe(o.infos).map(parseInfo),
         details: splitPipe(o.details),
-        thumb: o.thumb || '', poster: o.poster || '', link: o.link || '', linktext: o.linktext || ''
+        thumb: o.thumb || '', poster: o.poster || '', link: o.link || '', linktext: o.linktext || '',
+        link2: o.link2 || '', linktext2: o.linktext2 || ''
       };
     }).filter(Boolean);
     /* Neueste zuerst; am selben Tag bleibt die Reihenfolge der Tabelle */
     return out.sort((a, b) => b.iso.localeCompare(a.iso) || a.order - b.order);
+  }
+
+  /* Startseite: die neuesten Meldungen, deren "Bis"-Datum (einschliesslich)
+     noch nicht vorbei ist; ohne Datum bleiben sie wie bisher. Alles andere
+     steht im Archiv. */
+  function homeEntries() {
+    const d = new Date();
+    const today = `${d.getFullYear()}-${HD.pad(d.getMonth() + 1)}-${HD.pad(d.getDate())}`;
+    return entries.filter((e) => !e.until || e.until >= today).slice(0, LATEST);
   }
 
   const longDate = (e) => `${e.dateObj.getDate()}. ${HD.MONTHS[e.dateObj.getMonth()]} ${e.dateObj.getFullYear()}`;
@@ -85,10 +98,10 @@
       '</div></a>';
   }
   function renderLatest(el) {
-    const latest = entries.slice(0, LATEST);
+    const latest = homeEntries();
     el.innerHTML = latest.length ? latest.map(cardHTML).join('') : '<p class="s-text">Derzeit gibt es keine Meldungen.</p>';
     const more = qs('#news-more');
-    if (more) more.hidden = entries.length <= LATEST;
+    if (more) more.hidden = entries.length <= latest.length;
   }
 
   /* ---------- Archiv: nach Jahren ---------- */
@@ -103,9 +116,10 @@
       '<span class="news-row-go" aria-hidden="true">&rarr;</span></a>';
   }
   function renderArchive(el) {
-    const older = entries.slice(LATEST);
+    const home = homeEntries();
+    const older = entries.filter((e) => !home.includes(e));
     if (!older.length) {
-      el.innerHTML = '<p class="s-text">Im Archiv befinden sich noch keine Meldungen. Sobald es mehr als sechs aktuelle Neuigkeiten gibt, wandern die älteren automatisch hierher.</p>';
+      el.innerHTML = '<p class="s-text">Im Archiv befinden sich noch keine Meldungen. Ältere und abgelaufene Neuigkeiten wandern automatisch hierher.</p>';
       return;
     }
     /* Einmal nach Jahren gruppieren (Map behaelt die Einfuegereihenfolge) */
@@ -177,12 +191,18 @@
     return `<span class="news-noimg nd-noimg"><img src="${esc(base)}assets/logo-gold.png" alt="" width="96" height="96"/></span>`;
   }
 
+  /* Schaltflaechen im Fenster: Ziel der Meldung, zweite Schaltflaeche
+     (z. B. Kartenverkauf), Plakat */
+  const button = (href, text, cls) =>
+    `<a class="btn ${cls}" href="${esc(href)}"${isExternal(href) ? ' target="_blank" rel="noopener"' : ''}>${esc(text)}</a>`;
   function actionsHTML(e) {
     const link = url(e.link);
-    if (!link) return '';
+    const link2 = url(e.link2);
     const poster = url(e.poster);
+    if (!link && !link2 && !poster) return '';
     return '<div class="nd-actions">' +
-      `<a class="btn btn-dark" href="${esc(link)}"${isExternal(link) ? ' target="_blank" rel="noopener"' : ''}>${esc(e.linktext || 'Mehr erfahren')}</a>` +
+      (link ? button(link, e.linktext || 'Mehr erfahren', 'btn-dark') : '') +
+      (link2 ? button(link2, e.linktext2 || 'Mehr Informationen', 'btn-gold') : '') +
       (poster ? `<a class="btn btn-outline" href="${esc(poster)}" target="_blank" rel="noopener" data-lightbox>Plakat vergrößern</a>` : '') +
     '</div>';
   }

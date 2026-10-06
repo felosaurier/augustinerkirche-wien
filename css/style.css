@@ -26,7 +26,7 @@
   --line:#e6e0d2;
   --nav-h:72px;
   --sidebar:200px;
-  --max:1160px;
+  --max:1320px;
   --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
   --ease:cubic-bezier(.2,.6,.2,1);
 }
@@ -1068,4 +1068,40 @@ html.nd-lock{overflow:hidden}
 @media(forced-colors:active){
   .hamburger span,.nav-btn.current::after,.divider-g,.divider-g::before{background:CanvasText}
   .kal-m-btn.active,.news-year.active,.sidebar-item.active,.week-filter-btn.active{border-color:Highlight}
+}
+
+/* ============================================================
+   AUS DER VERWALTUNG — Runden-Termine, Personen, Kontakt, Repertoire
+   ============================================================ */
+/* Bereits vergangene Termine einer Runde */
+.termin-chips li.vorbei{opacity:.45}
+.termin-chips li.vorbei:hover{border-color:var(--line);background:var(--white)}
+/* Personenkarte ohne Foto */
+.person-card-wide.no-img{grid-template-columns:1fr}
+/* Kontaktleiste der Startseite */
+.cs-note{font-size:.82rem;color:var(--text-light)}
+.cs-hours{display:grid;grid-template-columns:auto 1fr;gap:0 .9rem;font-size:.9rem}
+
+/* Repertoire des Chores */
+.rep-head{display:flex;flex-wrap:wrap;gap:.8rem 1.5rem;align-items:center;margin-bottom:1.6rem}
+.rep-search{flex:1 1 16rem;max-width:26rem;font:inherit;font-size:1rem;padding:.75rem .95rem;border:1px solid var(--line);border-bottom:2px solid var(--gold);background:var(--white);color:var(--text);border-radius:0}
+.rep-search:focus{outline:2px solid var(--gold);outline-offset:1px}
+.rep-count{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-light);font-weight:600}
+.rep-list{columns:2 19rem;column-gap:3rem}
+.rep-item{break-inside:avoid;padding:1.1rem 0 1rem;border-top:1px solid var(--line)}
+.rep-name{font-family:var(--serif);font-size:1.35rem;font-weight:500;line-height:1.2;color:var(--black)}
+.rep-years{display:block;margin-top:.25rem;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.rep-works{list-style:none;margin-top:.6rem}
+.rep-works li{position:relative;padding-left:1rem;margin-bottom:.3rem;font-size:.95rem;line-height:1.55;color:var(--text-mid)}
+.rep-works li::before{content:'';position:absolute;left:0;top:.62em;width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}
+.rep-note{display:inline-block;margin-top:.25rem;padding:.1rem .55rem;background:var(--gold-pale);color:#6b5019;font-size:.8rem}
+.rep-empty{column-span:all}
+
+/* Hochamt-Detailseite: Plakat aus den Neuigkeiten daneben */
+.hd-layout.has-poster{display:grid;grid-template-columns:minmax(0,46rem) minmax(0,19rem);gap:4rem;align-items:start}
+.hd-poster .link-arr{display:flex;justify-content:center;margin-top:.9rem}
+.hd-poster-btn{display:block;width:100%;text-align:center;margin-top:1.1rem}
+@media(max-width:960px){
+  .hd-layout.has-poster{grid-template-columns:minmax(0,1fr);gap:2.4rem}
+  .hd-poster{max-width:22rem}
 }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Übersicht — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display+SC&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-uebersicht.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title" id="ov-greet">Grüß Gott</h1>
+      <p class="ph-sub" id="ov-today"></p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <h2 class="visually-hidden">Bereiche</h2>
+  <div class="adm-tiles" id="ov-tiles"></div>
+
+  <div class="adm-two">
+    <section class="adm-panel" aria-labelledby="ov-todo-h">
+      <h2 class="adm-panel-title" id="ov-todo-h">Noch offen</h2>
+      <p class="adm-panel-sub">Was bei den nächsten Terminen noch fehlt.</p>
+      <div id="ov-todo"><p class="adm-muted">Wird geladen …</p></div>
+    </section>
+
+    <div>
+      <section class="adm-panel" aria-labelledby="ov-steps-h">
+        <h2 class="adm-panel-title" id="ov-steps-h">So kommt eine Änderung auf die Website</h2>
+        <ol class="adm-steps" style="margin-top:1rem">
+          <li><span><b>Projektordner verbinden.</b> Einmalig, am Computer mit Chrome oder Edge. Dann speichert jedes Werkzeug direkt an der richtigen Stelle.</span></li>
+          <li><span><b>Ändern und speichern.</b> Hochämter, Neuigkeiten oder Solisten bearbeiten und auf „Speichern“ klicken.</span></li>
+          <li><span><b>Veröffentlichen lassen.</b> Kurz Bescheid geben, damit die Änderungen hochgeladen werden (commit und push).</span></li>
+        </ol>
+      </section>
+      <section class="adm-panel" aria-labelledby="ov-log-h">
+        <h2 class="adm-panel-title" id="ov-log-h">Zuletzt geändert</h2>
+        <p class="adm-panel-sub">Auf diesem Gerät, neueste zuerst.</p>
+        <div id="ov-log"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

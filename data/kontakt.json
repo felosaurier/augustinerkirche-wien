@@ -1,0 +1,26 @@
+{
+  "adresse": "Augustinerstraße 3",
+  "ort": "1010 Wien",
+  "eingang": "Eingang Kirche: Josefsplatz",
+  "telefon": [
+    {
+      "nummer": "+43 (0)1 533 70 99",
+      "bezeichnung": "Pfarre"
+    },
+    {
+      "nummer": "+43 (0)1 533 09 47",
+      "bezeichnung": "Kloster"
+    }
+  ],
+  "email": "info@augustinerkirche.at",
+  "kanzlei": [
+    {
+      "tage": "Mo, Mi, Fr",
+      "zeit": "09–12 Uhr"
+    },
+    {
+      "tage": "Di, Do",
+      "zeit": "15–18 Uhr"
+    }
+  ]
+}

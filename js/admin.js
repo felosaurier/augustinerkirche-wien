@@ -1,0 +1,1013 @@
+/* ============================================================
+   Augustinerkirche Wien — admin.js
+   Gemeinsame Grundlage der Verwaltung (Ordner admin/):
+   - Anmeldung: Zugänge stehen in admin/zugaenge.json, Passwörter
+     nur als Prüfsumme (PBKDF2-SHA256 mit Salz). Die Sitzung liegt
+     im Browser und endet nach 4 Stunden ohne Aktivität oder beim
+     Abmelden. Ohne gültige Sitzung geht es sofort zur Anmeldung.
+   - Kopfleiste mit Navigation, Name und Abmelden
+   - Projektordner (Chrome/Edge, File System Access API): einmal
+     verbinden, dann gilt die Verbindung für alle Werkzeuge
+     (der Ordner wird in IndexedDB gemerkt).
+   - Speichern: direkt in den Projektordner, sonst als Download
+     mit Angabe, wohin die Datei gehört.
+   - Meldungen (Toast), Rückfragen, Fenster, Formularfehler,
+     Listen-Eingabe, Bilder in WebP, Änderungsprotokoll.
+
+   Hinweis zur Sicherheit: Die Website ist statisch, es gibt keinen
+   Server, der Passwörter prüft. Die Anmeldung hält Unbefugte von
+   der Verwaltung fern; ändern lässt sich die öffentliche Website
+   aber ohnehin nur über den Projektordner (commit und push).
+
+   Wird im <head> nach js/hochaemter-data.js geladen (ohne defer).
+   ============================================================ */
+(function (w, d) {
+  'use strict';
+
+  const HD = w.HochamtData;
+  const ROOT = d.documentElement;
+  const PUBLIC = ROOT.dataset.adm === 'public';
+  const ACCOUNTS = 'admin/zugaenge.json';
+  const KEY_SESSION = 'aug-admin-sitzung';
+  const KEY_FAILS = 'aug-admin-fehlversuche';
+  const KEY_LOG = 'aug-admin-protokoll';
+  const IDLE_MS = 4 * 60 * 60 * 1000;
+  const ITER = 600000;
+  const MIN_PW = 10;
+
+  const { esc, pad } = HD;
+  const $ = (id) => d.getElementById(id);
+
+  /* ---------- Speicher im Browser (kann in privaten Fenstern fehlen) ---------- */
+  const store = (() => {
+    for (const name of ['localStorage', 'sessionStorage']) {
+      try {
+        const s = w[name];
+        s.setItem('aug-probe', '1');
+        s.removeItem('aug-probe');
+        return s;
+      } catch {
+        /* naechsten Speicher versuchen */
+      }
+    }
+    return null;
+  })();
+  function get(key) {
+    try {
+      return JSON.parse(store.getItem(key));
+    } catch {
+      return null;
+    }
+  }
+  function put(key, value) {
+    try {
+      store.setItem(key, JSON.stringify(value));
+    } catch {
+      /* Speicher voll oder gesperrt */
+    }
+  }
+  function drop(key) {
+    try {
+      store.removeItem(key);
+    } catch {
+      /* nichts zu tun */
+    }
+  }
+
+  /* ---------- Sitzung ---------- */
+  function session() {
+    const s = get(KEY_SESSION);
+    return s && s.benutzer && s.bis > Date.now() ? s : null;
+  }
+  const pageName = () => location.pathname.split('/').pop() || 'index.html';
+
+  /* Rollen: "admin" darf zusaetzlich Zugaenge verwalten, "redaktion" pflegt
+     Inhalte. Zugaenge ohne Angabe (aus der ersten Fassung) gelten als Admin. */
+  const roleOf = (acc) => (acc && acc.rolle === 'redaktion' ? 'redaktion' : 'admin');
+  const isAdmin = () => roleOf(session()) === 'admin';
+
+  /* Ohne gueltige Sitzung sofort zur Anmeldung, bevor die Seite sichtbar wird;
+     Seiten nur fuer Admins (<html data-adm-rolle="admin">) leiten sonst zur Uebersicht */
+  if (!PUBLIC && !session()) {
+    ROOT.style.visibility = 'hidden';
+    location.replace(`index.html?weiter=${encodeURIComponent(pageName() + location.search)}`);
+  } else if (!PUBLIC && ROOT.dataset.admRolle === 'admin' && !isAdmin()) {
+    ROOT.style.visibility = 'hidden';
+    location.replace('uebersicht.html?hinweis=nur-admin');
+  }
+
+  /* ---------- Datum ---------- */
+  const isoOf = (dt) => `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+  const isoToday = () => isoOf(new Date());
+  function fmtDate(iso) {
+    const dt = HD.dateFromIso(iso);
+    return `${HD.WEEKDAYS[dt.getDay()]}, ${dt.getDate()}. ${HD.MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
+  }
+  function fmtShort(iso) {
+    const dt = HD.dateFromIso(iso);
+    return `${HD.WEEKDAYS_SHORT[dt.getDay()]} ${pad(dt.getDate())}.${pad(dt.getMonth() + 1)}.${dt.getFullYear()}`;
+  }
+
+  /* ---------- Symbole (Linien, 24er-Raster) ---------- */
+  const ICONS = {
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    edit: '<path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M13.5 7.5l3 3"/>',
+    copy: '<rect x="9" y="9" width="11" height="11" rx="1"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/>',
+    trash: '<path d="M4 7h16M10 11v6M14 11v6M5.5 7l1 13h11l1-13M9 7V4h6v3"/>',
+    folder: '<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2h7.5A2.5 2.5 0 0 1 21 9.5v7a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5z"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    checkCircle: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 10"/>',
+    logout: '<path d="M9 4H6.5A2.5 2.5 0 0 0 4 6.5v11A2.5 2.5 0 0 0 6.5 20H9M16 16l4-4-4-4M20 12H10"/>',
+    external: '<path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+    eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    eyeOff: '<path d="M3 3l18 18M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7a9.8 9.8 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="1.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    news: '<path d="M4 5h13v14H6.5A2.5 2.5 0 0 1 4 16.5z"/><path d="M17 9h3v8.5a1.5 1.5 0 0 1-3 0M7.5 9h6M7.5 12.5h6M7.5 16h4"/>',
+    music: '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16.5 6.5l3 3M14 9l2 2"/>',
+    alert: '<path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+    image: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5-9 9"/>',
+    upload: '<path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+    download: '<path d="M12 4v12M7 11l5 5 5-5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+    close: '<path d="M6 6l12 12M18 6L6 18"/>',
+    archive: '<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"/>',
+    refresh: '<path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"/>',
+    dice: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h.01M15 9h.01M12 12h.01M9 15h.01M15 15h.01" stroke-width="2.6"/>',
+    lock: '<rect x="5" y="11" width="14" height="10" rx="1.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.4c2.1.7 3.5 2.8 3.5 5.6"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
+    book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M8 7h8M8 11h6"/>',
+    up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+    link: '<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4L12 5.6"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4L12 18.4"/>',
+    down: '<path d="M12 5v14M6 13l6 6 6-6"/>',
+    home: '<path d="M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-6h4v6"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>'
+  };
+  const icon = (name) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name] || ''}</svg>`;
+
+  /* ---------- Passwoerter ---------- */
+  const enc = new TextEncoder();
+  const toB64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+  const fromB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  const cryptoReady = () => !!(w.crypto && w.crypto.subtle);
+
+  async function derive(password, salt, iter) {
+    const key = await crypto.subtle.importKey('raw', enc.encode(String(password).normalize('NFC')), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: fromB64(salt), iterations: iter }, key, 256);
+    return toB64(bits);
+  }
+  const normUser = (s) => String(s || '').trim().toLowerCase();
+  const stampOf = (acc) => String(acc.hash || '').slice(0, 16);
+
+  function parseAccounts(text) {
+    const data = JSON.parse(text);
+    const list = Array.isArray(data) ? data : data && data.zugaenge;
+    return Array.isArray(list) ? list.filter((a) => a && a.benutzer && a.salt && a.hash) : [];
+  }
+  function accountsJSON(list) {
+    return JSON.stringify({
+      hinweis: 'Zugänge zur Verwaltung (admin/). Passwörter stehen hier nur als Prüfsumme (PBKDF2-SHA256), nie im Klartext. Bearbeiten über admin/zugaenge.html.',
+      zugaenge: list
+    }, null, 2) + '\n';
+  }
+  async function makeAccount({ benutzer, name, passwort, rolle }) {
+    const salt = toB64(crypto.getRandomValues(new Uint8Array(16)));
+    return {
+      benutzer: normUser(benutzer),
+      name: String(name || '').trim() || normUser(benutzer),
+      salt, iter: ITER,
+      hash: await derive(passwort, salt, ITER),
+      rolle: rolle === 'redaktion' ? 'redaktion' : 'admin',
+      angelegt: isoToday()
+    };
+  }
+  async function checkPassword(acc, passwort) {
+    return (await derive(passwort, acc.salt, acc.iter || ITER)) === acc.hash;
+  }
+
+  /* Staerke grob einschaetzen: 0 leer, 1 zu kurz/schwach … 4 sehr gut */
+  function pwLevel(pw) {
+    if (!pw) return 0;
+    if (pw.length < MIN_PW) return 1;
+    let score = 1;
+    if (pw.length >= 14) score++;
+    if (/[a-zäöüß]/.test(pw) && /[A-ZÄÖÜ]/.test(pw)) score++;
+    if (/\d/.test(pw) || /[^\p{L}\s]/u.test(pw)) score++;
+    return Math.min(score, 4);
+  }
+  const PW_WORDS = ['Orgel', 'Kerze', 'Psalm', 'Choral', 'Kantor', 'Glocke', 'Altar', 'Kanzel', 'Hymnus', 'Credo', 'Gloria', 'Sanctus',
+    'Kyrie', 'Motette', 'Kantate', 'Fuge', 'Toccata', 'Sonate', 'Geige', 'Pauke', 'Posaune', 'Harfe', 'Laute', 'Tenor', 'Sopran',
+    'Bariton', 'Kapelle', 'Kloster', 'Garten', 'Brunnen', 'Turm', 'Fenster', 'Pfeiler', 'Bogen', 'Portal', 'Krypta', 'Laterne',
+    'Leuchter', 'Kelch', 'Rose', 'Lilie', 'Linde', 'Eiche', 'Ahorn', 'Flieder', 'Efeu', 'Taube', 'Adler', 'Lamm', 'Anker', 'Stern',
+    'Sonne', 'Mond', 'Komet', 'Wolke', 'Regen', 'Nebel', 'Morgen', 'Abend', 'Advent', 'Ostern', 'Sommer', 'Winter', 'Herbst', 'Donau',
+    'Hofburg', 'Augustin', 'Monika', 'Ambrosius', 'Mailand', 'Ostia', 'Karthago', 'Pergament', 'Feder', 'Tinte', 'Siegel', 'Schlüssel',
+    'Buch', 'Brief', 'Lied', 'Klang', 'Takt', 'Akkord', 'Melodie', 'Stimme', 'Echo', 'Stille', 'Frieden', 'Freude', 'Hoffnung', 'Segen',
+    'Licht', 'Gold', 'Silber', 'Marmor', 'Bronze', 'Kupfer', 'Purpur', 'Brokat', 'Mosaik', 'Fresko', 'Kuppel', 'Kreuzgang', 'Zither',
+    'Flöte', 'Oboe', 'Fagott', 'Cello', 'Kontrabass', 'Trompete', 'Horn', 'Kantorei', 'Vesper', 'Matutin', 'Laudes', 'Pilger', 'Brücke'];
+  function randomIndex(n) {
+    const max = Math.floor(0x100000000 / n) * n;
+    const buf = new Uint32Array(1);
+    do crypto.getRandomValues(buf); while (buf[0] >= max);
+    return buf[0] % n;
+  }
+  /* Merkbares, aber starkes Passwort: vier Woerter und eine Zahl */
+  function suggestPassword() {
+    const words = Array.from({ length: 4 }, () => PW_WORDS[randomIndex(PW_WORDS.length)]);
+    return `${words.join('-')}-${10 + randomIndex(90)}`;
+  }
+
+  /* ---------- Fehlversuche: nach 5 falschen Eingaben kurze Wartezeit ---------- */
+  function lockLeft() {
+    const f = get(KEY_FAILS);
+    return f && f.bis > Date.now() ? Math.ceil((f.bis - Date.now()) / 1000) : 0;
+  }
+  function registerFail() {
+    const f = get(KEY_FAILS) || { n: 0 };
+    f.n += 1;
+    if (f.n >= 5) f.bis = Date.now() + Math.min(300, 30 * 2 ** (f.n - 5)) * 1000;
+    put(KEY_FAILS, f);
+  }
+
+  async function fetchText(path) {
+    const res = await fetch(`../${path}`, { cache: 'no-store' });
+    if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
+    return res.text();
+  }
+
+  /* Anmelden gegen die Zugaenge, die der Webserver ausliefert */
+  async function login(benutzer, passwort) {
+    if (!cryptoReady()) throw Object.assign(new Error('unsicher'), { code: 'insecure' });
+    if (lockLeft()) throw Object.assign(new Error('gesperrt'), { code: 'locked' });
+    const accounts = parseAccounts(await fetchText(ACCOUNTS));
+    const acc = accounts.find((a) => a.benutzer === normUser(benutzer));
+    /* Auch bei unbekanntem Namen rechnen, damit die Antwort gleich lange dauert */
+    const ok = acc ? await checkPassword(acc, passwort) : (await derive(passwort, 'AAAAAAAAAAAAAAAAAAAAAA==', ITER), false);
+    if (!ok) {
+      registerFail();
+      throw Object.assign(new Error('falsch'), { code: lockLeft() ? 'locked' : 'wrong' });
+    }
+    drop(KEY_FAILS);
+    startSession(acc);
+    return acc;
+  }
+  function startSession(acc) {
+    put(KEY_SESSION, { benutzer: acc.benutzer, name: acc.name, rolle: roleOf(acc), stamp: stampOf(acc), bis: Date.now() + IDLE_MS });
+  }
+  function logout(reason) {
+    drop(KEY_SESSION);
+    location.replace(`index.html${reason ? `?hinweis=${reason}` : ''}`);
+  }
+
+  /* Gibt es den Zugang noch und gilt das Passwort noch? Sonst abmelden.
+     Geprueft wird gegen die Datei des Webservers und, falls verbunden,
+     gegen die im Projektordner (dort kann sie neuer sein). Ist keine
+     der beiden lesbar (z. B. offline), bleibt die Sitzung bestehen. */
+  async function verifySession() {
+    const s = session();
+    if (!s) return;
+    const sources = [() => fetchText(ACCOUNTS)];
+    if (folder.state === 'ok') sources.push(() => folder.read(ACCOUNTS));
+    let readable = false;
+    for (const src of sources) {
+      try {
+        const list = parseAccounts(await src());
+        readable = true;
+        const acc = list.find((a) => a.benutzer === s.benutzer);
+        if (acc && stampOf(acc) === s.stamp) {
+          /* Name oder Rolle koennen sich inzwischen geaendert haben */
+          if (acc.name !== s.name || roleOf(acc) !== roleOf(s)) {
+            put(KEY_SESSION, { ...s, name: acc.name, rolle: roleOf(acc) });
+            if (roleOf(acc) !== roleOf(s)) location.reload();
+          }
+          return;
+        }
+      } catch {
+        /* naechste Quelle */
+      }
+    }
+    if (readable) logout('ungueltig');
+  }
+
+  /* ---------- Projektordner (File System Access API) ---------- */
+  function idb(mode, fn) {
+    return new Promise((resolve, reject) => {
+      const open = indexedDB.open('aug-admin', 1);
+      open.onupgradeneeded = () => open.result.createObjectStore('kv');
+      open.onerror = () => reject(open.error);
+      open.onsuccess = () => {
+        const db = open.result;
+        const tx = db.transaction('kv', mode);
+        const req = fn(tx.objectStore('kv'));
+        tx.oncomplete = () => { db.close(); resolve(req.result); };
+        tx.onerror = tx.onabort = () => { db.close(); reject(tx.error); };
+      };
+    });
+  }
+  const idbGet = (k) => idb('readonly', (s) => s.get(k));
+  const idbSet = (k, v) => idb('readwrite', (s) => s.put(v, k));
+  const idbDel = (k) => idb('readwrite', (s) => s.delete(k));
+
+  async function handleFor(dir, path, create) {
+    const parts = path.split('/');
+    let cur = dir;
+    for (const part of parts.slice(0, -1)) cur = await cur.getDirectoryHandle(part, { create: !!create });
+    return cur.getFileHandle(parts[parts.length - 1], { create: !!create });
+  }
+  async function existsIn(dir, path) {
+    try {
+      await handleFor(dir, path, false);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  const folder = {
+    supported: typeof w.showDirectoryPicker === 'function',
+    state: 'none',       /* unsupported | none | prompt | ok */
+    handle: null,
+    subs: new Set(),
+    on(fn) { this.subs.add(fn); },
+    async read(path) {
+      return (await (await handleFor(this.handle, path, false)).getFile()).text();
+    },
+    async write(path, blob) {
+      const fh = await handleFor(this.handle, path, true);
+      const out = await fh.createWritable();
+      await out.write(blob);
+      await out.close();
+    },
+    exists(path) {
+      return existsIn(this.handle, path);
+    },
+    async restore() {
+      if (!this.supported) return setFolderState('unsupported');
+      try {
+        const h = await idbGet('ordner');
+        if (!h) return setFolderState('none');
+        this.handle = h;
+        const p = await h.queryPermission({ mode: 'readwrite' });
+        return setFolderState(p === 'granted' ? 'ok' : 'prompt');
+      } catch {
+        return setFolderState('none');
+      }
+    },
+    async connect() {
+      let dir;
+      try {
+        dir = await w.showDirectoryPicker({ id: 'augustiner-website', mode: 'readwrite' });
+      } catch (e) {
+        if (e && e.name !== 'AbortError') toast(`Verbinden nicht möglich: ${e.message}`, 'err');
+        return false;
+      }
+      if (!(await existsIn(dir, 'index.html')) || !(await existsIn(dir, 'data/news.csv'))) {
+        toast('Das ist nicht der Projektordner. Bitte den Ordner wählen, in dem index.html liegt.', 'err');
+        return false;
+      }
+      this.handle = dir;
+      try {
+        await idbSet('ordner', dir);
+      } catch {
+        /* dann gilt die Verbindung nur fuer diese Seite */
+      }
+      toast(`Projektordner „${dir.name}“ verbunden.`);
+      await becomeOk();
+      return true;
+    },
+    async allow() {
+      try {
+        const p = await this.handle.requestPermission({ mode: 'readwrite' });
+        if (p !== 'granted') {
+          toast('Ohne Erlaubnis kann nicht direkt gespeichert werden.', 'err');
+          return false;
+        }
+      } catch {
+        return this.connect();
+      }
+      toast('Zugriff auf den Projektordner erlaubt.');
+      await becomeOk();
+      return true;
+    },
+    async disconnect() {
+      try {
+        await idbDel('ordner');
+      } catch {
+        /* nichts zu tun */
+      }
+      this.handle = null;
+      setFolderState('none');
+      toast('Projektordner getrennt. Änderungen gibt es jetzt als Download.');
+    }
+  };
+  /* Erst offene Downloads in den Ordner schreiben, dann die Werkzeuge
+     benachrichtigen (die ihre Daten dann aus dem Ordner neu laden) */
+  async function becomeOk() {
+    folder.state = 'ok';
+    await flushPending();
+    setFolderState('ok');
+  }
+  function setFolderState(state) {
+    folder.state = state;
+    renderFolderStrips();
+    renderPending();
+    for (const fn of folder.subs) fn(state);
+  }
+
+  function folderStripHTML() {
+    switch (folder.state) {
+      case 'ok':
+        return `<span class="adm-folder-ico">${icon('checkCircle')}</span>` +
+          `<div class="adm-folder-txt"><strong>Projektordner verbunden</strong>Änderungen werden direkt im Ordner „${esc(folder.handle.name)}“ gespeichert.</div>` +
+          '<button type="button" class="btn btn-quiet btn-sm" data-folder="disconnect">Trennen</button>';
+      case 'prompt':
+        return `<span class="adm-folder-ico">${icon('folder')}</span>` +
+          `<div class="adm-folder-txt"><strong>Zugriff auf den Projektordner erlauben</strong>Der Ordner „${esc(folder.handle.name)}“ ist bekannt. Der Browser fragt nach jedem Neustart einmal nach, ob die Verwaltung dort speichern darf.</div>` +
+          `<button type="button" class="btn btn-dark" data-folder="allow">${icon('check')}Zugriff erlauben</button>`;
+      case 'unsupported':
+        return `<span class="adm-folder-ico">${icon('download')}</span>` +
+          '<div class="adm-folder-txt"><strong>Speichern per Download</strong>Dieser Browser kann nicht direkt in einen Ordner speichern. Du bekommst geänderte Dateien zum Herunterladen, mit Angabe, wohin sie gehören. Am bequemsten geht es mit Chrome oder Edge am Computer.</div>';
+      default:
+        return `<span class="adm-folder-ico">${icon('folder')}</span>` +
+          '<div class="adm-folder-txt"><strong>Projektordner noch nicht verbunden</strong>Einmal verbinden, dann speichert die Verwaltung alles direkt an der richtigen Stelle. Ohne Verbindung bekommst du die Dateien zum Herunterladen.</div>' +
+          `<button type="button" class="btn btn-dark" data-folder="connect">${icon('folder')}Projektordner verbinden</button>`;
+    }
+  }
+  function renderFolderStrips() {
+    d.querySelectorAll('[data-adm-folder]').forEach((el) => {
+      el.className = `adm-folder${folder.state === 'ok' ? ' is-ok' : ''}`;
+      el.innerHTML = folderStripHTML();
+    });
+  }
+
+  /* ---------- Lesen und Speichern ---------- */
+  /* Text einer Projektdatei: aus dem verbundenen Ordner, sonst vom Webserver */
+  async function readText(path) {
+    if (folder.state === 'ok') return folder.read(path);
+    return fetchText(path);
+  }
+  const fileName = (path) => path.split('/').pop();
+  const dirName = (path) => path.replace(/[^/]+$/, '') || './';
+  function typeFor(path) {
+    if (path.endsWith('.csv')) return 'text/csv;charset=utf-8';
+    if (path.endsWith('.json')) return 'application/json;charset=utf-8';
+    return '';
+  }
+
+  /* Noch herunterzuladende Dateien (ohne verbundenen Projektordner) */
+  const pending = new Map();
+  /* In dieser Sitzung gespeicherte Bilder: so erscheinen sie sofort, auch
+     wenn sie (ohne Projektordner) erst noch heruntergeladen werden muessen */
+  const localImages = new Map();
+  function imageUrl(path) {
+    return localImages.get(path) || HD.safeUrl(path, '../');
+  }
+  /* Speichert eine Datei im Projektordner; ohne Ordner wird sie zum
+     Herunterladen vorgemerkt. Liefert true, wenn direkt gespeichert. */
+  async function saveFile(path, data) {
+    const blob = data instanceof Blob ? data : new Blob([data], { type: typeFor(path) });
+    if (blob.type.startsWith('image/')) {
+      if (localImages.has(path)) URL.revokeObjectURL(localImages.get(path));
+      localImages.set(path, URL.createObjectURL(blob));
+    }
+    if (folder.state === 'ok') {
+      await folder.write(path, blob);
+      return true;
+    }
+    pending.set(path, { path, blob, done: false });
+    renderPending();
+    return false;
+  }
+  const saveJSON = (path, data) => saveFile(path, JSON.stringify(data, null, 2) + '\n');
+
+  /* Offene Downloads in den gerade verbundenen Ordner schreiben; was
+     nicht geklappt hat, bleibt zum Herunterladen stehen */
+  async function flushPending() {
+    const open = [...pending.values()].filter((p) => !p.done);
+    if (folder.state === 'ok') {
+      try {
+        for (const p of open) {
+          await folder.write(p.path, p.blob);
+          pending.delete(p.path);
+        }
+        if (open.length) toast(open.length === 1 ? `${fileName(open[0].path)} im Projektordner gespeichert.` : `${open.length} Dateien im Projektordner gespeichert.`);
+        pending.clear();
+      } catch (e) {
+        toast(`Speichern nicht möglich: ${e.message}`, 'err');
+      }
+    }
+    renderPending();
+  }
+  function renderPending() {
+    let bar = $('adm-pending');
+    const items = [...pending.values()];
+    if (d.body) d.body.classList.toggle('has-pending', items.length > 0);
+    if (!items.length) {
+      if (bar) bar.remove();
+      return;
+    }
+    if (!bar) {
+      bar = d.createElement('section');
+      bar.id = 'adm-pending';
+      bar.className = 'adm-pending';
+      bar.setAttribute('aria-label', 'Noch zu speichern');
+      d.body.appendChild(bar);
+      bar.addEventListener('click', onPendingClick);
+    }
+    const allDone = items.every((p) => p.done);
+    const list = items.map((p) =>
+      `<code>${esc(fileName(p.path))}</code> in den Ordner <code>${esc(dirName(p.path))}</code>${p.done ? ' ✓' : ''}`
+    ).join(' · ');
+    const canConnect = folder.supported && folder.state !== 'ok' && !allDone;
+    bar.innerHTML = '<div class="adm-pending-in"><div class="adm-pending-txt">' +
+      (allDone
+        ? `<strong>Heruntergeladen</strong>Jetzt die Dateien in den Projektordner legen (gleichnamige Datei ersetzen): ${list}`
+        : `<strong>Noch nicht gespeichert</strong>Bitte herunterladen und in den Projektordner legen (gleichnamige Datei ersetzen): ${list}`) +
+      '</div><div class="adm-pending-files">' +
+      (allDone
+        ? '<button type="button" class="btn btn-gold btn-sm" data-pending="ok">Erledigt</button>'
+        : items.filter((p) => !p.done).map((p) =>
+          `<button type="button" class="btn btn-gold btn-sm" data-dl="${esc(p.path)}">${icon('download')}${esc(fileName(p.path))}</button>`).join('') +
+          (canConnect ? `<button type="button" class="btn btn-outline-w btn-sm" data-folder="${folder.state === 'prompt' ? 'allow' : 'connect'}">${icon('folder')}Lieber direkt speichern</button>` : '')) +
+      '</div></div>';
+    /* Meldungen erscheinen oberhalb der Leiste */
+    ROOT.style.setProperty('--adm-pending-h', `${bar.offsetHeight}px`);
+  }
+  function onPendingClick(ev) {
+    const dl = ev.target.closest('[data-dl]');
+    if (dl) {
+      const p = pending.get(dl.dataset.dl);
+      if (p) {
+        HD.download(p.blob, fileName(p.path));
+        p.done = true;
+        renderPending();
+      }
+    }
+    if (ev.target.closest('[data-pending="ok"]')) {
+      pending.clear();
+      renderPending();
+    }
+  }
+  const hasUnsaved = () => [...pending.values()].some((p) => !p.done);
+
+  /* ---------- Aenderungsprotokoll (nur auf diesem Geraet) ---------- */
+  function log(text) {
+    const s = session();
+    const list = get(KEY_LOG) || [];
+    list.unshift({ zeit: Date.now(), wer: s ? s.name : '', text });
+    put(KEY_LOG, list.slice(0, 30));
+  }
+  const recentLog = () => get(KEY_LOG) || [];
+
+  /* ---------- Meldungen ---------- */
+  function toast(msg, kind) {
+    let wrap = $('adm-toasts');
+    if (!wrap) {
+      wrap = d.createElement('div');
+      wrap.id = 'adm-toasts';
+      wrap.className = 'adm-toasts';
+      wrap.setAttribute('aria-live', 'polite');
+      d.body.appendChild(wrap);
+    }
+    const t = d.createElement('div');
+    t.className = `adm-toast${kind === 'err' ? ' err' : ''}`;
+    if (kind === 'err') t.setAttribute('role', 'alert');
+    t.innerHTML = `${icon(kind === 'err' ? 'alert' : 'checkCircle')}<span>${esc(msg)}</span>`;
+    wrap.appendChild(t);
+    setTimeout(() => {
+      t.classList.add('out');
+      setTimeout(() => t.remove(), 300);
+    }, kind === 'err' ? 8000 : 4200);
+  }
+
+  /* ---------- Fenster ---------- */
+  function unlockIfLast() {
+    if (!d.querySelector('dialog[open]')) ROOT.classList.remove('adm-lock');
+  }
+  /* Oeffnet ein <dialog>. isDirty(): ungespeicherte Eingaben? Dann wird
+     beim Schliessen (Escape, X, Abbrechen) erst nachgefragt. */
+  function openDialog(dlg, opts = {}) {
+    dlg._isDirty = opts.isDirty || null;
+    if (!dlg._wired) {
+      dlg._wired = true;
+      dlg.addEventListener('cancel', (e) => {
+        e.preventDefault();
+        requestClose(dlg);
+      });
+      dlg.addEventListener('click', (e) => {
+        if (e.target.closest('[data-close]')) requestClose(dlg);
+      });
+      dlg.addEventListener('close', unlockIfLast);
+    }
+    dlg.showModal();
+    ROOT.classList.add('adm-lock');
+    const body = dlg.querySelector('.adm-dlg-body');
+    if (body) body.scrollTop = 0;
+    const first = dlg.querySelector('[data-autofocus]') ||
+      dlg.querySelector('.adm-dlg-body input:not([type="file"]):not([type="hidden"]), .adm-dlg-body select, .adm-dlg-body textarea');
+    if (first) first.focus();
+  }
+  async function requestClose(dlg) {
+    if (dlg._isDirty && dlg._isDirty()) {
+      const ok = await confirmBox({
+        title: 'Änderungen verwerfen?',
+        text: 'In diesem Fenster wurde etwas geändert und noch nicht gespeichert.',
+        ok: 'Verwerfen', cancel: 'Weiter bearbeiten', danger: true
+      });
+      if (!ok) return;
+    }
+    dlg.close();
+  }
+
+  let cfCount = 0;
+  /* Rueckfrage als eigenes Fenster; liefert true bei Bestaetigung */
+  function confirmBox({ title, text, html, ok = 'OK', cancel = 'Abbrechen', danger = false }) {
+    return new Promise((resolve) => {
+      const id = `adm-cf-${++cfCount}`;
+      const dlg = d.createElement('dialog');
+      dlg.className = 'adm-dialog small';
+      dlg.setAttribute('aria-labelledby', `${id}-t`);
+      dlg.setAttribute('aria-describedby', `${id}-x`);
+      dlg.innerHTML =
+        `<div class="adm-dlg-head"><div><div class="adm-dlg-tag">Rückfrage</div><h2 class="adm-dlg-title" id="${id}-t">${esc(title)}</h2></div></div>` +
+        `<div class="adm-dlg-text" id="${id}-x">${html || esc(text)}</div>` +
+        '<div class="adm-dlg-foot"><div class="adm-dlg-foot-r">' +
+          `<button type="button" class="btn btn-quiet" value="no">${esc(cancel)}</button>` +
+          `<button type="button" class="btn ${danger ? 'btn-danger' : 'btn-dark'}" value="yes">${esc(ok)}</button>` +
+        '</div></div>';
+      d.body.appendChild(dlg);
+      let result = false;
+      dlg.addEventListener('click', (e) => {
+        const b = e.target.closest('button[value]');
+        if (!b) return;
+        result = b.value === 'yes';
+        dlg.close();
+      });
+      dlg.addEventListener('close', () => {
+        dlg.remove();
+        unlockIfLast();
+        resolve(result);
+      });
+      dlg.showModal();
+      ROOT.classList.add('adm-lock');
+      dlg.querySelector(danger ? 'button[value="no"]' : 'button[value="yes"]').focus();
+    });
+  }
+
+  /* ---------- Formularfehler: am Feld und als Liste oben ---------- */
+  function describe(input, id, on) {
+    const ids = new Set((input.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
+    if (on) ids.add(id);
+    else ids.delete(id);
+    if (ids.size) input.setAttribute('aria-describedby', [...ids].join(' '));
+    else input.removeAttribute('aria-describedby');
+  }
+  function setError(input, msg) {
+    const id = `${input.id}-fehler`;
+    let el = $(id);
+    if (!msg) {
+      if (el) el.remove();
+      input.removeAttribute('aria-invalid');
+      describe(input, id, false);
+      return;
+    }
+    if (!el) {
+      el = d.createElement('p');
+      el.id = id;
+      el.className = 'adm-error';
+      (input.closest('.adm-field') || input.parentNode).appendChild(el);
+    }
+    el.innerHTML = `${icon('alert')}<span>${esc(msg)}</span>`;
+    input.setAttribute('aria-invalid', 'true');
+    describe(input, id, true);
+  }
+  function clearErrors(root) {
+    root.querySelectorAll('[aria-invalid="true"]').forEach((i) => setError(i, ''));
+    root.querySelectorAll('.adm-alert.form-errors').forEach((b) => b.remove());
+  }
+  /* errors: Liste von [Eingabefeld, Text]. Die Liste oben bekommt den Fokus. */
+  function showErrors(root, errors) {
+    clearErrors(root);
+    for (const [input, msg] of errors) setError(input, msg);
+    const box = d.createElement('div');
+    box.className = 'adm-alert form-errors';
+    box.setAttribute('role', 'alert');
+    box.tabIndex = -1;
+    box.innerHTML = `${icon('alert')}<div><b>Bitte noch prüfen:</b><ul>` +
+      errors.map(([i, m]) => `<li><a href="#${esc(i.id)}">${esc(m)}</a></li>`).join('') + '</ul></div>';
+    root.prepend(box);
+    box.focus();
+  }
+  d.addEventListener('click', (e) => {
+    const a = e.target.closest('.form-errors a');
+    if (!a) return;
+    e.preventDefault();
+    const field = $(a.getAttribute('href').slice(1));
+    if (field) field.focus();
+  });
+  /* Fehlermeldung verschwindet, sobald das Feld korrigiert wird */
+  d.addEventListener('input', (e) => {
+    const t = e.target;
+    if (t.getAttribute && t.getAttribute('aria-invalid') === 'true') setError(t, '');
+  });
+
+  /* Momentaufnahme aller Eingaben (fuer "ungespeicherte Aenderungen?") */
+  function snapshot(root) {
+    return JSON.stringify(Array.from(root.querySelectorAll('input, select, textarea'), (el) => {
+      if (el.type === 'file') return '';
+      if (el.type === 'checkbox' || el.type === 'radio') return el.checked;
+      return el.value;
+    }));
+  }
+
+  /* ---------- Liste mit Zeilen (z. B. Solisten: Name und Stimme) ----------
+     fields: [{key, label, placeholder, list}] — ein oder zwei Felder je Zeile */
+  function listEditor(host, { fields, addLabel, rowLabel, labelFirst }) {
+    host.innerHTML = `<div class="adm-list"></div><button type="button" class="adm-list-add">${icon('plus')}${esc(addLabel)}</button>`;
+    const listEl = host.firstElementChild;
+    const addBtn = host.lastElementChild;
+    function renumber() {
+      Array.from(listEl.children).forEach((row, i) => {
+        row.querySelectorAll('input').forEach((inp, k) => inp.setAttribute('aria-label', `${fields[k].label} ${i + 1}`));
+        row.querySelector('.adm-list-del').setAttribute('aria-label', `${rowLabel} ${i + 1} entfernen`);
+      });
+    }
+    function add(values = {}, focus = false) {
+      const row = d.createElement('div');
+      row.className = `adm-list-row${fields.length === 2 ? ' pair' : fields.length > 2 ? ' triple' : ''}${labelFirst ? ' label-first' : ''}`;
+      row.innerHTML = fields.map((f) =>
+        `<input type="${f.type || 'text'}" class="adm-input" data-key="${f.key}" autocomplete="off"${f.list ? ` list="${f.list}"` : ''}` +
+        ` placeholder="${esc(f.placeholder || '')}" value="${esc(values[f.key] || '')}"/>`
+      ).join('') + `<button type="button" class="adm-list-del">${icon('close')}</button>`;
+      listEl.appendChild(row);
+      renumber();
+      if (focus) row.querySelector('input').focus();
+      return row;
+    }
+    listEl.addEventListener('click', (e) => {
+      const del = e.target.closest('.adm-list-del');
+      if (!del) return;
+      const row = del.closest('.adm-list-row');
+      const next = row.nextElementSibling || row.previousElementSibling;
+      row.remove();
+      renumber();
+      (next ? next.querySelector('input') : addBtn).focus();
+    });
+    addBtn.addEventListener('click', () => add({}, true));
+    return {
+      el: listEl,
+      add,
+      set(items) {
+        listEl.innerHTML = '';
+        items.forEach((it) => add(it));
+      },
+      values() {
+        return Array.from(listEl.children, (row) => {
+          const o = {};
+          row.querySelectorAll('input').forEach((inp) => { o[inp.dataset.key] = inp.value.trim(); });
+          return o;
+        });
+      }
+    };
+  }
+
+  /* ---------- Bilder ----------
+     Ohne Angaben: WebP bleibt unveraendert, andere Formate werden in voller
+     Groesse in WebP umgewandelt. square: quadratischer Ausschnitt (x/y von
+     0 bis 1 = Lage des Ausschnitts) in size × size Pixeln. Klappt die
+     Umwandlung nicht, bleibt das Original. */
+  async function toWebp(file, opts = {}) {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if (!opts.square && !opts.maxSize && (file.type === 'image/webp' || ext === 'webp')) return { blob: file, ext: 'webp' };
+    try {
+      const bmp = await createImageBitmap(file);
+      const canvas = d.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (opts.square) {
+        const side = Math.min(bmp.width, bmp.height);
+        const size = Math.min(opts.size || 400, side);
+        canvas.width = size;
+        canvas.height = size;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(bmp, (bmp.width - side) * (opts.x ?? 0.5), (bmp.height - side) * (opts.y ?? 0.5), side, side, 0, 0, size, size);
+      } else {
+        /* maxSize: laengste Seite hoechstens so viele Pixel */
+        const scale = opts.maxSize ? Math.min(1, opts.maxSize / Math.max(bmp.width, bmp.height)) : 1;
+        canvas.width = Math.round(bmp.width * scale);
+        canvas.height = Math.round(bmp.height * scale);
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+      }
+      const blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', opts.quality || 0.9));
+      if (blob && blob.type === 'image/webp') return { blob, ext: 'webp', converted: true };
+    } catch {
+      /* Browser kann das Format nicht umwandeln: Original verwenden */
+    }
+    return { blob: file, ext: ext || 'jpg' };
+  }
+  /* Ablageflaeche: Ziehen und Ablegen hervorheben (das Dateifeld liegt darueber) */
+  function wireDrop(label) {
+    const on = () => label.classList.add('is-over');
+    const off = () => label.classList.remove('is-over');
+    label.addEventListener('dragenter', on);
+    label.addEventListener('dragover', on);
+    label.addEventListener('dragleave', off);
+    label.addEventListener('drop', off);
+  }
+
+  /* Neuigkeiten (data/news.csv): Spalten ueber die Ueberschrift finden,
+     damit die Reihenfolge egal ist; neueste Meldung zuerst */
+  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext'];
+  function parseNews(text) {
+    const rows = HD.parseCSV(text);
+    if (!rows.length) return [];
+    const header = rows[0].map((c) => String(c).trim().toLowerCase());
+    const idx = NEWS_HEAD.map((h) => header.lastIndexOf(h.toLowerCase()));
+    return rows.slice(1).map((r) => {
+      const o = {};
+      NEWS_HEAD.forEach((h, k) => { o[h] = idx[k] >= 0 ? (r[idx[k]] || '').trim() : ''; });
+      return o;
+    }).filter((o) => o.Titel && HD.isoDate(o.Datum))
+      .sort((a, b) => HD.isoDate(b.Datum).localeCompare(HD.isoDate(a.Datum)));
+  }
+
+  /* Welche Meldungen stehen auf der Startseite? Die 6 neuesten, deren
+     "Bis"-Datum (einschliesslich) noch nicht vorbei ist; ohne Datum gelten
+     sie weiter. Gleiche Regel wie in js/news.js. Liefert ein Set. */
+  const NEWS_HOME = 6;
+  function newsOnHome(list) {
+    const today = isoToday();
+    return new Set(list.filter((e) => {
+      const until = HD.isoDate(e.Bis);
+      return !until || until >= today;
+    }).slice(0, NEWS_HOME));
+  }
+
+  /* Was fehlt bei einem Hochamt noch? Gilt fuer Hochaemter, Requiem und
+     Pontifikalamt; bei anderen Anlaessen (Konzert, Adventlichter …) nur das Werk. */
+  const MISSING = [['piece', 'Werk'], ['celebrant', 'Zelebrant'], ['conductor', 'Dirigent'], ['organist', 'Organist']];
+  function missingInfo(e) {
+    const keys = /hochamt|requiem|pontifikal/i.test(e.type || '') ? MISSING : MISSING.slice(0, 1);
+    return keys.filter(([k]) => !String(e[k] || '').trim()).map(([, label]) => label);
+  }
+
+  /* ---------- Kopfleiste ---------- */
+  /* Hauptreiter; Bereiche mit mehreren Seiten zeigen darunter eine zweite
+     Zeile. Zugaenge stehen (nur fuer Admins) rechts oben beim Namen. */
+  const NAV = [
+    { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
+    { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
+    { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [
+      ['hochaemter.html', 'Hochämter'],
+      ['solisten.html', 'Solisten'],
+      ['personen.html?bereich=musik', 'Leitung & Organisten'],
+      ['repertoire.html', 'Repertoire']
+    ] },
+    { label: 'Pfarre & Kloster', icon: 'users', href: 'gottesdienste.html', sub: [
+      ['gottesdienste.html', 'Gottesdienste & Kanzlei'],
+      ['runden.html', 'Runden'],
+      ['personen.html?bereich=kloster', 'Mitbrüder']
+    ] }
+  ];
+  /* Bereich der Personen-Seite: Mitbrueder (Kloster) oder Kirchenmusik */
+  function personenBereich() {
+    const q = new URLSearchParams(location.search);
+    if (q.get('bereich') === 'kloster' || q.get('gruppe') === 'mitbrueder') return 'kloster';
+    return 'musik';
+  }
+  /* Ist ein Eintrag (Adresse mit optionalem ?bereich=) die aktuelle Seite? */
+  function isHere(href) {
+    const [page, query] = href.split('?');
+    if (page !== pageName()) return false;
+    const bereich = query && new URLSearchParams(query).get('bereich');
+    return !bereich || bereich === personenBereich();
+  }
+  function initials(name) {
+    const parts = String(name || '?').trim().split(/\s+/);
+    return ((parts[0] || '?')[0] + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
+  }
+  function mountTop() {
+    const el = $('adm-top');
+    if (!el) return;
+    const s = session();
+    const here = pageName();
+    const group = NAV.find((n) => n.sub && n.sub.some(([href]) => isHere(href)));
+    el.innerHTML = '<div class="adm-bar">' +
+      '<a class="nav-logo-wrap" href="uebersicht.html">' +
+        '<img class="nav-logo-img" src="../assets/logo.png" alt="" width="38" height="38" decoding="async"/>' +
+        '<div><div class="nav-logo-text">Augustiner<span>kirche</span> Wien</div><span class="nav-logo-sub">Verwaltung</span></div>' +
+      '</a>' +
+      '<div class="adm-user">' +
+        `<span class="adm-avatar" aria-hidden="true" title="${esc(s.name)}">${esc(initials(s.name))}</span>` +
+        `<span class="adm-user-name">${esc(s.name)}</span>` +
+        (isAdmin() ? `<a class="adm-iconbtn" href="zugaenge.html" aria-label="Zugänge"${here === 'zugaenge.html' ? ' aria-current="page"' : ''}>${icon('key')}<span class="lbl">Zugänge</span></a>` : '') +
+        `<a class="adm-iconbtn" href="../index.html" target="_blank" rel="noopener" aria-label="Website ansehen (neues Fenster)">${icon('external')}<span class="lbl">Website</span></a>` +
+        `<button type="button" class="adm-iconbtn" id="adm-logout" aria-label="Abmelden">${icon('logout')}<span class="lbl">Abmelden</span></button>` +
+      '</div></div>' +
+      '<nav class="adm-nav" aria-label="Verwaltung"><div class="adm-nav-in">' +
+        NAV.map((n) => {
+          const on = n.sub ? n.sub.some(([href]) => isHere(href)) : isHere(n.href);
+          return `<a href="${n.href}"${on ? (n.sub ? ' class="is-open" aria-current="true"' : ' aria-current="page"') : ''}>${icon(n.icon)}${esc(n.label)}</a>`;
+        }).join('') +
+      '</div></nav>' +
+      (group ? `<nav class="adm-subnav" aria-label="${esc(group.label)}"><div class="adm-subnav-in">` +
+        group.sub.map(([href, label]) => `<a href="${href}"${isHere(href) ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('') +
+        '</div></nav>' : '');
+    $('adm-logout').addEventListener('click', () => logout('abgemeldet'));
+    /* Aktiven Reiter auf schmalen Bildschirmen sichtbar machen */
+    el.querySelectorAll('.adm-nav [aria-current], .adm-subnav [aria-current]')
+      .forEach((cur) => cur.scrollIntoView({ block: 'nearest', inline: 'center' }));
+  }
+
+  /* Aktivitaet verlaengert die Sitzung; Abmelden in einem anderen Tab gilt ueberall */
+  function watchSession() {
+    let last = 0;
+    const bump = () => {
+      const now = Date.now();
+      if (now - last < 60000) return;
+      last = now;
+      const s = session();
+      if (!s) return logout('abgelaufen');
+      put(KEY_SESSION, { ...s, bis: now + IDLE_MS });
+    };
+    d.addEventListener('pointerdown', bump, { passive: true });
+    d.addEventListener('keydown', bump);
+    setInterval(() => { if (!session()) logout('abgelaufen'); }, 60000);
+    w.addEventListener('storage', (e) => {
+      if (e.key === KEY_SESSION && !session()) logout('abgemeldet');
+    });
+    bump();
+  }
+
+  /* Warnung beim Verlassen mit ungespeicherten Aenderungen */
+  const guards = [hasUnsaved];
+  w.addEventListener('beforeunload', (e) => {
+    if (guards.some((g) => g())) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  /* Klicks auf Ordner-Knoepfe und Passwort-Anzeigen ueberall auf der Seite */
+  d.addEventListener('click', (e) => {
+    const f = e.target.closest('[data-folder]');
+    if (f) {
+      const act = f.dataset.folder;
+      if (act === 'connect') folder.connect();
+      if (act === 'allow') folder.allow();
+      if (act === 'disconnect') folder.disconnect();
+    }
+    const t = e.target.closest('.adm-pw-toggle');
+    if (t) {
+      const input = t.parentNode.querySelector('input');
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      t.setAttribute('aria-pressed', String(show));
+      t.setAttribute('aria-label', show ? 'Passwort verbergen' : 'Passwort anzeigen');
+      t.innerHTML = icon(show ? 'eyeOff' : 'eye');
+    }
+  });
+
+  /* ---------- Start ---------- */
+  const starters = [];
+  let readyResolve;
+  const ready = new Promise((r) => { readyResolve = r; });
+  d.addEventListener('DOMContentLoaded', async () => {
+    if (!PUBLIC && !session()) return;
+    d.querySelectorAll('[data-icon]').forEach((el) => el.insertAdjacentHTML('afterbegin', icon(el.dataset.icon)));
+    if (!PUBLIC) mountTop();
+    await folder.restore();
+    if (!PUBLIC) {
+      watchSession();
+      verifySession();
+    }
+    readyResolve();
+    for (const fn of starters) {
+      try {
+        await fn();
+      } catch (e) {
+        console.error(e);
+        toast(`Beim Laden ist ein Fehler aufgetreten: ${e.message}`, 'err');
+      }
+    }
+  });
+
+  w.Admin = {
+    HD, $, esc, icon, ready,
+    start: (fn) => starters.push(fn),
+    guard: (fn) => guards.push(fn),
+    /* Anmeldung und Zugaenge */
+    session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, roleOf, personenBereich,
+    parseAccounts, accountsJSON, makeAccount, checkPassword, normUser, stampOf,
+    pwLevel, suggestPassword, MIN_PW, ACCOUNTS,
+    /* Dateien */
+    folder, readText, fetchText, saveFile, saveJSON, hasUnsaved, imageUrl, fileName, dirName,
+    /* Oberflaeche */
+    toast, confirmBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
+    listEditor, toWebp, wireDrop, log, recentLog, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome,
+    /* Datum */
+    isoToday, isoOf, fmtDate, fmtShort
+  };
+})(window, document);

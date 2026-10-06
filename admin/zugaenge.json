@@ -1,0 +1,13 @@
+{
+  "hinweis": "Zugänge zur Verwaltung (admin/). Passwörter stehen hier nur als Prüfsumme (PBKDF2-SHA256), nie im Klartext. Bearbeiten über admin/zugaenge.html.",
+  "zugaenge": [
+    {
+      "benutzer": "felix",
+      "name": "Felix Horngacher",
+      "salt": "vbfoH+h53ejjee+lNs1lWQ==",
+      "iter": 600000,
+      "hash": "38rFgi+gQDf3WtAaW0Zh1SCG+8t+uTRP4hoxZQ26wXA=",
+      "angelegt": "2026-10-06"
+    }
+  ]
+}

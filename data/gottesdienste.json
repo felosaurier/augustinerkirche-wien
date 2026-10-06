@@ -1,0 +1,60 @@
+{
+  "termine": [
+    {
+      "tag": "so",
+      "zeit": "11:00",
+      "name": "Hochamt mit Chor, Solisten & Orchester",
+      "hinweis": "Augustinerkirche",
+      "liturgie": true,
+      "hervorheben": true
+    },
+    {
+      "tag": "so",
+      "zeit": "18:30",
+      "name": "Heilige Messe",
+      "hinweis": "Augustinerkirche",
+      "liturgie": true,
+      "hervorheben": false
+    },
+    {
+      "tag": "di",
+      "zeit": "18:30",
+      "name": "Heilige Messe",
+      "hinweis": "Augustinerkirche",
+      "liturgie": true,
+      "hervorheben": false
+    },
+    {
+      "tag": "mi",
+      "zeit": "19:30",
+      "name": "Chorprobe St. Augustin",
+      "hinweis": "Klosterkapelle (intern)",
+      "liturgie": false,
+      "hervorheben": false
+    },
+    {
+      "tag": "do",
+      "zeit": "18:30",
+      "name": "Heilige Messe",
+      "hinweis": "Augustinerkirche",
+      "liturgie": true,
+      "hervorheben": false
+    },
+    {
+      "tag": "fr",
+      "zeit": "08:00",
+      "name": "Heilige Messe",
+      "hinweis": "September bis Juni, nicht in den Ferien",
+      "liturgie": true,
+      "hervorheben": false
+    },
+    {
+      "tag": "sa",
+      "zeit": "18:30",
+      "name": "Vorabendmesse",
+      "hinweis": "September bis Juni, nicht in den Ferien",
+      "liturgie": true,
+      "hervorheben": false
+    }
+  ]
+}
