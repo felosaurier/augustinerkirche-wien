@@ -204,7 +204,7 @@
           `<span>${esc(h.tage)}</span><span>${esc(h.zeit)}</span>`).join('')}</div></div>`;
     }
     for (const el of lines) {
-      el.textContent = `Pfarrkanzlei: ${hours.map((h) => `${h.tage} ${h.zeit}`).join(' · ')}`;
+      el.textContent = `Pfarrkanzlei: ${hours.map((h) => `${h.tage} ${h.zeit}`.trim()).join(' ')}`;
     }
   }
 

@@ -140,11 +140,12 @@ Danach im Browser `http://localhost:8123` öffnen.
 ```
 index.html                    Startseite
 pages/
+  pfarre.html                 Pfarre, Pfarrer, Pfarrkanzlei, Pfarrgemeinderat, Seelsorger
   gottesdienste.html          Liturgiezeiten, Wochenüberblick, Runden
   sakramente.html             Sakramente
   musik.html                  Kirchenmusik: Hochämter, Ensembles, Orgeln
   hochamt.html                Detailseite eines Hochamts
-  chronik.html                Geschichte, Zeitstrahl, Orden
+  chronik.html                Geschichte, Rundgang, Führungen, Orden, Links
   aspersdorf.html             Pfarre Aspersdorf
   archiv.html                 Archiv der Neuigkeiten, nach Jahren
   impressum.html              Impressum

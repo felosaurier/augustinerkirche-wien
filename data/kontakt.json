@@ -12,15 +12,15 @@
       "bezeichnung": "Kloster"
     }
   ],
-  "email": "info@augustinerkirche.at",
+  "email": "pfarre@augustinerkirche.at",
   "kanzlei": [
     {
-      "tage": "Mo, Mi, Fr",
-      "zeit": "09–12 Uhr"
+      "tage": "Di & Fr",
+      "zeit": "10–12 Uhr"
     },
     {
-      "tage": "Di, Do",
-      "zeit": "15–18 Uhr"
+      "tage": "",
+      "zeit": "oder nach telefonischer Vereinbarung"
     }
   ]
 }
