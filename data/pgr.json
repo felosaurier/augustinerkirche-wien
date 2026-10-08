@@ -10,7 +10,10 @@
         "Mitglied im Fachausschuss Verkündigung (Sakramentenpastoral)"
       ],
       "email": "pfarrer@augustinerkirche.at",
-      "telefon": "+43 (0)1 533 70 99"
+      "telefon": "+43 (0)1 533 70 99",
+      "bild": "assets/img/personen/pgr/matthias-schloegl.webp",
+      "breite": 480,
+      "hoehe": 620
     },
     {
       "name": "Edith Schiavon",
@@ -21,7 +24,10 @@
         "Mitglied in den Fachausschüssen Caritas, Gemeindeaufbau und Liturgie"
       ],
       "email": "edith.schiavon@chello.at",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/edith-schiavon.webp",
+      "breite": 413,
+      "hoehe": 496
     },
     {
       "name": "Monika Kettinger",
@@ -29,7 +35,10 @@
       "beruf": "",
       "aufgaben": [],
       "email": "",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/monika-kettinger.webp",
+      "breite": 413,
+      "hoehe": 497
     },
     {
       "name": "Christine Hummer",
@@ -40,7 +49,10 @@
         "Mitglied in den Fachausschüssen Gemeindeaufbau, Kinder sowie Feste und Feiern"
       ],
       "email": "grunz@iwasno.net",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/christine-hummer.webp",
+      "breite": 413,
+      "hoehe": 496
     },
     {
       "name": "Klaus Kettinger",
@@ -52,7 +64,10 @@
         "Mitglied des Vermögensverwaltungsrats"
       ],
       "email": "klaus.kettinger@chello.at",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/klaus-kettinger.webp",
+      "breite": 413,
+      "hoehe": 496
     },
     {
       "name": "Ulrike Komarek",
@@ -63,7 +78,10 @@
         "Mitglied in den Fachausschüssen Gemeindeaufbau, Sorge um die Senioren, Erwachsenenbildung sowie Kunst und Kultur"
       ],
       "email": "komarekulrike@gmail.com",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/ulrike-komarek.webp",
+      "breite": 413,
+      "hoehe": 496
     },
     {
       "name": "Eva-Maria Leiner",
@@ -74,7 +92,10 @@
         "Mitglied in den Fachausschüssen Gemeindeaufbau und Sorge um die Senioren"
       ],
       "email": "evamarialeiner@gmx.at",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/eva-maria-leiner.webp",
+      "breite": 413,
+      "hoehe": 496
     },
     {
       "name": "Diakon Michael Schimpl",
@@ -86,7 +107,10 @@
         "Mitglied in den Fachausschüssen Gemeindeaufbau und Liturgie"
       ],
       "email": "diakon@augustinerkirche.at",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/michael-schimpl.webp",
+      "breite": 480,
+      "hoehe": 620
     },
     {
       "name": "Ing. Peter Schlögl",
@@ -98,7 +122,10 @@
         "Mitglied des Vermögensverwaltungsrats"
       ],
       "email": "peter@schloegl.wien",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/peter-schloegl.webp",
+      "breite": 413,
+      "hoehe": 496
     }
   ],
   "weitere": [
@@ -108,7 +135,10 @@
       "beruf": "Augustiner, Berufsschuldirektor und -lehrer",
       "aufgaben": [],
       "email": "p.nikolaus@augustiner.at",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/nikolaus-schachtner.webp",
+      "breite": 480,
+      "hoehe": 620
     },
     {
       "name": "Ursula Schimpl",
@@ -116,7 +146,10 @@
       "beruf": "Journalistin",
       "aufgaben": [],
       "email": "ursula.schimpl@gmail.com",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/ursula-schimpl.webp",
+      "breite": 550,
+      "hoehe": 700
     },
     {
       "name": "Tobias Klaghofer",
@@ -127,7 +160,10 @@
         "Mitglied im Fachausschuss Liturgie"
       ],
       "email": "",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/tobias-klaghofer.webp",
+      "breite": 413,
+      "hoehe": 496
     },
     {
       "name": "Florian Oppitz",
@@ -137,7 +173,10 @@
         "Mitglied im Fachausschuss Jugend"
       ],
       "email": "",
-      "telefon": ""
+      "telefon": "",
+      "bild": "assets/img/personen/pgr/florian-oppitz.webp",
+      "breite": 413,
+      "hoehe": 496
     }
   ]
 }
