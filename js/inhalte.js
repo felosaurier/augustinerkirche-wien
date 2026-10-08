@@ -11,6 +11,9 @@
      Oeffnungszeiten der Pfarrkanzlei ([data-inhalt="kanzlei"])
    - data/repertoire.json: Repertoire des Chores mit Suche
      ([data-inhalt="repertoire"])
+   - data/cds.json: CDs von St. Augustin mit Hörproben ([data-inhalt="cds"])
+   - data/pgr.json: Pfarrgemeinderat ([data-inhalt="pgr-mitglieder"],
+     [data-inhalt="pgr-weitere"])
    - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
      ([data-inhalt="paten"], [data-inhalt="ehrenpaten"])
    Der Inhalt im HTML bleibt als Rueckfall stehen, falls eine Datei
@@ -245,6 +248,56 @@
   /* ---------- Repertoire des Chores ---------- */
   const collator = new Intl.Collator('de');
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  /* ---------- CDs von St. Augustin ---------- */
+  function cdHTML(c) {
+    const cover = c.cover && url(c.cover.pfad);
+    const samples = (c.hoerproben || []).filter((h) => h.datei && url(h.datei));
+    return '<article class="cd">' +
+      (cover ? `<img class="cd-cover" src="${esc(cover)}" alt="" width="${c.cover.breite || 400}" height="${c.cover.hoehe || 400}" loading="lazy" decoding="async"/>` : '') +
+      '<div class="cd-body">' +
+        `<h4 class="cd-title">${esc(c.titel)}</h4>` +
+        (c.werke ? `<p class="cd-works">${esc(c.werke)}</p>` : '') +
+        (c.mitwirkende || c.leitung ? `<p class="cd-cast">${esc(c.mitwirkende || '')}${c.leitung ? `<span>Leitung: ${esc(c.leitung)}</span>` : ''}</p>` : '') +
+        (samples.length ? `<div class="cd-samples" aria-label="Hörproben">${samples.map((h) =>
+          `<button type="button" class="cd-play" data-audio="${esc(url(h.datei))}" aria-pressed="false">${esc(h.titel || 'Hörprobe')}</button>`).join('')}</div>` : '') +
+      '</div></article>';
+  }
+  async function cds() {
+    const host = document.querySelector('[data-inhalt="cds"]');
+    if (!host) return;
+    const data = await load('cds.json');
+    host.innerHTML = (data.gruppen || []).filter((g) => (g.cds || []).length).map((g) =>
+      `<h3 class="cd-group">${esc(g.titel)}</h3><div class="cd-list">${g.cds.map(cdHTML).join('')}</div>`
+    ).join('');
+  }
+
+  /* ---------- Pfarrgemeinderat ---------- */
+  function pgrItem(p) {
+    const contact = [
+      p.telefon ? `<a href="${esc(HD.telHref(p.telefon))}">${esc(p.telefon)}</a>` : '',
+      p.email ? HD.mailHTML(p.email) : ''
+    ].filter(Boolean).join(', ');
+    const src = p.bild && url(p.bild);
+    const photo = src ? `<img class="pgr-photo" src="${esc(src)}" alt="${esc(p.name)}" width="${p.breite || 400}" height="${p.hoehe || 500}" loading="lazy" decoding="async"/>` : '';
+    return `<li class="pgr-item"><div class="pgr-person">${photo}<div>` +
+      `<div class="pgr-name">${esc(p.name)}</div>` +
+      (p.rolle ? `<div class="pgr-role">${esc(p.rolle)}</div>` : '') +
+      (p.beruf ? `<div class="pgr-job">${esc(p.beruf)}</div>` : '') +
+      '</div></div><div>' +
+      `<ul class="pgr-tasks">${(p.aufgaben || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` +
+      (contact ? `<div class="pgr-contact">${contact}</div>` : '') +
+      '</div></li>';
+  }
+  async function pgr() {
+    const hosts = qsa('[data-inhalt^="pgr-"]');
+    if (!hosts.length) return;
+    const data = await load('pgr.json');
+    for (const el of hosts) {
+      const list = data[el.dataset.inhalt.slice(4)] || [];
+      el.innerHTML = list.map(pgrItem).join('');
+    }
+  }
+
   /* ---------- Paten der Kirchenmusik ---------- */
   /* "A, B und C" */
   const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} und ${xs[xs.length - 1]}`);
@@ -300,7 +353,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
-    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten]) {
+    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     }
   });

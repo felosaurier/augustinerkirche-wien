@@ -59,10 +59,12 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
 | **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick), dazu Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
 | **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
+| **Pfarrgemeinderat** | Mitglieder sowie Ersatzmitglieder und weitere Verantwortliche für Pfarre → Pfarrgemeinderat: Name, Funktion, Beruf, Aufgaben, E-Mail, Telefon, Foto (mit Bildnachweis); Reihenfolge per Pfeil |
 | **Personen** | Mitbrüder, Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto, Aufgabe und Text |
 | **Solisten** | Liste für Kirchenmusik → Solisten: Foto (wird quadratisch zugeschnitten, Ausschnitt verschiebbar), Stimmlage, verstorben |
-| **Bildnachweise** | Alle Bilder der Website mit Fundort und Feld für den Nachweis (z. B. „© Augustiner Wien, Foto: …“), Filter „Ohne Nachweis“; bei Personen, Solisten, Runden und Neuigkeiten auch direkt beim Bild. Auf der Website steht der Nachweis klein unter dem Bild, bei Titelfotos unten in der Ecke |
+| **Bildnachweise** | Kein eigener Bereich: bei jedem Bild (Personen, Solisten, Runden, Neuigkeiten, CDs, Pfarrgemeinderat) gibt es ein Feld „Bildnachweis“. Auf der Website steht er klein unter dem Bild, bei Titelfotos unten in der Ecke; gespeichert in `data/bildnachweise.json` |
 | **Paten** | Paten und Ehrenpaten für Kirchenmusik → Patenschaft: hinzufügen (am Ende oder ganz oben), ändern, verschieben, entfernen; die Paten erscheinen nummeriert in dieser Reihenfolge |
+| **CDs** | Aufnahmen für Kirchenmusik → CDs: Titel, Gruppe, Werke, Mitwirkende, Leitung, Cover (mit Bildnachweis) und Hörproben als MP3, beides zum Hineinziehen; verschieben, löschen |
 | **Repertoire** | Repertoire des Chores nach Komponisten, mit Werken und Hinweisen (z. B. Uraufführungen in der Augustinerkirche) |
 | **Zugänge** | Nur für Admins: Zugang anlegen, Rolle, Name oder Passwort ändern, entfernen |
 
@@ -76,7 +78,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 
 **Sicherheit:** Die Zugänge stehen in `admin/zugaenge.json`, Passwörter nur als Prüfsumme (PBKDF2-SHA256 mit Salz, 600 000 Runden), nie im Klartext. Nach fünf falschen Versuchen gibt es eine Wartezeit, eine Sitzung endet nach vier Stunden ohne Aktivität. Weil die Website statisch ist, prüft der Browser das Passwort, nicht ein Server: Die Anmeldung hält Unbefugte von der Verwaltung fern, ist aber kein Ersatz für einen Server-Schutz. Ändern lässt sich die öffentliche Website ohnehin nur über den Projektordner. Das gilt auch für die Rollen: Sie steuern, was die Verwaltung anzeigt, ersetzen aber keine Rechte am Server. Wer zusätzlich absichern möchte, schützt den Ordner `admin/` am Webserver mit einem Passwort (z. B. `.htaccess` bei Apache) oder lädt ihn gar nicht erst hoch.
 
-**Inhalte aus Datendateien:** Gottesdienste, Runden, Personen, Kontakt, Repertoire und Paten stehen in `data/*.json` und werden von `js/inhalte.js` auf die Seiten gezeichnet. Der Inhalt im HTML bleibt als Rückfall stehen, falls eine Datei einmal nicht geladen werden kann; maßgeblich sind die Datendateien.
+**Inhalte aus Datendateien:** Gottesdienste, Runden, Personen, Kontakt, Repertoire, Paten, CDs und Pfarrgemeinderat stehen in `data/*.json` und werden von `js/inhalte.js` auf die Seiten gezeichnet. Der Inhalt im HTML bleibt als Rückfall stehen, falls eine Datei einmal nicht geladen werden kann; maßgeblich sind die Datendateien.
 
 ## Hochämter pflegen
 
@@ -165,7 +167,8 @@ admin/                        Verwaltung (nur mit Anmeldung)
   neuigkeiten.html            Neuigkeiten und Plakate pflegen
   termine.html                Eigene Termine für den Kalender pflegen
   paten.html                  Paten der Kirchenmusik pflegen
-  bildnachweise.html          Bildnachweise aller Bilder pflegen
+  cds.html                    CDs mit Cover und Hörproben pflegen
+  pgr.html                    Pfarrgemeinderat pflegen
   solisten.html               Solisten pflegen
   gottesdienste.html          Wochenplan, Pfarrkanzlei und Kontakt pflegen
   runden.html                 Runden pflegen
@@ -194,7 +197,8 @@ js/
   admin-neuigkeiten.js        Neuigkeiten pflegen
   admin-termine.js            Termine für den Kalender pflegen
   admin-paten.js              Paten der Kirchenmusik pflegen
-  admin-bildnachweise.js      Bildnachweise pflegen
+  admin-cds.js                CDs pflegen
+  admin-pgr.js                Pfarrgemeinderat pflegen
   admin-solisten.js           Solisten pflegen
   admin-gottesdienste.js      Wochenplan, Pfarrkanzlei und Kontakt
   admin-runden.js             Runden pflegen
@@ -209,6 +213,8 @@ data/
   news.csv                    Neuigkeiten und Plakate
   termine.json                Eigene Termine für den Kalender (Ausflüge, Feste, Vorträge …)
   paten.json                  Paten und Ehrenpaten der Kirchenmusik
+  cds.json                    CDs von St. Augustin mit Hörproben
+  pgr.json                    Pfarrgemeinderat
   bildnachweise.json          Bildnachweis je Bild, erscheint unter dem Bild
   solisten.json               Solistinnen und Solisten mit Stimmlage
   gottesdienste.json          Wochenplan der Gottesdienste

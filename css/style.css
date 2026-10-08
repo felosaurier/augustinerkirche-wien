@@ -362,12 +362,18 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .pane-sub{margin:3rem 0 .9rem;font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.2;color:var(--blue)}
 .pane-quote{max-width:40rem;margin:0 0 1.4rem;font-family:var(--serif);font-size:1.5rem;font-weight:500;line-height:1.3;color:var(--blue)}
 .pane-quote cite{display:block;margin-top:.35rem;font-family:var(--sans);font-size:.92rem;font-style:normal;font-weight:500;color:var(--gold)}
+/* Augustinus-Zitat am Ende eines Bereichs */
+.pane-quote-end{margin:3.2rem 0 0}
 .pane-facts{max-width:32rem}
 .patron-quote{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line-dark);font-family:var(--serif);font-size:1.3rem;font-weight:500;line-height:1.35;color:#fff}
 
 /* Gremien (Pfarrgemeinderat, Vermögensverwaltungsrat): Name links, Aufgaben rechts */
 .pgr-list{max-width:54rem;list-style:none;border-top:1px solid var(--blue)}
-.pgr-item{display:grid;grid-template-columns:minmax(0,16rem) minmax(0,1fr);gap:.5rem 2rem;padding:1.1rem 0;border-bottom:1px solid var(--line)}
+.pgr-item{display:grid;grid-template-columns:minmax(0,19rem) minmax(0,1fr);gap:.5rem 2rem;padding:1.1rem 0;border-bottom:1px solid var(--line)}
+/* Foto (optional) links neben Name und Funktion */
+.pgr-person{display:flex;align-items:flex-start;gap:1rem}
+.pgr-person .bn-wrap{flex:none;width:5rem}
+.pgr-photo{display:block;flex:none;width:5rem;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--line)}
 .pgr-name{font-family:var(--serif);font-size:1.25rem;font-weight:500;line-height:1.25;color:var(--blue)}
 .pgr-role{margin-top:.2rem;font-size:.92rem;font-weight:500;color:var(--gold)}
 .pgr-job{margin-top:.1rem;font-size:.88rem;color:var(--text-light)}

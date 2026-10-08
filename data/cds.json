@@ -1,0 +1,430 @@
+{
+  "gruppen": [
+    {
+      "titel": "Messen",
+      "cds": [
+        {
+          "titel": "Mozart: Krönungsmesse",
+          "cover": {
+            "pfad": "assets/img/cds/mozart-kroenungsmesse.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Krönungsmesse KV 317, Ave verum KV 626, Sub tuum præsidium KV 198, Confitebor und Beatus vir KV 339, Laudate Dominum F-Dur KV 339; L. Cherubini: O Deus, ego amo te; C. Czerny: Veritas mea",
+          "mitwirkende": "Ana Puche Rosado, Frauke Schäfer, Lorena Espina, Rita-Lucia Schneider, Alexander Kaimbacher, Klemens Sander",
+          "leitung": "Ottokar Prochazka, Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Kyrie aus der Krönungsmesse",
+              "datei": "assets/audio/cds/kroenungsmesse-kyrie.mp3"
+            },
+            {
+              "titel": "Czerny: Veritas mea",
+              "datei": "assets/audio/cds/kroenungsmesse-veritas-mea.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Mozart: Missa solemnis",
+          "cover": {
+            "pfad": "assets/img/cds/mozart-missa-solemnis.webp",
+            "breite": 400,
+            "hoehe": 396
+          },
+          "werke": "Missa solemnis C-Dur KV 337, Benedictus sit Deus KV 117, Laudate Dominum A-Dur KV 321, Ergo interest KV 143, In te, Domine, speravi KV 427, Alma Dei creatoris KV 277, Regina coeli KV 276; B. Randhartinger: Ad te levavi animam meam",
+          "mitwirkende": "Regine Hangler, Ingrid Haselberger, Annely Peebo, Rita-Lucia Schneider, Norbert Ernst, Martin Maier, Marcus Pelz",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Agnus Dei aus der Missa solemnis",
+              "datei": "assets/audio/cds/missa-solemnis-agnus-dei.mp3"
+            },
+            {
+              "titel": "In te, Domine, speravi",
+              "datei": "assets/audio/cds/missa-solemnis-in-te-domine.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Mozart: Missæ breves",
+          "cover": {
+            "pfad": "assets/img/cds/mozart-missae-breves.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Spatzenmesse KV 220, Orgelsolomesse KV 259, Loretomesse KV 275, Kirchensonate C-Dur KV 336",
+          "mitwirkende": "Brigitta Karwautz, Judith Kopecky, Ingrid Hofer, Gabriele Uher, Elisabeth Lang, Manfred Equiluz, Christian Bauer, Wolfgang Bankl, Kurt Schober",
+          "leitung": "Alois Glaßner",
+          "hoerproben": [
+            {
+              "titel": "Kyrie aus der Spatzenmesse",
+              "datei": "assets/audio/cds/missae-breves-spatzenmesse-kyrie.mp3"
+            },
+            {
+              "titel": "Kyrie aus der Loretomesse",
+              "datei": "assets/audio/cds/missae-breves-loretomesse-kyrie.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Mozart: Requiem",
+          "cover": {
+            "pfad": "assets/img/cds/mozart-requiem.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Requiem d-Moll KV 626, nach J. von Eybler und F. X. Süßmayr vervollständigt von H. C. Robbins Landon",
+          "mitwirkende": "Ana Puche Rosado, Lorena Espina, Christian Bauer, Lars Woldt",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Dies irae",
+              "datei": "assets/audio/cds/requiem-dies-irae.mp3"
+            },
+            {
+              "titel": "Lux aeterna",
+              "datei": "assets/audio/cds/requiem-lux-aeterna.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Haydn: Nelsonmesse | Jugendmesse",
+          "cover": {
+            "pfad": "assets/img/cds/haydn-nelsonmesse.webp",
+            "breite": 400,
+            "hoehe": 396
+          },
+          "werke": "Nelsonmesse Hob. XXII:11, Jugendmesse Hob. XXII:1; J. von Eybler: Fremit mare cum furore",
+          "mitwirkende": "Frauke Schäfer, Rita-Lucia Schneider, Christian Bauer, Steffen Rössler",
+          "leitung": "Ottokar Prochazka, Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Kyrie aus der Nelsonmesse",
+              "datei": "assets/audio/cds/nelsonmesse-kyrie.mp3"
+            },
+            {
+              "titel": "Eybler: Fremit mare cum furore",
+              "datei": "assets/audio/cds/nelsonmesse-fremit-mare.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Haydn: Orgelsolomessen",
+          "cover": {
+            "pfad": "assets/img/cds/haydn-orgelsolomessen.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Kleine Orgelsolomesse Hob. XXII:7, Große Orgelsolomesse Hob. XXII:4; W. A. Mozart: Kirchensonaten KV 336 und KV 67",
+          "mitwirkende": "Regine Hangler, Natalia Sharay, Annely Peebo, Juliette Mars, Clemens Kerschbaumer, Gernot Heinrich, Andreas Jankowitsch, Christoph Seidl; Wolfgang Capek, Orgel",
+          "leitung": "Thomas Böttcher",
+          "hoerproben": [
+            {
+              "titel": "Kyrie aus der Kleinen Orgelsolomesse",
+              "datei": "assets/audio/cds/orgelsolomessen-kyrie.mp3"
+            },
+            {
+              "titel": "Gloria aus der Großen Orgelsolomesse",
+              "datei": "assets/audio/cds/orgelsolomessen-gloria.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Haydn: Paukenmesse",
+          "cover": {
+            "pfad": "assets/img/cds/haydn-paukenmesse.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Paukenmesse Hob. XXII:9, Ave Regina A-Dur Hob. XXIIIb:3",
+          "mitwirkende": "Ana Puche Rosado, Rita-Lucia Schneider, Iurie Ciobanu, Andreas Jankowitsch",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Pleni sunt coeli aus dem Sanctus",
+              "datei": "assets/audio/cds/paukenmesse-pleni-sunt-coeli.mp3"
+            },
+            {
+              "titel": "Ave Regina",
+              "datei": "assets/audio/cds/paukenmesse-ave-regina.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Haydn: Theresienmesse",
+          "cover": {
+            "pfad": "assets/img/cds/haydn-theresienmesse.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Theresienmesse Hob. XXII:12, Salve Regina E-Dur Hob. XXIIIb:1",
+          "mitwirkende": "Mara Mastalir, Cornelia Horak, Juliette Mars, Norbert Ernst, Georg Lehner",
+          "leitung": "Ottokar Prochazka",
+          "hoerproben": [
+            {
+              "titel": "Amen aus dem Gloria",
+              "datei": "assets/audio/cds/theresienmesse-amen.mp3"
+            },
+            {
+              "titel": "Salve Regina",
+              "datei": "assets/audio/cds/theresienmesse-salve-regina.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Haydn | Schubert: Deutsche Messen",
+          "cover": {
+            "pfad": "assets/img/cds/deutsche-messen.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "J. M. Haydn: Deutsches Hochamt MH 560; F. Schubert: Deutsche Messe D 872; Lieder von W. Rattler, A. F. Kropfreiter und H. Bone",
+          "mitwirkende": "Katrin Targo, Veronika Dünser, Alexander Kaimbacher, Michael Wagner; Robert Kovács, Orgel",
+          "leitung": "Thomas Böttcher",
+          "hoerproben": [
+            {
+              "titel": "Schubert: Heilig aus der Deutschen Messe",
+              "datei": "assets/audio/cds/deutsche-messen-heilig.mp3"
+            },
+            {
+              "titel": "Großer Gott, arr. Robert Kovács",
+              "datei": "assets/audio/cds/deutsche-messen-grosser-gott.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Schubert: Messe G-Dur | Messe C-Dur",
+          "cover": {
+            "pfad": "assets/img/cds/schubert-g-dur-c-dur.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Messe G-Dur D 167 (Fassung von Ferdinand Schubert), Messe C-Dur D 452, Salve Regina F-Dur D 223 und A-Dur D 676",
+          "mitwirkende": "Ingrid Haselberger, Ana Puche Rosado, Martina Mikelic, Norbert Ernst, Alexander Kaimbacher, Günter Haumer, Klemens Sander",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Benedictus aus der Messe G-Dur",
+              "datei": "assets/audio/cds/schubert-g-dur-benedictus.mp3"
+            },
+            {
+              "titel": "Credo aus der Messe C-Dur",
+              "datei": "assets/audio/cds/schubert-c-dur-credo.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Schubert: Große Messe As-Dur",
+          "cover": {
+            "pfad": "assets/img/cds/schubert-as-dur.webp",
+            "breite": 400,
+            "hoehe": 393
+          },
+          "werke": "Große Messe As-Dur D 678, Salve Regina B-Dur D 106",
+          "mitwirkende": "Regine Hangler, Annely Peebo, Christian Bauer, Norbert Ernst, Andreas Jankowitsch",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Kyrie",
+              "datei": "assets/audio/cds/schubert-as-dur-kyrie.mp3"
+            },
+            {
+              "titel": "Gratias agimus tibi aus dem Gloria",
+              "datei": "assets/audio/cds/schubert-as-dur-gratias.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Beethoven: Große Messe C-Dur",
+          "cover": {
+            "pfad": "assets/img/cds/beethoven-c-dur.webp",
+            "breite": 400,
+            "hoehe": 393
+          },
+          "werke": "Messe C-Dur op. 86, Die Himmel rühmen des Ewigen Ehre op. 48/4",
+          "mitwirkende": "Regine Hangler, Martina Mikelic, Ilker Arcayürek, Christian Hübner",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Gloria",
+              "datei": "assets/audio/cds/beethoven-gloria.mp3"
+            },
+            {
+              "titel": "Die Himmel rühmen des Ewigen Ehre",
+              "datei": "assets/audio/cds/beethoven-die-himmel-ruehmen.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Gounod: Cäcilienmesse",
+          "cover": {
+            "pfad": "assets/img/cds/gounod-caecilienmesse.webp",
+            "breite": 400,
+            "hoehe": 396
+          },
+          "werke": "Cäcilienmesse op. 12; C. M. von Weber: Gloria et honore WeV A 3, In die solemnitatis WeV A 4",
+          "mitwirkende": "Elisabeth Flechl, Norbert Ernst, Steffen Rössler",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Weber: In die solemnitatis",
+              "datei": "assets/audio/cds/gounod-in-die-solemnitatis.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Puccini: Messa di Gloria",
+          "cover": {
+            "pfad": "assets/img/cds/puccini-messa-di-gloria.webp",
+            "breite": 400,
+            "hoehe": 401
+          },
+          "werke": "Messa di Gloria",
+          "mitwirkende": "Norbert Ernst, Josef Wagner",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Qui tollis aus dem Gloria",
+              "datei": "assets/audio/cds/puccini-qui-tollis.mp3"
+            },
+            {
+              "titel": "Et resurrexit aus dem Credo",
+              "datei": "assets/audio/cds/puccini-et-resurrexit.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Widor | Vierne: Messe solennelle",
+          "cover": {
+            "pfad": "assets/img/cds/widor-vierne.webp",
+            "breite": 400,
+            "hoehe": 396
+          },
+          "werke": "Ch.-M. Widor: Messe solennelle fis-Moll op. 36; L. Vierne: Messe solennelle cis-Moll op. 16; dazu Orgelwerke beider Komponisten und C. Saint-Saëns: Ave verum",
+          "mitwirkende": "Wolfgang Capek, Orgel",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Widor: Kyrie",
+              "datei": "assets/audio/cds/widor-kyrie.mp3"
+            },
+            {
+              "titel": "Vierne: Kyrie",
+              "datei": "assets/audio/cds/vierne-kyrie.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "titel": "Feste, Trompete und Orgel",
+      "cds": [
+        {
+          "titel": "Ostern in St. Augustin",
+          "cover": {
+            "pfad": "assets/img/cds/ostern.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Werke von Kappel, Händel, J. M. Haydn, Albrechtsberger, F. Schmidt, B. Klein, Gassmann, F. Schubert, Mozart, Ferdinand Schubert und Widor",
+          "mitwirkende": "Elisabeth Flechl, Cornelia Horak, Monika Riedler, Rita-Lucia Schneider, Alexander Kaimbacher, Jan Petryka, Klemens Sander",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Gassmann: In così lieto dì",
+              "datei": "assets/audio/cds/ostern-in-cosi-lieto-di.mp3"
+            },
+            {
+              "titel": "Ferdinand Schubert: Regina coeli",
+              "datei": "assets/audio/cds/ostern-regina-coeli.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Weihnachten in St. Augustin",
+          "cover": {
+            "pfad": "assets/img/cds/weihnachten.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Werke von Kodály, Riedl, Mozart, Herbeck, Corelli, Schubert, Eybler, Manfredini, Diabelli, Händel, Schnabel, Saint-Saëns und Gruber",
+          "mitwirkende": "Elisabeth Flechl, Ana Puche Rosado, Katrin Auzinger, Juliette Mars, Martina Mikelic, Norbert Ernst, Alexander Kaimbacher, Jan Petryka, Mathias Hausmann",
+          "leitung": "Robert Rieder",
+          "hoerproben": [
+            {
+              "titel": "Adeste fideles",
+              "datei": "assets/audio/cds/weihnachten-adeste-fideles.mp3"
+            },
+            {
+              "titel": "Stille Nacht, Halleiner Fassung",
+              "datei": "assets/audio/cds/weihnachten-stille-nacht.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Trompete & Orgel in St. Augustin",
+          "cover": {
+            "pfad": "assets/img/cds/trompete-orgel.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Werke von Reiche, Clarke, Telemann, Händel, Loeillet, J. S. Bach, J. M. Haydn, J. Haydn, Scarlatti und Vivaldi",
+          "mitwirkende": "Cornelia Horak, Sopran; Gernot Kahofer, Trompete; Elke Eckerstorfer, Orgel",
+          "leitung": "",
+          "hoerproben": [
+            {
+              "titel": "Bach: Badinerie",
+              "datei": "assets/audio/cds/trompete-orgel-badinerie.mp3"
+            },
+            {
+              "titel": "Vivaldi: Allegro aus dem Concerto As-Dur",
+              "datei": "assets/audio/cds/trompete-orgel-vivaldi.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Christmas Trumpet",
+          "cover": {
+            "pfad": "assets/img/cds/christmas-trumpet.webp",
+            "breite": 400,
+            "hoehe": 397
+          },
+          "werke": "Werke von Händel, Martini, J. S. Bach, Telemann, Albinoni, Stachowicz, Caccini, Krebs, Hummel, Adam und Gruber",
+          "mitwirkende": "Elisabeth Wimmer, Sopran; Günter Haumer, Bariton; Gernot Kahofer, Trompete; Elke Eckerstorfer, Orgel",
+          "leitung": "",
+          "hoerproben": [
+            {
+              "titel": "Adam: Cantique de Noël",
+              "datei": "assets/audio/cds/christmas-trumpet-cantique-de-noel.mp3"
+            },
+            {
+              "titel": "Martini: Toccata",
+              "datei": "assets/audio/cds/christmas-trumpet-toccata.mp3"
+            }
+          ]
+        },
+        {
+          "titel": "Große Postludien in St. Augustin",
+          "cover": {
+            "pfad": "assets/img/cds/grosse-postludien.webp",
+            "breite": 400,
+            "hoehe": 399
+          },
+          "werke": "Orgelwerke von J. S. Bach, Franck, Lefébure-Wély, Elgar, F. Schmidt, Saint-Saëns, Vierne, Widor, Capek, Mailly und Mulet",
+          "mitwirkende": "Wolfgang Capek, Orgel",
+          "leitung": "",
+          "hoerproben": [
+            {
+              "titel": "Lefébure-Wély: Offertoire C-Dur",
+              "datei": "assets/audio/cds/postludien-offertoire.mp3"
+            },
+            {
+              "titel": "Widor: Final aus der 6. Symphonie",
+              "datei": "assets/audio/cds/postludien-widor-final.mp3"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

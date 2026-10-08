@@ -1,0 +1,143 @@
+{
+  "mitglieder": [
+    {
+      "name": "P. Mag. Matthias Schlögl OSA",
+      "rolle": "Pfarrer, Vorsitzender",
+      "beruf": "",
+      "aufgaben": [
+        "Vorsitzender des Pfarrgemeinderats und des Vermögensverwaltungsrats",
+        "Leitet die Fachausschüsse Gemeindeaufbau (Koinonia), Liturgie, Berufungspastoral, Öffentlichkeitsarbeit und Augustiner-Reisen",
+        "Mitglied im Fachausschuss Verkündigung (Sakramentenpastoral)"
+      ],
+      "email": "pfarrer@augustinerkirche.at",
+      "telefon": "+43 (0)1 533 70 99"
+    },
+    {
+      "name": "Edith Schiavon",
+      "rolle": "Stellvertretende Vorsitzende",
+      "beruf": "Pensionistin",
+      "aufgaben": [
+        "Leitet den Fachausschuss Erwachsenenbildung",
+        "Mitglied in den Fachausschüssen Caritas, Gemeindeaufbau und Liturgie"
+      ],
+      "email": "edith.schiavon@chello.at",
+      "telefon": ""
+    },
+    {
+      "name": "Monika Kettinger",
+      "rolle": "Stellvertretende Vorsitzende des Vermögensverwaltungsrats",
+      "beruf": "",
+      "aufgaben": [],
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Christine Hummer",
+      "rolle": "Gewähltes Mitglied",
+      "beruf": "Hausfrau",
+      "aufgaben": [
+        "Leitet die Fachausschüsse Jugend und Sorge um die Senioren",
+        "Mitglied in den Fachausschüssen Gemeindeaufbau, Kinder sowie Feste und Feiern"
+      ],
+      "email": "grunz@iwasno.net",
+      "telefon": ""
+    },
+    {
+      "name": "Klaus Kettinger",
+      "rolle": "Gewähltes Mitglied",
+      "beruf": "Schuldirektor",
+      "aufgaben": [
+        "Leitet den Fachausschuss Kunst und Kultur",
+        "Mitglied in den Fachausschüssen Gemeindeaufbau, Liturgie, Schöpfungsverantwortung und Kirchenmusik",
+        "Mitglied des Vermögensverwaltungsrats"
+      ],
+      "email": "klaus.kettinger@chello.at",
+      "telefon": ""
+    },
+    {
+      "name": "Ulrike Komarek",
+      "rolle": "Bestelltes Mitglied",
+      "beruf": "Orthoptistin",
+      "aufgaben": [
+        "Leitet den Fachausschuss Ökumene",
+        "Mitglied in den Fachausschüssen Gemeindeaufbau, Sorge um die Senioren, Erwachsenenbildung sowie Kunst und Kultur"
+      ],
+      "email": "komarekulrike@gmail.com",
+      "telefon": ""
+    },
+    {
+      "name": "Eva-Maria Leiner",
+      "rolle": "Gewähltes Mitglied",
+      "beruf": "Disponentin",
+      "aufgaben": [
+        "Leitet den Fachausschuss Kinder",
+        "Mitglied in den Fachausschüssen Gemeindeaufbau und Sorge um die Senioren"
+      ],
+      "email": "evamarialeiner@gmx.at",
+      "telefon": ""
+    },
+    {
+      "name": "Diakon Michael Schimpl",
+      "rolle": "Amtliches Mitglied, Schriftführer",
+      "beruf": "Ehrenamtlicher Diakon, technischer Angestellter",
+      "aufgaben": [
+        "Ministranten-Seelsorger",
+        "Leitet die Fachausschüsse Verkündigung (Sakramentenpastoral), Caritas, Ehe und Familie, Ministranten und Augustiner-Wallfahrt",
+        "Mitglied in den Fachausschüssen Gemeindeaufbau und Liturgie"
+      ],
+      "email": "diakon@augustinerkirche.at",
+      "telefon": ""
+    },
+    {
+      "name": "Ing. Peter Schlögl",
+      "rolle": "Gewähltes Mitglied",
+      "beruf": "Pensionist",
+      "aufgaben": [
+        "Leitet den Fachausschuss Schöpfungsverantwortung",
+        "Mitglied in den Fachausschüssen Gemeindeaufbau und Liturgie",
+        "Mitglied des Vermögensverwaltungsrats"
+      ],
+      "email": "peter@schloegl.wien",
+      "telefon": ""
+    }
+  ],
+  "weitere": [
+    {
+      "name": "P. MMag. Nikolaus Schachtner OSA",
+      "rolle": "Leiter des Fachausschusses Pfarrliche Bibelarbeit",
+      "beruf": "Augustiner, Berufsschuldirektor und -lehrer",
+      "aufgaben": [],
+      "email": "p.nikolaus@augustiner.at",
+      "telefon": ""
+    },
+    {
+      "name": "Ursula Schimpl",
+      "rolle": "Kontaktperson Prävention gegen Missbrauch",
+      "beruf": "Journalistin",
+      "aufgaben": [],
+      "email": "ursula.schimpl@gmail.com",
+      "telefon": ""
+    },
+    {
+      "name": "Tobias Klaghofer",
+      "rolle": "Ersatzmitglied",
+      "beruf": "Beamter",
+      "aufgaben": [
+        "Mitglied des Vermögensverwaltungsrats",
+        "Mitglied im Fachausschuss Liturgie"
+      ],
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Florian Oppitz",
+      "rolle": "Ersatzmitglied",
+      "beruf": "Archäologe",
+      "aufgaben": [
+        "Mitglied im Fachausschuss Jugend"
+      ],
+      "email": "",
+      "telefon": ""
+    }
+  ]
+}

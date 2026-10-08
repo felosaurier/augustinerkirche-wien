@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>CDs — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-cds.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">CDs <em>pflegen</em></h1>
+      <p class="ph-sub">Die Aufnahmen für Kirchenmusik → <a href="../pages/musik.html#p-cds" target="_blank" rel="noopener">CDs</a>: Cover, Werke, Mitwirkende und Hörproben, in Gruppen und in der Reihenfolge dieser Liste.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="cd-new" data-icon="plus">Neue CD</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-search" data-icon="search">
+      <input type="search" id="cd-search" placeholder="Suchen: Titel, Werk, Mitwirkende …" aria-label="CDs durchsuchen" autocomplete="off"/>
+    </div>
+  </div>
+  <p class="adm-count" id="cd-count" role="status"></p>
+
+  <div id="cd-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog wide" id="cd-dlg" aria-labelledby="cd-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="cd-dlg-tag">Neue CD</div>
+      <h2 class="adm-dlg-title" id="cd-dlg-title">Neue CD</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="cd-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Aufnahme</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-titel">Titel<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-titel" required placeholder="z. B. Mozart: Krönungsmesse"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-gruppe">Gruppe</label>
+          <input class="adm-input" type="text" id="f-gruppe" list="dl-cd-gruppe" aria-describedby="f-gruppe-hint"/>
+          <span class="adm-hint" id="f-gruppe-hint">Überschrift auf der Seite, z. B. Messen. Ein neuer Name legt eine neue Gruppe an.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-leitung">Leitung</label>
+          <input class="adm-input" type="text" id="f-leitung" placeholder="z. B. Robert Rieder"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-werke">Werke</label>
+          <textarea class="adm-input" id="f-werke" rows="3"></textarea>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-mitwirkende">Solistinnen, Solisten und Mitwirkende</label>
+          <textarea class="adm-input" id="f-mitwirkende" rows="2"></textarea>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Cover</legend>
+      <div class="adm-image">
+        <div class="adm-image-prev square" id="cd-prev"></div>
+        <div class="adm-field">
+          <label class="adm-drop" id="cd-drop">
+            <span data-icon="image"></span>
+            <span class="adm-drop-main">Cover hierher ziehen oder <u>auswählen</u></span>
+            <span class="adm-hint">Wird auf höchstens 400 Pixel verkleinert und als WebP gespeichert</span>
+            <input type="file" id="f-file" accept="image/*" aria-describedby="cd-imginfo"/>
+          </label>
+          <span class="adm-hint" id="cd-imginfo"></span>
+          <div class="adm-field adm-credit">
+            <label class="adm-label" for="f-credit">Bildnachweis</label>
+            <input class="adm-input" type="text" id="f-credit" placeholder="z. B. © Augustiner Wien, Foto: Max Muster" aria-describedby="f-credit-hint"/>
+            <span class="adm-hint" id="f-credit-hint">Steht auf der Website klein unter dem Bild.</span>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Hörproben</legend>
+      <p class="adm-hint" style="margin-bottom:.8rem">Titel und MP3-Datei je Hörprobe. Neue Dateien unten hineinziehen oder auswählen; sie werden beim Speichern nach <code>assets/audio/cds/</code> gelegt.</p>
+      <div id="cd-samples"></div>
+      <label class="adm-drop adm-drop-audio" id="cd-audio-drop" style="margin-top:.8rem">
+        <span data-icon="upload"></span>
+        <span class="adm-drop-main">MP3-Dateien hierher ziehen oder <u>auswählen</u></span>
+        <span class="adm-hint">Auch mehrere auf einmal. Der Dateiname wird als Titel vorgeschlagen.</span>
+        <input type="file" id="f-audio" accept="audio/mpeg,.mp3" multiple/>
+      </label>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="cd-delete" data-icon="trash">Löschen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="cd-form" class="btn btn-dark" id="cd-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-cd-gruppe"></datalist>
+
+</body>
+</html>

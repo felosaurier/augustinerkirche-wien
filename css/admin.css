@@ -574,8 +574,4 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
   .adm-rows-compact .adm-row:hover .adm-row-actions,.adm-rows-compact .adm-row:focus-within .adm-row-actions{opacity:1;pointer-events:auto}
 }
 .adm-credit{margin-top:.9rem}
-/* Bildnachweise: Vorschaubild, Datei, Fundorte, Feld */
-.adm-row.adm-bn{grid-template-columns:5.6rem minmax(0,1fr);gap:1.2rem;padding:.9rem 1.2rem}
-.adm-bn-body{display:flex;flex-direction:column;gap:.3rem;min-width:0}
-.adm-bn-file{font-size:.95rem;font-weight:600;color:var(--black);overflow-wrap:anywhere}
-.adm-row.adm-bn.changed{box-shadow:inset 3px 0 0 var(--gold)}
+.adm-drop-audio{min-height:6.5rem}

@@ -865,17 +865,18 @@
     { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
     { label: 'Termine', icon: 'calendar', href: 'termine.html' },
-    { label: 'Bildnachweise', icon: 'image', href: 'bildnachweise.html' },
     { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [
       ['hochaemter.html', 'Hochämter'],
       ['solisten.html', 'Solisten'],
       ['paten.html', 'Paten'],
+      ['cds.html', 'CDs'],
       ['personen.html?bereich=musik', 'Leitung & Organisten'],
       ['repertoire.html', 'Repertoire']
     ] },
     { label: 'Pfarre & Kloster', icon: 'users', href: 'gottesdienste.html', sub: [
       ['gottesdienste.html', 'Gottesdienste & Kanzlei'],
       ['runden.html', 'Runden'],
+      ['pgr.html', 'Pfarrgemeinderat'],
       ['personen.html?bereich=kloster', 'Mitbrüder']
     ] }
   ];
@@ -1004,8 +1005,8 @@
 
   /* ---------- Bildnachweise (data/bildnachweise.json) ----------
      Ein Nachweis je Bild (Pfad ab der Website-Wurzel); die Website zeigt ihn
-     klein unter dem Bild (js/main.js). Gepflegt in den Werkzeugen mit Bildern
-     und gesammelt unter "Bildnachweise". */
+     klein unter dem Bild (js/main.js). Gepflegt direkt beim Bild in den
+     Werkzeugen mit Bildern. */
   const CREDITS = 'data/bildnachweise.json';
   let creditMap = null;
   const sortedMap = (map) => Object.fromEntries(Object.keys(map).sort().map((k) => [k, map[k]]));
