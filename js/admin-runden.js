@@ -288,6 +288,7 @@
     removeImage = false;
     document.querySelector(`input[name="bildart"][value="${r && r.bild && r.bild.art === 'foto' ? 'foto' : 'plakat'}"]`).checked = true;
     $('f-alt').value = r && r.bild ? r.bild.alt || '' : '';
+    $('f-credit').value = A.credits.get(r && r.bild && r.bild.pfad);
     renderImage();
     updateArt();
 
@@ -368,6 +369,7 @@
       if (old) next[editIndex] = r;
       else next.push(r);
       await store(next, `Runde ${old ? 'gespeichert' : 'angelegt'}: ${titel}.`);
+      if (r.bild && r.bild.pfad) await A.credits.set(r.bild.pfad, $('f-credit').value);
       $('rd-dlg').close();
       flash(id);
     } catch (err) {
@@ -397,6 +399,7 @@
 
   /* ---------- Start ---------- */
   A.start(async () => {
+    A.credits.load();
     fakten = A.listEditor($('rd-fakten'), {
       fields: [
         { key: 'label', label: 'Bezeichnung', placeholder: 'z. B. Ort', list: 'dl-rd-fakt' },

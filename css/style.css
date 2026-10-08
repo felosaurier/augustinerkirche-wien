@@ -971,6 +971,14 @@ summary.cal-row::-webkit-details-marker{display:none}
 }
 
 
+/* ══ BILDNACHWEISE (js/main.js, data/bildnachweise.json) ══ */
+.bn-wrap{display:block;min-width:0}
+.bn{display:block;margin-top:.35rem;font-size:.76rem;line-height:1.35;color:var(--text-light)}
+.bn-over{position:absolute;right:.6rem;bottom:.5rem;z-index:2;max-width:calc(100% - 1.2rem);margin:0;padding:.15rem .45rem;
+  background:rgba(16,25,46,.55);color:rgba(255,255,255,.88);font-size:.72rem;text-align:right}
+.hero-img{position:relative}
+
+
 /* ══ BARRIEREFREIHEIT ══ */
 /* Touch: kleine, alleinstehende Links bekommen eine unsichtbar größere Tippfläche */
 @media(pointer:coarse){

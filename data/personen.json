@@ -46,7 +46,7 @@
       "name": "KMD MMag. Peter Tiefengraber, MA",
       "rolle": "Kirchenmusikdirektor",
       "bild": "assets/img/personen/dirigenten/kmd-tiefengraber.webp",
-      "bildtext": "Peter Tiefengraber | © Franz Josef Rupprecht",
+      "bildtext": "Peter Tiefengraber",
       "breite": 706,
       "hoehe": 1000,
       "text": [
@@ -76,7 +76,7 @@
       "name": "Mag. Thomas Böttcher",
       "rolle": "Gastdirigent von St. Augustin",
       "bild": "assets/img/personen/dirigenten/dirigent-boettcher.webp",
-      "bildtext": "Mag. Thomas Böttcher | © Franz Josef Rupprecht",
+      "bildtext": "Mag. Thomas Böttcher",
       "breite": 800,
       "hoehe": 1000,
       "text": [
@@ -90,7 +90,7 @@
       "name": "Gottfried Fragner",
       "rolle": "Gastdirigent von St. Augustin",
       "bild": "assets/img/personen/dirigenten/dirigent-fragner.webp",
-      "bildtext": "Gottfried Fragner (Foto: © Gottfried Fragner)",
+      "bildtext": "Gottfried Fragner",
       "breite": 598,
       "hoehe": 781,
       "text": [
@@ -119,7 +119,7 @@
       "name": "Univ.-Prof. Mag. Wolfgang Capek",
       "rolle": "Titularorganist an der Rieger-Orgel",
       "bild": "assets/img/personen/organisten/organist-capek.webp",
-      "bildtext": "Wolfgang Capek (Foto: © Wolfgang Capek)",
+      "bildtext": "Wolfgang Capek",
       "breite": 361,
       "hoehe": 500,
       "text": [
@@ -134,7 +134,7 @@
       "name": "Mag. Robert Kovács",
       "rolle": "Titularorganist an der Reil-Orgel",
       "bild": "assets/img/personen/organisten/organist-kovacs.webp",
-      "bildtext": "Robert Kovács (Foto: © Robert Kovács)",
+      "bildtext": "Robert Kovács",
       "breite": 500,
       "hoehe": 500,
       "text": [
@@ -149,7 +149,7 @@
       "name": "MMag. Elke Eckerstorfer",
       "rolle": "Organistin von St. Augustin",
       "bild": "assets/img/personen/organisten/organist-eckerstorfer.webp",
-      "bildtext": "Elke Eckerstorfer (Foto: © Elke Eckerstorfer)",
+      "bildtext": "Elke Eckerstorfer",
       "breite": 500,
       "hoehe": 500,
       "text": [
@@ -163,7 +163,7 @@
       "name": "Ines Schüttengruber",
       "rolle": "Organistin von St. Augustin",
       "bild": "assets/img/personen/organisten/organist-schuettengruber.webp",
-      "bildtext": "Ines Schüttengruber (Foto: © Lukas Beck)",
+      "bildtext": "Ines Schüttengruber",
       "breite": 900,
       "hoehe": 981,
       "text": [

@@ -174,6 +174,7 @@
     $('f-rolle').value = p ? p.rolle || '' : '';
     $('f-text').value = p ? (p.text || []).join('\n') : '';
     $('f-bildtext').value = p ? p.bildtext || '' : '';
+    $('f-credit').value = A.credits.get(p && p.bild);
     if (image) URL.revokeObjectURL(image.url);
     image = null;
     removeImage = false;
@@ -228,6 +229,7 @@
       }
       group = target;
       await store(next, `${old ? 'Gespeichert' : 'Hinzugefügt'}: ${name} (${GROUPS[target].label}).`);
+      if (p.bild) await A.credits.set(p.bild, $('f-credit').value);
       $('ps-dlg').close();
       flash(`${target}-${name}`);
     } catch (err) {
@@ -258,6 +260,7 @@
 
   /* ---------- Start ---------- */
   A.start(async () => {
+    A.credits.load();
     $('ps-title').innerHTML = area.title;
     $('ps-sub').textContent = area.sub;
     $('f-gruppe').innerHTML = area.groups.map((key) => `<option value="${key}">${GROUPS[key].label}</option>`).join('');

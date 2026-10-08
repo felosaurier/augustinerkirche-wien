@@ -865,6 +865,7 @@
     { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
     { label: 'Termine', icon: 'calendar', href: 'termine.html' },
+    { label: 'Bildnachweise', icon: 'image', href: 'bildnachweise.html' },
     { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [
       ['hochaemter.html', 'Hochämter'],
       ['solisten.html', 'Solisten'],
@@ -1001,6 +1002,49 @@
     }
   });
 
+  /* ---------- Bildnachweise (data/bildnachweise.json) ----------
+     Ein Nachweis je Bild (Pfad ab der Website-Wurzel); die Website zeigt ihn
+     klein unter dem Bild (js/main.js). Gepflegt in den Werkzeugen mit Bildern
+     und gesammelt unter "Bildnachweise". */
+  const CREDITS = 'data/bildnachweise.json';
+  let creditMap = null;
+  const sortedMap = (map) => Object.fromEntries(Object.keys(map).sort().map((k) => [k, map[k]]));
+  async function loadCredits(force) {
+    if (creditMap && !force) return creditMap;
+    try {
+      creditMap = JSON.parse(await readText(CREDITS)).bilder || {};
+    } catch {
+      creditMap = creditMap || {};
+    }
+    return creditMap;
+  }
+  /* Mehrere Nachweise auf einmal: {pfad: text}; leerer Text entfernt den Eintrag.
+     Liefert null, wenn sich nichts geaendert hat, sonst wie saveFile. */
+  async function saveCredits(changes) {
+    const map = { ...(await loadCredits(true)) };
+    let changed = false;
+    for (const [path, text] of Object.entries(changes)) {
+      if (!path) continue;
+      const t = String(text || '').replace(/\s+/g, ' ').trim();
+      if ((map[path] || '') === t) continue;
+      if (t) map[path] = t;
+      else delete map[path];
+      changed = true;
+    }
+    if (!changed) return null;
+    const next = sortedMap(map);
+    const direct = await saveFile(CREDITS, JSON.stringify({ bilder: next }, null, 2) + '\n');
+    creditMap = next;
+    return direct;
+  }
+  const credits = {
+    load: loadCredits,
+    get: (path) => (creditMap && path && creditMap[path]) || '',
+    set: (path, text) => saveCredits({ [path]: text }),
+    save: saveCredits,
+    PATH: CREDITS
+  };
+
   w.Admin = {
     HD, $, esc, icon, ready,
     start: (fn) => starters.push(fn),
@@ -1011,6 +1055,7 @@
     pwLevel, suggestPassword, MIN_PW, ACCOUNTS,
     /* Dateien */
     folder, readText, fetchText, saveFile, saveJSON, hasUnsaved, imageUrl, fileName, dirName,
+    credits,
     /* Oberflaeche */
     toast, confirmBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
     listEditor, toWebp, wireDrop, log, recentLog, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,

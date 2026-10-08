@@ -441,6 +441,7 @@
     image = null;
     removeImage = false;
     current = e ? imgOf(e) : '';
+    $('f-credit').value = A.credits.get(current);
     document.querySelector(`input[name="kind"][value="${e && !e.Plakat && e.Vorschaubild ? 'photo' : 'poster'}"]`).checked = true;
     delete $('f-filename').dataset.touched;
     renderImage();
@@ -523,6 +524,7 @@
       sortEntries(next);
       const direct = await A.saveFile(PATH, toCSV(next));
       entries = next;
+      if (imgOf(entry)) await A.credits.set(imgOf(entry), $('f-credit').value);
       $('nv-dlg').close();
       render();
       flash(newsId(entry));
@@ -561,6 +563,7 @@
 
   /* ---------- Start ---------- */
   A.start(async () => {
+    A.credits.load();
     infos = A.listEditor($('f-infos'), {
       fields: [
         { key: 'label', label: 'Bezeichnung', placeholder: 'Bezeichnung', list: 'dl-label' },

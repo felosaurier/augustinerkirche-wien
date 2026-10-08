@@ -61,6 +61,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
 | **Personen** | Mitbrüder, Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto, Aufgabe und Text |
 | **Solisten** | Liste für Kirchenmusik → Solisten: Foto (wird quadratisch zugeschnitten, Ausschnitt verschiebbar), Stimmlage, verstorben |
+| **Bildnachweise** | Alle Bilder der Website mit Fundort und Feld für den Nachweis (z. B. „© Augustiner Wien, Foto: …“), Filter „Ohne Nachweis“; bei Personen, Solisten, Runden und Neuigkeiten auch direkt beim Bild. Auf der Website steht der Nachweis klein unter dem Bild, bei Titelfotos unten in der Ecke |
 | **Paten** | Paten und Ehrenpaten für Kirchenmusik → Patenschaft: hinzufügen (am Ende oder ganz oben), ändern, verschieben, entfernen; die Paten erscheinen nummeriert in dieser Reihenfolge |
 | **Repertoire** | Repertoire des Chores nach Komponisten, mit Werken und Hinweisen (z. B. Uraufführungen in der Augustinerkirche) |
 | **Zugänge** | Nur für Admins: Zugang anlegen, Rolle, Name oder Passwort ändern, entfernen |
@@ -164,6 +165,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   neuigkeiten.html            Neuigkeiten und Plakate pflegen
   termine.html                Eigene Termine für den Kalender pflegen
   paten.html                  Paten der Kirchenmusik pflegen
+  bildnachweise.html          Bildnachweise aller Bilder pflegen
   solisten.html               Solisten pflegen
   gottesdienste.html          Wochenplan, Pfarrkanzlei und Kontakt pflegen
   runden.html                 Runden pflegen
@@ -192,6 +194,7 @@ js/
   admin-neuigkeiten.js        Neuigkeiten pflegen
   admin-termine.js            Termine für den Kalender pflegen
   admin-paten.js              Paten der Kirchenmusik pflegen
+  admin-bildnachweise.js      Bildnachweise pflegen
   admin-solisten.js           Solisten pflegen
   admin-gottesdienste.js      Wochenplan, Pfarrkanzlei und Kontakt
   admin-runden.js             Runden pflegen
@@ -206,6 +209,7 @@ data/
   news.csv                    Neuigkeiten und Plakate
   termine.json                Eigene Termine für den Kalender (Ausflüge, Feste, Vorträge …)
   paten.json                  Paten und Ehrenpaten der Kirchenmusik
+  bildnachweise.json          Bildnachweis je Bild, erscheint unter dem Bild
   solisten.json               Solistinnen und Solisten mit Stimmlage
   gottesdienste.json          Wochenplan der Gottesdienste
   runden.json                 Runden: Übersicht und Inhalt der Seiten

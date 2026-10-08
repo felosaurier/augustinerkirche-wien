@@ -459,6 +459,98 @@
       a.removeAttribute('data-mail');
     }
   }
+  /* ---------- Bildnachweise ----------
+     data/bildnachweise.json ordnet Bildern (Pfad ab der Website-Wurzel) ihren
+     Nachweis zu, z. B. "© Augustiner Wien, Foto: …". Er steht klein unter dem
+     Bild; bei Titelfotos (Hintergrundbild) unten in der Ecke. Gilt auch fuer
+     Bilder, die spaeter nachgeladen werden (Personen, Runden, Neuigkeiten). */
+  const siteRoot = (() => {
+    const s = qs('script[src$="js/main.js"]');
+    return s ? new URL('..', s.src).pathname : '/';
+  })();
+  /* Rahmen, die zum Bild gehoeren (Bildfeld einer Karte, Link um das Bild) */
+  const BOX = /(^|[-\s])(img|thumb|cover|foto|photo)([-\s]|$)/;
+  let credits = null;
+
+  function creditFor(url) {
+    if (!credits || !url) return '';
+    let path;
+    try {
+      path = decodeURIComponent(new URL(url, location.href).pathname);
+    } catch {
+      return '';
+    }
+    if (!path.startsWith(siteRoot)) return '';
+    return credits[path.slice(siteRoot.length)] || '';
+  }
+
+  function creditEl(text, over) {
+    const el = document.createElement('small');
+    el.className = over ? 'bn bn-over' : 'bn';
+    el.textContent = text;
+    return el;
+  }
+
+  function applyCredits() {
+    if (!credits) return;
+    for (const img of qsa('img:not([data-bn])')) {
+      img.dataset.bn = '';
+      const text = creditFor(img.currentSrc || img.getAttribute('src'));
+      if (!text || img.closest('.mobile-menu, nav, footer')) continue;
+      /* Zum Bild gehoerende Rahmen mitnehmen, damit der Text darunter steht */
+      let box = img;
+      for (let i = 0; i < 3; i++) {
+        const p = box.parentElement;
+        if (!p || p.matches('main, section, li, .tab-pane, .tab-content-area')) break;
+        const single = p.children.length === 1 && /^(A|PICTURE|SPAN)$/.test(p.tagName);
+        if (!single && !BOX.test(p.className)) break;
+        box = p;
+      }
+      /* Rahmen um Bild und Nachweis nimmt den Platz des Bildes im Layout ein */
+      const cs = getComputedStyle(box);
+      const wrap = document.createElement('span');
+      wrap.className = 'bn-wrap';
+      for (const prop of ['flex', 'alignSelf', 'gridColumn', 'gridRow', 'order', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft']) {
+        wrap.style[prop] = cs[prop];
+      }
+      if (cs.position === 'sticky') {
+        wrap.style.position = 'sticky';
+        wrap.style.top = cs.top;
+      }
+      box.style.margin = '0';
+      box.replaceWith(wrap);
+      wrap.append(box, creditEl(text));
+    }
+    /* Titelfotos als Hintergrundbild */
+    for (const el of qsa('.hero-img:not([data-bn])')) {
+      el.dataset.bn = '';
+      const m = (el.getAttribute('style') || '').match(/url\(['"]?([^'")]+)/);
+      const text = m && creditFor(m[1]);
+      if (text) el.append(creditEl(text, true));
+    }
+  }
+
+  async function initCredits() {
+    try {
+      const res = await fetch(`${siteRoot}data/bildnachweise.json`);
+      if (!res.ok) return;
+      credits = (await res.json()).bilder || {};
+    } catch {
+      return;
+    }
+    applyCredits();
+    let queued = false;
+    new MutationObserver(() => {
+      if (queued) return;
+      queued = true;
+      /* Zeitgeber statt requestAnimationFrame: laeuft auch in Hintergrund-Tabs */
+      setTimeout(() => {
+        queued = false;
+        applyCredits();
+      }, 40);
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+
   function initMail() {
     decodeMail();
     new MutationObserver(decodeMail).observe(document.body, { childList: true, subtree: true });
@@ -471,6 +563,7 @@
     initSidebarTabs();
     initSakrChips();
     initMail();
+    initCredits();
     markCurrentNav();
     initAttributeFilter('.week-filter-btn[data-filter]', '.week-row', 'day');
 

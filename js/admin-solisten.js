@@ -141,6 +141,7 @@
     form.reset();
     A.clearErrors(form);
     fillVoices(p ? p.voice : '');
+    $('f-credit').value = A.credits.get(p && p.image);
     $('f-name').value = p ? p.name : '';
     $('f-surname').value = p ? p.surname : '';
     if (p && p.surname !== surnameOf(p.name)) $('f-surname').dataset.touched = '1';
@@ -200,6 +201,7 @@
       next.sort(bySurname);
       const direct = await A.saveFile(PATH, JSON.stringify(next, null, 2));
       people = next;
+      if (person.image) await A.credits.set(person.image, $('f-credit').value);
       $('so-dlg').close();
       renderVoices();
       render();
@@ -240,6 +242,7 @@
 
   /* ---------- Start ---------- */
   A.start(async () => {
+    A.credits.load();
     $('so-new').addEventListener('click', () => openEditor(-1));
     $('so-form').addEventListener('submit', save);
     $('so-delete').addEventListener('click', remove);
