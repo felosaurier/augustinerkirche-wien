@@ -140,7 +140,8 @@
       /* Gleicher Bereich wie in der Adresszeile: kein hashchange, also selbst hinspringen */
       if (a.pathname === location.pathname && a.hash && a.hash === location.hash) {
         e.preventDefault();
-        routeToHash();
+        const target = hashTarget();
+        if (target) target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
       }
     });
 
@@ -308,22 +309,53 @@
   }
 
   /* ---------- URL-Hash-Routing ---------- */
-  function routeToHash() {
-    const id = location.hash.slice(1);
-    if (!id) return;
-    const pane = document.getElementById(id);
-    if (!pane || !pane.classList.contains('tab-pane')) return;
-    const area = pane.closest('.tab-content-area');
+  /* Sprungziel der Adresse: ein Reiter (Bereich wird geoeffnet, Ziel ist der
+     Anfang des Bereichs) oder ein beliebiges Element mit dieser id */
+  function hashTarget() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const el = id && document.getElementById(id);
+    if (!el) return null;
+    if (!el.classList.contains('tab-pane')) return el;
+    const area = el.closest('.tab-content-area');
     const sidebar = area && area.previousElementSibling;
-    if (!sidebar) return;
+    if (!sidebar || !activatePane(sidebar, id)) return null;
+    return sidebar.closest('.with-sidebar') || el;
+  }
 
-    if (activatePane(sidebar, id)) {
-      /* kurz warten, bis der Bereich sichtbar und vermessen ist */
-      setTimeout(() => {
-        const section = sidebar.closest('.with-sidebar') || pane;
-        section.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
-      }, 60);
-    }
+  function routeToHash() {
+    const target = hashTarget();
+    /* Nur Reiter selbst anfahren; andere Ziele scrollt der Browser */
+    if (!target || target.id === location.hash.slice(1)) return;
+    /* kurz warten, bis der Bereich sichtbar und vermessen ist */
+    setTimeout(() => target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' }), 60);
+  }
+
+  /* Beim Oeffnen einer Seite mit Sprungziel (z. B. index.html#kontakt) laden
+     Hochaemter, Neuigkeiten und Personen erst danach und schieben das Ziel nach
+     unten. Bis alles steht, wird es deshalb immer wieder oben ausgerichtet;
+     sobald man selbst scrollt, tippt oder eine Taste drueckt, hoert das auf. */
+  function holdHashTarget() {
+    const target = hashTarget();
+    if (!target) return;
+    const events = ['wheel', 'touchstart', 'keydown', 'mousedown'];
+    let done = false;
+    const jump = () => {
+      if (!done) target.scrollIntoView({ behavior: 'instant', block: 'start' });
+    };
+    const ro = 'ResizeObserver' in window ? new ResizeObserver(jump) : null;
+    const stop = () => {
+      done = true;
+      if (ro) ro.disconnect();
+      for (const ev of events) window.removeEventListener(ev, stop);
+    };
+    for (const ev of events) window.addEventListener(ev, stop, { passive: true });
+    if (ro) ro.observe(document.body);
+    window.addEventListener('load', () => {
+      jump();
+      setTimeout(stop, 3000);
+    }, { once: true });
+    setTimeout(stop, 8000);
+    requestAnimationFrame(jump);
   }
 
   /* ---------- Markiert den aktiven Navigationspunkt ---------- */
@@ -442,7 +474,7 @@
     markCurrentNav();
     initAttributeFilter('.week-filter-btn[data-filter]', '.week-row', 'day');
 
-    routeToHash();
+    holdHashTarget();
     bleedBands();
     window.addEventListener('resize', scheduleBleed);
     window.addEventListener('load', bleedBands);
