@@ -856,6 +856,25 @@ footer{
 .reveal{opacity:1;transform:none}
 
 
+/* ══ RUNDEN IN ST. AUGUSTIN: Karten mit Bild (js/inhalte.js) ══
+   Fotos füllen das Bildfeld, Plakate stehen ganz auf hellem Grund,
+   ohne eigenes Bild ein Foto aus der Augustinerkirche. */
+.rk-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2.6rem 2rem}
+.rk{display:flex;flex-direction:column;color:inherit;text-decoration:none}
+.rk-img{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--bg-warm)}
+.rk-img img{display:block;width:100%;height:100%;object-fit:cover}
+.rk-img.plakat img{object-fit:contain;padding:.9rem 0}
+.rk-body{display:flex;flex-direction:column;flex:1;padding-top:1.1rem;border-bottom:1px solid var(--line);padding-bottom:1.3rem}
+.rk-title{margin-bottom:.4rem;font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s}
+.rk:hover .rk-title{color:var(--gold)}
+.rk-text{font-size:1rem;line-height:1.6;color:var(--text-mid)}
+.rk-next{margin-top:auto;padding-top:.9rem;font-size:.95rem;font-weight:500;color:var(--blue)}
+.rk-next-l{display:block;margin-bottom:.1rem;font-size:.84rem;font-weight:600;color:var(--gold)}
+@media(max-width:600px){
+  .rk-grid{grid-template-columns:minmax(0,1fr);gap:2.2rem}
+}
+
+
 /* ══ KALENDER (pages/kalender.html, js/kalender.js) ══
    Links das Monatsblatt mit Punkten je Gruppe, rechts die Termine nach Tagen. */
 .cal{--g-gottesdienst:var(--blue);--g-konzert:var(--gold);--g-runde:#4d6b57;--g-veranstaltung:#8a3b45;

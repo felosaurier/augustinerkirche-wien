@@ -72,15 +72,47 @@
   /* ---------- Runden ---------- */
   const rundeHref = (r) => url(r.link || r.seite || `pages/runden/runde.html?id=${encodeURIComponent(r.id)}`);
 
+  /* Naechster Termin einer Runde aus ihren Terminreihen (heute oder spaeter) */
+  function nextDate(r) {
+    const d = new Date();
+    const today = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    let best = null;
+    for (const b of r.termine || []) {
+      for (const iso of b.daten || []) {
+        if (iso >= today && (!best || iso < best.iso)) best = { iso, zeit: HD.isoTime(b.zeit), name: b.name };
+      }
+    }
+    return best;
+  }
+  function nextHTML(n) {
+    if (!n) return '';
+    const dt = HD.dateFromIso(n.iso);
+    return '<p class="rk-next"><span class="rk-next-l">Nächster Termin</span>' +
+      `${HD.WEEKDAYS[dt.getDay()]}, ${dt.getDate()}. ${HD.MONTHS[dt.getMonth()]}${n.zeit ? `, ${n.zeit} Uhr` : ''}</p>`;
+  }
+  /* Runden ohne eigenes Bild: der Reihe nach ein Foto aus der Augustinerkirche */
+  const KIRCHE = ['interior-hero', 'kanzel', 'loretokapelle-a', 'seitenaltar', 'loretokapelle-b']
+    .map((n) => ({ pfad: `assets/img/kirche/${n}.webp`, art: 'foto' }));
+  /* Bild der Karte: Foto oder Plakat der Runde, sonst ein Kirchenfoto */
+  function cardImg(b) {
+    const src = b && url(b.pfad);
+    if (!src) return '';
+    return `<div class="rk-img${b.art === 'plakat' ? ' plakat' : ''}"><img src="${esc(src)}" alt="" width="${b.breite || 800}" height="${b.hoehe || 600}" loading="lazy" decoding="async"/></div>`;
+  }
+
   async function rundenListe() {
     const hosts = qsa('[data-inhalt="runden"]');
     if (!hosts.length) return;
     const { runden } = await load('runden.json');
     for (const el of hosts) {
+      let spare = 0;
       el.innerHTML = runden.filter((r) => r.sichtbar !== false).map((r) =>
-        `<a class="card" href="${esc(rundeHref(r))}" target="_blank" rel="noopener">` +
-        `<div class="card-title">${esc(r.titel)}</div><div class="card-text">${esc(r.kurztext)}</div>` +
-        '<span class="link-arr">Mehr erfahren (neues Fenster)</span></a>'
+        `<a class="rk" href="${esc(rundeHref(r))}">${cardImg(r.bild && r.bild.pfad ? r.bild : KIRCHE[spare++ % KIRCHE.length])}` +
+        '<div class="rk-body">' +
+          `<h3 class="rk-title">${esc(r.titel)}</h3>` +
+          (r.kurztext ? `<p class="rk-text">${esc(r.kurztext)}</p>` : '') +
+          nextHTML(nextDate(r)) +
+        '</div></a>'
       ).join('');
     }
   }
