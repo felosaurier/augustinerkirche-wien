@@ -1,7 +1,7 @@
 /* ============================================================
    Augustinerkirche Wien — lightbox.js
-   Vergroessert Plakate und Bilder: Link mit data-lightbox anklicken,
-   dann steht nur das Bild gross vor unscharfem Hintergrund.
+   Vergroessert Plakate und Bilder: Link mit data-lightbox oder ein Foto
+   im Inhalt anklicken, dann steht nur das Bild gross vor unscharfem Hintergrund.
    Schliessen per Klick, Escape oder Schliessen-Button.
    Ohne JavaScript oeffnet der Link das Bild einfach in einem neuen Tab.
    ============================================================ */
@@ -43,11 +43,24 @@
     if (!box.open) box.showModal();
   }
 
+  /* Fotos im Inhalt (nicht in Menue, Fusszeile, Links und Knoepfen) lassen sich
+     ebenfalls anklicken und vergroessern */
+  function zoomable(img) {
+    if (!img || img.closest('a,button,label,summary,nav,footer,.lightbox,[data-no-zoom]')) return false;
+    if (!img.closest('main,dialog')) return false;
+    return img.clientWidth >= 48 && img.clientHeight >= 48;
+  }
+
   document.addEventListener('click', (ev) => {
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
     const a = ev.target.closest('a[data-lightbox]');
-    if (!a || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
-    ev.preventDefault();
-    const pic = a.querySelector('img');
-    open(a.href, (pic && pic.alt) || a.getAttribute('title') || '', a);
+    if (a) {
+      ev.preventDefault();
+      const pic = a.querySelector('img');
+      open(a.href, (pic && pic.alt) || a.getAttribute('title') || '', a);
+      return;
+    }
+    const img = ev.target.closest('img');
+    if (zoomable(img)) open(img.currentSrc || img.src, img.alt, img);
   });
 })();
