@@ -108,7 +108,7 @@ Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine
 | Spalte | Inhalt |
 |---|---|
 | Datum | Veröffentlichungsdatum, TT.MM.JJJJ (bestimmt die Reihenfolge) |
-| Bis | Letzter Tag als aktive Meldung, TT.MM.JJJJ; danach rückt sie auf der Startseite nach unten bzw. ins Archiv. In der Verwaltung Pflichtfeld; leer = ohne Ende |
+| Bis | Letzter Tag als aktive Meldung, TT.MM.JJJJ; danach rückt sie auf der Startseite nach unten bzw. ins Archiv. Leer = zwei Wochen ab dem Datum der Meldung (die Verwaltung trägt das beim Speichern ein) |
 | Kategorie | z. B. Kirchenmusik, Konzert, Pfarrleben, Hochamt |
 | Titel, Kurztext | erscheinen auf der Karte |
 | Infos | Angaben im Fenster als `Bezeichnung: Wert`, mehrere mit <code>&#124;</code> trennen (z. B. `Zeit: 19:30 Uhr`) |

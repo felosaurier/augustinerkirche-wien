@@ -281,7 +281,6 @@
           `<span class="adm-row-date">${esc(e.Datum)}${e.Bis ? ` · bis ${esc(e.Bis)}` : ''}${e.Kategorie ? ` · ${esc(e.Kategorie)}` : ''}</span>` +
           `<span class="adm-row-title">${esc(e.Titel)}</span>` +
           `<span class="adm-row-people">${esc(e.Kurztext)}</span>` +
-          (e.Bis ? '' : `<span class="adm-chip">${icon('alert')}Enddatum fehlt: bitte ergänzen</span> `) +
           (src ? '' : `<span class="adm-chip">${icon('image')}Ohne Bild: die Karte zeigt das Logo</span>`) +
         `</span>${badge}` +
       '</button>' +
@@ -367,8 +366,8 @@
      mit dieser Meldung durchrechnen (gleiche Regel wie auf der Website). */
   function whereText(iso) {
     if (!HD.isoDate(iso)) return '';
-    const bis = HD.isoDate($('f-bis').value);
-    const me = { Datum: isoToDe(iso), Bis: bis ? isoToDe(bis) : '' };
+    const bis = HD.newsUntil(iso, $('f-bis').value);
+    const me = { Datum: isoToDe(iso), Bis: isoToDe(bis) };
     const next = entries.slice();
     if (editIndex >= 0) next[editIndex] = me;
     else next.push(me);
@@ -477,10 +476,10 @@
     const target = readLink();
     const link = target.link || '';
     const errors = [];
-    const bis = HD.isoDate($('f-bis').value);
+    /* Ohne eigenes Enddatum: zwei Wochen ab dem Datum der Meldung */
+    const bis = HD.newsUntil(date, $('f-bis').value);
     if (!HD.isoDate(date)) errors.push([$('f-date'), 'Bitte das Datum der Meldung wählen.']);
-    if (!bis) errors.push([$('f-bis'), 'Bitte eintragen, bis wann die Meldung auf der Startseite stehen soll.']);
-    else if (HD.isoDate(date) && bis < date) errors.push([$('f-bis'), 'Das Enddatum liegt vor dem Datum der Meldung.']);
+    else if (bis < date) errors.push([$('f-bis'), 'Das Enddatum liegt vor dem Datum der Meldung.']);
     if (!title) errors.push([$('f-title'), 'Bitte einen Titel eintragen.']);
     if (!teaser) errors.push([$('f-teaser'), 'Bitte einen Kurztext eintragen.']);
     if (target.error) errors.push(target.error);

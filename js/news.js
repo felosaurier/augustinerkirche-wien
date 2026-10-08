@@ -50,7 +50,7 @@
       return {
         id: `${iso}-${HD.slug(o.title)}`,
         iso, order,
-        until: HD.isoDate(o.until),
+        until: HD.newsUntil(iso, o.until),
         dateObj: HD.dateFromIso(iso),
         cat: o.cat || '', title: o.title, teaser: o.teaser || '',
         infos: splitPipe(o.infos).map(parseInfo),
@@ -64,8 +64,8 @@
   }
 
   /* Startseite: zuerst die neuesten Meldungen, deren "Bis"-Datum
-     (einschliesslich) noch nicht vorbei ist; ohne Datum bleiben sie wie
-     bisher. Sind das weniger als 6, wird mit den neuesten abgelaufenen
+     (einschliesslich) noch nicht vorbei ist; ohne Datum gelten zwei
+     Wochen ab dem Datum der Meldung (HD.newsUntil). Sind das weniger als 6, wird mit den neuesten abgelaufenen
      aufgefuellt, die dann unten stehen. Alles andere steht im Archiv. */
   function homeEntries() {
     const d = new Date();

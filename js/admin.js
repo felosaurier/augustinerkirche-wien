@@ -834,13 +834,13 @@
   }
 
   /* Welche Meldungen stehen auf der Startseite? Zuerst die neuesten, deren
-     "Bis"-Datum (einschliesslich) noch nicht vorbei ist (ohne Datum gelten
-     sie weiter); reicht das nicht fuer 3, wird mit den neuesten abgelaufenen
+     "Bis"-Datum (einschliesslich) noch nicht vorbei ist (ohne Datum zwei
+     Wochen ab dem Datum der Meldung); reicht das nicht fuer 3, wird mit den neuesten abgelaufenen
      aufgefuellt, die dann unten stehen. Gleiche Regel wie in js/news.js.
      Liefert ein Set. */
   const NEWS_HOME = 3;
   function newsExpired(e, today = isoToday()) {
-    const until = HD.isoDate(e.Bis);
+    const until = HD.newsUntil(HD.isoDate(e.Datum), e.Bis);
     return Boolean(until) && until < today;
   }
   function newsOnHome(list) {

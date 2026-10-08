@@ -128,16 +128,9 @@
     ].join('');
   }
 
-  function renderTodo({ ha, sol, rd, news }) {
+  function renderTodo({ ha, sol, rd }) {
     const items = [];
-    const noEnd = (news || []).filter((e) => !e.Bis);
-    if (noEnd.length) {
-      items.push({
-        href: 'neuigkeiten.html', ico: 'news',
-        title: `${plural(noEnd.length, 'Meldung', 'Meldungen')} ohne Enddatum`,
-        sub: 'Eintragen, bis wann sie auf der Startseite stehen sollen.', go: 'Ergänzen'
-      });
-    }
+    /* Meldungen ohne Enddatum sind kein Fehler: sie gelten zwei Wochen (HD.newsUntil) */
     /* Runden mit Terminen, die alle vorbei sind */
     for (const r of rd || []) {
       const all = (r.termine || []).flatMap((b) => b.daten || []);

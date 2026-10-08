@@ -189,6 +189,17 @@
     return new Date(y, m - 1, d);
   }
 
+  /* Meldungen ohne eigenes Enddatum stehen zwei Wochen ab ihrem Datum
+     auf der Startseite (gleiche Regel fuer Website und Verwaltung) */
+  const NEWS_DAYS = 14;
+  function newsUntil(iso, bis) {
+    const own = isoDate(bis);
+    if (own || !isoDate(iso)) return own;
+    const dt = dateFromIso(isoDate(iso));
+    dt.setDate(dt.getDate() + NEWS_DAYS);
+    return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+  }
+
   /* Zeilen -> Roh-Objekte (Textfelder, interne Feldnamen); leere Zeilen fallen weg */
   function rowsToRaw(rows, aliases = ALIASES) {
     if (!rows.length) return [];
@@ -298,7 +309,7 @@
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
     esc, pad, safeUrl, richText, mailHTML, telHref, slug, csvText, download,
-    parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, list,
+    parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV
   };
