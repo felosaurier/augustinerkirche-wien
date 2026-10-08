@@ -67,7 +67,7 @@
   const escHTML = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
   /* Das Handy-Menue entsteht aus dem Laptop-Menue, damit beide immer dieselben
-     Eintraege haben: oben drei Schnellzugriffe, darunter die Bereiche zum Aufklappen. */
+     Eintraege haben: oben drei Schnellzugriffe (Gottesdienste, Kalender, Kontakt), darunter die Bereiche zum Aufklappen. */
   function buildMobileMenu(menu) {
     const center = qs('.nav-center');
     const logo = qs('.nav-logo-wrap');
@@ -75,7 +75,7 @@
     const base = (logo.getAttribute('href') || 'index.html').replace(/index\.html$/, '');
     const quick = [
       ['Gottesdienste', `${base}pages/gottesdienste.html`],
-      ['Hochämter', `${base}pages/musik.html#p-hochaemter`],
+      ['Kalender', `${base}pages/kalender.html`],
       ['Kontakt', `${base}index.html#kontakt`]
     ];
     let html = '<div class="mob-quick">' +

@@ -864,6 +864,7 @@
   const NAV = [
     { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
+    { label: 'Termine', icon: 'calendar', href: 'termine.html' },
     { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [
       ['hochaemter.html', 'Hochämter'],
       ['solisten.html', 'Solisten'],

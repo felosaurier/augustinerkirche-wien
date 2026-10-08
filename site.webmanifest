@@ -23,6 +23,11 @@
       "icons": [{ "src": "assets/app/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
+      "name": "Kalender",
+      "url": "./pages/kalender.html",
+      "icons": [{ "src": "assets/app/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
       "name": "Hochämter",
       "url": "./pages/musik.html#p-hochaemter",
       "icons": [{ "src": "assets/app/icon-192.png", "sizes": "192x192", "type": "image/png" }]

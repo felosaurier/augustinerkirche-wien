@@ -19,7 +19,7 @@
 
   let runden = [];
   let editIndex = -1;
-  let blocks = [];        /* Terminreihen im Fenster: {label, daten: [JJJJ-MM-TT]} */
+  let blocks = [];        /* Terminreihen im Fenster: {label, name, zeit, ort, daten: [JJJJ-MM-TT]} */
   let fakten = null;
   let image = null;       /* neu gewaehltes Bild {blob, ext, url, name, w, h} */
   let removeImage = false;
@@ -117,9 +117,10 @@
 
   /* ---------- Fenster: Terminreihen ---------- */
   function syncBlocks() {
-    document.querySelectorAll('#rd-blocks [data-label]').forEach((inp) => {
-      const b = blocks[Number(inp.dataset.label)];
-      if (b) b.label = inp.value;
+    /* Felder der Reihen: data-blk="Nummer", data-key="label|name|zeit|ort" */
+    document.querySelectorAll('#rd-blocks [data-blk]').forEach((inp) => {
+      const b = blocks[Number(inp.dataset.blk)];
+      if (b) b[inp.dataset.key] = inp.value;
     });
   }
   function renderBlocks(focus) {
@@ -128,9 +129,24 @@
       `<div class="adm-block" data-b="${i}">` +
         '<div class="adm-block-head"><div class="adm-field">' +
           `<label class="adm-label" for="blk-${i}">Überschrift der Reihe ${i + 1}</label>` +
-          `<input class="adm-input" type="text" id="blk-${i}" data-label="${i}" value="${esc(b.label)}" placeholder="z. B. Termine 2026/27 · donnerstags"/>` +
+          `<input class="adm-input" type="text" id="blk-${i}" data-blk="${i}" data-key="label" value="${esc(b.label)}" placeholder="z. B. Termine 2026/27 · donnerstags"/>` +
         '</div>' +
         `<button type="button" class="adm-act danger" data-del-block="${i}">${icon('trash')}Reihe entfernen</button></div>` +
+        /* Fuer den Kalender: Name des Termins, Uhrzeit und Ort */
+        '<div class="adm-grid adm-blk-cal">' +
+          '<div class="adm-field">' +
+            `<label class="adm-label" for="blk-name-${i}">Im Kalender als</label>` +
+            `<input class="adm-input" type="text" id="blk-name-${i}" data-blk="${i}" data-key="name" value="${esc(b.name)}" placeholder="z. B. Seniorennachmittag"/>` +
+          '</div>' +
+          '<div class="adm-field">' +
+            `<label class="adm-label" for="blk-zeit-${i}">Uhrzeit</label>` +
+            `<input class="adm-input" type="time" id="blk-zeit-${i}" data-blk="${i}" data-key="zeit" value="${esc(b.zeit)}"/>` +
+          '</div>' +
+          '<div class="adm-field full">' +
+            `<label class="adm-label" for="blk-ort-${i}">Ort</label>` +
+            `<input class="adm-input" type="text" id="blk-ort-${i}" data-blk="${i}" data-key="ort" value="${esc(b.ort)}" placeholder="z. B. Pfarrsaal, Augustinerstraße 3"/>` +
+          '</div>' +
+        '</div>' +
         `<div class="adm-dates" role="list" aria-label="Termine der Reihe ${i + 1}">` +
           (b.daten.length ? b.daten.slice().sort().map((d) =>
             `<span class="adm-date-chip${d < today ? ' past' : ''}" role="listitem">${esc(dateLabel(d))}` +
@@ -264,7 +280,7 @@
     $('f-k-email').value = ko.email || '';
     $('f-k-telefon').value = ko.telefon || '';
     $('f-k-anschrift').value = ko.anschrift || '';
-    blocks = (r && r.termine || []).map((b) => ({ label: b.label || '', daten: (b.daten || []).slice() }));
+    blocks = (r && r.termine || []).map((b) => ({ label: b.label || '', name: b.name || '', zeit: b.zeit || '', ort: b.ort || '', daten: (b.daten || []).slice() }));
     renderBlocks();
     fakten.set((r && r.fakten || []).length ? r.fakten : [{ label: 'Zeit' }, { label: 'Ort' }, { label: 'Leitung' }]);
     if (image) URL.revokeObjectURL(image.url);
@@ -333,7 +349,8 @@
         einleitung: lines($('f-einleitung').value),
         schwerpunkt: sp.titel || sp.text ? sp : null,
         text: lines($('f-text').value),
-        termine: blocks.map((b) => ({ label: clean(b.label), daten: b.daten.slice().sort() })).filter((b) => b.daten.length || b.label),
+        termine: blocks.map((b) => ({ label: clean(b.label), name: clean(b.name), zeit: HD.isoTime(b.zeit), ort: clean(b.ort), daten: b.daten.slice().sort() }))
+          .filter((b) => b.daten.length || b.label),
         fakten: fakten.values().map((f) => ({ label: clean(f.label), wert: clean(f.wert), zusatz: clean(f.zusatz) })).filter((f) => f.wert),
         kontakt: ko.email || ko.telefon || ko.anschrift ? ko : null,
         bild: currentImage() ? { ...currentImage(), art: bildart(), alt: clean($('f-alt').value) } : null
@@ -400,7 +417,7 @@
     });
     $('rd-add-block').addEventListener('click', () => {
       syncBlocks();
-      blocks.push({ label: '', daten: [] });
+      blocks.push({ label: '', name: '', zeit: '', ort: '', daten: [] });
       renderBlocks(`#blk-${blocks.length - 1}`);
     });
     $('f-file').addEventListener('change', (ev) => onFile(ev.target.files[0]));

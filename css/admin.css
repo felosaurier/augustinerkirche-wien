@@ -552,3 +552,4 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
   .adm-nav a[aria-current="page"]::after,.adm-head::after{background:CanvasText}
   .adm-strength span{border:1px solid CanvasText}
 }
+.adm-blk-cal{margin-bottom:.8rem}

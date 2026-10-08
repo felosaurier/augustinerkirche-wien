@@ -89,6 +89,9 @@
       "termine": [
         {
           "label": "Termine 2026/27 · donnerstags",
+          "name": "BIBELpur",
+          "zeit": "19:30",
+          "ort": "Pfarrsaal, Augustinerstraße 3",
           "daten": [
             "2026-10-01",
             "2026-10-29",
@@ -169,6 +172,9 @@
       "termine": [
         {
           "label": "Termine 2026/27 · donnerstags",
+          "name": "FensterBlick",
+          "zeit": "19:30",
+          "ort": "Pfarrsaal, Augustinerstraße 3",
           "daten": [
             "2026-09-24",
             "2026-10-15",
@@ -400,6 +406,9 @@
       "termine": [
         {
           "label": "Seniorennachmittage 2026/27 · mittwochs",
+          "name": "Seniorennachmittag",
+          "zeit": "16:00",
+          "ort": "Pfarrsaal, Augustinerstraße 3",
           "daten": [
             "2026-09-09",
             "2026-10-07",
@@ -415,6 +424,9 @@
         },
         {
           "label": "Unterwegs 2026/27 · mittwochs",
+          "name": "Unterwegs mit St. Augustin",
+          "zeit": "",
+          "ort": "",
           "daten": [
             "2026-09-23",
             "2026-10-21",

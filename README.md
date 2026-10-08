@@ -37,6 +37,7 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 | Seite | Inhalt |
 |---|---|
 | **Startseite** | Aktuelles, Identität von Pfarre und Kloster, Herzgruft, die nächsten Hochämter |
+| **Kalender** | Alle Termine von St. Augustin: Hochämter und Konzerte, Termine der Runden, eigene Termine wie Ausflüge und Feste; Monatsblatt mit Punkten je Gruppe, Filter, im laufenden Monat ab heute |
 | **Gottesdienste** | Liturgiezeiten, Wochenüberblick, Runden in St. Augustin |
 | **Sakramente** | Taufe, Eucharistie, Firmung, Trauung, Wiedereintritt und mehr |
 | **Kirchenmusik** | Hochämter und Archiv, Chor, Kammerchor, Repertoire des Chores (mit Suche), Orchester, Solisten, Organisten, Orgeln |
@@ -55,8 +56,9 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Übersicht** | Stand aller Bereiche, nächstes Hochamt, neueste Meldung, „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel) und die letzten Änderungen auf diesem Gerät |
 | **Hochämter** | Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
+| **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
 | **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick), dazu Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
-| **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl, „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
+| **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
 | **Personen** | Mitbrüder, Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto, Aufgabe und Text |
 | **Solisten** | Liste für Kirchenmusik → Solisten: Foto (wird quadratisch zugeschnitten, Ausschnitt verschiebbar), Stimmlage, verstorben |
 | **Repertoire** | Repertoire des Chores nach Komponisten, mit Werken und Hinweisen (z. B. Uraufführungen in der Augustinerkirche) |
@@ -141,6 +143,7 @@ Danach im Browser `http://localhost:8123` öffnen.
 index.html                    Startseite
 pages/
   pfarre.html                 Pfarre, Pfarrer, Pfarrkanzlei, Pfarrgemeinderat, Seelsorger
+  kalender.html               Kalender: alle Termine von St. Augustin
   gottesdienste.html          Liturgiezeiten, Wochenüberblick, Runden
   sakramente.html             Sakramente
   musik.html                  Kirchenmusik: Hochämter, Ensembles, Orgeln
@@ -158,6 +161,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   uebersicht.html             Übersicht
   hochaemter.html             Hochämter pflegen
   neuigkeiten.html            Neuigkeiten und Plakate pflegen
+  termine.html                Eigene Termine für den Kalender pflegen
   solisten.html               Solisten pflegen
   gottesdienste.html          Wochenplan, Pfarrkanzlei und Kontakt pflegen
   runden.html                 Runden pflegen
@@ -173,7 +177,8 @@ js/
   hochaemter-data.js          Gemeinsames Modul: CSV-Tabelle, HTML-Escaping, sichere Links
   hochaemter.js               Kalender und Archiv auf der Musik-Seite
   hochaemter-start.js         Nächste Hochämter auf der Startseite
-  news.js                     Neuigkeiten: 6 Karten, Fenster mit Plakat, Jahresarchiv
+  news.js                     Neuigkeiten: 3 Karten, Fenster mit Plakat, Jahresarchiv
+  kalender.js                 Kalender: Hochämter, Runden und eigene Termine zusammengeführt
   lightbox.js                 Plakate vergrößern (Hintergrund unscharf)
   hochamt-detail.js           Detailseite eines Hochamts
   solisten.js                 Solistenliste
@@ -183,6 +188,7 @@ js/
   admin-uebersicht.js         Übersicht
   admin-hochaemter.js         Hochämter pflegen, Jahreswechsel
   admin-neuigkeiten.js        Neuigkeiten pflegen
+  admin-termine.js            Termine für den Kalender pflegen
   admin-solisten.js           Solisten pflegen
   admin-gottesdienste.js      Wochenplan, Pfarrkanzlei und Kontakt
   admin-runden.js             Runden pflegen
@@ -195,6 +201,7 @@ data/
   hochaemter.csv              Hochamt-Termine ab dem laufenden Jahr inkl. Mitwirkende
   archiv/                     Hochamt-Archiv 2015–2025: hochaemter-JJJJ.csv je Jahr, jahre.json
   news.csv                    Neuigkeiten und Plakate
+  termine.json                Eigene Termine für den Kalender (Ausflüge, Feste, Vorträge …)
   solisten.json               Solistinnen und Solisten mit Stimmlage
   gottesdienste.json          Wochenplan der Gottesdienste
   runden.json                 Runden: Übersicht und Inhalt der Seiten
@@ -240,7 +247,7 @@ Marine und Gold auf Weiß — klar, ruhig und festlich, passend zu einer Hofkirc
 | **Stil** | Linien statt Kästen, keine Schatten außer bei Fenstern, nur eine Bewegung beim Laden (das Foto hebt sich) |
 | **Zugänglichkeit** | Lesbare Kontraste, sichtbarer Tastaturfokus, Sprunglink zum Inhalt, Menüs per Tastatur (Escape schließt), reduzierte Bewegung wird respektiert |
 | **Geräte** | Für Handy im Hochformat, Tablet und Desktop ausgelegt; Bilder werden nicht beschnitten |
-| **Menü** | Gepflegt wird nur das Laptop-Menü (`nav-center` in jeder Seite); das Handy-Menü baut `js/main.js` daraus: oben Gottesdienste, Hochämter und Kontakt, darunter die Bereiche zum Aufklappen |
+| **Menü** | Gepflegt wird nur das Laptop-Menü (`nav-center` in jeder Seite); das Handy-Menü baut `js/main.js` daraus: oben Gottesdienste, Kalender und Kontakt, darunter die Bereiche zum Aufklappen |
 | **Reiter einer Unterseite** | Am Laptop als Liste links; auf Handy und Tablet als fixierte Leiste, die den geöffneten Bereich nennt und alle Bereiche aufklappt. Am Ende jedes Bereichs führen „Zurück“ und „Weiter“ durch die Seite |
 
 ## Vor dem Veröffentlichen

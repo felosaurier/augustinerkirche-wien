@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Termine — Verwaltung Augustinerkirche Wien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-termine.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Termine <em>pflegen</em></h1>
+      <p class="ph-sub">Ausflüge, Feste, Vorträge und andere Termine für den <a href="../pages/kalender.html" target="_blank" rel="noopener">Kalender</a>. Hochämter und Konzerte kommen automatisch aus Kirchenmusik → Hochämter, die Termine der Runden aus Pfarre &amp; Kloster → Runden.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="tm-new" data-icon="plus">Neuer Termin</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-search" data-icon="search">
+      <input type="search" id="tm-search" placeholder="Suchen: Titel, Art, Ort …" aria-label="Termine durchsuchen" autocomplete="off"/>
+    </div>
+    <div class="adm-seg" role="group" aria-label="Zeitraum" id="tm-when">
+      <button type="button" class="week-filter-btn active" data-when="kommend" aria-pressed="true">Kommende</button>
+      <button type="button" class="week-filter-btn" data-when="vergangen" aria-pressed="false">Vergangene</button>
+    </div>
+  </div>
+  <p class="adm-count" id="tm-count" role="status"></p>
+
+  <div id="tm-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog" id="tm-dlg" aria-labelledby="tm-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="tm-dlg-tag">Neuer Termin</div>
+      <h2 class="adm-dlg-title" id="tm-dlg-title">Neuer Termin</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="tm-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Wann</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="f-date">Datum<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="date" id="f-date" required/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-bis">Bis (bei mehreren Tagen)</label>
+          <input class="adm-input" type="date" id="f-bis" aria-describedby="f-bis-hint"/>
+          <span class="adm-hint" id="f-bis-hint">Leer lassen, wenn der Termin an einem Tag ist.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-time">Beginn</label>
+          <input class="adm-input" type="time" id="f-time" aria-describedby="f-time-hint"/>
+          <span class="adm-hint" id="f-time-hint">Leer lassen, wenn es keine feste Uhrzeit gibt.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-end">Ende</label>
+          <input class="adm-input" type="time" id="f-end"/>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Was</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="f-art">Art<span class="adm-req">Pflichtfeld</span></label>
+          <select class="adm-input" id="f-art" required aria-describedby="f-art-hint">
+            <option value="Ausflug">Ausflug</option>
+            <option value="Fest">Fest</option>
+            <option value="Vortrag">Vortrag</option>
+            <option value="Wallfahrt">Wallfahrt</option>
+            <option value="Gottesdienst">Gottesdienst</option>
+            <option value="Konzert">Konzert</option>
+            <option value="Sonstiges">Sonstiges</option>
+          </select>
+          <span class="adm-hint" id="f-art-hint">Gottesdienste und Konzerte erscheinen im Kalender bei diesen Gruppen, alles andere unter Veranstaltungen.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-ort">Ort</label>
+          <input class="adm-input" type="text" id="f-ort" list="dl-tm-ort" placeholder="z. B. Pfarrsaal"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-title">Titel<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-title" required placeholder="z. B. Pfarrausflug nach Melk"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-text">Beschreibung</label>
+          <textarea class="adm-input" id="f-text" rows="4" aria-describedby="f-text-hint"></textarea>
+          <span class="adm-hint" id="f-text-hint">Klappt im Kalender auf, wenn man den Termin antippt. E-Mail-Adressen werden automatisch verlinkt.</span>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-link">Link für mehr Infos</label>
+          <input class="adm-input" type="text" id="f-link" inputmode="url" placeholder="z. B. www.augustiner.at oder pages/runden/senioren.html" aria-describedby="f-link-hint"/>
+          <span class="adm-hint" id="f-link-hint">Optional. Eine andere Website oder eine Seite dieser Website.</span>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="tm-delete" data-icon="trash">Löschen</button>
+      <button type="button" class="adm-act" id="tm-copy" data-icon="copy">Als neuen Termin kopieren</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="tm-form" class="btn btn-dark" id="tm-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-tm-ort">
+  <option value="Augustinerkirche"></option>
+  <option value="Pfarrsaal, Augustinerstraße 3"></option>
+  <option value="Georgskapelle"></option>
+  <option value="Loretokapelle"></option>
+  <option value="Augustinus-Saal"></option>
+  <option value="Treffpunkt vor der Augustinerkirche"></option>
+</datalist>
+
+</body>
+</html>
