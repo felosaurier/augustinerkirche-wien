@@ -238,6 +238,8 @@ Marine und Gold auf Weiß — klar, ruhig und festlich, passend zu einer Hofkirc
 | **Stil** | Linien statt Kästen, keine Schatten außer bei Fenstern, nur eine Bewegung beim Laden (das Foto hebt sich) |
 | **Zugänglichkeit** | Lesbare Kontraste, sichtbarer Tastaturfokus, Sprunglink zum Inhalt, Menüs per Tastatur (Escape schließt), reduzierte Bewegung wird respektiert |
 | **Geräte** | Für Handy im Hochformat, Tablet und Desktop ausgelegt; Bilder werden nicht beschnitten |
+| **Menü** | Gepflegt wird nur das Laptop-Menü (`nav-center` in jeder Seite); das Handy-Menü baut `js/main.js` daraus: oben Gottesdienste, Hochämter und Kontakt, darunter die Bereiche zum Aufklappen |
+| **Reiter einer Unterseite** | Am Laptop als Liste links; auf Handy und Tablet als fixierte Leiste, die den geöffneten Bereich nennt und alle Bereiche aufklappt. Am Ende jedes Bereichs führen „Zurück“ und „Weiter“ durch die Seite |
 
 ## Vor dem Veröffentlichen
 

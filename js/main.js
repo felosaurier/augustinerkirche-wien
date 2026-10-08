@@ -17,7 +17,7 @@
   const scrollBehavior = () => (reducedMotion.matches ? 'auto' : 'smooth');
 
   /* Ab dieser Breite ersetzt das Hamburger-Menue die Dropdowns (siehe style.css) */
-  const mobileNavQuery = window.matchMedia('(max-width: 1360px)');
+  const mobileNavQuery = window.matchMedia('(max-width: 1120px)');
 
   /* ---------- Dropdown-Menues (Event-Delegation) ---------- */
   function closeAllDropdowns() {
@@ -63,23 +63,85 @@
   }
 
   /* ---------- Mobile Navigation ---------- */
+  const CHEVRON = '<svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>';
+  const escHTML = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+  /* Das Handy-Menue entsteht aus dem Laptop-Menue, damit beide immer dieselben
+     Eintraege haben: oben drei Schnellzugriffe, darunter die Bereiche zum Aufklappen. */
+  function buildMobileMenu(menu) {
+    const center = qs('.nav-center');
+    const logo = qs('.nav-logo-wrap');
+    if (!center || !logo) return;
+    const base = (logo.getAttribute('href') || 'index.html').replace(/index\.html$/, '');
+    const quick = [
+      ['Gottesdienste', `${base}pages/gottesdienste.html`],
+      ['Hochämter', `${base}pages/musik.html#p-hochaemter`],
+      ['Kontakt', `${base}index.html#kontakt`]
+    ];
+    let html = '<div class="mob-quick">' +
+      quick.map(([t, h]) => `<a class="mob-quick-link" href="${escHTML(h)}">${escHTML(t)}</a>`).join('') + '</div>';
+    for (const item of qsa('.nav-item', center)) {
+      const btn = qs('.nav-btn', item);
+      const id = `mob-${item.id}`;
+      html += `<div class="mob-sec" data-item="${escHTML(item.id)}">` +
+        `<button type="button" class="mob-sec-btn" aria-expanded="false" aria-controls="${id}">` +
+        `${escHTML(btn.textContent.trim())}${CHEVRON}</button><div class="mob-sec-panel" id="${id}" hidden>`;
+      for (const group of qsa('.mega-group', item)) {
+        const label = qs('.mega-group-label', group);
+        if (label) html += `<span class="mob-group-title">${escHTML(label.textContent.trim())}</span>`;
+        for (const a of qsa('a', group)) html += `<a class="mob-sub" href="${escHTML(a.getAttribute('href'))}">${escHTML(a.textContent.trim())}</a>`;
+      }
+      html += '</div></div>';
+    }
+    menu.innerHTML = html;
+  }
+
+  function setSection(btn, open) {
+    btn.setAttribute('aria-expanded', String(open));
+    const panel = document.getElementById(btn.getAttribute('aria-controls'));
+    if (panel) panel.hidden = !open;
+  }
+
   function initMobileNav() {
     const burger = qs('#hamburger');
     const menu = qs('#mob-menu');
     if (!burger || !menu) return;
+    buildMobileMenu(menu);
 
     const setOpen = (open) => {
       menu.classList.toggle('open', open);
+      document.documentElement.classList.toggle('menu-open', open);
       burger.setAttribute('aria-expanded', String(open));
       burger.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+      if (!open) return;
+      /* Der Bereich der aktuellen Seite ist beim Oeffnen schon aufgeklappt */
+      if (!qs('.mob-sec-btn[aria-expanded="true"]', menu)) {
+        const sec = qsa('.mob-sec', menu).find((el) => {
+          const item = document.getElementById(el.dataset.item);
+          return qs('.mob-sub.current', el) || (item && qs('.nav-btn.current', item));
+        });
+        if (sec) setSection(qs('.mob-sec-btn', sec), true);
+      }
+      menu.scrollTop = 0;
     };
 
     setOpen(false);
     burger.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
 
-    /* Ein Klick auf einen Link schliesst das Menue (Sprungziele auf derselben Seite) */
     menu.addEventListener('click', (e) => {
-      if (e.target.closest('a')) setOpen(false);
+      const secBtn = e.target.closest('.mob-sec-btn');
+      if (secBtn) {
+        setSection(secBtn, secBtn.getAttribute('aria-expanded') !== 'true');
+        return;
+      }
+      const a = e.target.closest('a');
+      if (!a) return;
+      setOpen(false);
+      /* Gleicher Bereich wie in der Adresszeile: kein hashchange, also selbst hinspringen */
+      if (a.pathname === location.pathname && a.hash && a.hash === location.hash) {
+        e.preventDefault();
+        routeToHash();
+      }
     });
 
     document.addEventListener('keydown', (e) => {
@@ -107,22 +169,81 @@
       btn.classList.toggle('active', isMatch);
       if (isMatch) btn.setAttribute('aria-current', 'true');
       else btn.removeAttribute('aria-current');
-
-      /* Horizontale Tab-Leiste (Hochformat): aktiven Reiter mittig zeigen */
-      if (isMatch && sidebar.scrollWidth > sidebar.clientWidth) {
-        sidebar.scrollTo({
-          left: btn.offsetLeft - (sidebar.clientWidth - btn.offsetWidth) / 2,
-          behavior: scrollBehavior()
-        });
+      if (isMatch) {
+        const current = qs('.sidebar-toggle-current', sidebar);
+        if (current) current.textContent = btn.textContent.trim();
       }
     }
+    setSidebarOpen(sidebar, false);
 
     for (const p of qsa('.tab-pane', area)) p.classList.toggle('active', p === pane);
     markCurrentNav();
     return true;
   }
 
+  /* Handy und Tablet: das Seitenmenue klappt unter einem Umschalter auf,
+     der den geoeffneten Bereich nennt (Laptop: Liste links, siehe style.css) */
+  function setSidebarOpen(sidebar, open) {
+    const toggle = qs('.sidebar-toggle', sidebar);
+    if (!toggle) return;
+    sidebar.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  }
+
+  function buildSidebarToggle(sidebar, index) {
+    const items = qsa('.sidebar-item', sidebar);
+    const list = document.createElement('div');
+    list.className = 'sidebar-list';
+    list.id = `sidebar-list-${index}`;
+    list.append(...sidebar.childNodes);
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'sidebar-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', list.id);
+    const active = items.find((b) => b.classList.contains('active')) || items[0];
+    toggle.innerHTML = `<span class="sidebar-toggle-current">${escHTML(active ? active.textContent.trim() : '')}</span>` +
+      `<span class="sidebar-toggle-hint">${items.length} Bereiche</span>${CHEVRON}`;
+    sidebar.append(toggle, list);
+  }
+
+  /* Ablauf: am Ende jedes Bereichs geht es zum vorigen und naechsten weiter */
+  function buildPaneSteps(sidebar) {
+    const items = qsa('.sidebar-item[data-pane]', sidebar);
+    items.forEach((btn, i) => {
+      const pane = document.getElementById(btn.dataset.pane);
+      if (!pane || qs('.pane-steps', pane)) return;
+      const prev = items[i - 1];
+      const next = items[i + 1];
+      if (!prev && !next) return;
+      const step = (b, cls, dir) => (b
+        ? `<a class="pane-step ${cls}" href="#${b.dataset.pane}"><span class="pane-step-dir">${dir}</span>` +
+          `<span class="pane-step-name">${escHTML(b.textContent.trim())}</span></a>`
+        : '<span></span>');
+      /* div statt nav: die Hauptnavigation ist in style.css als nav gestaltet */
+      const nav = document.createElement('div');
+      nav.className = 'pane-steps';
+      nav.setAttribute('role', 'navigation');
+      nav.setAttribute('aria-label', 'Weitere Bereiche dieser Seite');
+      nav.innerHTML = step(prev, 'prev', 'Zurück') + step(next, 'next', 'Weiter');
+      pane.append(nav);
+    });
+  }
+
+  /* Ist der Anfang des Bereichs schon aus dem Bild gescrollt, dorthin zurueck */
+  function scrollToSection(sidebar) {
+    const section = sidebar.closest('.with-sidebar');
+    const nav = qs('nav');
+    if (section && section.getBoundingClientRect().top < (nav ? nav.offsetHeight : 0)) {
+      section.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+    }
+  }
+
   function initSidebarTabs() {
+    qsa('.sidebar').forEach((sidebar, i) => {
+      buildSidebarToggle(sidebar, i);
+      buildPaneSteps(sidebar);
+    });
     /* Knoepfe mit ihrem Bereich verknuepfen, damit Screenreader den Zusammenhang kennen */
     for (const btn of qsa('.sidebar-item[data-pane]')) {
       btn.setAttribute('aria-controls', btn.dataset.pane);
@@ -130,6 +251,15 @@
     }
 
     document.addEventListener('click', (e) => {
+      const toggle = e.target.closest('.sidebar-toggle');
+      if (toggle) {
+        const sb = toggle.closest('.sidebar');
+        setSidebarOpen(sb, !sb.classList.contains('open'));
+        return;
+      }
+      /* Klick neben das offene Menue schliesst es */
+      for (const sb of qsa('.sidebar.open')) if (!sb.contains(e.target)) setSidebarOpen(sb, false);
+
       const btn = e.target.closest('.sidebar-item');
       const sidebar = btn && btn.closest('.sidebar');
       const paneId = btn && btn.dataset.pane;
@@ -137,9 +267,18 @@
       e.preventDefault();
       if (activatePane(sidebar, paneId)) {
         history.replaceState(null, '', `${location.pathname}#${paneId}`);
+        scrollToSection(sidebar);
         scheduleBleed();
         revealObserve();
       }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const sb = qs('.sidebar.open');
+      if (!sb) return;
+      setSidebarOpen(sb, false);
+      qs('.sidebar-toggle', sb).focus();
     });
   }
 
@@ -312,5 +451,6 @@
   window.addEventListener('hashchange', () => {
     routeToHash();
     bleedBands();
+    revealObserve();
   });
 })();
