@@ -63,6 +63,7 @@
   <div class="adm-dlg-body">
     <div class="adm-split">
       <form id="nv-form" novalidate autocomplete="off">
+        <input type="hidden" id="f-focus"/>
         <fieldset class="adm-fs">
           <legend>Meldung</legend>
           <div class="adm-grid">
@@ -204,6 +205,10 @@
       <aside class="adm-split-side" aria-label="Vorschau">
         <div class="adm-side-label">So sieht die Karte aus</div>
         <div id="nv-card"></div>
+        <div class="adm-pan-help" id="nv-pan" hidden>
+          <span class="adm-hint">Bild in der Karte ziehen (oder mit den Pfeiltasten verschieben), bis der Ausschnitt passt.</span>
+          <button type="button" class="adm-act" id="nv-pan-reset">Ausschnitt zurücksetzen</button>
+        </div>
         <p class="adm-hint" id="nv-where" style="margin-top:.9rem"></p>
       </aside>
     </div>

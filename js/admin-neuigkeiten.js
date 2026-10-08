@@ -344,6 +344,7 @@
     if (image) URL.revokeObjectURL(image.url);
     image = { ...conv, url: URL.createObjectURL(conv.blob), name: file.name };
     removeImage = false;
+    $('f-focus').value = '';
     if (!$('f-filename').dataset.touched) $('f-filename').value = fileSlug($('f-title').value || file.name.replace(/\.[^.]+$/, ''));
     renderImage();
     renderPreview();
@@ -357,6 +358,7 @@
       removeImage = true;
     }
     $('f-file').value = '';
+    $('f-focus').value = '';
     renderImage();
     renderPreview();
   }
@@ -385,9 +387,9 @@
     const cat = $('f-cat').value.trim();
     const src = imageSrc();
     $('nv-card').innerHTML = '<div class="news-card">' +
-      '<div class="news-card-img">' +
+      `<div class="news-card-img${src ? ' adm-pan' : ''}"${src ? ' tabindex="0" role="group" aria-label="Bildausschnitt: mit der Maus ziehen oder mit den Pfeiltasten verschieben"' : ''}>` +
         (src
-          ? `<img class="news-thumb${kind() === 'photo' ? ' news-thumb-photo' : ''}" src="${esc(src)}" alt=""/>`
+          ? `<img class="news-thumb${kind() === 'photo' ? ' news-thumb-photo' : ''}" src="${esc(src)}" alt=""${$('f-focus').value ? ` style="object-position:${$('f-focus').value}"` : ''} draggable="false"/>`
           : '<span class="news-noimg"><img src="../assets/logo-gold.png" alt="" width="64" height="64"/></span>') +
         (cat ? `<span class="news-card-cat">${esc(cat)}</span>` : '') +
       '</div><div class="news-card-body">' +
@@ -397,8 +399,69 @@
         '<span class="link-arr">Mehr erfahren</span>' +
       '</div></div>';
     $('nv-where').textContent = whereText(iso);
+    $('nv-pan').hidden = !src;
     renderSuggest();
   }
+  /* Bildausschnitt: Bild in der Karte ziehen oder mit Pfeiltasten verschieben;
+     gespeichert als object-position ("x% y%") in f-focus */
+  function panBox() {
+    const box = $('nv-card').querySelector('.adm-pan');
+    const img = box && box.querySelector('img');
+    return img && img.naturalWidth ? { box, img } : null;
+  }
+  function panTo(x, y) {
+    const t = panBox();
+    if (!t) return;
+    const clamp = (v) => Math.round(Math.min(100, Math.max(0, v)));
+    $('f-focus').value = `${clamp(x)}% ${clamp(y)}%`;
+    t.img.style.objectPosition = $('f-focus').value;
+  }
+  function panStart() {
+    const v = $('f-focus').value.match(/^(\d+)% (\d+)%$/);
+    if (v) return { x: Number(v[1]), y: Number(v[2]) };
+    return { x: 50, y: kind() === 'photo' ? 50 : 0 };
+  }
+  function wirePan() {
+    const card = $('nv-card');
+    let drag = null;
+    card.addEventListener('pointerdown', (ev) => {
+      const t = panBox();
+      if (!t || !t.box.contains(ev.target)) return;
+      const r = t.box.getBoundingClientRect();
+      const scale = Math.max(r.width / t.img.naturalWidth, r.height / t.img.naturalHeight);
+      drag = {
+        x0: ev.clientX, y0: ev.clientY, ...panStart(),
+        rx: t.img.naturalWidth * scale - r.width, ry: t.img.naturalHeight * scale - r.height
+      };
+      t.box.setPointerCapture(ev.pointerId);
+      t.box.classList.add('dragging');
+      ev.preventDefault();
+    });
+    card.addEventListener('pointermove', (ev) => {
+      if (!drag) return;
+      panTo(drag.rx > 1 ? drag.x - ((ev.clientX - drag.x0) / drag.rx) * 100 : drag.x,
+        drag.ry > 1 ? drag.y - ((ev.clientY - drag.y0) / drag.ry) * 100 : drag.y);
+    });
+    const end = () => {
+      drag = null;
+      const t = panBox();
+      if (t) t.box.classList.remove('dragging');
+    };
+    card.addEventListener('pointerup', end);
+    card.addEventListener('pointercancel', end);
+    card.addEventListener('keydown', (ev) => {
+      const step = { ArrowLeft: [-5, 0], ArrowRight: [5, 0], ArrowUp: [0, -5], ArrowDown: [0, 5] }[ev.key];
+      if (!step || !panBox()) return;
+      ev.preventDefault();
+      const s = panStart();
+      panTo(s.x + step[0], s.y + step[1]);
+    });
+    $('nv-pan-reset').addEventListener('click', () => {
+      $('f-focus').value = '';
+      renderPreview();
+    });
+  }
+
   function updateCounter() {
     const n = $('f-teaser').value.trim().length;
     const el = $('f-teaser-count');
@@ -441,6 +504,7 @@
     image = null;
     removeImage = false;
     current = e ? imgOf(e) : '';
+    $('f-focus').value = e ? e.Bildausschnitt : '';
     $('f-credit').value = A.credits.get(current);
     document.querySelector(`input[name="kind"][value="${e && !e.Plakat && e.Vorschaubild ? 'photo' : 'poster'}"]`).checked = true;
     delete $('f-filename').dataset.touched;
@@ -501,13 +565,14 @@
       Datum: isoToDe(date), Bis: isoToDe(bis), Kategorie: clean($('f-cat').value), Titel: title, Kurztext: teaser,
       Infos: readInfos(), Details: readDetails(), Vorschaubild: '', Plakat: '',
       Link: link, Linktext: link ? clean($('f-linktext').value) || defaultText() : '',
-      'Weiterer Link': link2, 'Weiterer Linktext': link2 ? text2 : ''
+      'Weiterer Link': link2, 'Weiterer Linktext': link2 ? text2 : '', Bildausschnitt: ''
     };
     /* Bisheriges Bild behalten (Art kann sich geaendert haben) */
     if (!image && !removeImage && current) {
       entry.Plakat = poster ? current : '';
       entry.Vorschaubild = poster ? '' : current;
     }
+    const hasImage = !!image || (!removeImage && !!current);
     const btn = $('nv-save');
     btn.disabled = true;
     try {
@@ -518,6 +583,7 @@
         entry.Vorschaubild = poster ? '' : imgPath;
         await A.saveFile(imgPath, image.blob);
       }
+      if (hasImage) entry.Bildausschnitt = $('f-focus').value;
       const next = entries.slice();
       if (old) next[editIndex] = entry;
       else next.push(entry);
@@ -625,6 +691,7 @@
       renderPreview();
       $('f-bis').focus();
     });
+    wirePan();
     $('f-file').addEventListener('change', (ev) => onFile(ev.target.files[0]));
     A.wireDrop($('nv-drop'));
     $('nv-img-remove').addEventListener('click', dropImage);

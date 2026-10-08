@@ -17,7 +17,6 @@
   const LABEL = { mitglieder: 'Mitglieder', weitere: 'Ersatzmitglieder & weitere' };
 
   let data = { mitglieder: [], weitere: [] };
-  let group = 'mitglieder';
   let query = '';
   let edit = null;        /* {group, i} oder null = neu */
   let snap = '';
@@ -41,15 +40,15 @@
     render();
   }
 
-  function rowHTML(p, i, last, searching) {
+  function rowHTML(g, p, i, last, searching) {
     const move = searching ? '' :
       `<button type="button" class="adm-act icon" data-act="up" data-i="${i}" aria-label="Nach oben: ${esc(p.name)}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
       `<button type="button" class="adm-act icon" data-act="down" data-i="${i}" aria-label="Nach unten: ${esc(p.name)}" title="Nach unten"${i === last ? ' disabled' : ''}>${icon('down')}</button>`;
     const meta = [p.rolle, p.beruf].filter(Boolean).join(' · ');
     const hints = [p.aufgaben && p.aufgaben.length ? plural(p.aufgaben.length, 'Aufgabe', 'Aufgaben') : '', p.email ? 'E-Mail' : '', p.telefon ? 'Telefon' : ''].filter(Boolean).join(', ');
-    return `<li class="adm-row" data-key="${group}-${i}">` +
+    return `<li class="adm-row" data-key="${g}-${i}" data-g="${g}">` +
       `<button type="button" class="adm-row-open adm-pate" data-act="edit" data-i="${i}">` +
-        `<span class="adm-pate-n">${i + 1}</span>` +
+        `<span class="adm-pgr-photo">${p.bild ? `<img src="${esc(A.imageUrl(p.bild))}" alt="" loading="lazy"/>` : esc(p.name.replace(/^(?:(?:Dr|Ing|Mag|MMag|P|Hw|Diakon)\.?\s+)+/i, '').charAt(0))}</span>` +
         `<span class="adm-row-body"><span class="adm-row-title">${esc(p.name)}</span>` +
         (meta ? `<span class="adm-row-meta">${esc(meta)}</span>` : '') +
         (hints ? `<span class="adm-row-people">${esc(hints)}</span>` : '') +
@@ -60,17 +59,23 @@
   }
 
   function render() {
-    const all = data[group];
     const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const list = all.map((p, i) => ({ p, i })).filter(({ p }) =>
-      words.every((w) => `${p.name} ${p.rolle} ${p.beruf} ${(p.aufgaben || []).join(' ')}`.toLowerCase().includes(w)));
-    $('pg-n-mitglieder').textContent = data.mitglieder.length;
-    $('pg-n-weitere').textContent = data.weitere.length;
+    let shown = 0;
+    const sections = Object.keys(LABEL).map((g) => {
+      const all = data[g];
+      const list = all.map((p, i) => ({ p, i })).filter(({ p }) =>
+        words.every((w) => `${p.name} ${p.rolle} ${p.beruf} ${(p.aufgaben || []).join(' ')}`.toLowerCase().includes(w)));
+      shown += list.length;
+      if (!list.length) return '';
+      return `<section class="adm-pgr-sec" aria-label="${LABEL[g]}"><h2 class="adm-pgr-h">${LABEL[g]} <span class="n">${all.length}</span></h2>` +
+        `<ul class="adm-rows">${list.map(({ p, i }) => rowHTML(g, p, i, all.length - 1, words.length > 0)).join('')}</ul></section>`;
+    });
+    const total = data.mitglieder.length + data.weitere.length;
     $('pg-count').textContent = words.length
-      ? `${plural(list.length, 'Treffer', 'Treffer')} für „${query.trim()}“`
-      : `${plural(all.length, 'Person', 'Personen')} · ${LABEL[group]}`;
-    if (list.length) {
-      $('pg-list').innerHTML = `<ul class="adm-rows">${list.map(({ p, i }) => rowHTML(p, i, all.length - 1, words.length > 0)).join('')}</ul>`;
+      ? `${plural(shown, 'Treffer', 'Treffer')} für „${query.trim()}“`
+      : plural(total, 'Person', 'Personen');
+    if (shown) {
+      $('pg-list').innerHTML = sections.join('');
       return;
     }
     $('pg-list').innerHTML = words.length
@@ -87,15 +92,6 @@
     row.scrollIntoView({ block: 'nearest' });
     const btn = row.querySelector(sel || '.adm-row-open');
     if (btn) btn.focus({ preventScroll: true });
-  }
-
-  function setGroup(g) {
-    group = g;
-    for (const b of document.querySelectorAll('#pg-group [data-group]')) {
-      const on = b.dataset.group === g;
-      b.classList.toggle('active', on);
-      b.setAttribute('aria-pressed', String(on));
-    }
   }
 
   async function persist(next) {
@@ -231,7 +227,6 @@
       const direct = await persist(next);
       if (person.bild) await A.credits.set(person.bild, $('f-credit').value);
       $('pg-dlg').close();
-      setGroup(target);
       query = '';
       $('pg-search').value = '';
       render();
@@ -266,7 +261,7 @@
     }
   }
 
-  async function move(i, dir) {
+  async function move(group, i, dir) {
     const j = i + dir;
     const next = copy();
     const list = next[group];
@@ -287,7 +282,7 @@
     $('f-file').addEventListener('change', (ev) => onFile(ev.target.files[0]));
     $('pg-img-remove').addEventListener('click', dropImage);
     A.wireDrop($('pg-drop'));
-    $('pg-new').addEventListener('click', () => openEditor(group));
+    $('pg-new').addEventListener('click', () => openEditor('mitglieder'));
     $('pg-form').addEventListener('submit', save);
     $('pg-delete').addEventListener('click', () => { if (edit) remove(edit.group, edit.i); });
     $('pg-list').addEventListener('click', (ev) => {
@@ -295,21 +290,17 @@
       if (!b) return;
       const i = Number(b.dataset.i);
       const act = b.dataset.act;
+      const row = b.closest('[data-g]');
+      const group = row ? row.dataset.g : 'mitglieder';
       if (act === 'edit') openEditor(group, i);
       else if (act === 'del') remove(group, i);
-      else if (act === 'up' || act === 'down') move(i, act === 'up' ? -1 : 1);
+      else if (act === 'up' || act === 'down') move(group, i, act === 'up' ? -1 : 1);
       else if (act === 'new') openEditor(group);
       else if (act === 'clear') {
         query = '';
         $('pg-search').value = '';
         render();
       }
-    });
-    $('pg-group').addEventListener('click', (ev) => {
-      const b = ev.target.closest('[data-group]');
-      if (!b) return;
-      setGroup(b.dataset.group);
-      render();
     });
     let timer = 0;
     $('pg-search').addEventListener('input', (ev) => {

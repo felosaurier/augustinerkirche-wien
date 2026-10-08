@@ -19,7 +19,7 @@
   const KEYS = {
     datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
     details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',
-    weitererlink: 'link2', weitererlinktext: 'linktext2'
+    weitererlink: 'link2', weitererlinktext: 'linktext2', bildausschnitt: 'focus'
   };
   const CLOSE_ICON = '<svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
 
@@ -56,7 +56,8 @@
         infos: splitPipe(o.infos).map(parseInfo),
         details: splitPipe(o.details),
         thumb: o.thumb || '', poster: o.poster || '', link: o.link || '', linktext: o.linktext || '',
-        link2: o.link2 || '', linktext2: o.linktext2 || ''
+        link2: o.link2 || '', linktext2: o.linktext2 || '',
+        focus: /^\d{1,3}% \d{1,3}%$/.test(o.focus || '') ? o.focus : ''
       };
     }).filter(Boolean);
     /* Neueste zuerst; am selben Tag bleibt die Reihenfolge der Tabelle */
@@ -84,7 +85,8 @@
   function thumbHTML(e, cls) {
     const src = url(e.thumb || e.poster);
     if (src) {
-      return `<img class="${cls}${e.poster ? '' : ' news-thumb-photo'}" src="${esc(src)}" alt="" width="640" height="480" loading="lazy" decoding="async"/>`;
+      const pos = e.focus ? ` style="object-position:${e.focus}"` : '';
+      return `<img class="${cls}${e.poster ? '' : ' news-thumb-photo'}" src="${esc(src)}" alt="" width="640" height="480" loading="lazy" decoding="async"${pos}/>`;
     }
     return `<span class="news-noimg"><img src="${esc(base)}assets/logo-gold.png" alt="" width="64" height="64" loading="lazy" decoding="async"/></span>`;
   }

@@ -819,7 +819,7 @@
 
   /* Neuigkeiten (data/news.csv): Spalten ueber die Ueberschrift finden,
      damit die Reihenfolge egal ist; neueste Meldung zuerst */
-  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext'];
+  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext', 'Bildausschnitt'];
   function parseNews(text) {
     const rows = HD.parseCSV(text);
     if (!rows.length) return [];

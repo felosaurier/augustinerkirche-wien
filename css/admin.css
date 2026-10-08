@@ -82,7 +82,7 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 /* ══ SEITENKOPF ══ */
 .adm-head{position:relative;background:linear-gradient(180deg,var(--bg-warm),var(--bg-soft));border-bottom:1px solid var(--line)}
 .adm-head::after{content:'';position:absolute;left:max(2rem,calc((100% - var(--adm-max)) / 2 + 2rem));bottom:-1px;width:6rem;height:2px;background:var(--gold)}
-.adm-head-in{max-width:var(--adm-max);margin:0 auto;padding:2.8rem 2rem 2.3rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1.4rem 2rem;flex-wrap:wrap}
+.adm-head-in{max-width:var(--adm-max);margin:0 auto;padding:1.8rem 2rem 1.5rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1.4rem 2rem;flex-wrap:wrap}
 .adm-head .ph-title{font-size:clamp(2.2rem,4.2vw,3.2rem)}
 .adm-head .ph-sub{max-width:40rem;margin-top:.5rem}
 .adm-head-actions{display:flex;gap:.8rem;flex-wrap:wrap}
@@ -444,26 +444,22 @@ select.adm-input{-webkit-appearance:none;appearance:none;padding-right:2.6rem;cu
 body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 
 /* ══ ÜBERSICHT ══ */
-.adm-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,21rem),1fr));gap:1.4rem;margin-bottom:2rem}
-.adm-tile{position:relative;display:flex;flex-direction:column;gap:.5rem;padding:1.6rem 1.8rem 1.4rem;background:var(--white);border:1px solid var(--line);transition:box-shadow .4s var(--ease),transform .4s var(--ease)}
-.adm-tile::before{content:'';position:absolute;left:0;right:0;top:-1px;height:2px;background:var(--gold);transform:scaleX(.18);transform-origin:left;transition:transform .5s var(--ease)}
-.adm-tile:hover{box-shadow:0 14px 40px rgba(16,25,46,.09);transform:translateY(-3px)}
-.adm-tile:hover::before,.adm-tile:focus-within::before{transform:scaleX(1)}
-.adm-tile-head{display:flex;align-items:center;gap:.9rem}
-.adm-tile-ico{width:2.8rem;height:2.8rem;border-radius:50%;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold);flex:none}
-.adm-tile-ico svg.i{width:1.3rem;height:1.3rem}
-.adm-tile-title{font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.1;color:var(--black)}
+.adm-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr));gap:.8rem;margin-bottom:2rem}
+.adm-tile{position:relative;display:flex;align-items:center;gap:.9rem;padding:.9rem 1rem;background:var(--white);border:1px solid var(--line);transition:border-color .25s var(--ease),box-shadow .25s var(--ease)}
+.adm-tile:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(16,25,46,.07)}
+.adm-tile-ico{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold);flex:none}
+.adm-tile-ico svg.i{width:1.2rem;height:1.2rem}
+.adm-tile-body{flex:1;min-width:0}
+.adm-tile-title{font-family:var(--serif);font-size:1.3rem;font-weight:500;line-height:1.15;color:var(--black)}
 .adm-tile-title a{color:inherit;text-decoration:none}
 .adm-tile-title a::after{content:'';position:absolute;inset:0;z-index:1}
 .adm-tile-title a:focus-visible{outline:none}
 .adm-tile:has(.adm-tile-title a:focus-visible){outline:2px solid var(--gold);outline-offset:2px}
-.adm-tile-stat{font-size:0.85rem;color:var(--gold);font-weight:600;margin-top:.4rem}
-.adm-tile-text{font-size:.97rem;line-height:1.6;color:var(--text-mid);flex:1}
-.adm-tile-text b{font-family:var(--serif);font-size:1.15rem;font-weight:500;color:var(--black)}
-.adm-tile-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:.6rem;padding-top:.9rem;border-top:1px solid var(--line)}
-.adm-tile-foot .link-arr{position:relative}
-.adm-tile-foot .btn{position:relative;z-index:2}
-
+.adm-tile-stat{font-size:.84rem;color:var(--text-mid);margin-top:.15rem}
+.adm-tile-add{position:relative;z-index:2;flex:none;width:2.75rem;height:2.75rem;border-radius:50%;display:grid;place-items:center;color:var(--gold);border:1px solid var(--line);text-decoration:none;transition:background .2s,color .2s,border-color .2s}
+.adm-tile-add:hover,.adm-tile-add:focus-visible{background:var(--blue);border-color:var(--blue);color:#fff;outline:none}
+.adm-tile-add:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.adm-tile-add svg.i{width:1.1rem;height:1.1rem}
 .adm-two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1.4rem;align-items:start}
 .adm-todo{list-style:none;border-top:1px solid var(--line)}
 .adm-todo li{border-bottom:1px solid var(--line)}
@@ -495,8 +491,7 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
   .adm-head-in{padding:2rem 1rem 1.8rem}
   .adm-head::after{left:1rem}
   .adm-panel{padding:1.3rem 1.1rem}
-  .adm-tile{padding:1.3rem 1.2rem 1.1rem}
-  .adm-head-actions,.adm-head-actions .btn{width:100%}
+    .adm-head-actions,.adm-head-actions .btn{width:100%}
 }
 
 /* ══ ANMELDUNG ══ */
@@ -545,7 +540,7 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 /* ══ BEWEGUNG UND KONTRAST ══ */
 @media(prefers-reduced-motion:reduce){
   .adm-dialog[open],.adm-dialog::backdrop,.adm-toast,.adm-row.flash,.adm-person.flash{animation:none}
-  .adm-tile,.adm-person,.adm-tile::before{transition:none}
+  .adm-tile,.adm-person{transition:none}
   .login-busy{animation-duration:2s}
 }
 @media(forced-colors:active){
@@ -575,3 +570,18 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 }
 .adm-credit{margin-top:.9rem}
 .adm-drop-audio{min-height:6.5rem}
+
+/* Bildausschnitt der Karte verschieben (Neuigkeiten) */
+.adm-pan{cursor:grab;touch-action:none;user-select:none}
+.adm-pan.dragging{cursor:grabbing}
+.adm-pan:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.adm-pan-help{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:center;justify-content:space-between;margin-top:.7rem}
+.adm-pan-help .adm-hint{flex:1;min-width:12rem}
+.adm-split-side .adm-pan{pointer-events:auto}
+
+/* Pfarrgemeinderat: eine Liste mit Gruppen, Foto statt Nummer */
+.adm-pgr-sec{margin-bottom:1.8rem}
+.adm-pgr-h{font-family:var(--serif);font-size:1.4rem;font-weight:500;color:var(--black);margin-bottom:.6rem}
+.adm-pgr-h .n{font-family:var(--sans);font-size:.85rem;color:var(--text-light);margin-left:.4rem}
+.adm-pgr-photo{width:2.8rem;height:2.8rem;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold);font-family:var(--serif);font-size:1.25rem;justify-self:center}
+.adm-pgr-photo img{width:100%;height:100%;object-fit:cover;object-position:top}

@@ -123,6 +123,7 @@ Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine
 | Vorschaubild | nur nötig, wenn es kein Plakat gibt (z. B. ein Foto); ohne beides erscheint das goldene Logo |
 | Link, Linktext | optionale Schaltfläche im Fenster. In der Verwaltung wählt man das Ziel aus Listen (Hochamt oder Konzert, Runde, Seite der Website, andere Website) statt eine Adresse einzutippen; liegt am Enddatum ein Termin, wird er zum Verknüpfen vorgeschlagen. Ist eine Meldung mit einem Hochamt verknüpft (`pages/hochamt.html?id=…`), erscheint ihr Plakat auch auf der Seite dieses Termins. Die Verknüpfung lässt sich in der Meldung oder im Fenster des Termins wieder aufheben; wird ein Termin verschoben, zieht die Meldung mit |
 | Weiterer Link, Weiterer Linktext | optionale zweite Schaltfläche, z. B. „Karten beim Musikverein“ zum Kartenverkauf; ist die Meldung mit einem Termin verknüpft, steht sie auch unter dem Plakat auf dessen Seite |
+| Bildausschnitt | optional, z. B. `50% 20%`: welcher Teil des Bildes auf der Karte zu sehen ist; wird in der Verwaltung durch Ziehen des Bildes in der Vorschau gesetzt |
 
 **Am einfachsten in der [Verwaltung](#verwaltung) unter „Neuigkeiten“:** Formular für Titel, Kurztext, Infos, Beschreibung, Link und Bild mit Vorschau der Karte, dazu eine Liste aller Meldungen zum Bearbeiten und Löschen. Mit verbundenem Projektordner werden `news.csv` und das Bild (automatisch im richtigen Jahresordner, in voller Größe) direkt gespeichert, sonst gibt es Downloads mit Angabe, wohin die Dateien gehören.
 
