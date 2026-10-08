@@ -136,7 +136,12 @@
     }
     const years = [...byYear.keys()].sort((a, b) => b - a);
 
+    /* Handy: Jahr als Aufklappmenue (Reiter ausgeblendet, siehe style.css) */
     el.innerHTML =
+      '<div class="kal-select-wrap news-year-wrap"><label class="kal-select-label" for="news-year-select">Jahr wählen</label>' +
+        '<select id="news-year-select" class="kal-select">' +
+          years.map((y) => `<option value="${y}">${y}</option>`).join('') +
+        '</select></div>' +
       '<div class="news-years" role="group" aria-label="Jahr wählen">' +
         years.map((y, i) =>
           `<button type="button" class="news-year${i === 0 ? ' active' : ''}" data-year="${y}" aria-pressed="${i === 0}">${y}<span class="news-year-n">${byYear.get(y).length}</span></button>`
@@ -145,16 +150,22 @@
       '<div class="news-rows" id="news-rows" aria-live="polite"></div>';
 
     const rows = qs('#news-rows', el);
-    const show = (y) => { rows.innerHTML = byYear.get(y).map(rowHTML).join(''); };
+    const select = qs('#news-year-select', el);
+    /* Reiter und Aufklappmenue zeigen immer dasselbe Jahr */
+    const show = (y) => {
+      rows.innerHTML = byYear.get(y).map(rowHTML).join('');
+      for (const x of el.querySelectorAll('.news-year')) {
+        const on = Number(x.dataset.year) === y;
+        x.classList.toggle('active', on);
+        x.setAttribute('aria-pressed', String(on));
+      }
+      select.value = String(y);
+    };
     el.addEventListener('click', (ev) => {
       const b = ev.target.closest('.news-year');
-      if (!b) return;
-      for (const x of el.querySelectorAll('.news-year')) {
-        x.classList.toggle('active', x === b);
-        x.setAttribute('aria-pressed', String(x === b));
-      }
-      show(Number(b.dataset.year));
+      if (b) show(Number(b.dataset.year));
     });
+    select.addEventListener('change', () => show(Number(select.value)));
     show(years[0]);
   }
 

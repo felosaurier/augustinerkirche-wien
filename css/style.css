@@ -970,6 +970,8 @@ footer a:focus-visible,.herzgruft a:focus-visible,.sakr-band:not(.sakr-band-inli
   /* Archiv der Hochämter: Jahr als Aufklappmenü */
   #kal-archive-list .news-years{display:none}
   #kal-archive-list .kal-year-wrap{display:block}
+  /* Archiv der Neuigkeiten: ebenso */
+  #news-archive .news-years{display:none}
   .gd-day{width:auto;padding-right:.8rem}
   .gd-time{width:4.8rem;font-size:1.4rem}
   .person-card-wide{grid-template-columns:7.5rem minmax(0,1fr);gap:1.2rem;padding:1.4rem 0}
