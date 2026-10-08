@@ -497,10 +497,9 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .news-card:hover .news-card-title{color:var(--gold)}
 .news-card-text{font-size:.98rem;line-height:1.6;color:var(--text-mid);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .news-card .link-arr{display:none}
-.news-more{display:flex}
-/* Zuerst nur 3 Karten, der Rest per Knopf (js/news.js) */
-.news-grid:not(.show-all) .news-card:nth-child(n+4){display:none}
-.news-expand{margin-top:2.6rem}
+/* Unter den drei Karten: Weg ins Archiv */
+.news-more{display:flex;margin-top:2.4rem}
+.news-more[hidden]{display:none}
 
 /* Instagram (derzeit nicht auf der Startseite eingebunden, siehe js/instagram.js) */
 .insta-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem 2rem;margin-bottom:2rem}
@@ -1006,8 +1005,7 @@ footer a:focus-visible,.herzgruft a:focus-visible,.sakr-band:not(.sakr-band-inli
   .news-card-date{margin-bottom:.2rem;font-size:.86rem}
   .news-card-title{margin-bottom:.3rem;font-size:1.18rem}
   .news-card-text{font-size:.92rem;line-height:1.5;-webkit-line-clamp:2}
-  .news-expand{margin-top:1.6rem}
-  .news-expand .btn{width:100%}
+  .news-more{margin-top:1.6rem}
   .news-row{grid-template-columns:6rem minmax(0,1fr);gap:1rem}
   .news-row-title{font-size:1.2rem}
   .news-row-text{display:none}

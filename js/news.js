@@ -1,9 +1,9 @@
 /* ============================================================
    Augustinerkirche Wien — news.js
    Neuigkeiten aus data/news.csv (Excel-Tabelle):
-   - Startseite (#news-grid): die 6 neuesten Meldungen als Karten;
+   - Startseite (#news-grid): die 3 neuesten Meldungen als Karten;
      Meldungen mit abgelaufenem "Bis"-Datum ruecken nach unten und
-     fuellen nur noch auf, wenn es weniger als 6 aktive gibt
+     fuellen nur noch auf, wenn es weniger als 3 aktive gibt
    - Archiv (#news-archive): alle uebrigen Meldungen, nach Jahren
    - Klick auf eine Meldung oeffnet ein Fenster mit allen Infos
    Aufruf mit ?news=ID oeffnet die Meldung direkt (teilbarer Link).
@@ -15,8 +15,7 @@
   const HD = window.HochamtData;
   if (!HD) return;
 
-  const LATEST = 6;
-  const MOBILE = 3;     /* zuerst sichtbar, Rest per Knopf (css/style.css) */
+  const LATEST = 3;
   const KEYS = {
     datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
     details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',
@@ -90,7 +89,7 @@
     return `<span class="news-noimg"><img src="${esc(base)}assets/logo-gold.png" alt="" width="64" height="64" loading="lazy" decoding="async"/></span>`;
   }
 
-  /* ---------- Startseite: 6 Karten ---------- */
+  /* ---------- Startseite: 3 Karten ---------- */
   function cardHTML(e) {
     return `<a class="news-card" href="${esc(pageUrl(e.id))}" data-id="${esc(e.id)}">` +
       `<div class="news-card-img">${thumbHTML(e, 'news-thumb')}` +
@@ -108,35 +107,6 @@
     el.innerHTML = latest.length ? latest.map(cardHTML).join('') : '<p class="s-text">Derzeit gibt es keine Meldungen.</p>';
     const more = qs('#news-more');
     if (more) more.hidden = entries.length <= latest.length;
-    expandButton(el, latest.length);
-  }
-
-  /* Zuerst nur die ersten MOBILE Karten (CSS blendet den Rest aus), darunter
-     ein Knopf, der die uebrigen aufklappt. */
-  function expandButton(grid, count) {
-    const old = qs('.news-expand');
-    if (old) old.remove();
-    grid.classList.remove('show-all');
-    if (count <= MOBILE) return;
-    const wrap = document.createElement('div');
-    wrap.className = 'news-expand';
-    const rest = count - MOBILE;
-    wrap.innerHTML = `<button type="button" class="btn btn-outline" aria-controls="${esc(grid.id)}" aria-expanded="false">` +
-      `${rest} weitere ${rest === 1 ? 'Meldung' : 'Meldungen'} anzeigen</button>`;
-    grid.after(wrap);
-    qs('button', wrap).addEventListener('click', () => {
-      /* Ohne das haelt der Browser den Inhalt unter dem Knopf fest
-         (Scroll-Anchoring) und springt an den neuen Karten vorbei */
-      const root = document.documentElement;
-      root.style.overflowAnchor = 'none';
-      grid.classList.add('show-all');
-      wrap.remove();
-      requestAnimationFrame(() => requestAnimationFrame(() => { root.style.overflowAnchor = ''; }));
-      /* Fokus auf die erste aufgeklappte Karte, damit es mit der Tastatur
-         und dem Bildschirmleser an der richtigen Stelle weitergeht */
-      const next = grid.children[MOBILE];
-      if (next) next.focus({ preventScroll: true });
-    });
   }
 
   /* ---------- Archiv: nach Jahren ---------- */

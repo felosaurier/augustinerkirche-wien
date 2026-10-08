@@ -272,7 +272,7 @@
       : '<span class="adm-thumb none"><img src="../assets/logo-gold.png" alt=""/></span>';
     const place = placeOf(e, home);
     const badge = place === 'home' ? '<span class="adm-badge on">Startseite</span>'
-      : place === 'home-expired' ? '<span class="adm-badge on" title="Abgelaufen, füllt die Startseite unten auf, solange es weniger als 6 aktive Meldungen gibt">Startseite · abgelaufen</span>'
+      : place === 'home-expired' ? '<span class="adm-badge on" title="Abgelaufen, füllt die Startseite unten auf, solange es weniger als 3 aktive Meldungen gibt">Startseite · abgelaufen</span>'
       : place === 'expired' ? '<span class="adm-badge">Abgelaufen · Archiv</span>'
         : `<span class="adm-badge">Archiv ${esc(e.Datum.split('.')[2])}</span>`;
     return `<li class="adm-row" data-key="${esc(newsId(e))}">` +
@@ -379,7 +379,7 @@
       return `Steht auf der Startseite an Stelle ${pos} von ${home.size}${bis ? `, bis einschließlich ${A.fmtDate(bis)}` : ''}.`;
     }
     if (bis && bis < A.isoToday()) return `Das Enddatum ist vorbei: Die Meldung steht nur im Archiv ${iso.slice(0, 4)}.`;
-    return `Es gibt sechs neuere Meldungen: Diese steht vorerst nur im Archiv ${iso.slice(0, 4)}.`;
+    return `Es gibt drei neuere Meldungen: Diese steht vorerst nur im Archiv ${iso.slice(0, 4)}.`;
   }
   function renderPreview() {
     const iso = $('f-date').value;
