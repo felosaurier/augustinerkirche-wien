@@ -379,8 +379,8 @@
       const pos = [...home].indexOf(me) + 1;
       return `Steht auf der Startseite an Stelle ${pos} von ${home.size}${bis ? `, bis einschließlich ${A.fmtDate(bis)}` : ''}.`;
     }
-    if (bis && bis < A.isoToday()) return `Das Enddatum ist vorbei: Die Meldung steht nur im Archiv ${iso.slice(0, 4)}.`;
-    return `Es gibt drei neuere Meldungen: Diese steht vorerst nur im Archiv ${iso.slice(0, 4)}.`;
+    if (bis && bis < A.isoToday()) return `Das Enddatum ist vorbei: Die Meldung steht nur noch im Archiv ${iso.slice(0, 4)}, nicht mehr auf der Startseite.`;
+    return `Es gibt drei neuere Meldungen: Diese steht im Archiv ${iso.slice(0, 4)} und noch nicht auf der Startseite.`;
   }
   function renderPreview() {
     const iso = $('f-date').value;

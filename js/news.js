@@ -4,7 +4,7 @@
    - Startseite (#news-grid): die 3 neuesten Meldungen als Karten;
      Meldungen mit abgelaufenem "Bis"-Datum ruecken nach unten und
      fuellen nur noch auf, wenn es weniger als 3 aktive gibt
-   - Archiv (#news-archive): alle uebrigen Meldungen, nach Jahren
+   - Archiv (#news-archive): alle Meldungen, auch die der Startseite, nach Jahren
    - Klick auf eine Meldung oeffnet ein Fenster mit allen Infos
    Aufruf mit ?news=ID oeffnet die Meldung direkt (teilbarer Link).
    Benoetigt js/hochaemter-data.js (CSV-Parser und Hilfen).
@@ -123,10 +123,10 @@
       '<span class="news-row-go" aria-hidden="true">&rarr;</span></a>';
   }
   function renderArchive(el) {
-    const home = homeEntries();
-    const older = entries.filter((e) => !home.includes(e));
+    /* Alle Meldungen, auch die auf der Startseite: so muss man nicht zurueck */
+    const older = entries;
     if (!older.length) {
-      el.innerHTML = '<p class="s-text">Im Archiv befinden sich noch keine Meldungen. Ältere und abgelaufene Neuigkeiten wandern automatisch hierher.</p>';
+      el.innerHTML = '<p class="s-text">Es gibt noch keine Meldungen.</p>';
       return;
     }
     /* Einmal nach Jahren gruppieren (Map behaelt die Einfuegereihenfolge) */
