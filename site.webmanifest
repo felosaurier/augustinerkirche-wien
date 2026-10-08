@@ -1,0 +1,36 @@
+{
+  "name": "Augustinerkirche Wien",
+  "short_name": "St. Augustin",
+  "description": "Pfarre und Kloster St. Augustin: Gottesdienste, Hochämter, Kirchenmusik und Neuigkeiten.",
+  "lang": "de",
+  "dir": "ltr",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#10192e",
+  "theme_color": "#10192e",
+  "icons": [
+    { "src": "assets/app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/app/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/app/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Gottesdienste",
+      "url": "./pages/gottesdienste.html",
+      "icons": [{ "src": "assets/app/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Hochämter",
+      "url": "./pages/musik.html#p-hochaemter",
+      "icons": [{ "src": "assets/app/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Neuigkeiten",
+      "url": "./index.html#aktuelles-h",
+      "icons": [{ "src": "assets/app/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

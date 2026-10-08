@@ -201,8 +201,10 @@ data/
   personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten
   kontakt.json                Adresse, Telefon, E-Mail, Öffnungszeiten der Pfarrkanzlei
   repertoire.json             Repertoire des Chores
+site.webmanifest              App-Manifest: Name, Farben, Symbole, Schnellzugriffe
 assets/
   logo.png, logo-gold.png     Logo (grün und golden), Favicons, Zierlinie
+  app/                        App-Symbole (192 und 512 Pixel, dazu maskierbar für Android)
   audio/cds/                  Hörproben zu den CDs (MP3, von hochamt.augustiner.at)
   programme/                  Kirchenmusik-Programmhefte 2008–2018 (PDF)
   img/
