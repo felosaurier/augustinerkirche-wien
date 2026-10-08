@@ -12,6 +12,7 @@
    - data/repertoire.json: Repertoire des Chores mit Suche
      ([data-inhalt="repertoire"])
    - data/cds.json: CDs von St. Augustin mit Hörproben ([data-inhalt="cds"])
+   - data/rundgang.json: Rundgang durch die Kirche ([data-inhalt="rundgang"])
    - data/pgr.json: Pfarrgemeinderat ([data-inhalt="pgr-mitglieder"],
      [data-inhalt="pgr-weitere"])
    - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
@@ -271,6 +272,21 @@
     ).join('');
   }
 
+  /* ---------- Rundgang durch die Kirche ---------- */
+  async function rundgang() {
+    const host = document.querySelector('[data-inhalt="rundgang"]');
+    if (!host) return;
+    const data = await load('rundgang.json');
+    const list = (data.bilder || []).filter((b) => b.bild && url(b.bild));
+    if (!list.length) return;
+    const cls = (b) => (b.format === 'breit' ? ' g-breit' : b.format === 'hoch' ? ' g-hoch' : '');
+    const pos = (b) => (/^\d{1,3}% \d{1,3}%$/.test(b.ausschnitt || '') ? ` style="object-position:${b.ausschnitt}"` : '');
+    host.innerHTML = list.map((b) =>
+      `<div class="g-item${cls(b)}"><a href="${esc(url(b.bild))}" data-lightbox title="Bild vergrößern">` +
+      `<img src="${esc(url(b.bild))}" alt="${esc(b.titel)}" loading="lazy" width="${b.breite || 900}" height="${b.hoehe || 600}" decoding="async"${pos(b)}/></a>` +
+      (b.titel ? `<div class="g-cap">${esc(b.titel)}</div>` : '') + '</div>').join('');
+  }
+
   /* ---------- Pfarrgemeinderat ---------- */
   function pgrItem(p) {
     const contact = [
@@ -353,7 +369,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
-    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds]) {
+    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds, rundgang]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     }
   });

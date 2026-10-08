@@ -159,7 +159,7 @@
     if (ende && !zeit) errors.push([$('f-time'), 'Bitte auch den Beginn eintragen.']);
     else if (ende && !bis && ende <= zeit) errors.push([$('f-end'), 'Das Ende liegt vor dem Beginn.']);
     if (!titel) errors.push([$('f-title'), 'Bitte einen Titel eintragen.']);
-    if (link === null) errors.push([$('f-link'), 'Diese Adresse sieht nicht richtig aus, z. B. www.augustiner.at oder pages/kalender.html.']);
+    if (link === null) errors.push([$('f-link'), 'Diese Adresse sieht nicht richtig aus, z. B. www.beispiel.at oder pages/kalender.html.']);
     if (errors.length) {
       A.showErrors(form, errors);
       return;

@@ -153,7 +153,8 @@ pages/
   sakramente.html             Sakramente
   musik.html                  Kirchenmusik: Hochämter, Ensembles, Orgeln
   hochamt.html                Detailseite eines Hochamts
-  chronik.html                Geschichte, Rundgang, Führungen, Orden, Links
+  chronik.html                Geschichte der Kirche, Herzgruft, Führungen, Rundgang
+  augustiner.html             Hl. Augustinus, Regel, Orden, Ordensheilige, Vikariat, Augustiner in Wien, Links
   aspersdorf.html             Pfarre Aspersdorf
   archiv.html                 Archiv der Neuigkeiten, nach Jahren
   impressum.html              Impressum
@@ -173,6 +174,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   solisten.html               Solisten pflegen
   gottesdienste.html          Wochenplan, Pfarrkanzlei und Kontakt pflegen
   runden.html                 Runden pflegen
+  rundgang.html               Kirchenrundgang pflegen
   personen.html               Mitbrüder, Leitung, Gastdirigenten, Organisten pflegen
   repertoire.html             Repertoire des Chores pflegen
   zugaenge.html               Zugänge und Rollen verwalten (nur Admin)
@@ -203,6 +205,7 @@ js/
   admin-solisten.js           Solisten pflegen
   admin-gottesdienste.js      Wochenplan, Pfarrkanzlei und Kontakt
   admin-runden.js             Runden pflegen
+  admin-rundgang.js           Kirchenrundgang pflegen
   admin-personen.js           Personen pflegen
   admin-repertoire.js         Repertoire pflegen
   admin-zugaenge.js           Zugänge und Rollen verwalten
@@ -220,6 +223,7 @@ data/
   solisten.json               Solistinnen und Solisten mit Stimmlage
   gottesdienste.json          Wochenplan der Gottesdienste
   runden.json                 Runden: Übersicht und Inhalt der Seiten
+  rundgang.json               Bilder des Kirchenrundgangs (Chronik → Rundgang)
   personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten
   kontakt.json                Adresse, Telefon, E-Mail, Öffnungszeiten der Pfarrkanzlei
   repertoire.json             Repertoire des Chores

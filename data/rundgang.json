@@ -1,0 +1,52 @@
+{
+  "bilder": [
+    {
+      "titel": "Kirchenschiff",
+      "bild": "assets/img/kirche/interior-nave.webp",
+      "breite": 900,
+      "hoehe": 1350,
+      "format": "breit",
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Außenansicht",
+      "bild": "assets/img/kirche/exterior.webp",
+      "breite": 900,
+      "hoehe": 1316,
+      "format": "normal",
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Kanzel",
+      "bild": "assets/img/kirche/kanzel.webp",
+      "breite": 900,
+      "hoehe": 1351,
+      "format": "normal",
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Hochaltar",
+      "bild": "assets/img/kirche/hochaltar.webp",
+      "breite": 900,
+      "hoehe": 1351,
+      "format": "breit",
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Loretokapelle",
+      "bild": "assets/img/kirche/loretokapelle-a.webp",
+      "breite": 1200,
+      "hoehe": 675,
+      "format": "normal",
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Seitenaltar",
+      "bild": "assets/img/kirche/seitenaltar.webp",
+      "breite": 900,
+      "hoehe": 1347,
+      "format": "normal",
+      "ausschnitt": ""
+    }
+  ]
+}

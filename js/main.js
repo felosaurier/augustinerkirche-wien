@@ -8,6 +8,14 @@
 (function () {
   'use strict';
 
+  /* Alte Adressen: Die Reiter zu Augustinus und Orden liegen jetzt auf augustiner.html */
+  if (/\/chronik\.html$/.test(location.pathname) &&
+      /^#p-(augustinus|regel|regel-geist|spiritualitaet|forschung|orden|ordensgeschichte|ordensheilige|bedeutende|berufung|vikariat|wien|links)$/.test(location.hash)) {
+    const id = location.hash.replace(/^#p-(regel-geist)$/, '#p-regel').replace(/^#p-ordensgeschichte$/, '#p-orden');
+    location.replace(location.pathname.replace('chronik.html', 'augustiner.html') + id);
+    return;
+  }
+
   /* ---------- Hilfsfunktionen ---------- */
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
   const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));

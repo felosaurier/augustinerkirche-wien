@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-title" content="St. Augustin"/>
 <meta name="theme-color" content="#10192e"/>
 <title>Chronik — Augustinerkirche Wien</title>
-<meta name="description" content="Die Geschichte der Hofpfarrkirche der Habsburger, die Herzgruft, der Augustinerorden und sieben Jahrhunderte Konventsgeschichte in Wien."/>
+<meta name="description" content="Die Geschichte der Hofpfarrkirche der Habsburger, die Herzgruft, Führungen und der Rundgang durch die Augustinerkirche in Wien."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..600&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
@@ -102,11 +102,24 @@
       </button>
       <div class="mega" id="ni-aug-menu">
         <div class="mega-group">
-          <span class="mega-group-label">Über den Orden</span>
-          <a href="chronik.html#p-augustinus">Hl. Augustinus</a>
-          <a href="chronik.html#p-orden">Der Augustinerorden</a>
-          <a href="chronik.html#p-vikariat">Das Augustiner-Vikariat Wien</a>
-          <a href="chronik.html#p-wien">Die Augustiner in Wien</a>
+          <span class="mega-group-label">Hl. Augustinus</span>
+          <a href="augustiner.html#p-augustinus">Leben und Zeittafel</a>
+          <a href="augustiner.html#p-regel">Die Augustinusregel</a>
+          <a href="augustiner.html#p-spiritualitaet">Spiritualität</a>
+          <a href="augustiner.html#p-forschung">Augustinus-Forschung</a>
+        </div>
+        <div class="mega-group">
+          <span class="mega-group-label">Der Augustinerorden</span>
+          <a href="augustiner.html#p-orden">Geschichte des Ordens</a>
+          <a href="augustiner.html#p-ordensheilige">Ordensheilige</a>
+          <a href="augustiner.html#p-bedeutende">Bedeutende Augustiner</a>
+          <a href="augustiner.html#p-berufung">Augustiner werden</a>
+        </div>
+        <div class="mega-group">
+          <span class="mega-group-label">In Österreich</span>
+          <a href="augustiner.html#p-vikariat">Vikariat Wien</a>
+          <a href="augustiner.html#p-wien">Die Augustiner in Wien</a>
+          <a href="augustiner.html#p-links">Links</a>
         </div>
       </div>
     </div>
@@ -154,26 +167,19 @@
   <div class="inner">
     <div class="ph-tag">Seit 1327</div>
     <h1 class="ph-title">Die Chronik</h1>
-    <p class="ph-sub">Über sieben Jahrhunderte Geschichte verbinden die Hofpfarrkirche der Habsburger mit dem Wirken des Augustinerordens in Wien.</p>
+    <p class="ph-sub">Über sieben Jahrhunderte Geschichte: die Hofpfarrkirche der Habsburger, die Herzgruft und ein Rundgang durch den gotischen Kirchenraum.</p>
   </div>
 </header>
 
 <section class="section">
   <div class="inner">
     <div class="with-sidebar">
-      <aside class="sidebar" aria-label="Chronik Unterseiten">
+      <aside class="sidebar sidebar-flat" aria-label="Chronik Unterseiten">
         <span class="sidebar-group-label">Geschichte der Kirche</span>
         <button type="button" class="sidebar-item active" data-pane="p-geschichte">Geschichte</button>
         <button type="button" class="sidebar-item" data-pane="p-herzgruft">Herzgruft</button>
         <button type="button" class="sidebar-item" data-pane="p-fuehrungen">Führungen</button>
         <button type="button" class="sidebar-item" data-pane="p-rundgang">Rundgang</button>
-        <div class="sidebar-divider"></div>
-        <span class="sidebar-group-label">Orden &amp; Spiritualität</span>
-        <button type="button" class="sidebar-item" data-pane="p-augustinus">Hl. Augustinus</button>
-        <button type="button" class="sidebar-item" data-pane="p-orden">Der Augustinerorden</button>
-        <button type="button" class="sidebar-item" data-pane="p-vikariat">Vikariat Wien</button>
-        <button type="button" class="sidebar-item" data-pane="p-wien">Die Augustiner in Wien</button>
-        <button type="button" class="sidebar-item" data-pane="p-links">Links</button>
       </aside>
 
       <div class="tab-content-area">
@@ -246,13 +252,13 @@
         <div class="tab-pane" id="p-rundgang">
           <h2 class="s-title">Rundgang durch die Kirche</h2>
           <p class="s-text" style="margin-bottom:1.6rem">Ein Rundgang durch die gotische Hallenkirche, ihre Kapellen und Kunstwerke.</p>
-          <div class="gallery">
-            <div class="g-item"><img src="../assets/img/kirche/interior-nave.webp" alt="Kirchenschiff" loading="lazy" width="900" height="1350" decoding="async"/><div class="g-cap">Kirchenschiff</div></div>
-            <div class="g-item"><img src="../assets/img/kirche/exterior.webp" alt="Außenansicht" loading="lazy" width="900" height="1316" decoding="async"/><div class="g-cap">Außenansicht</div></div>
-            <div class="g-item"><img src="../assets/img/kirche/kanzel.webp" alt="Kanzel" loading="lazy" width="900" height="1351" decoding="async"/><div class="g-cap">Kanzel</div></div>
-            <div class="g-item"><img src="../assets/img/kirche/hochaltar.webp" alt="Hochaltar" loading="lazy" width="900" height="1351" decoding="async"/><div class="g-cap">Hochaltar</div></div>
-            <div class="g-item"><img src="../assets/img/kirche/loretokapelle-a.webp" alt="Loretokapelle" loading="lazy" width="1200" height="675" decoding="async"/><div class="g-cap">Loretokapelle</div></div>
-            <div class="g-item"><img src="../assets/img/kirche/seitenaltar.webp" alt="Seitenaltar" loading="lazy" width="900" height="1347" decoding="async"/><div class="g-cap">Seitenaltar</div></div>
+          <div class="gallery" data-inhalt="rundgang">
+            <div class="g-item g-breit"><a href="../assets/img/kirche/interior-nave.webp" data-lightbox title="Bild vergrößern"><img src="../assets/img/kirche/interior-nave.webp" alt="Kirchenschiff" loading="lazy" width="900" height="1350" decoding="async"/></a><div class="g-cap">Kirchenschiff</div></div>
+            <div class="g-item"><a href="../assets/img/kirche/exterior.webp" data-lightbox title="Bild vergrößern"><img src="../assets/img/kirche/exterior.webp" alt="Außenansicht" loading="lazy" width="900" height="1316" decoding="async"/></a><div class="g-cap">Außenansicht</div></div>
+            <div class="g-item"><a href="../assets/img/kirche/kanzel.webp" data-lightbox title="Bild vergrößern"><img src="../assets/img/kirche/kanzel.webp" alt="Kanzel" loading="lazy" width="900" height="1351" decoding="async"/></a><div class="g-cap">Kanzel</div></div>
+            <div class="g-item g-breit"><a href="../assets/img/kirche/hochaltar.webp" data-lightbox title="Bild vergrößern"><img src="../assets/img/kirche/hochaltar.webp" alt="Hochaltar" loading="lazy" width="900" height="1351" decoding="async"/></a><div class="g-cap">Hochaltar</div></div>
+            <div class="g-item"><a href="../assets/img/kirche/loretokapelle-a.webp" data-lightbox title="Bild vergrößern"><img src="../assets/img/kirche/loretokapelle-a.webp" alt="Loretokapelle" loading="lazy" width="1200" height="675" decoding="async"/></a><div class="g-cap">Loretokapelle</div></div>
+            <div class="g-item"><a href="../assets/img/kirche/seitenaltar.webp" data-lightbox title="Bild vergrößern"><img src="../assets/img/kirche/seitenaltar.webp" alt="Seitenaltar" loading="lazy" width="900" height="1347" decoding="async"/></a><div class="g-cap">Seitenaltar</div></div>
           </div>
           <h3 class="pane-sub">Der Kirchenraum</h3>
           <p class="bio-p">Bis zur Schleifung der Stadtmauern 1857 war die Augustinerkirche der zweitgrößte Kirchenbau Wiens. Der gotische Raum ist eine 80 Meter lange Hallenkirche, davon nimmt der Hochchor 30 Meter ein. Die Bänke im vorderen Langhaus mit reich geschnitzten Wangen und biblischen Szenen schuf Johann Baptist Straub um 1730 für die Schwarzspanierkirche; unter Joseph II. kamen sie, wie andere Stücke aus aufgehobenen Klöstern, nach St. Augustin. Bänke mit dem Emblem Kaiser Karls VI. stammen aus der Josefskapelle der Hofburg bzw. dem früheren Jakoberkloster.</p>
@@ -272,134 +278,6 @@
           <blockquote class="pane-quote pane-quote-end">„Spät habe ich dich geliebt, du Schönheit, so alt und so neu.“<cite>Augustinus, Bekenntnisse X,27,38</cite></blockquote>
         </div>
 
-        <div class="tab-pane" id="p-augustinus">
-          <div class="aug-grid">
-            <div>
-              <div class="s-label">354 – 430 n. Chr.</div>
-              <h2 class="s-title">Aurelius Augustinus</h2>
-              <p class="bio-p">Aurelius Augustinus wurde am 13. November 354 in Thagaste (dem heutigen Souk Ahras in Algerien) geboren. Nach einem bewegten Leben — geprägt von intellektueller Suche und tiefer Bekehrung — wurde er zum bedeutendsten Kirchenlehrer des Abendlandes.</p>
-              <p class="bio-p">Seine <em>Confessiones</em> gelten als das erste Werk der europäischen Literatur, das die Innerlichkeit eines Menschen in dieser Tiefe erforscht. Sein Denken prägte Theologie, Philosophie und das gesamte westliche Geistesleben bis heute.</p>
-              <p class="bio-p">Am 28. August 430 starb Augustinus als Bischof von Hippo Regius. Sein Erbe lebt weiter im Orden, der seinen Namen trägt, und in seinem bis heute viel zitierten Wort: „Unruhig ist unser Herz, bis es Ruhe findet in dir."</p>
-              <div class="facts"><div class="fact"><div class="fact-n">354</div><div class="fact-l">Geburtsjahr</div></div><div class="fact"><div class="fact-n">430</div><div class="fact-l">Todesjahr</div></div><div class="fact"><div class="fact-n">100+</div><div class="fact-l">Werke</div></div></div>
-            </div>
-            <div class="aug-img reveal"></div>
-          </div>
-          <div class="cards-stack" style="margin-top:2.5rem">
-            <div class="card"><div class="card-title">Biographie</div><div class="card-text">Vom Rhetoriklehrer zum Bischof von Hippo.</div><p class="card-more">Augustinus wurde am 13. November 354 in Thagaste geboren, als Sohn des Patricius und der Christin Monika. In Karthago studierte er Rhetorik; dort kam 372 sein Sohn Adeodatus zur Welt. Ciceros Schrift „Hortensius“ weckte seine Liebe zur Philosophie, zugleich schloss er sich für rund zehn Jahre den Manichäern an.</p><p class="card-more">Nach Lehrjahren in Thagaste, Karthago und Rom wurde er 384 kaiserlicher Professor für Rhetorik in Mailand, wo ihn die Predigten des Bischofs Ambrosius beeindruckten. Im August 386 kam es im Garten zur Bekehrung, als er die Worte „Tolle lege, nimm und lies“ hörte; in der Osternacht 387 taufte ihn Ambrosius gemeinsam mit seinem Sohn. Kurz darauf starb Monika in Ostia.</p><p class="card-more">388 gründete Augustinus in Thagaste eine Gemeinschaft von Laienmönchen. In Hippo Regius wurde er 391 zum Priester und 395 zum Bischof geweiht; auch als Bischof lebte er mit seinen Klerikern in Gemeinschaft, nach dem Vorbild der Urgemeinde, die „ein Herz und eine Seele“ war. Er schrieb unter anderem die „Confessiones“, „De trinitate“ und „De civitate Dei“ und stritt gegen Manichäer, Donatisten und Pelagianer. Er starb am 28. August 430 im von den Vandalen belagerten Hippo; seine Gebeine ruhen seit dem 8. Jahrhundert in Pavia.</p><p class="card-more">Die älteste Lebensbeschreibung verfasste zwischen 431 und 437 sein Freund Possidius, Bischof von Calama, der beim Tod Augustins an seiner Seite war.</p><p class="card-more" style="display:flex;flex-wrap:wrap;gap:.4rem 1.4rem"><a class="link-arr" href="https://www.augustiner.at/augustinus/biographie/" target="_blank" rel="noopener">Biographie auf augustiner.at</a><a class="link-arr" href="https://www.augustiner.at/eine-lebensbeschreibung" target="_blank" rel="noopener">Ausführliche Lebensbeschreibung</a><a class="link-arr" href="https://www.augustiner.at/das-leben-des-hl-augustinus-nach-possidius" target="_blank" rel="noopener">Vita des Possidius</a></p></div>
-            <div class="card"><div class="card-title">Die Regel</div><div class="card-text">Die älteste Klosterregel des Westens, entstanden um 397.</div><p class="card-more">Augustinus schrieb seine Regel um 397 im Kloster seines Bischofshauses in Hippo, rund zehn Jahre nach seiner Taufe und etwa hundert Jahre vor der Regel Benedikts. Überliefert ist sie in mehreren Fassungen: dem kurzen „Ordo monasterii“ mit Weisungen für den Alltag, dem Kernstück „Praeceptum“ und einer Fassung für Frauen. Die heute geltende Form verbindet den ersten Satz des Ordo mit dem Praeceptum.</p><p class="card-more">Ihr Ziel steht gleich am Anfang: Gott und den Nächsten lieben und in Eintracht zusammenleben, „ein Herz und eine Seele auf Gott hin“. Acht Kapitel handeln vom Gebet, von einem einfachen Leben, von Keuschheit und gegenseitiger Verantwortung, von der Sorge füreinander, von Vergebung im Streit, von Leitung und Gehorsam als Dienst und von der Treue zur Regel, die jede Woche vorgelesen wird.</p><p class="card-more">Ab dem 11. Jahrhundert verbreitete sie sich rasch. Regularkanoniker, Prämonstratenser, Dominikaner, Johanniter, der Deutsche Orden, Serviten, Ursulinen und viele hundert weitere Gemeinschaften leben bis heute nach ihr.</p><p class="card-more" style="display:flex;flex-wrap:wrap;gap:.4rem 1.4rem"><a class="link-arr" href="https://www.augustiner.at/augustinus/ordensregel/" target="_blank" rel="noopener">Die Regel im Wortlaut</a><a class="link-arr" href="https://www.augustiner.at/ueber-die-regel" target="_blank" rel="noopener">Geschichte der Regel</a><a class="link-arr" href="https://www.augustiner.at/augustinus/inhalt-und-geist-der-augustinusregel" target="_blank" rel="noopener">Inhalt und Geist</a></p></div>
-            <div class="card"><div class="card-title">Spiritualität</div><div class="card-text">Gemeinschaft, innere Einkehr und die Suche nach Wahrheit.</div><p class="card-more">Augustinische Spiritualität verbindet das gemeinsame klösterliche Leben mit der persönlichen Suche nach Wahrheit im Gebet und Studium — getragen von der Überzeugung, dass der Mensch Gott zuerst im eigenen Inneren begegnet.</p></div>
-            <div class="card"><div class="card-title">Augustinus-Forschung</div><div class="card-text">Werk und Wirkung des Kirchenvaters erschließen.</div><p class="card-more">Von Augustinus sind über 100 Werke sowie zahlreiche Briefe und Predigten erhalten, nicht einmal die Hälfte davon liegt in deutscher Übersetzung vor. Die Literatur über ihn umfasst weltweit rund 50.000 Titel, jedes Jahr kommen etwa 300 hinzu.</p><p class="card-more">Der Augustinerorden fördert die Erforschung seines Ordensvaters. Aus dem Würzburger Forschungsprojekt sind das Augustinus-Lexikon und das Corpus Augustinianum Gissense hervorgegangen.</p><p class="card-more" style="display:flex;flex-wrap:wrap;gap:.4rem 1.4rem"><a class="link-arr" href="https://www.augustinus.de/" target="_blank" rel="noopener">Zentrum für Augustinus-Forschung</a></p></div>
-          </div>
-          <h3 class="pane-sub">Zeittafel</h3>
-          <div class="timeline">
-            <div class="timeline-item"><div class="timeline-year">354</div><div class="timeline-text">Geburt am 13. November in Thagaste</div></div>
-            <div class="timeline-item"><div class="timeline-year">370</div><div class="timeline-text">Studium der Rhetorik in Karthago</div></div>
-            <div class="timeline-item"><div class="timeline-year">384</div><div class="timeline-text">Professor für Rhetorik in Mailand</div></div>
-            <div class="timeline-item"><div class="timeline-year">386</div><div class="timeline-text">Bekehrung im Garten: „Nimm und lies!“</div></div>
-            <div class="timeline-item"><div class="timeline-year">387</div><div class="timeline-text">Taufe durch Ambrosius in der Osternacht; Tod der Mutter Monika</div></div>
-            <div class="timeline-item"><div class="timeline-year">388</div><div class="timeline-text">Erste Gemeinschaft in Thagaste</div></div>
-            <div class="timeline-item"><div class="timeline-year">391</div><div class="timeline-text">Priesterweihe in Hippo Regius, Gründung eines Klosters</div></div>
-            <div class="timeline-item"><div class="timeline-year">395</div><div class="timeline-text">Bischofsweihe, ab 396 Bischof von Hippo</div></div>
-            <div class="timeline-item"><div class="timeline-year">397</div><div class="timeline-text">„Confessiones“; um diese Zeit entsteht die Regel</div></div>
-            <div class="timeline-item"><div class="timeline-year">413</div><div class="timeline-text">Beginn von „De civitate Dei“, vollendet 427</div></div>
-            <div class="timeline-item"><div class="timeline-year">430</div><div class="timeline-text">Tod am 28. August im belagerten Hippo</div></div>
-          </div>
-          <blockquote class="pane-quote pane-quote-end">„Du hast uns auf dich hin geschaffen, und unruhig ist unser Herz, bis es ruht in dir.“<cite>Augustinus, Bekenntnisse I,1,1</cite></blockquote>
-        </div>
-
-        <div class="tab-pane" id="p-orden">
-          <div class="s-label">Seit 1256</div>
-          <h2 class="s-title">Der Augustinerorden</h2>
-          <p class="s-text" style="max-width:52rem;margin-bottom:2.5rem">Der Orden der Augustiner-Eremiten (OSA) wurde 1256 durch Papst Alexander IV. vereinigt. Er zählt heute weltweit rund 2.800 Mitglieder in über 50 Ländern. Bekannte Augustiner waren Martin Luther, Gregor Mendel und Thomas von Villanova.</p>
-          <div class="cards-stack" style="margin-top:2.5rem">
-            <div class="card"><div class="card-title">Geschichte</div><div class="card-text">Von der Vereinigung 1244/1256 bis heute.</div><p class="card-more">Nach dem Tod Augustins lebte sein Mönchtum in vielen Gemeinschaften weiter. Im März 1244 fasste Papst Innozenz IV. toskanische Eremitengruppen, die nach seiner Regel lebten, zu einem Orden zusammen; mit der Bulle „Licet Ecclesiae“ vom 9. April 1256 schloss Papst Alexander IV. weitere Verbände an. Er schickte die Brüder in die Städte, um dort zu predigen und Seelsorge zu leisten. Den Zusatz „Eremiten“ legte der Orden 1963 ab; seither heißt er „Ordo Fratrum Sancti Augustini“, kurz OSA. Das Ordenskleid ist ein schwarzer Habit mit Ledergürtel und Kapuze.</p><p class="card-more">Der Orden breitete sich rasch aus: 1295 zählte er 16, 1329 schon 24 Provinzen von Irland bis Zypern. 1299 wurde die deutsche Provinz geteilt; zur bayerischen Provinz gehörten auch Böhmen, Mähren, Österreich und Polen.</p><p class="card-more">Die Reformation traf den Orden schwer, Martin Luther war selbst Augustiner: Von 160 Klöstern der deutschen Provinzen gingen 69 verloren. Ordensgeneral Hieronymus Seripando führte ihn aus der Krise, und Reformzweige wie die Augustiner-Barfüßer entstanden. Aufklärung, Josephinismus, Französische Revolution und Säkularisation kosteten erneut die meisten Klöster.</p><p class="card-more">Heute gehören zum Orden rund 50 Provinzen, Vikariate und Delegaturen mit mehr als 2.500 Mitgliedern in Europa, Afrika, Amerika, Asien und Ozeanien. Schwerpunkte sind Seelsorge, Erziehung und Unterricht, Mission und Wissenschaft, etwa am Patristischen Institut Augustinianum in Rom.</p><p class="card-more" style="display:flex;flex-wrap:wrap;gap:.4rem 1.4rem"><a class="link-arr" href="https://www.augustiner.at/augustinerorden/geschichte/" target="_blank" rel="noopener">Ausführlich auf augustiner.at</a></p></div>
-            <div class="card"><div class="card-title">Ordensheilige</div><div class="card-text">Heilige, die der Orden besonders verehrt.</div><p class="card-more">Zu den Ordensheiligen zählen der Hl. Augustinus selbst als geistiger Vater des Ordens, der Hl. Thomas von Villanova als Vorbild tätiger Nächstenliebe und die Hl. Rita von Cascia, eine der meistverehrten Heiligen des Ordens.</p></div>
-            <div class="card"><div class="card-title">Bedeutende Augustiner</div><div class="card-text">Persönlichkeiten aus der Geschichte des Ordens.</div><p class="card-more"><ul class="pgr-tasks" style="margin-top:.8rem"><li><strong>Thomas von Straßburg († 1357)</strong>: Ordensgeneral ab 1345 und Hauptvertreter der Augustinerschule. Er hielt sich im Wiener Kloster auf, gilt als Bauberater von Kirche und Kloster und als geistiger Wegbereiter der Wiener Universität.</li><li><strong>Gregor von Rimini († 1358)</strong>: Neben Thomas von Straßburg der wichtigste Theologe der mittelalterlichen Augustinerschule.</li><li><strong>Leopold Steinreuther (um 1340)</strong>: Mitglied und 1377/78 Prior des Wiener Klosters; schrieb im Auftrag Herzog Albrechts III. die „Österreichische Chronik von den 95 Herrschaften“.</li><li><strong>Martin Luther (1483–1546)</strong>: Trat 1505 in das Erfurter Augustinerkloster ein, wurde Professor in Wittenberg und veröffentlichte 1517 seine 95 Thesen.</li><li><strong>Abraham a Sancta Clara (1644–1709)</strong>: Eigentlich Johann Ulrich Megerle, Augustiner-Barfüßer und gefeierter Wiener Volksprediger.</li><li><strong>David a S. Cajetano Rutschmann (geb. 1726)</strong>: Baute eine astronomische Standuhr mit 32 Zeigern, die 1769 fertig wurde und lange im Wiener Augustinerkloster stand; heute zählt sie zu den bedeutendsten Stücken des Wiener Uhrenmuseums.</li><li><strong>Gregor Mendel (1822–1884)</strong>: Augustiner der Abtei St. Thomas in Brünn; entdeckte 1865 nach jahrelangen Kreuzungsversuchen mit Erbsen die Grundgesetze der Vererbung.</li><li><strong>Prosper Kardinal Grech (1925–2019)</strong>: Maltesischer Augustiner und Bibelwissenschaftler, Mitbegründer und erster Präsident des Patristischen Instituts Augustinianum in Rom.</li></ul></p><p class="card-more" style="display:flex;flex-wrap:wrap;gap:.4rem 1.4rem"><a class="link-arr" href="https://www.augustiner.at/augustinerorden/bedeutende-augustiner/" target="_blank" rel="noopener">Ausführlich auf augustiner.at</a></p></div>
-            <div class="card"><div class="card-title">Augustiner werden</div><div class="card-text">Der Weg in die Gemeinschaft.</div><p class="card-more">Burschen ab 16 Jahren und Männer, die über ein Ordensleben nachdenken, können eine Zeit lang im Kloster mitleben und den Rhythmus von Gebet und Arbeit teilen. Für den Eintritt braucht es die Bereitschaft zur Gottsuche und zum Leben in Gemeinschaft, Matura oder Abitur bzw. eine abgeschlossene Berufsausbildung und ausreichende Gesundheit; aufgenommen werden getaufte, gefirmte und ledige Katholiken.</p><p class="card-more">Das Postulat dauert drei Monate bis zwei Jahre und beginnt mit der Einkleidung; es kann in Wien oder in Zwiesel verbracht werden. Es folgt das zwölfmonatige Noviziat, das mit der zeitlichen Profess endet. Im Juniorat, drei bis fünf Jahre lang, wird die Profess jährlich erneuert, und es bleibt Zeit für Studium und Ausbildung; Studienhaus ist das Augustinerkloster in Wien. Mit der feierlichen Profess bindet sich der Mitbruder lebenslang an den Orden.</p><p class="card-more">Ansprechpartner ist Ausbildungsleiter P. Dominic Sadrawetz OSA: <a href="tel:+4315330947">+43 (0)1 533 09 47</a>, <a class="mail" data-mail="ta.renitsugua|cinimod.p">p(dot)dominic(at)augustiner(dot)at</a>.</p><p class="card-more" style="display:flex;flex-wrap:wrap;gap:.4rem 1.4rem"><a class="link-arr" href="https://www.augustiner-werden.at/" target="_blank" rel="noopener">augustiner-werden.at</a><a class="link-arr" href="https://www.augustiner.at/augustinerorden/wie-werde-ich-augustiner/" target="_blank" rel="noopener">Ausführlich auf augustiner.at</a></p></div>
-          </div>
-          <blockquote class="pane-quote pane-quote-end">„Der erste Zweck eures Zusammenlebens ist, dass ihr einmütig im Haus wohnt und ein Herz und eine Seele seid, auf Gott hin.“<cite>Augustinus, Regel 1,2</cite></blockquote>
-        </div>
-
-        <div class="tab-pane" id="p-vikariat">
-          <div class="s-label">Österreich &amp; Süddeutschland</div>
-          <h2 class="s-title">Das Augustiner-Vikariat Wien</h2>
-          <p class="s-text" style="max-width:52rem;margin-bottom:2.5rem">Das Augustiner-Vikariat Wien umfasst mehrere Niederlassungen und Pfarren in Österreich und Süddeutschland, darunter die Augustinerkirche Wien als bedeutendste.</p>
-          <div class="cards-stack" style="margin-top:2.5rem">
-            <div class="card"><div class="card-title">Leitung</div><div class="card-text">Informationen zur aktuellen Leitung des Vikariats.</div><p class="card-more">Das Vikariat wird von einem Vikar geleitet, der die Niederlassungen in Österreich und Süddeutschland in geistlichen und organisatorischen Fragen vertritt und mit dem Provinzialat des Ordens in Verbindung steht. Anfragen zur Leitung richten Sie an die Pfarrkanzlei der Augustinerkirche.</p></div>
-            <div class="card"><div class="card-title">Leitbild</div><div class="card-text">Gemeinschaft, Liturgie und lebenslange Bildung.</div><p class="card-more">Das Augustiner-Vikariat Wien „Maria Trost“ hat sein Leitbild bei den Pfingsttreffen 2006 und 2007 erarbeitet. Es ist verbindliche Grundlage des Ordenslebens und dient der regelmäßigen Besinnung, allein und in Gemeinschaft.</p><p class="card-more">Die Augustiner verstehen sich als verbindliche Lebensgemeinschaft auf der Grundlage von Regel und Konstitutionen, als Einheit in Vielfalt, getragen von Liturgie und lebenslanger Bildung. Sie wollen das Leben miteinander und mit den Menschen mit einer lebendigen Gottesbeziehung verbinden, wertschätzend miteinander umgehen, Konflikte offen austragen und Ämter als Dienst verstehen, über den jedes Jahr Rechenschaft abgelegt wird.</p><p class="card-more">Nach außen wollen sie Menschen auf der Suche nach dem Sinn ihres Lebens begleiten, unterstützt von haupt- und ehrenamtlichen Laien. Geteiltes, gedeutetes und gefeiertes Leben, Diakonia, Martyria und Leiturgia, machen für sie gemeinsam Menschwerdung aus.</p><p class="card-more" style="display:flex;flex-wrap:wrap;gap:.4rem 1.4rem"><a class="link-arr" href="https://www.augustiner.at/augustiner-vikariat/leitbild/" target="_blank" rel="noopener">Das Leitbild im Wortlaut</a></p></div>
-            <div class="card"><div class="card-title">Geschichte</div><div class="card-text">Von Baden bei Wien 1285 bis zum Vikariat heute.</div><p class="card-more">Schon 1285 entstand in Baden bei Wien das erste österreichische Augustinerkloster, um die Mitte des 14. Jahrhunderts folgten zehn weitere. Nach Verlusten in der Reformationszeit wuchs die Zahl der Konvente im 17. Jahrhundert wieder auf 14. In der josephinischen Zeit blieb der Nachwuchs aus, 1837 starb der letzte Augustiner in Österreich.</p><p class="card-more">Nach dem Zweiten Weltkrieg bildeten die vertriebenen sudetendeutschen Augustiner einen eigenen Ordensverband, zunächst abhängig von der Deutschen Augustiner-Provinz; seit 1951 wirken sie an der Augustinerkirche in Wien. Daraus wurde das Augustiner-Vikariat Wien „Maria Trost“, das direkt dem Generalprior in Rom untersteht. Zu ihm gehören die Klöster St. Augustin in Wien und Maria Trost in Zwiesel im Bayerischen Wald (seit 1962).</p><p class="card-more">Die Mitbrüder wirken in der Pfarr-, Schul- und Lehrlingsseelsorge, im Unterricht, im Studium und in der Ausbildung des Ordensnachwuchses.</p><p class="card-more" style="display:flex;flex-wrap:wrap;gap:.4rem 1.4rem"><a class="link-arr" href="https://www.augustiner.at/augustiner-vikariat/geschichte/" target="_blank" rel="noopener">Ausführlich auf augustiner.at</a></p></div>
-            <div class="card"><div class="card-title">Aus- und Weiterbildung</div><div class="card-text">Formation für den Ordensnachwuchs und theologische Weiterbildung.</div><p class="card-more">Das Vikariat begleitet junge Männer auf dem Weg in die Gemeinschaft durch Postulat, Noviziat und weitere Ausbildungsschritte und ermöglicht den Mitbrüdern fortlaufende theologische und spirituelle Weiterbildung.</p></div>
-          </div>
-        </div>
-
-        <div class="tab-pane" id="p-wien">
-          <h2 class="s-title">Die Augustiner in Wien</h2>
-          <p class="s-text" style="max-width:52rem;margin-bottom:2.5rem">Seit 1327 in Wien präsent, seit 1951 erneut von den Augustinern getragen, verbindet die Gemeinschaft klösterliches Leben mit aktiver Seelsorge und kulturellem Engagement in der Innenstadt.</p>
-          <div class="cards-stack">
-            <div class="card"><div class="card-title">Die Mitbrüder</div><div class="card-text">Wer sind die Augustiner, die heute in Wien wirken?</div><p class="card-more">Der Wiener Konvent besteht heute aus einer kleinen Gemeinschaft von Augustinern, die das klösterliche Leben mit der Seelsorge in der Pfarre St. Augustin und dem Dienst an der Kirchenmusik verbinden. Die Mitbrüder leben nach der Regel des Hl. Augustinus in gemeinsamem Gebet, Mahlzeiten und geistlichem Austausch und stehen den Gläubigen der Pfarre als Ansprechpartner zur Verfügung. Persönliche Begegnungen sind über die Pfarrkanzlei vermittelbar.</p></div>
-          </div>
-
-          <figure class="mitbrueder-foto">
-            <a href="../assets/img/personen/patres/mitbrueder-gruppe.webp" data-lightbox title="Foto in voller Größe öffnen"><img src="../assets/img/personen/patres/mitbrueder-gruppe.webp" alt="Die drei Mitbrüder des Wiener Augustinerklosters im Garten" width="800" height="482" decoding="async"/></a>
-          </figure>
-
-          <div class="people-stack" data-personen="mitbrueder">
-            <div class="person-card-wide">
-              <img src="../assets/img/personen/patres/pater-sadrawetz.webp" alt="P. Mag. Dominic Sadrawetz OSA" loading="lazy" width="480" height="620" decoding="async"/>
-              <div class="person-body">
-                <div class="person-name">P. Mag. Dominic Sadrawetz OSA</div>
-                <div class="person-role">Regionalvikar &amp; Prior des Wiener Augustinerklosters</div>
-                <p class="person-bio">Pater Dominic wurde 1966 in Wasserburg am Inn (Erzbistum München-Freising) geboren. Nach seinem Eintritt in unsere Ordensgemeinschaft 1985 und seinem Noviziat in Deutschland legte er 1988 seine Profess ab und wurde 2000 zum Priester geweiht.</p>
-                <p class="person-bio">P. Dominic war in dieser Zeit mit verschiedenen ordensinternen Aufgaben (Prokurator, Bibliothekar, Schriftleiter von „Kirche am Ort. Mitteilungsblatt der Augustinerkirche Wien" und des „Augustiner-Rundbrief" u. a.) betraut. Seit 2002 leitet er als Moderator die Pfarre St. Georg, Aspersdorf (Niederösterreich), seit 2021 als Pfarrvikar.</p>
-                <p class="person-bio">Mit dem Jahr 2006 wurden P. Dominic im Augustiner-Orden Leitungsaufgaben anvertraut: Seit 2006 leitet er als Prior das Wiener Augustinerkloster, von 2007 bis 2017 war er Regionalvikar des Augustiner-Vikariates Wien. 2011 übernahm er als Prior auch die Leitung des Zwieseler Augustinerklosters sowie die Leitung des Gästehauses der Augustiner in Zwiesel. Für das Augustiner-Vikariat Wien ist er außerdem als Ausbildungsleiter für die Kandidaten, Postulanten und Studenten zuständig sowie auch für die Berufungspastoral verantwortlich. 2015–2016 war er Novizenmeister, 2017–2025 Vikariatsrat und Sekretär des Augustiner-Vikariates Wien.</p>
-                <p class="person-bio">2008 wurde P. Dominic bei der Investitur der österreichischen Statthalterei in Frauenkirchen (Burgenland) in den Ritterorden vom Heiligen Grab zu Jerusalem aufgenommen; 2017–2025 war er Prior der Komturei Wien dieses Ritterordens. P. Dominic arbeitet zudem in der City-Seelsorge an der Augustinerkirche Wien mit und begleitet seit 2006 als Seelsorger die Mitglieder der Akademisch Katholischen Verbindung Aggstein zu Wien. Mit 28. August 2025 wurde er erneut zum Regionalvikar des Augustiner-Vikariats Wien ernannt und zum Firmspender für die Erzdiözese Wien.</p>
-              </div>
-            </div>
-            <div class="person-card-wide">
-              <img src="../assets/img/personen/patres/pater-schloegl.webp" alt="P. Mag. Matthias Schlögl OSA" loading="lazy" width="480" height="620" decoding="async"/>
-              <div class="person-body">
-                <div class="person-name">P. Mag. Matthias Schlögl OSA</div>
-                <div class="person-role">Pfarrer von St. Augustin &amp; Dechant der Inneren Stadt</div>
-                <p class="person-bio">Pater Matthias wurde 1972 in Wien geboren und trat nach einer Floristenlehre 1992 in unseren Orden ein. Nach seinem Noviziat in Italien legte er 1995 seine Profess ab und wurde 2010 zum Priester geweiht.</p>
-                <p class="person-bio">P. Matthias war von 2005 bis 2017 Sekretär des Augustiner-Vikariates Wien, von 2009 bis 2017 auch Vikariatsrat. Im Wiener Augustinerkloster war er von 2011 bis 2017 Subprior. Von 2017 bis 2025 leitete er als Regionalvikar das Augustiner-Vikariat Wien.</p>
-                <p class="person-bio">Seit 2011 ist P. Matthias Pfarrer der Pfarre St. Augustin, Wien 1. Bereits 2008 übernahm er die Verantwortung für die Kirchenmusik von St. Augustin, die Schriftleitung unseres Mitteilungsblatts „Kirche am Ort" und die Öffentlichkeitsarbeit. Seit 2011 unterrichtet er als Berufsschullehrer an der SPAR Akademie. Mit September 2020 hat Kardinal Schönborn P. Matthias zum Firmspender für die Erzdiözese Wien ernannt. Mit 1. Juni 2024 wurde er zum Dechant des Wiener Innenstadt-Dekanats ernannt.</p>
-              </div>
-            </div>
-            <div class="person-card-wide">
-              <img src="../assets/img/personen/patres/pater-schachtner.webp" alt="P. MMag. Nikolaus Schachtner OSA" loading="lazy" width="480" height="620" decoding="async"/>
-              <div class="person-body">
-                <div class="person-name">P. MMag. Nikolaus Schachtner OSA</div>
-                <div class="person-role">Prokurator des Klosters &amp; Vikariatsprokurator</div>
-                <p class="person-bio">Pater Nikolaus wurde 1971 in Wien geboren und wurde als Kalasantiner 1999 zum Priester geweiht. Im Jahre 2003 trat er von der Kalasantiner-Kongregation in unseren Orden über und legte im Jahr 2006 seine Feierliche Profess auf unsere Gemeinschaft ab.</p>
-                <p class="person-bio">P. Nikolaus unterrichtet seit 1998 in zwei Wiener Berufsschulen Religion, Kulturpflege, Politische Bildung und Deutsch &amp; Kommunikation.</p>
-                <p class="person-bio">Seit 2006 ist er als Prokurator für die finanziellen Angelegenheiten des Konventes, seit 2009 als Vikariatsprokurator für die Finanzen des Augustiner-Vikariates zuständig. Seit 2011 ist er Vikariatsrat und Schriftleiter vom „Augustiner-Rundbrief". P. Nikolaus arbeitet auch in der City-Seelsorge an der Augustinerkirche Wien mit.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="cards-stack" style="margin-top:2rem">
-            <div class="card"><div class="card-title">Aufgabengebiete</div><div class="card-text">Seelsorge, Bildung und Kirchenmusik.</div><p class="card-more">Neben der täglichen Pfarrseelsorge — Gottesdienste, Sakramentenspendung, Beichte und Begleitung in Lebenskrisen — engagieren sich die Augustiner in Wien in der Trägerschaft der Kirchenmusik von St. Augustin, in der Betreuung der Herzgruft und Führungen sowie im ökumenischen und kulturellen Austausch der Inneren Stadt.</p></div>
-            <div class="card"><div class="card-title">Geschichte in Wien</div><div class="card-text">Von der Hofpfarrkirche bis zur Stadtpfarre.</div><p class="card-more">Von 1327 bis 1836 wirkten Augustiner an der Kirche, die von 1634 bis 1918 Hofpfarrkirche der Habsburger war. Nach der Aufhebung des Klosters 1836 betreuten 115 Jahre lang Diözesanpriester die Kirche, bis 1951 aus dem Sudetenland vertriebene Augustiner Kirche und Konvent wieder übernahmen — eine Geschichte ausführlich nachzulesen unter <a class="link-arr" href="chronik.html#p-geschichte">Geschichte</a>.</p></div>
-          </div>
-        </div>
-
-
-        <div class="tab-pane" id="p-links">
-          <h2 class="s-title">Links</h2>
-          <p class="s-text">Weiterführende Seiten zum hl. Augustinus, zum Augustinerorden und zur Kirche in Österreich.</p>
-          <h3 class="pane-sub">Über den hl. Augustinus</h3>
-          <ul class="link-list"><li><a href="https://www.augustinus.de/" target="_blank" rel="noopener">Zentrum für Augustinus-Forschung</a><span>www.augustinus.de</span></li><li><a href="https://de.wikipedia.org/wiki/Augustinus_von_Hippo" target="_blank" rel="noopener">Wikipedia: Augustinus von Hippo</a><span>de.wikipedia.org/wiki/Augustinus_von_Hippo</span></li><li><a href="https://www.heiligenlexikon.de/BiographienA/Augustinus.html" target="_blank" rel="noopener">Ökumenisches Heiligenlexikon</a><span>www.heiligenlexikon.de/BiographienA/Augustinus.html</span></li></ul>
-          <h3 class="pane-sub">Der Augustinerorden</h3>
-          <ul class="link-list"><li><a href="https://www.augustinians.net/" target="_blank" rel="noopener">Generalkurie des Ordens in Rom</a><span>www.augustinians.net</span></li><li><a href="https://www.augustiner.at/" target="_blank" rel="noopener">Augustiner in Österreich und Süddeutschland</a><span>www.augustiner.at</span></li><li><a href="https://www.augustiner-werden.at/" target="_blank" rel="noopener">Augustiner werden</a><span>www.augustiner-werden.at</span></li><li><a href="https://www.augustiner.de/" target="_blank" rel="noopener">Deutsche Augustiner-Provinz</a><span>www.augustiner.de</span></li><li><a href="https://www.augustiner-zwiesel.de/" target="_blank" rel="noopener">Augustinerkloster Zwiesel</a><span>www.augustiner-zwiesel.de</span></li><li><a href="https://www.gaestehaus-zwiesel.de/" target="_blank" rel="noopener">Gästehaus der Augustiner in Zwiesel</a><span>www.gaestehaus-zwiesel.de</span></li></ul>
-          <h3 class="pane-sub">St. Augustin und Aspersdorf</h3>
-          <ul class="link-list"><li><a href="https://www.aspersdorf.at/" target="_blank" rel="noopener">Pfarre St. Georg, Aspersdorf</a><span>www.aspersdorf.at</span></li></ul>
-          <h3 class="pane-sub">Kirche in Österreich</h3>
-          <ul class="link-list"><li><a href="https://www.katholisch.at/" target="_blank" rel="noopener">Katholische Kirche in Österreich</a><span>www.katholisch.at</span></li><li><a href="https://www.erzdioezese-wien.at/" target="_blank" rel="noopener">Erzdiözese Wien</a><span>www.erzdioezese-wien.at</span></li><li><a href="https://www.kathpress.at/" target="_blank" rel="noopener">Kathpress</a><span>www.kathpress.at</span></li><li><a href="https://www.ordensgemeinschaften.at/" target="_blank" rel="noopener">Ordensgemeinschaften Österreich</a><span>www.ordensgemeinschaften.at</span></li><li><a href="https://www.orden.de/" target="_blank" rel="noopener">Ordensgemeinschaften in Deutschland</a><span>www.orden.de</span></li><li><a href="https://www.oessh.at/" target="_blank" rel="noopener">Ritterorden vom Heiligen Grab zu Jerusalem, Statthalterei Österreich</a><span>www.oessh.at</span></li></ul>
-          <h3 class="pane-sub">Schutz vor Gewalt und Missbrauch</h3>
-          <ul class="link-list"><li><a href="https://www.katholisch.at/pages/ombudsstellen/ombudsstellen" target="_blank" rel="noopener">Ombudsstellen der katholischen Kirche</a><span>www.katholisch.at/pages/ombudsstellen/ombudsstellen</span></li></ul>
-          <h3 class="pane-sub">Studentenverbindungen</h3>
-          <ul class="link-list"><li><a href="https://www.aggstein.wien/" target="_blank" rel="noopener">AKV Aggstein zu Wien</a><span>www.aggstein.wien</span></li><li><a href="https://www.kartellverband.org/" target="_blank" rel="noopener">Kartellverband (ÖKV)</a><span>www.kartellverband.org</span></li></ul>
-        </div>
       </div>
     </div>
   </div>

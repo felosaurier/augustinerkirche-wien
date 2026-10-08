@@ -14,7 +14,7 @@
   const { HD, $, esc, icon } = A;
   const PATH = 'data/personen.json';
   const GROUPS = {
-    mitbrueder: { label: 'Mitbrüder', page: 'pages/chronik.html#p-wien', dir: 'patres' },
+    mitbrueder: { label: 'Mitbrüder', page: 'pages/augustiner.html#p-wien', dir: 'patres' },
     leitung: { label: 'Leitung', page: 'pages/musik.html#p-leitung', dir: 'dirigenten' },
     gastdirigenten: { label: 'Gastdirigenten', page: 'pages/musik.html#p-gastdirigenten', dir: 'dirigenten' },
     organisten: { label: 'Organisten', page: 'pages/musik.html#p-organisten', dir: 'organisten' }

@@ -70,7 +70,7 @@
       ['pages/chronik.html#p-geschichte', 'Geschichte', 'Zur Geschichte'],
       ['pages/chronik.html#p-herzgruft', 'Herzgruft', 'Zur Herzgruft'],
       ['pages/chronik.html#p-fuehrungen', 'Führungen', 'Zu den Führungen'],
-      ['pages/chronik.html#p-wien', 'Die Augustiner in Wien', 'Zu den Augustinern in Wien']]],
+      ['pages/augustiner.html#p-wien', 'Die Augustiner in Wien', 'Zu den Augustinern in Wien']]],
     ['Weitere', [
       ['pages/aspersdorf.html', 'Pfarre Aspersdorf', 'Nach Aspersdorf'],
       ['pages/archiv.html', 'Archiv der Neuigkeiten', 'Zum Archiv'],

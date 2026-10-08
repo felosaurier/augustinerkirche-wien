@@ -585,3 +585,11 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-pgr-h .n{font-family:var(--sans);font-size:.85rem;color:var(--text-light);margin-left:.4rem}
 .adm-pgr-photo{width:2.8rem;height:2.8rem;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold);font-family:var(--serif);font-size:1.25rem;justify-self:center}
 .adm-pgr-photo img{width:100%;height:100%;object-fit:cover;object-position:top}
+
+/* Kirchenrundgang: Bild in der Liste */
+.adm-row-open.adm-rg{grid-template-columns:6rem minmax(0,1fr);gap:1rem;min-height:60px}
+.adm-rg .adm-thumb{width:6rem}
+.adm-rg-pan{width:100%;max-width:26rem;overflow:hidden;background:var(--bg-warm);border:1px solid var(--line);cursor:grab;touch-action:none;user-select:none}
+.adm-rg-pan.dragging{cursor:grabbing}
+.adm-rg-pan:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.adm-rg-pan img{display:block;width:100%;height:100%;object-fit:cover}

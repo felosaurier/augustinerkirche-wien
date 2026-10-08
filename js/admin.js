@@ -876,6 +876,7 @@
     { label: 'Pfarre & Kloster', icon: 'users', href: 'gottesdienste.html', sub: [
       ['gottesdienste.html', 'Gottesdienste & Kanzlei'],
       ['runden.html', 'Runden'],
+      ['rundgang.html', 'Kirchenrundgang'],
       ['pgr.html', 'Pfarrgemeinderat'],
       ['personen.html?bereich=kloster', 'Mitbrüder']
     ] }
