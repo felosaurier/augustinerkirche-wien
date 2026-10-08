@@ -868,6 +868,7 @@
     { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [
       ['hochaemter.html', 'Hochämter'],
       ['solisten.html', 'Solisten'],
+      ['paten.html', 'Paten'],
       ['personen.html?bereich=musik', 'Leitung & Organisten'],
       ['repertoire.html', 'Repertoire']
     ] },

@@ -553,3 +553,23 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
   .adm-strength span{border:1px solid CanvasText}
 }
 .adm-blk-cal{margin-bottom:.8rem}
+/* Paten: Nummer statt Datum */
+.adm-row-open.adm-pate{grid-template-columns:3.4rem minmax(0,1fr);min-height:60px}
+.adm-pate-n{font-family:var(--serif);font-size:1.35rem;font-weight:500;color:var(--gold);text-align:center;font-variant-numeric:tabular-nums}
+/* Kompakte Liste in Spalten (Paten): schmale Zeilen, nur Symbole */
+/* Spaltenweise: 1, 2, 3 … untereinander, dann weiter in der naechsten Spalte */
+.adm-rows-compact{display:block;columns:21rem;column-gap:1.2rem;border:none;background:none}
+.adm-rows-compact .adm-row{break-inside:avoid;background:var(--white);border:1px solid var(--line);margin-top:-1px}
+.adm-rows-compact .adm-row:first-child{margin-top:0}
+.adm-rows-compact .adm-row-open.adm-pate{grid-template-columns:2.4rem minmax(0,1fr);gap:.6rem;min-height:0;padding:.45rem .6rem}
+.adm-rows-compact .adm-pate-n{font-size:1rem}
+.adm-rows-compact .adm-row-title{font-family:var(--sans);font-size:.95rem;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm-rows-compact .adm-row-actions{gap:0;padding:0 .3rem 0 0}
+.adm-rows-compact .adm-act{min-height:34px;padding:0 .4rem}
+/* Maus: Symbole erst beim Darueberfahren oder mit der Tastatur; Touch: immer */
+@media(hover:hover) and (pointer:fine){
+  .adm-rows-compact .adm-row{position:relative;grid-template-columns:minmax(0,1fr)}
+  .adm-rows-compact .adm-row-actions{position:absolute;top:0;right:0;bottom:0;align-items:center;padding-left:1.2rem;
+    background:linear-gradient(90deg,transparent,#fffdf8 1.2rem);opacity:0;pointer-events:none;transition:opacity .15s}
+  .adm-rows-compact .adm-row:hover .adm-row-actions,.adm-rows-compact .adm-row:focus-within .adm-row-actions{opacity:1;pointer-events:auto}
+}

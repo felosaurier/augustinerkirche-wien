@@ -11,6 +11,8 @@
      Oeffnungszeiten der Pfarrkanzlei ([data-inhalt="kanzlei"])
    - data/repertoire.json: Repertoire des Chores mit Suche
      ([data-inhalt="repertoire"])
+   - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
+     ([data-inhalt="paten"], [data-inhalt="ehrenpaten"])
    Der Inhalt im HTML bleibt als Rueckfall stehen, falls eine Datei
    nicht geladen werden kann.
    Benoetigt js/hochaemter-data.js (Escaping, sichere Links, Freitext).
@@ -243,6 +245,21 @@
   /* ---------- Repertoire des Chores ---------- */
   const collator = new Intl.Collator('de');
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  /* ---------- Paten der Kirchenmusik ---------- */
+  /* "A, B und C" */
+  const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} und ${xs[xs.length - 1]}`);
+  async function paten() {
+    const list = document.querySelector('[data-inhalt="paten"]');
+    const ehren = document.querySelector('[data-inhalt="ehrenpaten"]');
+    if (!list && !ehren) return;
+    const data = await load('paten.json');
+    if (list) list.innerHTML = (data.paten || []).map((n) => `<li>${esc(n)}</li>`).join('');
+    if (ehren) {
+      const e = data.ehrenpaten || [];
+      ehren.textContent = e.length ? ` ${e.length === 1 ? 'Ehrenpate ist' : 'Ehrenpaten sind'} ${andList(e)}.` : '';
+    }
+  }
+
   async function repertoire() {
     const host = document.querySelector('[data-inhalt="repertoire"]');
     if (!host) return;
@@ -283,7 +300,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
-    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire]) {
+    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     }
   });

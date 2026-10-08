@@ -61,6 +61,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
 | **Personen** | Mitbrüder, Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto, Aufgabe und Text |
 | **Solisten** | Liste für Kirchenmusik → Solisten: Foto (wird quadratisch zugeschnitten, Ausschnitt verschiebbar), Stimmlage, verstorben |
+| **Paten** | Paten und Ehrenpaten für Kirchenmusik → Patenschaft: hinzufügen (am Ende oder ganz oben), ändern, verschieben, entfernen; die Paten erscheinen nummeriert in dieser Reihenfolge |
 | **Repertoire** | Repertoire des Chores nach Komponisten, mit Werken und Hinweisen (z. B. Uraufführungen in der Augustinerkirche) |
 | **Zugänge** | Nur für Admins: Zugang anlegen, Rolle, Name oder Passwort ändern, entfernen |
 
@@ -74,7 +75,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 
 **Sicherheit:** Die Zugänge stehen in `admin/zugaenge.json`, Passwörter nur als Prüfsumme (PBKDF2-SHA256 mit Salz, 600 000 Runden), nie im Klartext. Nach fünf falschen Versuchen gibt es eine Wartezeit, eine Sitzung endet nach vier Stunden ohne Aktivität. Weil die Website statisch ist, prüft der Browser das Passwort, nicht ein Server: Die Anmeldung hält Unbefugte von der Verwaltung fern, ist aber kein Ersatz für einen Server-Schutz. Ändern lässt sich die öffentliche Website ohnehin nur über den Projektordner. Das gilt auch für die Rollen: Sie steuern, was die Verwaltung anzeigt, ersetzen aber keine Rechte am Server. Wer zusätzlich absichern möchte, schützt den Ordner `admin/` am Webserver mit einem Passwort (z. B. `.htaccess` bei Apache) oder lädt ihn gar nicht erst hoch.
 
-**Inhalte aus Datendateien:** Gottesdienste, Runden, Personen, Kontakt und Repertoire stehen in `data/*.json` und werden von `js/inhalte.js` auf die Seiten gezeichnet. Der Inhalt im HTML bleibt als Rückfall stehen, falls eine Datei einmal nicht geladen werden kann; maßgeblich sind die Datendateien.
+**Inhalte aus Datendateien:** Gottesdienste, Runden, Personen, Kontakt, Repertoire und Paten stehen in `data/*.json` und werden von `js/inhalte.js` auf die Seiten gezeichnet. Der Inhalt im HTML bleibt als Rückfall stehen, falls eine Datei einmal nicht geladen werden kann; maßgeblich sind die Datendateien.
 
 ## Hochämter pflegen
 
@@ -162,6 +163,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   hochaemter.html             Hochämter pflegen
   neuigkeiten.html            Neuigkeiten und Plakate pflegen
   termine.html                Eigene Termine für den Kalender pflegen
+  paten.html                  Paten der Kirchenmusik pflegen
   solisten.html               Solisten pflegen
   gottesdienste.html          Wochenplan, Pfarrkanzlei und Kontakt pflegen
   runden.html                 Runden pflegen
@@ -189,6 +191,7 @@ js/
   admin-hochaemter.js         Hochämter pflegen, Jahreswechsel
   admin-neuigkeiten.js        Neuigkeiten pflegen
   admin-termine.js            Termine für den Kalender pflegen
+  admin-paten.js              Paten der Kirchenmusik pflegen
   admin-solisten.js           Solisten pflegen
   admin-gottesdienste.js      Wochenplan, Pfarrkanzlei und Kontakt
   admin-runden.js             Runden pflegen
@@ -202,6 +205,7 @@ data/
   archiv/                     Hochamt-Archiv 2015–2025: hochaemter-JJJJ.csv je Jahr, jahre.json
   news.csv                    Neuigkeiten und Plakate
   termine.json                Eigene Termine für den Kalender (Ausflüge, Feste, Vorträge …)
+  paten.json                  Paten und Ehrenpaten der Kirchenmusik
   solisten.json               Solistinnen und Solisten mit Stimmlage
   gottesdienste.json          Wochenplan der Gottesdienste
   runden.json                 Runden: Übersicht und Inhalt der Seiten
