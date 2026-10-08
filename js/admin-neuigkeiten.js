@@ -258,11 +258,12 @@
     render();
   }
 
-  /* Wo steht die Meldung? Startseite, abgelaufen oder (zu alt) im Archiv */
+  /* Wo steht die Meldung? Startseite (abgelaufene nur zum Auffuellen, unten),
+     abgelaufen oder (zu alt) im Archiv */
   function placeOf(e, home) {
-    if (home.has(e)) return 'home';
-    const until = HD.isoDate(e.Bis);
-    return until && until < A.isoToday() ? 'expired' : 'archive';
+    const expired = A.newsExpired(e);
+    if (home.has(e)) return expired ? 'home-expired' : 'home';
+    return expired ? 'expired' : 'archive';
   }
   function rowHTML(e, i, home) {
     const src = A.imageUrl(imgOf(e));
@@ -271,6 +272,7 @@
       : '<span class="adm-thumb none"><img src="../assets/logo-gold.png" alt=""/></span>';
     const place = placeOf(e, home);
     const badge = place === 'home' ? '<span class="adm-badge on">Startseite</span>'
+      : place === 'home-expired' ? '<span class="adm-badge on" title="Abgelaufen, füllt die Startseite unten auf, solange es weniger als 6 aktive Meldungen gibt">Startseite · abgelaufen</span>'
       : place === 'expired' ? '<span class="adm-badge">Abgelaufen · Archiv</span>'
         : `<span class="adm-badge">Archiv ${esc(e.Datum.split('.')[2])}</span>`;
     return `<li class="adm-row" data-key="${esc(newsId(e))}">` +

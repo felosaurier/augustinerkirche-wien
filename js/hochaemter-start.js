@@ -19,7 +19,7 @@
         `<span class="hs-yr">${d.getFullYear()}</span>` +
       '</div>' +
       `<div class="hs-main"><div class="hs-piece">${HD.esc(e.piece || e.type)}</div>` +
-        `<div class="hs-meta">${HD.WEEKDAYS[d.getDay()]} · ${HD.esc(e.type)}</div></div>` +
+        `<div class="hs-meta">${HD.WEEKDAYS[d.getDay()]}, ${HD.esc(e.type)}</div></div>` +
       `<div class="hs-time">${HD.esc(e.time)}</div>` +
     '</a>';
   }

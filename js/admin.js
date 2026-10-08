@@ -833,16 +833,21 @@
       .sort((a, b) => HD.isoDate(b.Datum).localeCompare(HD.isoDate(a.Datum)));
   }
 
-  /* Welche Meldungen stehen auf der Startseite? Die 6 neuesten, deren
-     "Bis"-Datum (einschliesslich) noch nicht vorbei ist; ohne Datum gelten
-     sie weiter. Gleiche Regel wie in js/news.js. Liefert ein Set. */
+  /* Welche Meldungen stehen auf der Startseite? Zuerst die neuesten, deren
+     "Bis"-Datum (einschliesslich) noch nicht vorbei ist (ohne Datum gelten
+     sie weiter); reicht das nicht fuer 6, wird mit den neuesten abgelaufenen
+     aufgefuellt, die dann unten stehen. Gleiche Regel wie in js/news.js.
+     Liefert ein Set. */
   const NEWS_HOME = 6;
+  function newsExpired(e, today = isoToday()) {
+    const until = HD.isoDate(e.Bis);
+    return Boolean(until) && until < today;
+  }
   function newsOnHome(list) {
     const today = isoToday();
-    return new Set(list.filter((e) => {
-      const until = HD.isoDate(e.Bis);
-      return !until || until >= today;
-    }).slice(0, NEWS_HOME));
+    const live = list.filter((e) => !newsExpired(e, today));
+    const past = list.filter((e) => newsExpired(e, today));
+    return new Set([...live, ...past].slice(0, NEWS_HOME));
   }
 
   /* Was fehlt bei einem Hochamt noch? Gilt fuer Hochaemter, Requiem und
@@ -1006,7 +1011,7 @@
     folder, readText, fetchText, saveFile, saveJSON, hasUnsaved, imageUrl, fileName, dirName,
     /* Oberflaeche */
     toast, confirmBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
-    listEditor, toWebp, wireDrop, log, recentLog, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome,
+    listEditor, toWebp, wireDrop, log, recentLog, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
     /* Datum */
     isoToday, isoOf, fmtDate, fmtShort
   };

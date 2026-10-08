@@ -14,7 +14,7 @@
   const FALLBACK = '<p class="s-text">Die Termine konnten nicht geladen werden. Das vollständige Programm finden Sie unter <a class="link-arr" href="https://hochamt.augustiner.at">hochamt.augustiner.at</a>.</p>';
 
   const shortDate = (d) => `${d.getDate()}. ${HD.MONTHS[d.getMonth()]} ${d.getFullYear()}`;
-  const longDate = (e) => `${HD.WEEKDAYS[e.dateObj.getDay()]}, ${shortDate(e.dateObj)} · ${e.time} Uhr`;
+  const longDate = (e) => `${HD.WEEKDAYS[e.dateObj.getDay()]}, ${shortDate(e.dateObj)}, ${e.time} Uhr`;
 
   /* Eine Zeile der Besetzung; leere Felder erscheinen gar nicht */
   function row(label, value) {
@@ -34,7 +34,7 @@
   }
 
   function renderNotFound(body) {
-    qs('#hd-title').innerHTML = 'Hochamt nicht <em>gefunden</em>';
+    qs('#hd-title').innerHTML = 'Hochamt nicht gefunden';
     body.innerHTML = '<p class="s-text">Dieser Termin ist nicht (mehr) eingetragen.</p>' +
       '<p style="margin-top:1.5rem"><a class="btn btn-dark" href="musik.html#p-hochaemter">Alle Hochämter</a></p>';
   }
@@ -53,7 +53,7 @@
     document.title = `${e.piece || e.type} — ${e.type} — Augustinerkirche Wien`;
     qs('#hd-type').textContent = e.type;
     qs('#hd-title').textContent = e.piece || e.type;
-    qs('#hd-when').textContent = `${longDate(e)} · ${e.location}`;
+    qs('#hd-when').textContent = `${longDate(e)}, ${e.location}`;
 
     const rows =
       row('Zelebrant', e.celebrant) +
@@ -66,9 +66,7 @@
       row('Hinweis', e.note);
 
     body.innerHTML =
-      '<div class="s-label">Programm &amp; Besetzung</div>' +
-      '<h2 class="s-title">Musikalische <em>Gestaltung</em></h2>' +
-      '<div class="divider-g"></div>' +
+      '<h2 class="s-title">Musikalische Gestaltung</h2>' +
       (rows
         ? `<div class="hd-grid">${rows}</div>`
         : '<p class="s-text">Die Mitwirkenden und das genaue Programm werden noch bekannt gegeben.</p>') +

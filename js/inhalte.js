@@ -98,7 +98,7 @@
   }
   function kontaktHTML(k) {
     const rows = [];
-    if (k.email) rows.push(['E-Mail', `<a href="mailto:${esc(k.email)}">${esc(k.email)}</a>`]);
+    if (k.email) rows.push(['E-Mail', HD.mailHTML(k.email)]);
     if (k.telefon) rows.push(['Telefon', `<a href="${esc(HD.telHref(k.telefon))}">${esc(k.telefon)}</a>`]);
     if (k.anschrift) rows.push(['Anschrift', esc(k.anschrift), ' kontakt-hours']);
     return '<div class="kontakt-card">' +
@@ -128,7 +128,7 @@
     const back = `<div class="runde-back"><a class="link-arr" href="${esc(url('pages/gottesdienste.html#p-runden'))}">Zurück zu Runden in St. Augustin</a></div>`;
     if (!r) {
       if (main.dataset.runde) return;   /* feste Seite: Inhalt aus dem HTML behalten */
-      hero.innerHTML = '<div class="ph-tag">Runden in St. Augustin</div><h1 class="ph-title">Nicht <em>gefunden</em></h1>';
+      hero.innerHTML = '<div class="ph-tag">Runden in St. Augustin</div><h1 class="ph-title">Nicht gefunden</h1>';
       layout.className = 'runde-layout runde-single';
       layout.innerHTML = `<div class="runde-main"><p class="bio-p">Diese Runde gibt es nicht oder nicht mehr.</p>${back}</div>`;
       return;
@@ -199,7 +199,7 @@
           (k.eingang ? `<br><span class="cs-note">${esc(k.eingang)}</span>` : '') + '</div></div>' +
         `<div><div class="cs-label">Telefon</div><div class="cs-val">${(k.telefon || []).map((t) =>
           `<a href="${esc(HD.telHref(t.nummer))}">${esc(t.nummer)}</a>${t.bezeichnung ? ` <span class="cs-note">${esc(t.bezeichnung)}</span>` : ''}`).join('<br>')}</div></div>` +
-        `<div><div class="cs-label">E-Mail</div><div class="cs-val"><a href="mailto:${esc(k.email)}">${esc(k.email)}</a></div></div>` +
+        `<div><div class="cs-label">E-Mail</div><div class="cs-val">${HD.mailHTML(k.email)}</div></div>` +
         `<div><div class="cs-label">Pfarrkanzlei</div><div class="cs-val cs-hours">${hours.map((h) =>
           `<span>${esc(h.tage)}</span><span>${esc(h.zeit)}</span>`).join('')}</div></div>`;
     }

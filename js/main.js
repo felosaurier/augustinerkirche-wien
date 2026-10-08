@@ -194,6 +194,8 @@
     const path = location.pathname.replace(/\/+$/, '');
     const current = path.split('/').pop() || 'index.html';
     const activePane = qs('.tab-pane.active');
+    /* Startseite: Sprungmarken wie index.html#pfarre machen keinen Bereich zum aktuellen */
+    if (current === 'index.html') return;
     for (const a of qsa('.mega a, .mob-sub')) {
       const [href, hash] = (a.getAttribute('href') || '').split('#');
       const page = href.split('/').pop();
@@ -272,12 +274,31 @@
     });
   }
 
+  /* ---------- E-Mail-Adressen entschluesseln ----------
+     Gegenstueck zu HochamtData.mailHTML: aus data-mail wird ein normaler
+     mailto-Link. Auch fuer Inhalte, die spaeter nachgeladen werden
+     (Kontaktleiste, Runden, Personen, Fenster der Neuigkeiten). */
+  function decodeMail() {
+    for (const a of qsa('a.mail[data-mail]')) {
+      const addr = [...a.dataset.mail.replace('|', '@')].reverse().join('');
+      const subject = a.dataset.subject;
+      a.href = `mailto:${addr}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
+      a.textContent = addr;
+      a.removeAttribute('data-mail');
+    }
+  }
+  function initMail() {
+    decodeMail();
+    new MutationObserver(decodeMail).observe(document.body, { childList: true, subtree: true });
+  }
+
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', () => {
     initDropdowns();
     initMobileNav();
     initSidebarTabs();
     initSakrChips();
+    initMail();
     markCurrentNav();
     initAttributeFilter('.week-filter-btn[data-filter]', '.week-row', 'day');
 

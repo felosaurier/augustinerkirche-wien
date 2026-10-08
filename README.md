@@ -108,7 +108,7 @@ Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine
 | Spalte | Inhalt |
 |---|---|
 | Datum | Veröffentlichungsdatum, TT.MM.JJJJ (bestimmt die Reihenfolge) |
-| Bis | Letzter Tag auf der Startseite, TT.MM.JJJJ; danach steht die Meldung im Archiv. In der Verwaltung Pflichtfeld; leer = ohne Ende |
+| Bis | Letzter Tag als aktive Meldung, TT.MM.JJJJ; danach rückt sie auf der Startseite nach unten bzw. ins Archiv. In der Verwaltung Pflichtfeld; leer = ohne Ende |
 | Kategorie | z. B. Kirchenmusik, Konzert, Pfarrleben, Hochamt |
 | Titel, Kurztext | erscheinen auf der Karte |
 | Infos | Angaben im Fenster als `Bezeichnung: Wert`, mehrere mit <code>&#124;</code> trennen (z. B. `Zeit: 19:30 Uhr`) |
@@ -120,7 +120,7 @@ Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine
 
 **Am einfachsten in der [Verwaltung](#verwaltung) unter „Neuigkeiten“:** Formular für Titel, Kurztext, Infos, Beschreibung, Link und Bild mit Vorschau der Karte, dazu eine Liste aller Meldungen zum Bearbeiten und Löschen. Mit verbundenem Projektordner werden `news.csv` und das Bild (automatisch im richtigen Jahresordner, in voller Größe) direkt gespeichert, sonst gibt es Downloads mit Angabe, wohin die Dateien gehören.
 
-- **Startseite:** zeigt die **6 neuesten** Meldungen, deren Enddatum („Bis“) noch nicht vorbei ist. Ein Klick öffnet ein Fenster mit Plakat, Infos und Details.
+- **Startseite:** zeigt immer **6 Meldungen**: zuerst die neuesten, deren Enddatum („Bis“) noch nicht vorbei ist; gibt es weniger als 6 davon, wird unten mit den neuesten abgelaufenen aufgefüllt (in der Verwaltung als „Startseite · abgelaufen“ markiert). Zuerst sind nur die 3 neuesten zu sehen, ein Knopf klappt die übrigen auf. Ein Klick öffnet ein Fenster mit Plakat, Infos und Details.
 - **Archiv** (`pages/archiv.html`): ältere und abgelaufene Meldungen wandern **automatisch** dorthin und sind **nach Jahren** geordnet.
 - Jede Meldung hat einen eigenen Link, z. B. `index.html?news=…`, der das Fenster direkt öffnet.
 - **Neues Plakat:** Bild als WebP in den **Jahresordner** legen, passend zum Datum der Meldung: Plakate von 2026 nach `assets/img/news/2026/`, Plakate von 2027 nach `assets/img/news/2027/` usw. Dann eine Zeile in `news.csv` ergänzen und dort den Pfad eintragen, z. B. `assets/img/news/2026/bibelpur-2026-27.webp`. Ein Bild reicht, die Vorschau wird automatisch zugeschnitten.
@@ -176,6 +176,7 @@ js/
   lightbox.js                 Plakate vergrößern (Hintergrund unscharf)
   hochamt-detail.js           Detailseite eines Hochamts
   solisten.js                 Solistenliste
+  hoerproben.js               Hörproben im CD-Katalog (immer nur eine Probe gleichzeitig)
   admin.js                    Verwaltung: Anmeldung, Kopfleiste, Projektordner, Speichern, Fenster
   admin-anmeldung.js          Anmeldung und Ersteinrichtung
   admin-uebersicht.js         Übersicht
@@ -188,7 +189,7 @@ js/
   admin-repertoire.js         Repertoire pflegen
   admin-zugaenge.js           Zugänge und Rollen verwalten
   inhalte.js                  Zeichnet Gottesdienste, Runden, Personen, Kontakt und Repertoire aus data/
-  instagram.js                Instagram-Bereich mit Fallback
+  instagram.js                Instagram-Bereich mit Fallback (derzeit nicht auf der Startseite eingebunden)
 data/
   hochaemter.csv              Hochamt-Termine ab dem laufenden Jahr inkl. Mitwirkende
   archiv/                     Hochamt-Archiv 2015–2025: hochaemter-JJJJ.csv je Jahr, jahre.json
@@ -201,6 +202,8 @@ data/
   repertoire.json             Repertoire des Chores
 assets/
   logo.png, logo-gold.png     Logo (grün und golden), Favicons, Zierlinie
+  audio/cds/                  Hörproben zu den CDs (MP3, von hochamt.augustiner.at)
+  programme/                  Kirchenmusik-Programmhefte 2008–2018 (PDF)
   img/
     kirche/                   Außen- und Innenansichten, Altäre, Loretokapelle, Titelbilder
     orgeln/                   Rieger- und Reil-Orgel
@@ -213,24 +216,25 @@ assets/
       historisch/             Hl. Augustinus
     runden/                   Bilder der Pfarrgruppen
     aspersdorf/               Pfarrkirche St. Georg
+    cds/                      CD-Cover (WebP, 400 Pixel)
     news/2026/, 2027/ …       Plakate der Neuigkeiten, je Jahr ein Ordner
 ```
 
 Alle Pfade sind **relativ**, die Seite funktioniert daher in jedem Unterverzeichnis eines Webservers.
 
-**Sicherheit:** Jede Seite trägt im `<head>` eine Content-Security-Policy (nur eigene Skripte, keine Inline-Skripte). Inhalte aus den Tabellen werden vor der Ausgabe escaped, Links und Bildpfade nur mit `http(s)`, `mailto` oder als relativer Pfad übernommen. Wird später ein Instagram-Endpunkt in `js/instagram.js` eingetragen, muss seine Adresse in der Richtlinie unter `connect-src` ergänzt werden.
+**Sicherheit:** Jede Seite trägt im `<head>` eine Content-Security-Policy (nur eigene Skripte, keine Inline-Skripte). Inhalte aus den Tabellen werden vor der Ausgabe escaped, Links und Bildpfade nur mit `http(s)`, `mailto` oder als relativer Pfad übernommen. E-Mail-Adressen stehen nie im Klartext im Quelltext der Seiten: `HochamtData.mailHTML` (in `js/hochaemter-data.js`) legt sie rückwärts in `data-mail` ab, `js/main.js` macht beim Anzeigen wieder normale Links daraus; ohne JavaScript erscheint „name(at)domain(dot)at“. Neue Adressen in HTML-Seiten bitte ebenfalls so einbauen, in den Datendateien genügt die normale Schreibweise. Wird später ein Instagram-Endpunkt in `js/instagram.js` eingetragen, muss seine Adresse in der Richtlinie unter `connect-src` ergänzt werden.
 
 ## Gestaltung
 
-Klassisch, ruhig und festlich — passend zu einer Hofkirche.
+Marine und Gold auf Weiß — klar, ruhig und festlich, passend zu einer Hofkirche.
 
 | | |
 |---|---|
-| **Überschriften** | Cormorant Garamond, feine Serifenschrift |
-| **Fließtext** | Source Sans 3 |
-| **Logo-Schriftzug** | Playfair Display SC |
-| **Farben** | Marineblau `#1b2a4a` · Gold `#8f6b25` · Elfenbein `#faf8f3` |
-| **Stil** | Feine Linien statt Schatten, zurückhaltende Übergänge, Goldakzente |
+| **Überschriften, Daten, Uhrzeiten** | Bodoni Moda, immer aufrecht (keine Kursiven in Überschriften), mit kleiner optischer Größe für kräftigere Haarlinien; Binde- und Gedankenstriche kommen aus einer Systemschrift, weil sie in der Bodoni nur Haarlinien sind |
+| **Fließtext, Navigation, Knöpfe** | Hanken Grotesk, normale Schreibung (keine Versal-Labels) |
+| **Farben** | Marineblau `#10192e` / `#1b2a4a` für Navigation, Kopfbereiche und Fußzeile · Gold `#8f6b25` auf Weiß, `#d8b96e` auf Marine · Weiß als Lesegrund |
+| **Kopfbereich** | Im Querformat steht das Foto randlos rechts neben dem Titel, im Hochformat (Handy) randlos über die volle Breite oberhalb des Titels — keine Ornamente |
+| **Stil** | Linien statt Kästen, keine Schatten außer bei Fenstern, nur eine Bewegung beim Laden (das Foto hebt sich) |
 | **Zugänglichkeit** | Lesbare Kontraste, sichtbarer Tastaturfokus, Sprunglink zum Inhalt, Menüs per Tastatur (Escape schließt), reduzierte Bewegung wird respektiert |
 | **Geräte** | Für Handy im Hochformat, Tablet und Desktop ausgelegt; Bilder werden nicht beschnitten |
 

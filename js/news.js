@@ -2,7 +2,8 @@
    Augustinerkirche Wien — news.js
    Neuigkeiten aus data/news.csv (Excel-Tabelle):
    - Startseite (#news-grid): die 6 neuesten Meldungen als Karten;
-     Meldungen mit abgelaufenem "Bis"-Datum stehen dort nicht mehr
+     Meldungen mit abgelaufenem "Bis"-Datum ruecken nach unten und
+     fuellen nur noch auf, wenn es weniger als 6 aktive gibt
    - Archiv (#news-archive): alle uebrigen Meldungen, nach Jahren
    - Klick auf eine Meldung oeffnet ein Fenster mit allen Infos
    Aufruf mit ?news=ID oeffnet die Meldung direkt (teilbarer Link).
@@ -15,6 +16,7 @@
   if (!HD) return;
 
   const LATEST = 6;
+  const MOBILE = 3;     /* zuerst sichtbar, Rest per Knopf (css/style.css) */
   const KEYS = {
     datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
     details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',
@@ -62,13 +64,17 @@
     return out.sort((a, b) => b.iso.localeCompare(a.iso) || a.order - b.order);
   }
 
-  /* Startseite: die neuesten Meldungen, deren "Bis"-Datum (einschliesslich)
-     noch nicht vorbei ist; ohne Datum bleiben sie wie bisher. Alles andere
-     steht im Archiv. */
+  /* Startseite: zuerst die neuesten Meldungen, deren "Bis"-Datum
+     (einschliesslich) noch nicht vorbei ist; ohne Datum bleiben sie wie
+     bisher. Sind das weniger als 6, wird mit den neuesten abgelaufenen
+     aufgefuellt, die dann unten stehen. Alles andere steht im Archiv. */
   function homeEntries() {
     const d = new Date();
     const today = `${d.getFullYear()}-${HD.pad(d.getMonth() + 1)}-${HD.pad(d.getDate())}`;
-    return entries.filter((e) => !e.until || e.until >= today).slice(0, LATEST);
+    const expired = (e) => e.until && e.until < today;
+    const live = entries.filter((e) => !expired(e));
+    const past = entries.filter(expired);
+    return [...live, ...past].slice(0, LATEST);
   }
 
   const longDate = (e) => `${e.dateObj.getDate()}. ${HD.MONTHS[e.dateObj.getMonth()]} ${e.dateObj.getFullYear()}`;
@@ -102,6 +108,35 @@
     el.innerHTML = latest.length ? latest.map(cardHTML).join('') : '<p class="s-text">Derzeit gibt es keine Meldungen.</p>';
     const more = qs('#news-more');
     if (more) more.hidden = entries.length <= latest.length;
+    expandButton(el, latest.length);
+  }
+
+  /* Zuerst nur die ersten MOBILE Karten (CSS blendet den Rest aus), darunter
+     ein Knopf, der die uebrigen aufklappt. */
+  function expandButton(grid, count) {
+    const old = qs('.news-expand');
+    if (old) old.remove();
+    grid.classList.remove('show-all');
+    if (count <= MOBILE) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'news-expand';
+    const rest = count - MOBILE;
+    wrap.innerHTML = `<button type="button" class="btn btn-outline" aria-controls="${esc(grid.id)}" aria-expanded="false">` +
+      `${rest} weitere ${rest === 1 ? 'Meldung' : 'Meldungen'} anzeigen</button>`;
+    grid.after(wrap);
+    qs('button', wrap).addEventListener('click', () => {
+      /* Ohne das haelt der Browser den Inhalt unter dem Knopf fest
+         (Scroll-Anchoring) und springt an den neuen Karten vorbei */
+      const root = document.documentElement;
+      root.style.overflowAnchor = 'none';
+      grid.classList.add('show-all');
+      wrap.remove();
+      requestAnimationFrame(() => requestAnimationFrame(() => { root.style.overflowAnchor = ''; }));
+      /* Fokus auf die erste aufgeklappte Karte, damit es mit der Tastatur
+         und dem Bildschirmleser an der richtigen Stelle weitergeht */
+      const next = grid.children[MOBILE];
+      if (next) next.focus({ preventScroll: true });
+    });
   }
 
   /* ---------- Archiv: nach Jahren ---------- */
@@ -154,10 +189,10 @@
   }
 
   /* ---------- Fenster ---------- */
-  /* E-Mail-Adressen im (bereits escapten) Text als mailto-Links; das Muster
-     enthaelt weder < > noch Anfuehrungszeichen und kann kein HTML erzeugen. */
+  /* E-Mail-Adressen im (bereits escapten) Text als verschleierte Links
+     (HD.mailHTML); das Muster enthaelt weder < > noch Anfuehrungszeichen. */
   function linkify(text) {
-    return esc(text).replace(/([A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[a-z]{2,})/g, '<a href="mailto:$1">$1</a>');
+    return esc(text).replace(/([A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[a-z]{2,})/g, (m) => HD.mailHTML(m));
   }
   function buildDialog() {
     dialog = document.createElement('dialog');
@@ -221,7 +256,6 @@
     content.innerHTML =
       `<div class="nd-meta">${e.cat ? `<span class="nd-cat">${esc(e.cat)}</span>` : ''}<span class="nd-date">${esc(longDate(e))}</span></div>` +
       `<h2 class="nd-title" id="nd-title">${esc(e.title)}</h2>` +
-      '<div class="divider-g"></div>' +
       `<p class="nd-teaser">${esc(e.teaser)}</p>` +
       (e.infos.length ? '<div class="nd-infos">' + e.infos.map((r) =>
         `<div class="nd-info"><div class="nd-info-label">${esc(r.label || 'Info')}</div><div class="nd-info-value">${linkify(r.value)}</div></div>`

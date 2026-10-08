@@ -62,6 +62,15 @@
     }
   }
 
+  /* E-Mail-Adressen stehen nie im Klartext im Quelltext der Seite: In
+     data-mail liegt die Adresse rueckwaerts und mit "|" statt "@", als Text
+     steht "name(at)domain(dot)at". main.js macht daraus beim Anzeigen wieder
+     einen normalen mailto-Link. Das haelt einfache Adress-Sammler ab. */
+  const mailCode = (addr) => [...String(addr)].reverse().join('').replace('@', '|');
+  const mailText = (addr) => String(addr).replace('@', '(at)').replace(/\./g, '(dot)');
+  const mailHTML = (addr, subject = '') =>
+    `<a class="mail" data-mail="${esc(mailCode(addr))}"${subject ? ` data-subject="${esc(subject)}"` : ''}>${esc(mailText(addr))}</a>`;
+
   /* Freitext aus den Datendateien -> sicheres HTML. [Text](Adresse) wird ein
      Link (Adressen der Website relativ zur Wurzel, Praefix `base`), *Wort*
      kursiv; E-Mail- und https-Adressen werden automatisch verlinkt. */
@@ -78,7 +87,7 @@
       } else if (m[3]) {
         html += `<em>${esc(m[3])}</em>`;
       } else if (m[4]) {
-        html += `<a href="mailto:${esc(m[4])}">${esc(m[4])}</a>`;
+        html += mailHTML(m[4]);
       } else {
         html += `<a href="${esc(m[5])}" target="_blank" rel="noopener">${esc(m[5])}</a>`;
       }
@@ -288,7 +297,7 @@
 
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
-    esc, pad, safeUrl, richText, telHref, slug, csvText, download,
+    esc, pad, safeUrl, richText, mailHTML, telHref, slug, csvText, download,
     parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV
