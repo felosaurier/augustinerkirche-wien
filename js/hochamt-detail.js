@@ -11,7 +11,7 @@
 
   const HD = window.HochamtData;
   const qs = (sel) => document.querySelector(sel);
-  const FALLBACK = '<p class="s-text">Die Termine konnten nicht geladen werden. Das vollständige Programm finden Sie unter <a class="link-arr" href="https://hochamt.augustiner.at">hochamt.augustiner.at</a>.</p>';
+  const FALLBACK = '<p class="s-text">Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.</p>';
 
   const shortDate = (d) => `${d.getDate()}. ${HD.MONTHS[d.getMonth()]} ${d.getFullYear()}`;
   const longDate = (e) => `${HD.WEEKDAYS[e.dateObj.getDay()]}, ${shortDate(e.dateObj)}, ${e.time} Uhr`;

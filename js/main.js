@@ -422,7 +422,8 @@
       const addr = [...a.dataset.mail.replace('|', '@')].reverse().join('');
       const subject = a.dataset.subject;
       a.href = `mailto:${addr}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
-      a.textContent = addr;
+      /* Nur die Ersatzschreibweise name(at)… ersetzen, eine Beschriftung wie "CDs bestellen" bleibt */
+      if (a.textContent.includes('(at)')) a.textContent = addr;
       a.removeAttribute('data-mail');
     }
   }

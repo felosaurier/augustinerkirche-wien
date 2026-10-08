@@ -257,7 +257,7 @@
       if (monthsEl && listEl) renderUpcoming(upcoming, monthsEl, listEl);
       if (archiveList) renderArchive(past, years, archiveList);
     } catch {
-      const message = '<p class="s-text">Der Hochamt-Kalender konnte nicht geladen werden. Das vollständige Programm finden Sie unter <a class="link-arr" href="https://hochamt.augustiner.at">hochamt.augustiner.at</a>.</p>';
+      const message = '<p class="s-text">Der Hochamt-Kalender konnte nicht geladen werden. Bitte laden Sie die Seite später noch einmal.</p>';
       if (listEl) listEl.innerHTML = message;
       if (archiveList) archiveList.innerHTML = message;
     }
