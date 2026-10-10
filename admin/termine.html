@@ -91,17 +91,18 @@
       <div class="adm-grid">
         <div class="adm-field">
           <label class="adm-label" for="f-art">Art<span class="adm-req">Pflichtfeld</span></label>
-          <select class="adm-input" id="f-art" required aria-describedby="f-art-hint">
-            <option value="Ausflug">Ausflug</option>
-            <option value="Fest">Fest</option>
-            <option value="Vortrag">Vortrag</option>
-            <option value="Wallfahrt">Wallfahrt</option>
-            <option value="Hochamt">Hochamt</option>
-            <option value="Gottesdienst">Gottesdienst</option>
-            <option value="Konzert">Konzert</option>
-            <option value="Sonstiges">Sonstiges</option>
-          </select>
-          <span class="adm-hint" id="f-art-hint">Hochämter, Gottesdienste und Konzerte erscheinen im Kalender bei diesen Gruppen, alles andere unter Veranstaltungen.</span>
+          <input class="adm-input" type="text" id="f-art" list="dl-art" required maxlength="40" autocomplete="off" aria-describedby="f-art-hint"/>
+          <datalist id="dl-art">
+            <option value="Ausflug"></option>
+            <option value="Fest"></option>
+            <option value="Vortrag"></option>
+            <option value="Wallfahrt"></option>
+            <option value="Hochamt"></option>
+            <option value="Gottesdienst"></option>
+            <option value="Konzert"></option>
+            <option value="Sonstiges"></option>
+          </datalist>
+          <span class="adm-hint" id="f-art-hint">Aus der Liste wählen oder selbst etwas eintragen. Hochamt, Gottesdienst und Konzert erscheinen im Kalender bei diesen Gruppen, alles andere unter Veranstaltungen.</span>
         </div>
         <div class="adm-field">
           <label class="adm-label" for="f-ort">Ort</label>

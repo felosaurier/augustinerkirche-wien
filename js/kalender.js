@@ -37,7 +37,7 @@
   ];
   const groupName = new Map(GROUPS);
   /* Eigene Termine: Art -> Gruppe (alles andere ist eine Veranstaltung) */
-  const ART_GROUP = { Hochamt: 'hochamt', Gottesdienst: 'gottesdienst', Konzert: 'konzert' };
+  const ART_GROUP = { hochamt: 'hochamt', gottesdienst: 'gottesdienst', konzert: 'konzert' };
   /* Welche Anlässe der Hochamt-Liste ein Hochamt im engeren Sinn sind; alles andere
      (Begräbnis, Trauung, Karfreitagsliturgie, Messe vom Abendmahl …) zählt als Gottesdienst */
   const HOCHAMT = /hochamt|pontifikal|requiem|festmesse|christmette|osternacht/i;
@@ -93,7 +93,7 @@
       const time = HD.isoTime(t.zeit);
       const ende = HD.isoTime(t.ende);
       return {
-        date, time, ende, group: ART_GROUP[t.art] || 'veranstaltung',
+        date, time, ende, group: ART_GROUP[String(t.art || '').trim().toLowerCase()] || 'veranstaltung',
         art: t.art || '', title: t.titel,
         sub: [bis && bis > date ? `bis ${shortDate(bis)}` : '', t.ort].filter(Boolean).join(', '),
         text: t.text || '', link: HD.safeUrl(t.link || '', base), bis

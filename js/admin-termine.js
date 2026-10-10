@@ -109,7 +109,7 @@
     $('f-bis').value = t ? t.bis || '' : '';
     $('f-time').value = t ? t.zeit || '' : '';
     $('f-end').value = t ? t.ende || '' : '';
-    $('f-art').value = t && [...$('f-art').options].some((o) => o.value === t.art) ? t.art : 'Ausflug';
+    $('f-art').value = t ? t.art || 'Sonstiges' : 'Ausflug';
     $('f-ort').value = t ? t.ort || '' : '';
     $('f-title').value = t ? t.titel : '';
     $('f-text').value = t ? t.text || '' : '';
@@ -158,6 +158,7 @@
     if (datum && bis && bis < datum) errors.push([$('f-bis'), 'Das Enddatum liegt vor dem Datum.']);
     if (ende && !zeit) errors.push([$('f-time'), 'Bitte auch den Beginn eintragen.']);
     else if (ende && !bis && ende <= zeit) errors.push([$('f-end'), 'Das Ende liegt vor dem Beginn.']);
+    if (!clean($('f-art').value)) errors.push([$('f-art'), 'Bitte eine Art wählen oder eintragen.']);
     if (!titel) errors.push([$('f-title'), 'Bitte einen Titel eintragen.']);
     if (link === null) errors.push([$('f-link'), 'Diese Adresse sieht nicht richtig aus, z. B. www.beispiel.at oder pages/kalender.html.']);
     if (errors.length) {
@@ -167,7 +168,7 @@
 
     const termin = {
       datum, bis: bis && bis > datum ? bis : '', zeit, ende,
-      art: $('f-art').value, titel, ort: clean($('f-ort').value),
+      art: clean($('f-art').value), titel, ort: clean($('f-ort').value),
       text: cleanText($('f-text').value), link: link || ''
     };
     const old = editIndex >= 0 ? termine[editIndex] : null;
