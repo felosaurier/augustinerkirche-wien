@@ -45,7 +45,7 @@
 
   let items = [];
   let month = null;             /* {y, m} mit m = 0..11 */
-  let filter = '';              /* '' = alle Gruppen */
+  const filter = new Set();     /* leer = alle Gruppen; sonst die gewaehlten, auch mehrere zusammen */
   let showPast = false;         /* laufender Monat: vergangene Tage aufgeklappt? */
 
   const isoOf = (dt) => `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
@@ -166,7 +166,7 @@
     return `${dt.getDate()}. ${MONTHS[dt.getMonth()]}`;
   }
   const inMonth = (it) => it.date.slice(0, 7) === monthKey(month);
-  const visible = () => items.filter((it) => !filter || it.group === filter);
+  const visible = () => items.filter((it) => !filter.size || filter.has(it.group));
 
   function monthGrid() {
     const first = new Date(month.y, month.m, 1);
@@ -247,7 +247,7 @@
     if (!all.length) {
       const any = items.filter(inMonth).length;
       return `<p class="cal-empty">${any
-        ? `Im ${MONTHS[month.m]} ${month.y} gibt es keine ${groupName.get(filter)}.`
+        ? `Im ${MONTHS[month.m]} ${month.y} gibt es keine ${[...filter].map((g) => groupName.get(g)).join(' oder ')}.`
         : `Für ${MONTHS[month.m]} ${month.y} sind noch keine Termine eingetragen.`}</p>`;
     }
     /* Laufender Monat: die Liste beginnt heute, Vergangenes auf Wunsch */
@@ -265,10 +265,10 @@
     const inThis = items.filter(inMonth);
     for (const it of inThis) counts.set(it.group, counts.get(it.group) + 1);
     const btn = (g, label, n) =>
-      `<button type="button" class="cal-filter${g ? ` g-${g}` : ''}" data-group="${g}" aria-pressed="${filter === g}">` +
+      `<button type="button" class="cal-filter${g ? ` g-${g}` : ''}" data-group="${g}" aria-pressed="${g ? filter.has(g) : !filter.size}">` +
         `${g ? `<i class="cal-dot g-${g}"></i>` : ''}${label}<span class="n">${n}</span></button>`;
     return btn('', 'Alle', inThis.length) +
-      GROUPS.filter(([g]) => counts.get(g) || filter === g).map(([g, label]) => btn(g, label, counts.get(g))).join('');
+      GROUPS.filter(([g]) => counts.get(g) || filter.has(g)).map(([g, label]) => btn(g, label, counts.get(g))).join('');
   }
 
   function render(focusSel) {
@@ -347,8 +347,12 @@
       }
       const f = ev.target.closest('.cal-filter');
       if (f) {
-        filter = f.dataset.group;
-        render(`.cal-filter[data-group="${filter}"]`);
+        const g = f.dataset.group;
+        /* "Alle" hebt die Auswahl auf; eine Gruppe wird dazu- oder wieder weggenommen (Hochaemter + Gottesdienste zusammen) */
+        if (!g) filter.clear();
+        else if (filter.has(g)) filter.delete(g);
+        else filter.add(g);
+        render(`.cal-filter[data-group="${g}"]`);
         return;
       }
       const day = ev.target.closest('.cal-cell[data-day]');

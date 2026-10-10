@@ -452,7 +452,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .hs-all:hover{color:var(--gold)}
 .hs-list{border-top:1px solid var(--blue)}
 .hs-item{
-  display:grid;grid-template-columns:4.6rem minmax(0,1fr) auto;gap:1.8rem;align-items:center;
+  display:grid;grid-template-columns:3.6rem 5.2rem minmax(0,1fr);gap:1.2rem;align-items:center;
   padding:1.5rem 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none;
 }
 .hs-when{line-height:1}
@@ -611,13 +611,13 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .kal-m-btn.active{color:var(--blue);font-weight:600;border-bottom-color:var(--gold)}
 .kal-m-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
 
-.kal-row{display:grid;grid-template-columns:4.6rem minmax(0,1fr) auto;gap:1.8rem;align-items:center;padding:1.3rem 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
+.kal-row{display:grid;grid-template-columns:4.6rem 5.2rem minmax(0,1fr);gap:1.2rem;align-items:center;padding:1.3rem 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
 .kal-d{font-family:var(--serif);font-size:2.5rem;font-weight:500;line-height:.95;color:var(--blue)}
 .kal-wd{margin-top:.4rem;font-size:.85rem;font-weight:600;line-height:1.3;color:var(--blue)}
 .kal-yr{margin-top:0;font-weight:400;color:var(--text-light);white-space:nowrap}
 .kal-name{font-family:var(--serif);font-size:1.4rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s}
 .kal-type{margin-top:.25rem;font-size:.92rem;font-weight:500;color:var(--gold)}
-.kal-time{font-family:var(--serif);font-size:1.5rem;text-align:right;color:var(--blue);white-space:nowrap}
+.kal-time{font-family:var(--serif);font-size:1.5rem;text-align:left;color:var(--blue);white-space:nowrap}
 .kal-loc{margin-top:.15rem;font-size:.85rem;text-align:right;color:var(--text-light)}
 .kal-go{display:none}
 a.kal-row:hover .kal-name{color:var(--gold)}
@@ -1220,7 +1220,7 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
 }
 
 @media(max-width:600px){
-  .hs-item{grid-template-columns:3.2rem minmax(0,1fr) auto;gap:1rem;padding:1.2rem 0}
+  .hs-item{grid-template-columns:3.2rem auto minmax(0,1fr);gap:.9rem;padding:1.2rem 0}
   .hs-day{font-size:2.3rem}
   .hs-piece{font-size:1.2rem;line-height:1.25}
   .hs-time{font-size:1.2rem}
@@ -1248,7 +1248,7 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .timeline-item{grid-template-columns:4.8rem minmax(0,1fr);gap:1rem}
   .timeline-year{font-size:1.4rem}
   .kal-row,a.kal-row{grid-template-columns:3.8rem minmax(0,1fr);gap:.3rem 1rem}
-  .kal-row>div:nth-child(3){grid-column:2}
+  .kal-row>div:nth-child(3){grid-column:1/-1}
   .kal-time,.kal-loc{text-align:left}
   .kal-time{font-size:1.2rem}
   .kal-d{font-size:2.1rem}
