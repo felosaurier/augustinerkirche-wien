@@ -235,9 +235,12 @@
 
   A.start(async () => {
     const s = A.session();
-    /* Titel (Pater, Dr. …) ueberspringen: "Guten Abend, Matthias" statt "Guten Abend, Pater" */
+    /* Titel (Pater, Dr. ...) bleiben stehen, dazu der Vorname: "Guten Abend, Pater Matthias" */
     const words = String(s.name || s.benutzer).trim().split(/\s+/);
-    const first = words.find((w) => !/^(pater|p\.|dr\.|mag\.|mmag\.|prof\.|dipl\.-ing\.|frau|herr|br\.|bruder|fr\.)$/i.test(w)) || words[0];
+    const isTitle = (w) => /^(pater|p\.|dr\.|mag\.|mmag\.|prof\.|dipl\.-ing\.|frau|herr|br\.|bruder|fr\.)$/i.test(w);
+    let n = 0;
+    while (n < words.length - 1 && isTitle(words[n])) n++;
+    const first = words.slice(0, n + 1).join(' ');
     const hour = new Date().getHours();
     $('ov-greet').innerHTML = `${hour < 11 ? 'Guten Morgen' : hour >= 18 ? 'Guten Abend' : 'Grüß Gott'}, <em>${esc(first)}</em>`;
     $('ov-today').textContent = `${A.fmtDate(A.isoToday())}`;
