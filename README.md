@@ -58,7 +58,8 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Startseite** | Titelfotos ganz oben auf der Startseite: Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
-| **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen), dazu Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
+| **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen) |
+| **Pfarrkanzlei & Kontakt** | Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
 | **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
 | **Pfarrgemeinderat** | Mitglieder sowie Ersatzmitglieder und weitere Verantwortliche für Pfarre → Pfarrgemeinderat: Name, Funktion, Beruf, Aufgaben, E-Mail, Telefon, Foto (mit Bildnachweis); Reihenfolge per Pfeil |
 | **Personen** | Mitbrüder, Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto, Aufgabe und Text |
@@ -173,7 +174,8 @@ admin/                        Verwaltung (nur mit Anmeldung)
   cds.html                    CDs mit Cover und Hörproben pflegen
   pgr.html                    Pfarrgemeinderat pflegen
   solisten.html               Solisten pflegen
-  gottesdienste.html          Wochenplan, Pfarrkanzlei und Kontakt pflegen
+  gottesdienste.html          Wochenplan, Ferien und Pausen, Ausfälle pflegen
+  kontakt.html                Pfarrkanzlei und Kontakt pflegen
   runden.html                 Runden pflegen
   rundgang.html               Kirchenrundgang pflegen
   startseite.html             Titelfotos der Startseite pflegen
@@ -205,7 +207,8 @@ js/
   admin-cds.js                CDs pflegen
   admin-pgr.js                Pfarrgemeinderat pflegen
   admin-solisten.js           Solisten pflegen
-  admin-gottesdienste.js      Wochenplan, Pfarrkanzlei und Kontakt
+  admin-gottesdienste.js      Wochenplan, Ferien und Pausen, Ausfälle
+  admin-kontakt.js            Pfarrkanzlei und Kontakt
   admin-runden.js             Runden pflegen
   admin-rundgang.js           Kirchenrundgang pflegen
   admin-startseite.js         Titelfotos der Startseite pflegen

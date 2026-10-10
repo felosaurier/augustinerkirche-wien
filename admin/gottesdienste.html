@@ -27,7 +27,7 @@
     <div>
       <div class="ph-tag">Verwaltung</div>
       <h1 class="ph-title">Gottesdienste <em>pflegen</em></h1>
-      <p class="ph-sub">Die regelmäßigen Gottesdienste der Woche (sie stehen auch im Kalender), wenn eine Messe ausfällt, dazu Öffnungszeiten und Kontakt der Pfarrkanzlei.</p>
+      <p class="ph-sub">Die regelmäßigen Gottesdienste der Woche (sie stehen auch im Kalender), Ferien und Pausen und wenn eine Messe ausfällt. Öffnungszeiten und Kontakt der Pfarrkanzlei stehen unter „Pfarrkanzlei &amp; Kontakt“.</p>
     </div>
     <div class="adm-head-actions">
       <button type="button" class="btn btn-gold" id="gd-new" data-icon="plus">Neuer Termin</button>
@@ -54,51 +54,6 @@
   </div>
   <p class="adm-hint" style="margin:.4rem 0 .9rem">Fällt an einem Tag eine Messe aus, trägst du es hier ein. Sie bleibt im Kalender sichtbar, mit dem Hinweis „Entfällt“, und der Wochenplan bleibt unverändert.</p>
   <div id="ax-list"><p class="adm-muted">Wird geladen …</p></div>
-
-  <section class="adm-panel" style="margin-top:2.6rem" aria-labelledby="kt-h">
-    <h2 class="adm-panel-title" id="kt-h">Pfarrkanzlei &amp; Kontakt</h2>
-    <p class="adm-panel-sub">Erscheint unten auf der Startseite und im Impressum.</p>
-    <form id="kt-form" novalidate autocomplete="off">
-      <fieldset class="adm-fs">
-        <legend>Öffnungszeiten der Pfarrkanzlei</legend>
-        <div id="kt-hours"></div>
-      </fieldset>
-      <fieldset class="adm-fs">
-        <legend>Telefon und E-Mail</legend>
-        <div class="adm-grid">
-          <div class="adm-field full" role="group" aria-labelledby="kt-tel-l">
-            <span class="adm-label" id="kt-tel-l">Telefonnummern</span>
-            <div id="kt-tel"></div>
-          </div>
-          <div class="adm-field full">
-            <label class="adm-label" for="kt-email">E-Mail</label>
-            <input class="adm-input" type="email" id="kt-email"/>
-          </div>
-        </div>
-      </fieldset>
-      <fieldset class="adm-fs">
-        <legend>Adresse</legend>
-        <div class="adm-grid">
-          <div class="adm-field">
-            <label class="adm-label" for="kt-adresse">Straße</label>
-            <input class="adm-input" type="text" id="kt-adresse"/>
-          </div>
-          <div class="adm-field">
-            <label class="adm-label" for="kt-ort">Postleitzahl und Ort</label>
-            <input class="adm-input" type="text" id="kt-ort"/>
-          </div>
-          <div class="adm-field full">
-            <label class="adm-label" for="kt-eingang">Hinweis <span class="adm-opt">z. B. Eingang der Kirche</span></label>
-            <input class="adm-input" type="text" id="kt-eingang"/>
-          </div>
-        </div>
-      </fieldset>
-      <div class="adm-inline-foot">
-        <span class="adm-muted" id="kt-state"></span>
-        <button type="submit" class="btn btn-dark" id="kt-save" data-icon="check">Kontakt speichern</button>
-      </div>
-    </form>
-  </section>
 </main>
 
 <!-- Termin bearbeiten -->

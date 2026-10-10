@@ -12,8 +12,6 @@
    - Ausfaelle ("entfaellt": [{datum, zeit, grund}]): faellt an einem Tag
      eine Messe aus (zeit leer = alle Gottesdienste des Tages), bleibt sie
      im Kalender stehen, durchgestrichen mit dem Hinweis "Entfällt"
-   - Pfarrkanzlei und Kontakt aus data/kontakt.json (Startseite,
-     Impressum): Oeffnungszeiten, Telefon, E-Mail, Adresse
    Benoetigt js/hochaemter-data.js und js/admin.js.
    ============================================================ */
 (function () {
@@ -22,7 +20,6 @@
   const A = window.Admin;
   const { $, esc, icon } = A;
   const PATH = 'data/gottesdienste.json';
-  const KPATH = 'data/kontakt.json';
   const DAYS = { so: 'Sonntag', mo: 'Montag', di: 'Dienstag', mi: 'Mittwoch', do: 'Donnerstag', fr: 'Freitag', sa: 'Samstag' };
   const ORDER = Object.keys(DAYS);
   const byDay = (a, b) => ORDER.indexOf(a.tag) - ORDER.indexOf(b.tag) || a.zeit.localeCompare(b.zeit);
@@ -55,10 +52,6 @@
   let axSnap = '';
   let editIndex = -1;
   let snap = '';
-  let kontakt = {};
-  let hours = null;
-  let phones = null;
-  let kSnap = '';
 
   /* ---------- Wochenplan ---------- */
   function render() {
@@ -381,70 +374,8 @@
     }
   }
 
-  /* ---------- Pfarrkanzlei und Kontakt ---------- */
-  function fillKontakt() {
-    hours.set((kontakt.kanzlei || []).length ? kontakt.kanzlei : [{}]);
-    phones.set((kontakt.telefon || []).length ? kontakt.telefon : [{}]);
-    $('kt-email').value = kontakt.email || '';
-    $('kt-adresse').value = kontakt.adresse || '';
-    $('kt-ort').value = kontakt.ort || '';
-    $('kt-eingang').value = kontakt.eingang || '';
-    kSnap = A.snapshot($('kt-form'));
-    $('kt-state').textContent = '';
-  }
-  async function loadKontakt() {
-    try {
-      kontakt = JSON.parse(await A.readText(KPATH));
-    } catch {
-      kontakt = {};
-      A.toast('Die Kontaktdaten konnten nicht geladen werden.', 'err');
-    }
-    fillKontakt();
-  }
-  async function saveKontakt(ev) {
-    ev.preventDefault();
-    const form = $('kt-form');
-    const email = clean($('kt-email').value);
-    A.clearErrors(form);
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      A.showErrors(form, [[$('kt-email'), 'Diese E-Mail-Adresse sieht nicht richtig aus.']]);
-      return;
-    }
-    const next = {
-      adresse: clean($('kt-adresse').value), ort: clean($('kt-ort').value), eingang: clean($('kt-eingang').value),
-      telefon: phones.values().filter((t) => t.nummer).map((t) => ({ nummer: clean(t.nummer), bezeichnung: clean(t.bezeichnung) })),
-      email,
-      kanzlei: hours.values().filter((h) => h.tage || h.zeit).map((h) => ({ tage: clean(h.tage), zeit: clean(h.zeit) }))
-    };
-    try {
-      const direct = await A.saveJSON(KPATH, next);
-      kontakt = next;
-      fillKontakt();
-      $('kt-state').textContent = direct ? 'Gespeichert.' : 'Übernommen, bitte unten herunterladen.';
-      A.toast(direct ? 'Kontakt und Öffnungszeiten gespeichert.' : 'Übernommen. Bitte unten die Datei herunterladen.');
-      A.log('Kontakt und Öffnungszeiten der Pfarrkanzlei geändert');
-    } catch (err) {
-      A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
-    }
-  }
-
   /* ---------- Start ---------- */
   A.start(async () => {
-    hours = A.listEditor($('kt-hours'), {
-      fields: [
-        { key: 'tage', label: 'Tage', placeholder: 'z. B. Mo, Mi, Fr' },
-        { key: 'zeit', label: 'Zeit', placeholder: 'z. B. 09–12 Uhr' }
-      ],
-      addLabel: 'Weitere Öffnungszeit', rowLabel: 'Öffnungszeit', labelFirst: true
-    });
-    phones = A.listEditor($('kt-tel'), {
-      fields: [
-        { key: 'nummer', label: 'Telefonnummer', placeholder: '+43 (0)1 …' },
-        { key: 'bezeichnung', label: 'Bezeichnung', placeholder: 'z. B. Pfarre' }
-      ],
-      addLabel: 'Weitere Nummer', rowLabel: 'Telefonnummer'
-    });
-
     const months = (first) => `<option value="">${first}</option>` + MONTHS.map((m, i) => `<option value="${i + 1}">${m}</option>`).join('');
     $('f-von').innerHTML = months('Das ganze Jahr');
     $('f-bis').innerHTML = months('Das ganze Jahr');
@@ -497,14 +428,10 @@
       if (b.dataset.act === 'del') remove(Number(b.dataset.i));
       if (b.dataset.act === 'new') openEditor(-1);
     });
-    $('kt-form').addEventListener('submit', saveKontakt);
-    $('kt-form').addEventListener('input', () => {
-      $('kt-state').textContent = A.snapshot($('kt-form')) !== kSnap ? 'Noch nicht gespeichert' : '';
-    });
-    A.guard(() => ($('gd-dlg').open && A.snapshot($('gd-form')) !== snap) || ($('ax-dlg').open && A.snapshot($('ax-form')) !== axSnap) || ($('fp-dlg').open && A.snapshot($('fp-form')) !== fpSnap) || A.snapshot($('kt-form')) !== kSnap);
-    A.folder.on((state) => { if (state === 'ok') { load(); loadKontakt(); } });
+    A.guard(() => ($('gd-dlg').open && A.snapshot($('gd-form')) !== snap) || ($('ax-dlg').open && A.snapshot($('ax-form')) !== axSnap) || ($('fp-dlg').open && A.snapshot($('fp-form')) !== fpSnap));
+    A.folder.on((state) => { if (state === 'ok') load(); });
 
-    await Promise.all([load(), loadKontakt()]);
+    await load();
     if (new URLSearchParams(location.search).has('neu')) {
       openEditor(-1);
       history.replaceState(null, '', location.pathname);

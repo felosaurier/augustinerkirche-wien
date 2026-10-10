@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Pfarrkanzlei & Kontakt — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-kontakt.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Pfarrkanzlei <em>&amp; Kontakt</em></h1>
+      <p class="ph-sub">Öffnungszeiten, Telefon, E-Mail und Adresse der Pfarrkanzlei. Sie erscheinen unten auf der Startseite und im Impressum.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <section class="adm-panel" aria-labelledby="kt-h">
+    <h2 class="visually-hidden" id="kt-h">Kontaktdaten</h2>
+    <form id="kt-form" novalidate autocomplete="off">
+      <fieldset class="adm-fs">
+        <legend>Öffnungszeiten der Pfarrkanzlei</legend>
+        <div id="kt-hours"></div>
+      </fieldset>
+      <fieldset class="adm-fs">
+        <legend>Telefon und E-Mail</legend>
+        <div class="adm-grid">
+          <div class="adm-field full" role="group" aria-labelledby="kt-tel-l">
+            <span class="adm-label" id="kt-tel-l">Telefonnummern</span>
+            <div id="kt-tel"></div>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-label" for="kt-email">E-Mail</label>
+            <input class="adm-input" type="email" id="kt-email"/>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="adm-fs">
+        <legend>Adresse</legend>
+        <div class="adm-grid">
+          <div class="adm-field">
+            <label class="adm-label" for="kt-adresse">Straße</label>
+            <input class="adm-input" type="text" id="kt-adresse"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="kt-ort">Postleitzahl und Ort</label>
+            <input class="adm-input" type="text" id="kt-ort"/>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-label" for="kt-eingang">Hinweis <span class="adm-opt">z. B. Eingang der Kirche</span></label>
+            <input class="adm-input" type="text" id="kt-eingang"/>
+          </div>
+        </div>
+      </fieldset>
+      <div class="adm-inline-foot">
+        <span class="adm-muted" id="kt-state"></span>
+        <button type="submit" class="btn btn-dark" id="kt-save" data-icon="check">Kontakt speichern</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+</body>
+</html>

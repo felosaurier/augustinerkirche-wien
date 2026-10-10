@@ -102,7 +102,8 @@
     { key: 'cds', label: 'CDs', group: 'Kirchenmusik', page: 'cds.html' },
     { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
     { key: 'repertoire', label: 'Repertoire', group: 'Kirchenmusik', page: 'repertoire.html' },
-    { key: 'gottesdienste', label: 'Gottesdienste & Kanzlei', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
+    { key: 'gottesdienste', label: 'Gottesdienste', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
+    { key: 'kontakt', label: 'Pfarrkanzlei & Kontakt', group: 'Pfarre & Kloster', page: 'kontakt.html' },
     { key: 'rundgang', label: 'Kirchenrundgang', group: 'Pfarre & Kloster', page: 'rundgang.html' },
     { key: 'pgr', label: 'Pfarrgemeinderat', group: 'Pfarre & Kloster', page: 'pgr.html' },
     { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' }
@@ -939,7 +940,8 @@
       ['repertoire.html', 'Repertoire']
     ] },
     { label: 'Pfarre & Kloster', icon: 'users', href: 'gottesdienste.html', sub: [
-      ['gottesdienste.html', 'Gottesdienste & Kanzlei'],
+      ['gottesdienste.html', 'Gottesdienste'],
+      ['kontakt.html', 'Pfarrkanzlei & Kontakt'],
       ['runden.html', 'Runden'],
       ['rundgang.html', 'Kirchenrundgang'],
       ['pgr.html', 'Pfarrgemeinderat'],
