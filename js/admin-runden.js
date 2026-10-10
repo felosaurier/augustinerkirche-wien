@@ -7,6 +7,8 @@
      eigene Seite oder Verweis), Kopf der Seite, Texte, Terminreihen
      mit Datumsauswahl, "Auf einen Blick", Kontakt, Plakat oder Foto
    - Neue Runden bekommen ihre Seite ueber pages/runden/runde.html?id=…
+   - Rechte: Wer nicht alle Runden darf, sieht und bearbeitet nur die eigenen;
+     Neu anlegen, Loeschen und Reihenfolge sind dann gesperrt.
    Benoetigt js/hochaemter-data.js und js/admin.js.
    ============================================================ */
 (function () {
@@ -54,13 +56,20 @@
   }
 
   function render() {
+    const all = A.canAllRunden();
     const shown = runden.filter((r) => r.sichtbar !== false).length;
-    $('rd-count').textContent = `${plural(runden.length, 'Runde', 'Runden')} · ${shown} in der Übersicht · Reihenfolge wie auf der Website`;
-    if (!runden.length) {
-      $('rd-list').innerHTML = `<div class="adm-empty"><p class="adm-empty-title">Noch keine Runden</p><p>Lege die erste Runde an.</p><button type="button" class="btn btn-gold" data-act="new">${icon('plus')}Neue Runde</button></div>`;
+    const mine = runden.filter((r) => A.canRunde(r.id)).length;
+    $('rd-count').textContent = all
+      ? `${plural(runden.length, 'Runde', 'Runden')} · ${shown} in der Übersicht · Reihenfolge wie auf der Website`
+      : `${plural(mine, 'Runde', 'Runden')}, die du bearbeiten darfst`;
+    if (!mine) {
+      $('rd-list').innerHTML = all
+        ? `<div class="adm-empty"><p class="adm-empty-title">Noch keine Runden</p><p>Lege die erste Runde an.</p><button type="button" class="btn btn-gold" data-act="new">${icon('plus')}Neue Runde</button></div>`
+        : '<div class="adm-empty"><p class="adm-empty-title">Keine Runde gefunden</p><p>Die Runden, für die du freigeschaltet bist, gibt es nicht mehr. Ein Admin kann das unter „Zugänge“ ändern.</p></div>';
       return;
     }
     $('rd-list').innerHTML = '<ul class="adm-rows">' + runden.map((r, i) => {
+      if (!A.canRunde(r.id)) return '';
       const src = r.bild && r.bild.pfad ? A.imageUrl(r.bild.pfad) : '';
       const next = nextDate(r);
       return `<li class="adm-row" data-key="${esc(r.id)}">` +
@@ -75,11 +84,13 @@
           '</span>' +
           `<span>${r.sichtbar === false ? '<span class="adm-badge">Ausgeblendet</span>' : r.link ? '<span class="adm-badge">Verweis</span>' : '<span class="adm-badge on">Eigene Seite</span>'}</span>` +
         '</button>' +
-        '<div class="adm-row-actions">' +
-          `<button type="button" class="adm-act icon" data-act="up" data-i="${i}" aria-label="Nach oben: ${esc(r.titel)}"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
-          `<button type="button" class="adm-act icon" data-act="down" data-i="${i}" aria-label="Nach unten: ${esc(r.titel)}"${i === runden.length - 1 ? ' disabled' : ''}>${icon('down')}</button>` +
-          `<button type="button" class="adm-act danger" data-act="del" data-i="${i}" aria-label="Löschen: ${esc(r.titel)}">${icon('trash')}Löschen</button>` +
-        '</div></li>';
+        (all
+          ? '<div class="adm-row-actions">' +
+            `<button type="button" class="adm-act icon" data-act="up" data-i="${i}" aria-label="Nach oben: ${esc(r.titel)}"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
+            `<button type="button" class="adm-act icon" data-act="down" data-i="${i}" aria-label="Nach unten: ${esc(r.titel)}"${i === runden.length - 1 ? ' disabled' : ''}>${icon('down')}</button>` +
+            `<button type="button" class="adm-act danger" data-act="del" data-i="${i}" aria-label="Löschen: ${esc(r.titel)}">${icon('trash')}Löschen</button>` +
+          '</div>' : '') +
+        '</li>';
     }).join('') + '</ul>';
   }
 
@@ -104,7 +115,7 @@
 
   async function move(i, dir) {
     const j = i + dir;
-    if (j < 0 || j >= runden.length) return;
+    if (!A.canAllRunden() || j < 0 || j >= runden.length) return;
     const next = runden.slice();
     [next[i], next[j]] = [next[j], next[i]];
     try {
@@ -255,6 +266,10 @@
 
   function openEditor(i) {
     const r = i >= 0 ? runden[i] : null;
+    if (r ? !A.canRunde(r.id) : !A.canAllRunden()) {
+      A.toast('Dafür hast du keine Berechtigung.', 'err');
+      return;
+    }
     editIndex = i;
     const form = $('rd-form');
     form.reset();
@@ -294,7 +309,7 @@
 
     $('rd-dlg-tag').textContent = r ? 'Runde bearbeiten' : 'Neue Runde';
     $('rd-dlg-title').textContent = r ? r.titel : 'Neue Runde';
-    $('rd-delete').hidden = !r;
+    $('rd-delete').hidden = !r || !A.canAllRunden();
     $('rd-view').hidden = !r;
     if (r) $('rd-view').href = pageHref(r);
     A.openDialog($('rd-dlg'), { isDirty: () => dirtyState() !== snap });
@@ -319,6 +334,10 @@
     syncBlocks();
     const form = $('rd-form');
     const old = editIndex >= 0 ? runden[editIndex] : null;
+    if (old ? !A.canRunde(old.id) : !A.canAllRunden()) {
+      A.toast('Dafür hast du keine Berechtigung.', 'err');
+      return;
+    }
     const titel = clean($('f-titel').value);
     const kurztext = clean($('f-kurztext').value);
     const link = clean($('f-link').value);
@@ -381,6 +400,10 @@
 
   async function remove(i) {
     const r = runden[i];
+    if (!A.canAllRunden()) {
+      A.toast('Runden löschen darf nur, wer alle Runden bearbeiten darf.', 'err');
+      return false;
+    }
     const ok = await A.confirmBox({
       title: 'Runde löschen?',
       html: `<strong>${esc(r.titel)}</strong><br><br>Die Runde verschwindet aus der Übersicht.` +
@@ -408,6 +431,7 @@
       ],
       addLabel: 'Zeile hinzufügen', rowLabel: 'Angabe', labelFirst: true
     });
+    $('rd-new').hidden = !A.canAllRunden();
     $('rd-new').addEventListener('click', () => openEditor(-1));
     $('rd-form').addEventListener('submit', save);
     $('rd-form').addEventListener('change', (ev) => { if (ev.target.name === 'art') updateArt(); });

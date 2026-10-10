@@ -86,14 +86,73 @@
   const roleOf = (acc) => (acc && acc.rolle === 'redaktion' ? 'redaktion' : 'admin');
   const isAdmin = () => roleOf(session()) === 'admin';
 
+  /* Rechte der Redaktion: Bereiche (je eine Seite der Verwaltung) und einzelne
+     Runden. Admins duerfen alles. Redaktionszugaenge ohne Angabe "rechte" (aus
+     der Zeit davor) duerfen ebenfalls alles, damit niemand ausgesperrt wird.
+     Gespeichert als rechte: { bereiche: [Schluessel], runden: [Runden-IDs] };
+     der Schluessel "runden" bedeutet alle Runden samt Anlegen, Loeschen und
+     Reihenfolge, sonst nur die einzeln genannten Runden bearbeiten. */
+  const AREAS = [
+    { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Allgemein', page: 'neuigkeiten.html' },
+    { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Allgemein', page: 'termine.html' },
+    { key: 'hochaemter', label: 'Hochämter', group: 'Kirchenmusik', page: 'hochaemter.html' },
+    { key: 'solisten', label: 'Solisten', group: 'Kirchenmusik', page: 'solisten.html' },
+    { key: 'paten', label: 'Paten', group: 'Kirchenmusik', page: 'paten.html' },
+    { key: 'cds', label: 'CDs', group: 'Kirchenmusik', page: 'cds.html' },
+    { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
+    { key: 'repertoire', label: 'Repertoire', group: 'Kirchenmusik', page: 'repertoire.html' },
+    { key: 'gottesdienste', label: 'Gottesdienste & Kanzlei', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
+    { key: 'rundgang', label: 'Kirchenrundgang', group: 'Pfarre & Kloster', page: 'rundgang.html' },
+    { key: 'pgr', label: 'Pfarrgemeinderat', group: 'Pfarre & Kloster', page: 'pgr.html' },
+    { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' }
+  ];
+  /* "Runden" gehoert zu Pfarre & Kloster, steht aber wegen der Einzelauswahl getrennt */
+  const RUNDEN_KEY = 'runden';
+
+  /* null = darf alles */
+  function rightsOf(acc) {
+    if (!acc) return { bereiche: [], runden: [] };
+    if (roleOf(acc) === 'admin' || !acc.rechte) return null;
+    const r = acc.rechte;
+    return {
+      bereiche: Array.isArray(r.bereiche) ? r.bereiche.map(String) : [],
+      runden: Array.isArray(r.runden) ? r.runden.map(String) : []
+    };
+  }
+  const can = (key) => {
+    const r = rightsOf(session());
+    return !r || r.bereiche.includes(key);
+  };
+  const canRunde = (id) => {
+    const r = rightsOf(session());
+    return !r || r.bereiche.includes(RUNDEN_KEY) || r.runden.includes(String(id));
+  };
+  const canAllRunden = () => can(RUNDEN_KEY);
+  const canAnyRunde = () => {
+    const r = rightsOf(session());
+    return !r || r.bereiche.includes(RUNDEN_KEY) || r.runden.length > 0;
+  };
+  /* Schluessel einer Seite der Verwaltung ('' = fuer alle offen) */
+  function rightOfPage(page) {
+    if (page === 'runden.html') return RUNDEN_KEY;
+    if (page === 'personen.html') return personenBereich() === 'kloster' ? 'mitbrueder' : 'musik-personen';
+    const a = AREAS.find((x) => x.page === page);
+    return a ? a.key : '';
+  }
+  const allowed = (key) => !key || (key === RUNDEN_KEY ? canAnyRunde() : can(key));
+
   /* Ohne gueltige Sitzung sofort zur Anmeldung, bevor die Seite sichtbar wird;
-     Seiten nur fuer Admins (<html data-adm-rolle="admin">) leiten sonst zur Uebersicht */
+     Seiten nur fuer Admins (<html data-adm-rolle="admin">) und Seiten ohne
+     Berechtigung leiten sonst zur Uebersicht */
   if (!PUBLIC && !session()) {
     ROOT.style.visibility = 'hidden';
     location.replace(`index.html?weiter=${encodeURIComponent(pageName() + location.search)}`);
   } else if (!PUBLIC && ROOT.dataset.admRolle === 'admin' && !isAdmin()) {
     ROOT.style.visibility = 'hidden';
     location.replace('uebersicht.html?hinweis=nur-admin');
+  } else if (!PUBLIC && !allowed(rightOfPage(pageName()))) {
+    ROOT.style.visibility = 'hidden';
+    location.replace('uebersicht.html?hinweis=kein-recht');
   }
 
   /* ---------- Datum ---------- */
@@ -173,9 +232,10 @@
       zugaenge: list
     }, null, 2) + '\n';
   }
-  async function makeAccount({ benutzer, name, passwort, rolle }) {
+  /* rechte nur fuer die Redaktion; Admins brauchen keine */
+  async function makeAccount({ benutzer, name, passwort, rolle, rechte }) {
     const salt = toB64(crypto.getRandomValues(new Uint8Array(16)));
-    return {
+    const acc = {
       benutzer: normUser(benutzer),
       name: String(name || '').trim() || normUser(benutzer),
       salt, iter: ITER,
@@ -183,6 +243,8 @@
       rolle: rolle === 'redaktion' ? 'redaktion' : 'admin',
       angelegt: isoToday()
     };
+    if (acc.rolle === 'redaktion' && rechte) acc.rechte = rechte;
+    return acc;
   }
   async function checkPassword(acc, passwort) {
     return (await derive(passwort, acc.salt, acc.iter || ITER)) === acc.hash;
@@ -254,7 +316,7 @@
     return acc;
   }
   function startSession(acc) {
-    put(KEY_SESSION, { benutzer: acc.benutzer, name: acc.name, rolle: roleOf(acc), stamp: stampOf(acc), bis: Date.now() + IDLE_MS });
+    put(KEY_SESSION, { benutzer: acc.benutzer, name: acc.name, rolle: roleOf(acc), rechte: acc.rechte || null, stamp: stampOf(acc), bis: Date.now() + IDLE_MS });
   }
   function logout(reason) {
     drop(KEY_SESSION);
@@ -277,10 +339,11 @@
         readable = true;
         const acc = list.find((a) => a.benutzer === s.benutzer);
         if (acc && stampOf(acc) === s.stamp) {
-          /* Name oder Rolle koennen sich inzwischen geaendert haben */
-          if (acc.name !== s.name || roleOf(acc) !== roleOf(s)) {
-            put(KEY_SESSION, { ...s, name: acc.name, rolle: roleOf(acc) });
-            if (roleOf(acc) !== roleOf(s)) location.reload();
+          /* Name, Rolle oder Rechte koennen sich inzwischen geaendert haben */
+          const rightsChanged = JSON.stringify(acc.rechte || null) !== JSON.stringify(s.rechte || null);
+          if (acc.name !== s.name || roleOf(acc) !== roleOf(s) || rightsChanged) {
+            put(KEY_SESSION, { ...s, name: acc.name, rolle: roleOf(acc), rechte: acc.rechte || null });
+            if (roleOf(acc) !== roleOf(s) || rightsChanged) location.reload();
           }
           return;
         }
@@ -881,6 +944,20 @@
       ['personen.html?bereich=kloster', 'Mitbrüder']
     ] }
   ];
+  /* Nur das zeigen, was die angemeldete Person bearbeiten darf; ein Reiter
+     mit mehreren Seiten fuehrt zur ersten erlaubten */
+  function allowedNav() {
+    const ok = (href) => {
+      const [page, query] = href.split('?');
+      if (page === 'personen.html') return can(new URLSearchParams(query).get('bereich') === 'kloster' ? 'mitbrueder' : 'musik-personen');
+      return allowed(rightOfPage(page));
+    };
+    return NAV.map((n) => {
+      if (!n.sub) return ok(n.href) ? n : null;
+      const sub = n.sub.filter(([href]) => ok(href));
+      return sub.length ? { ...n, href: sub[0][0], sub } : null;
+    }).filter(Boolean);
+  }
   /* Bereich der Personen-Seite: Mitbrueder (Kloster) oder Kirchenmusik */
   function personenBereich() {
     const q = new URLSearchParams(location.search);
@@ -903,7 +980,8 @@
     if (!el) return;
     const s = session();
     const here = pageName();
-    const group = NAV.find((n) => n.sub && n.sub.some(([href]) => isHere(href)));
+    const nav = allowedNav();
+    const group = nav.find((n) => n.sub && n.sub.some(([href]) => isHere(href)));
     el.innerHTML = '<div class="adm-bar">' +
       '<a class="nav-logo-wrap" href="uebersicht.html">' +
         '<img class="nav-logo-img" src="../assets/logo.png" alt="" width="38" height="38" decoding="async"/>' +
@@ -917,7 +995,7 @@
         `<button type="button" class="adm-iconbtn" id="adm-logout" aria-label="Abmelden">${icon('logout')}<span class="lbl">Abmelden</span></button>` +
       '</div></div>' +
       '<nav class="adm-nav" aria-label="Verwaltung"><div class="adm-nav-in">' +
-        NAV.map((n) => {
+        nav.map((n) => {
           const on = n.sub ? n.sub.some(([href]) => isHere(href)) : isHere(n.href);
           return `<a href="${n.href}"${on ? (n.sub ? ' class="is-open" aria-current="true"' : ' aria-current="page"') : ''}>${icon(n.icon)}${esc(n.label)}</a>`;
         }).join('') +
@@ -1053,6 +1131,7 @@
     guard: (fn) => guards.push(fn),
     /* Anmeldung und Zugaenge */
     session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, roleOf, personenBereich,
+    AREAS, RUNDEN_KEY, rightsOf, can, canRunde, canAllRunden, canAnyRunde,
     parseAccounts, accountsJSON, makeAccount, checkPassword, normUser, stampOf,
     pwLevel, suggestPassword, MIN_PW, ACCOUNTS,
     /* Dateien */

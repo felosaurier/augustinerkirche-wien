@@ -3,7 +3,8 @@
    Zugaenge zur Verwaltung pflegen (admin/zugaenge.html), Quelle
    ist admin/zugaenge.json. Zugang anlegen, Namen oder Passwort
    aendern, Zugang entfernen. Passwoerter werden nur als PBKDF2-
-   Pruefsumme gespeichert (siehe js/admin.js).
+   Pruefsumme gespeichert (siehe js/admin.js). Eine Redaktion bekommt
+   Rechte: welche Bereiche und welche einzelnen Runden sie bearbeiten darf.
    Benoetigt js/hochaemter-data.js und js/admin.js.
    ============================================================ */
 (function () {
@@ -13,6 +14,7 @@
   const { HD, $, esc, icon } = A;
 
   let accounts = [];
+  let runden = [];      /* {id, titel} aus data/runden.json fuer die Auswahl der Rechte */
   let editIndex = -1;   /* -1 = neuer Zugang */
   let snap = '';
 
@@ -27,6 +29,77 @@
   }
   const deDate = (iso) => (HD.isoDate(iso) ? iso.split('-').reverse().join('.') : '');
 
+  /* ---------- Rechte ---------- */
+  async function loadRunden() {
+    try {
+      runden = (JSON.parse(await A.readText('data/runden.json')).runden || []).map((r) => ({ id: r.id, titel: r.titel }));
+    } catch {
+      runden = [];
+    }
+  }
+  /* Ausgewaehlte Rechte eines Zugangs; Redaktion ohne Angabe darf (noch) alles */
+  function rightsSel(acc) {
+    const sel = { bereiche: new Set(), runden: new Set() };
+    if (!acc || A.roleOf(acc) === 'admin') return sel;
+    if (!acc.rechte) {
+      A.AREAS.forEach((a) => sel.bereiche.add(a.key));
+      sel.bereiche.add(A.RUNDEN_KEY);
+      return sel;
+    }
+    (acc.rechte.bereiche || []).forEach((k) => sel.bereiche.add(k));
+    (acc.rechte.runden || []).forEach((k) => sel.runden.add(k));
+    return sel;
+  }
+  function rightsHTML(sel) {
+    let n = 0;
+    const box = (name, value, label, checked) =>
+      `<label class="adm-check"><input type="checkbox" name="${name}" value="${esc(value)}"${n++ === 0 ? ' id="zg-recht-first"' : ''}${checked ? ' checked' : ''}/>${esc(label)}</label>`;
+    const groups = [...new Set(A.AREAS.map((a) => a.group))];
+    const allRunden = sel.bereiche.has(A.RUNDEN_KEY);
+    return groups.map((g) =>
+      `<div class="zg-rg"><h3 class="zg-rg-title">${esc(g)}</h3><div class="zg-rg-grid">` +
+        A.AREAS.filter((a) => a.group === g).map((a) => box('recht', a.key, a.label, sel.bereiche.has(a.key))).join('') +
+      '</div></div>'
+    ).join('') +
+      '<div class="zg-rg"><h3 class="zg-rg-title">Runden</h3>' +
+        box('recht', A.RUNDEN_KEY, 'Alle Runden', allRunden) +
+        '<p class="adm-hint zg-rg-hint">Auch neue Runden anlegen, löschen und die Reihenfolge ändern.</p>' +
+        '<fieldset class="zg-runden"' + (allRunden ? ' disabled' : '') + '><legend>Oder nur diese Runden bearbeiten</legend>' +
+          (runden.length
+            ? '<div class="zg-rg-grid">' + runden.map((r) => box('runde', r.id, r.titel, sel.runden.has(r.id))).join('') + '</div>'
+            : '<p class="adm-muted">Die Runden konnten nicht geladen werden.</p>') +
+        '</fieldset>' +
+      '</div>';
+  }
+  function collectRights() {
+    const checked = (name) => Array.from(document.querySelectorAll(`#zg-rights input[name="${name}"]:checked`), (i) => i.value);
+    const bereiche = checked('recht');
+    return { bereiche, runden: bereiche.includes(A.RUNDEN_KEY) ? [] : checked('runde') };
+  }
+  function syncRights() {
+    const all = document.querySelector('#zg-rights input[value="runden"]');
+    const set = document.querySelector('#zg-rights .zg-runden');
+    if (all && set) set.disabled = all.checked;
+    $('zg-rights-fs').hidden = role() === 'admin';
+  }
+  function setAllRights(on) {
+    document.querySelectorAll('#zg-rights input[type="checkbox"]').forEach((i) => { i.checked = on; });
+    syncRights();
+  }
+  /* Kurzfassung fuer die Liste: was darf dieser Zugang bearbeiten? */
+  function rightsSummary(acc) {
+    if (A.roleOf(acc) === 'admin') return 'Darf alles und Zugänge verwalten';
+    const sel = rightsSel(acc);
+    if (!acc.rechte) return 'Darf alles bearbeiten';
+    const labels = A.AREAS.filter((a) => sel.bereiche.has(a.key)).map((a) => a.label.replace(/ \(.*\)$/, ''));
+    if (sel.bereiche.has(A.RUNDEN_KEY)) labels.push('alle Runden');
+    else if (sel.runden.size) {
+      const names = runden.filter((r) => sel.runden.has(r.id)).map((r) => r.titel);
+      labels.push(names.length === 1 ? `Runde ${names[0]}` : names.length && names.length <= 3 ? `Runden ${names.join(', ')}` : plural(sel.runden.size, 'Runde', 'Runden'));
+    }
+    return labels.length ? `Darf bearbeiten: ${labels.join(', ')}` : 'Darf noch nichts bearbeiten';
+  }
+
   async function load() {
     try {
       accounts = A.parseAccounts(await A.readText(A.ACCOUNTS));
@@ -34,6 +107,7 @@
       $('zg-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Zugänge konnten nicht geladen werden (${esc(e.message)}).</div></div>`;
       return;
     }
+    await loadRunden();
     render();
   }
 
@@ -48,6 +122,7 @@
               `<span class="adm-row-title">${esc(a.name)}${a.benutzer === self ? ' <span class="adm-badge">Du</span>' : ''}` +
                 ` <span class="adm-badge${A.roleOf(a) === 'admin' ? ' on' : ''}">${ROLES[A.roleOf(a)]}</span></span>` +
               `<span class="adm-row-meta">Benutzername <code>${esc(a.benutzer)}</code>${a.angelegt ? ` · angelegt am ${esc(deDate(a.angelegt))}` : ''}</span>` +
+              `<span class="adm-row-meta">${esc(rightsSummary(a))}</span>` +
             '</span><span></span>' +
           '</button>' +
           '<div class="adm-row-actions">' +
@@ -89,6 +164,8 @@
     /* Der letzte Admin kann nicht zur Redaktion werden */
     const lastAdmin = acc && A.roleOf(acc) === 'admin' && admins(accounts).length === 1;
     document.querySelector('input[name="rolle"][value="redaktion"]').disabled = lastAdmin;
+    $('zg-rights').innerHTML = rightsHTML(rightsSel(acc));
+    syncRights();
     $('zg-role-hint').textContent = lastAdmin ? 'Das ist der einzige Admin. Lege zuerst einen weiteren Admin an, bevor du diese Rolle änderst.' : '';
     $('f-user').readOnly = !!acc;
     delete $('f-user').dataset.touched;
@@ -118,6 +195,10 @@
       if (!/^[a-z0-9._-]{2,30}$/.test(user)) errors.push([$('f-user'), 'Benutzername: 2 bis 30 Zeichen, nur Kleinbuchstaben, Ziffern, Punkt oder Bindestrich.']);
       else if (accounts.some((a) => a.benutzer === user)) errors.push([$('f-user'), `Den Benutzernamen „${user}“ gibt es schon.`]);
     }
+    const rechte = role() === 'redaktion' ? collectRights() : null;
+    if (rechte && !rechte.bereiche.length && !rechte.runden.length) {
+      errors.push([$('zg-recht-first'), 'Bitte mindestens einen Bereich oder eine Runde auswählen, sonst kann die Person nichts bearbeiten.']);
+    }
     if (!old || pw) {
       if (pw.length < A.MIN_PW) errors.push([$('f-pw'), `Das Passwort braucht mindestens ${A.MIN_PW} Zeichen.`]);
       else if (pw.toLowerCase() === (old ? old.benutzer : user)) errors.push([$('f-pw'), 'Das Passwort darf nicht der Benutzername sein.']);
@@ -138,12 +219,16 @@
       const next = accounts.slice();
       let acc;
       if (!old) {
-        acc = await A.makeAccount({ benutzer: user, name, passwort: pw, rolle: role() });
+        acc = await A.makeAccount({ benutzer: user, name, passwort: pw, rolle: role(), rechte });
         next.push(acc);
       } else {
-        acc = pw
-          ? { ...(await A.makeAccount({ benutzer: old.benutzer, name, passwort: pw, rolle: role() })), angelegt: old.angelegt }
-          : { ...old, name, rolle: role() };
+        if (pw) {
+          acc = { ...(await A.makeAccount({ benutzer: old.benutzer, name, passwort: pw, rolle: role(), rechte })), angelegt: old.angelegt };
+        } else {
+          acc = { ...old, name, rolle: role() };
+          if (rechte) acc.rechte = rechte;
+          else delete acc.rechte;
+        }
         next[editIndex] = acc;
       }
       const direct = await A.saveFile(A.ACCOUNTS, A.accountsJSON(next));
@@ -208,6 +293,9 @@
   A.start(async () => {
     $('zg-new').addEventListener('click', () => openEditor(-1));
     $('zg-form').addEventListener('submit', save);
+    $('zg-form').addEventListener('change', (ev) => { if (ev.target.name === 'rolle' || ev.target.name === 'recht') syncRights(); });
+    $('zg-rights-all').addEventListener('click', () => setAllRights(true));
+    $('zg-rights-none').addEventListener('click', () => setAllRights(false));
     $('f-pw').addEventListener('input', updateMeter);
     $('zg-suggest').addEventListener('click', () => {
       const pw = A.suggestPassword();

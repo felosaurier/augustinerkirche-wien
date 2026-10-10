@@ -593,3 +593,15 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-rg-pan.dragging{cursor:grabbing}
 .adm-rg-pan:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .adm-rg-pan img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Zugaenge: Rechte der Redaktion */
+.zg-rights-tools{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.9rem}
+.zg-rg{margin-bottom:1.1rem}
+.zg-rg-title{margin:0 0 .15rem;font-family:var(--sans);font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.zg-rg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.2rem}
+.zg-rg .adm-check{min-height:38px}
+.zg-rg-hint{margin:-.2rem 0 .5rem 1.95rem}
+.zg-runden{border:none;margin:0 0 0 1.95rem;padding:0;min-width:0}
+.zg-runden>legend{padding:0;margin-bottom:.1rem;font-size:.86rem;color:var(--text-mid)}
+.zg-runden[disabled]{opacity:.45}
+@media (max-width:640px){.zg-rg-grid{grid-template-columns:1fr}}

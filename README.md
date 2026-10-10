@@ -68,7 +68,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Repertoire** | Repertoire des Chores nach Komponisten, mit Werken und Hinweisen (z. B. Uraufführungen in der Augustinerkirche) |
 | **Zugänge** | Nur für Admins: Zugang anlegen, Rolle, Name oder Passwort ändern, entfernen |
 
-**Rollen:** *Admin* darf zusätzlich Zugänge verwalten, *Redaktion* pflegt alle Inhalte. Es gibt immer mindestens einen Admin; der erste Zugang aus der Ersteinrichtung ist Admin.
+**Rollen und Rechte:** *Admin* darf alles und zusätzlich Zugänge verwalten. Eine *Redaktion* pflegt nur, was ihr unter „Zugänge“ erlaubt wird: einzelne Bereiche (Neuigkeiten, Hochämter, Solisten …) und entweder alle Runden oder nur bestimmte. Menü, Übersicht und Seiten zeigen dann nur diese Bereiche; andere Seiten leiten zur Übersicht um. Zugänge aus der Zeit vor den Rechten dürfen weiterhin alles. Es gibt immer mindestens einen Admin; der erste Zugang aus der Ersteinrichtung ist Admin.
 
 **Texte formatieren:** In Texten von Runden und Personen wird `[Text](pages/chronik.html)` zum Link, `*Wort*` kursiv; E-Mail- und https-Adressen werden automatisch verlinkt.
 

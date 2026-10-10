@@ -46,7 +46,9 @@
       <b>Gut zu wissen</b>
       <ul>
         <li>Am besten bekommt jede Person einen eigenen Zugang. Wer nicht mehr mitarbeitet, wird einfach entfernt.</li>
-        <li><b>Admin</b> darf Zugänge verwalten, <b>Redaktion</b> nur Inhalte pflegen. Es muss immer mindestens einen Admin geben.</li>
+        <li><b>Admin</b> darf alles und Zugänge verwalten. Eine <b>Redaktion</b> darf nur, was ihr hier erlaubt wird: ganze Bereiche und einzelne Runden. Es muss immer mindestens einen Admin geben.</li>
+        <li>Bei den <b>Runden</b> lässt sich entweder „Alle Runden“ erlauben (mit Neu anlegen, Löschen und Reihenfolge) oder nur bestimmte, z. B. die eigene Gruppe.</li>
+        <li>Die Einschränkung gilt in der Verwaltung. Wer den Projektordner selbst bearbeiten kann, ist dadurch nicht gebremst.</li>
         <li>Passwort vergessen? Hier ein neues vergeben. Das alte lässt sich nicht anzeigen.</li>
         <li>Änderungen gelten sofort, sobald <code>admin/zugaenge.json</code> im Projektordner gespeichert ist; auf der veröffentlichten Website nach dem Veröffentlichen.</li>
       </ul>
@@ -81,10 +83,19 @@
     <fieldset class="adm-fs">
       <legend>Rolle</legend>
       <div class="adm-choice" role="radiogroup" aria-label="Rolle">
-        <label><input type="radio" name="rolle" value="redaktion" checked/><span><b>Redaktion</b><span>Pflegt Inhalte: Hochämter, Neuigkeiten, Gottesdienste, Runden, Personen …</span></span></label>
-        <label><input type="radio" name="rolle" value="admin"/><span><b>Admin</b><span>Darf zusätzlich Zugänge anlegen, ändern und entfernen.</span></span></label>
+        <label><input type="radio" name="rolle" value="redaktion" checked/><span><b>Redaktion</b><span>Pflegt nur die Bereiche, die unten angehakt sind.</span></span></label>
+        <label><input type="radio" name="rolle" value="admin"/><span><b>Admin</b><span>Darf alles bearbeiten und zusätzlich Zugänge anlegen, ändern und entfernen.</span></span></label>
       </div>
       <p class="adm-hint" id="zg-role-hint" style="margin-top:.6rem"></p>
+    </fieldset>
+    <fieldset class="adm-fs" id="zg-rights-fs">
+      <legend>Was darf bearbeitet werden?</legend>
+      <p class="adm-hint" style="margin-bottom:.8rem">In der Verwaltung sieht diese Person nur die angehakten Bereiche, alles andere ist ausgeblendet und gesperrt.</p>
+      <div class="zg-rights-tools">
+        <button type="button" class="adm-list-add" id="zg-rights-all">Alles auswählen</button>
+        <button type="button" class="adm-list-add" id="zg-rights-none">Nichts auswählen</button>
+      </div>
+      <div id="zg-rights" class="adm-field"></div>
     </fieldset>
     <fieldset class="adm-fs">
       <legend id="zg-pw-legend">Passwort</legend>
