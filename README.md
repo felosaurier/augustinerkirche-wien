@@ -1,22 +1,6 @@
 <div align="center">
 
-<br>
-
-<img src="assets/logo-gold.png" alt="Goldenes Logo der Augustinerkirche Wien" width="130"/>
-
-<br>
-
-# Augustinerkirche Wien
-
-<sub>P F A R R E &nbsp; & &nbsp; K L O S T E R &nbsp;&nbsp; S T .&nbsp; A U G U S T I N</sub>
-
-<br>
-
-<img src="assets/divider-gold.svg" alt="" width="300"/>
-
-<br>
-
-*Hofpfarrkirche der Habsburger — Heimat der Wiener Kirchenmusik*
+<img src="docs/readme-banner.svg" alt="Augustinerkirche Wien – Pfarre und Kloster St. Augustin" width="100%"/>
 
 <br>
 
@@ -27,6 +11,17 @@
 </div>
 
 <br>
+
+## Auf einen Blick
+
+| | |
+|---|---|
+| **Technik** | Statisches HTML, CSS und JavaScript. Kein Build, kein Framework, kein Backend. |
+| **Inhalte** | Tabellen und Dateien in `data/`, gepflegt in der Verwaltung (`admin/`) oder direkt in Excel. |
+| **Ansehen** | `python -m http.server 8123`, dann `http://localhost:8123` |
+| **Verwaltung** | `http://localhost:8123/admin/`, speichert in den Projektordner oder, auf einem Server, direkt dort. |
+| **Veröffentlichen** | Per Git (`commit` und `push`) oder als Paket für nginx und Apache: `python tools/paket.py --verwaltung`. |
+| **Gestaltung** | Marine und Gold auf Weiß, Calibri, für Handy, Tablet und Laptop. |
 
 ## Über das Projekt
 

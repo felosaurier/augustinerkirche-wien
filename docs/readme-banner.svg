@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-labelledby="t d">
+  <title id="t">Augustinerkirche Wien</title>
+  <desc id="d">Pfarre und Kloster St. Augustin. Ein goldener gotischer Bogen zeichnet sich auf Marineblau.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10192e"/>
+      <stop offset="1" stop-color="#1b2a4a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8f6b25"/>
+      <stop offset=".5" stop-color="#d8b96e"/>
+      <stop offset="1" stop-color="#8f6b25"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#d8b96e" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#d8b96e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <style>
+    .arch{fill:none;stroke:url(#gold);stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:700;stroke-dashoffset:700;animation:draw 2.6s cubic-bezier(.4,0,.2,1) forwards}
+    .a2{animation-delay:.5s;stroke-width:1.2;opacity:.7}
+    .t{font-family:Georgia,'Times New Roman',serif;fill:#fff;opacity:0;animation:rise 1.2s ease-out 1.4s forwards}
+    .s{font-family:Georgia,'Times New Roman',serif;fill:#d8b96e;letter-spacing:.42em;opacity:0;animation:rise 1.2s ease-out 2s forwards}
+    .q{font-family:Georgia,'Times New Roman',serif;font-style:italic;fill:#c7cddb;opacity:0;animation:rise 1.2s ease-out 2.6s forwards}
+    .line{fill:url(#gold);transform-box:fill-box;transform-origin:left center;transform:scaleX(0);animation:wide 1.6s ease-out 2.3s forwards}
+    .c{fill:#d8b96e;opacity:0;animation:fade 1s ease-out 2.8s forwards}
+    .g{fill:url(#glow);opacity:0;animation:pulse 4.5s ease-in-out 3s infinite}
+    .g2{animation-delay:4.2s}.g3{animation-delay:5.4s}
+    @keyframes draw{to{stroke-dashoffset:0}}
+    @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    @keyframes wide{to{transform:scaleX(1)}}
+    @keyframes fade{to{opacity:1}}
+    @keyframes pulse{0%,100%{opacity:.08}50%{opacity:.9}}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important}.arch{stroke-dashoffset:0}.t,.s,.q,.c{opacity:1}.line{transform:none}.g{opacity:.4}}
+  </style>
+  <rect width="1200" height="300" fill="url(#bg)"/>
+  <!-- Bogen -->
+  <path class="arch" stroke-width="2" d="M100 262 V150 Q100 86 170 38 Q240 86 240 150 V262"/>
+  <path class="arch a2" d="M122 262 V152 Q122 100 170 66 Q218 100 218 152 V262"/>
+  <path class="arch a2" d="M170 262 V120"/>
+  <!-- Kerzen -->
+  <circle class="g" cx="170" cy="150" r="30"/>
+  <circle class="g g2" cx="136" cy="196" r="22"/>
+  <circle class="g g3" cx="204" cy="196" r="22"/>
+  <circle class="c" cx="170" cy="150" r="2.6"/><circle class="c" cx="136" cy="196" r="2"/><circle class="c" cx="204" cy="196" r="2"/>
+  <!-- Text -->
+  <text class="t" x="320" y="136" font-size="58">Augustinerkirche Wien</text>
+  <text class="s" x="322" y="178" font-size="15">PFARRE &amp; KLOSTER ST. AUGUSTIN</text>
+  <rect class="line" x="322" y="198" width="260" height="1.5"/>
+  <text class="q" x="322" y="236" font-size="19">Hofpfarrkirche der Habsburger – Heimat der Wiener Kirchenmusik</text>
+</svg>
