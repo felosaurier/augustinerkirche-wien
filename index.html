@@ -14,7 +14,6 @@
 <meta name="theme-color" content="#10192e"/>
 <title>Augustinerkirche Wien — Pfarre &amp; Kloster St. Augustin</title>
 <meta name="description" content="Die Augustinerkirche Wien: Hofpfarrkirche der Habsburger, lebendige Pfarre St. Augustin und Heimat einer der bedeutendsten Kirchenmusiktraditionen Wiens."/>
-<link rel="preload" as="image" href="assets/img/kirche/turm.webp" fetchpriority="high"/>
 <link rel="stylesheet" href="css/style.css"/>
 <noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
 </head>
@@ -162,7 +161,9 @@
 <main id="main">
 
 <section class="hero hero-home">
-  <div class="hero-img" style="background-image:url('assets/img/kirche/turm.webp')"></div>
+  <div class="hero-img hero-show" id="hero-show" data-show="data/startseite.json">
+    <noscript><div class="hero-slide is-on" style="background-image:url('assets/img/kirche/turm.webp');background-position:50% 20%"></div></noscript>
+  </div>
   <div class="hero-content">
     <h1 class="hero-h1">Ein Ort der Stille<br>und lebendigen Musik</h1>
     <p class="hero-sub">Die Augustinerkirche Wien — Hofpfarrkirche der Habsburger, heute lebendige Pfarre und Heimat einer der bedeutendsten Kirchenmusiktraditionen Wiens.</p>

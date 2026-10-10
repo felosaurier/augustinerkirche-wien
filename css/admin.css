@@ -605,3 +605,20 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .zg-runden>legend{padding:0;margin-bottom:.1rem;font-size:.86rem;color:var(--text-mid)}
 .zg-runden[disabled]{opacity:.45}
 @media (max-width:640px){.zg-rg-grid{grid-template-columns:1fr}}
+
+/* Startseite: grosse Fotos in der Liste, grosses Fotofeld im Fenster */
+.adm-row-open.adm-st{grid-template-columns:8rem minmax(0,1fr);gap:1.1rem;min-height:96px}
+.adm-st .adm-thumb{width:8rem;aspect-ratio:4/5}
+.adm-st .adm-thumb img{width:100%;height:100%;object-fit:cover}
+.adm-seg{display:inline-flex;margin:.3rem 0 .7rem;border:1px solid var(--line);background:var(--white)}
+.adm-seg-btn{min-height:38px;padding:0 1.1rem;border:none;background:none;font:inherit;font-size:.9rem;font-weight:600;color:var(--text-mid);cursor:pointer}
+.adm-seg-btn+.adm-seg-btn{border-left:1px solid var(--line)}
+.adm-seg-btn[aria-pressed="true"]{background:var(--blue-deep);color:var(--gold-l)}
+.adm-seg-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.adm-st-pan{width:100%;max-width:34rem;aspect-ratio:4/5;overflow:hidden;background:var(--bg-warm);border:1px solid var(--line);cursor:grab;touch-action:none;user-select:none}
+.adm-st-pan.dragging{cursor:grabbing}
+.adm-st-pan:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.adm-st-pan img{display:block;width:100%;height:100%;object-fit:cover}
+.adm-st-speed{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.8rem 1.4rem;padding:1rem 1.2rem;margin-bottom:1rem}
+.adm-st-speed .adm-field{min-width:12rem}
+.adm-st-speed .adm-hint{flex:1;min-width:12rem}

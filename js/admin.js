@@ -93,6 +93,7 @@
      der Schluessel "runden" bedeutet alle Runden samt Anlegen, Loeschen und
      Reihenfolge, sonst nur die einzeln genannten Runden bearbeiten. */
   const AREAS = [
+    { key: 'startseite', label: 'Startseite (Titelfotos)', group: 'Allgemein', page: 'startseite.html' },
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Allgemein', page: 'neuigkeiten.html' },
     { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Allgemein', page: 'termine.html' },
     { key: 'hochaemter', label: 'Hochämter', group: 'Kirchenmusik', page: 'hochaemter.html' },
@@ -926,6 +927,7 @@
      Zeile. Zugaenge stehen (nur fuer Admins) rechts oben beim Namen. */
   const NAV = [
     { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
+    { label: 'Startseite', icon: 'image', href: 'startseite.html' },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
     { label: 'Termine', icon: 'calendar', href: 'termine.html' },
     { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [

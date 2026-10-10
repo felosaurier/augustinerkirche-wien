@@ -547,6 +547,7 @@
       return;
     }
     applyCredits();
+    if (heroCredit) heroCredit();
     let queued = false;
     new MutationObserver(() => {
       if (queued) return;
@@ -557,6 +558,115 @@
         applyCredits();
       }, 40);
     }).observe(document.body, { childList: true, subtree: true });
+  }
+
+  /* ---------- Titelbilder der Startseite ----------
+     data/startseite.json: {sekunden, bilder: [{titel, bild, ausschnitt}]}, gepflegt in
+     admin/startseite.html. Ein Bild steht still, mehrere wechseln weich ineinander
+     (nicht bei "reduzierte Bewegung"). Ein Klick oder Tipp aufs Foto zeigt Pfeile
+     links und rechts zum Blaettern; solange sie da sind, wechselt das Foto nicht
+     von selbst. Der Bildnachweis wechselt mit. */
+  let heroCredit = null;
+  const HERO_FALLBACK = [{ titel: 'Der Turm der Augustinerkirche', bild: 'assets/img/kirche/turm.webp', ausschnitt: '50% 20%' }];
+  async function initHeroShow() {
+    const box = qs('#hero-show');
+    if (!box) return;
+    let data = null;
+    try {
+      const res = await fetch(`${siteRoot}${box.dataset.show}`);
+      if (res.ok) data = await res.json();
+    } catch {
+      /* ohne Daten bleibt das Standardbild */
+    }
+    let items = data && Array.isArray(data.bilder)
+      ? data.bilder.filter((b) => b && typeof b.bild === 'string' && !/^[a-z]+:|\.\.|^[/\\]/i.test(b.bild)) : [];
+    if (!items.length) items = HERO_FALLBACK;
+    const secs = Math.min(30, Math.max(3, Number(data && data.sekunden) || 6));
+    const url = (b) => encodeURI(`${siteRoot}${b.bild}`);
+
+    const slides = items.map((b) => {
+      const el = document.createElement('div');
+      el.className = 'hero-slide';
+      el.setAttribute('role', 'img');
+      el.setAttribute('aria-label', String(b.titel || ''));
+      el.setAttribute('aria-hidden', 'true');
+      if (/^\d{1,3}% \d{1,3}%$/.test(b.ausschnitt || '')) el.style.backgroundPosition = b.ausschnitt;
+      box.append(el);
+      return el;
+    });
+    const load = (i) => new Promise((resolve) => {
+      const el = slides[i];
+      if (!el.style.backgroundImage) el.style.backgroundImage = `url("${url(items[i])}")`;
+      const img = new Image();
+      img.onload = img.onerror = resolve;
+      img.src = url(items[i]);
+    });
+
+    const credit = document.createElement('small');
+    credit.className = 'bn bn-over';
+    credit.hidden = true;
+    box.append(credit);
+    let cur = -1;
+    heroCredit = () => {
+      const text = cur >= 0 ? creditFor(url(items[cur])) : '';
+      credit.textContent = text;
+      credit.hidden = !text;
+    };
+
+    function show(i) {
+      if (i === cur) return;
+      cur = i;
+      slides.forEach((el, k) => {
+        el.classList.toggle('is-on', k === i);
+        el.setAttribute('aria-hidden', String(k !== i));
+      });
+      heroCredit();
+      if (slides.length > 1) load((i + 1) % slides.length);
+    }
+
+    await load(0);
+    show(0);
+    if (slides.length < 2) return;
+
+    const go = (to) => {
+      const next = (to + slides.length) % slides.length;
+      load(next).then(() => show(next));
+    };
+    const arrow = (dir) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = `hero-arrow hero-arrow-${dir < 0 ? 'prev' : 'next'}`;
+      b.setAttribute('aria-label', dir < 0 ? 'Voriges Foto' : 'Nächstes Foto');
+      b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${dir < 0 ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7'}"/></svg>`;
+      b.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        go(cur + dir);
+        reveal();
+      });
+      return b;
+    };
+    let hideTimer = 0;
+    function reveal() {
+      box.classList.add('show-arrows');
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => box.classList.remove('show-arrows'), 5000);
+    }
+    box.classList.add('hero-multi');
+    box.append(arrow(-1), arrow(1));
+    box.addEventListener('click', () => {
+      if (box.classList.contains('show-arrows')) {
+        clearTimeout(hideTimer);
+        box.classList.remove('show-arrows');
+      } else {
+        reveal();
+      }
+    });
+    box.addEventListener('focusin', () => clearTimeout(hideTimer));
+
+    setInterval(() => {
+      if (reducedMotion.matches || document.hidden || box.classList.contains('show-arrows') || box.contains(document.activeElement)) return;
+      go(cur + 1);
+    }, secs * 1000);
   }
 
   function initMail() {
@@ -571,6 +681,7 @@
     initSidebarTabs();
     initSakrChips();
     initMail();
+    initHeroShow();
     initCredits();
     markCurrentNav();
     initAttributeFilter('.week-filter-btn[data-filter]', '.week-row', 'day');

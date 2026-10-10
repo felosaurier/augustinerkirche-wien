@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Startseite — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-startseite.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Startseite <em>pflegen</em></h1>
+      <p class="ph-sub">Die großen Fotos ganz oben auf der <a href="../index.html" target="_blank" rel="noopener">Startseite</a>. Bei mehreren Fotos wechseln sie nacheinander, in der Reihenfolge dieser Liste.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="st-new" data-icon="plus">Neues Foto</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <p class="adm-count" id="st-count" role="status"></p>
+  <div class="adm-panel adm-st-speed" id="st-speed" hidden>
+    <div class="adm-field">
+      <label class="adm-label" for="st-secs">Wechsel nach</label>
+      <select class="adm-input" id="st-secs">
+        <option value="4">4 Sekunden</option>
+        <option value="6">6 Sekunden</option>
+        <option value="8">8 Sekunden</option>
+        <option value="10">10 Sekunden</option>
+        <option value="15">15 Sekunden</option>
+        <option value="20">20 Sekunden</option>
+      </select>
+    </div>
+    <p class="adm-hint">Die Fotos wechseln von selbst. Ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern, dann pausiert der Wechsel. Wer „reduzierte Bewegung“ eingestellt hat, sieht nur das erste Foto.</p>
+  </div>
+  <div id="st-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Foto bearbeiten -->
+<dialog class="adm-dialog" id="st-dlg" aria-labelledby="st-dlg-title" style="width:min(760px,calc(100vw - 2rem))">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="st-dlg-tag">Neues Foto</div>
+      <h2 class="adm-dlg-title" id="st-dlg-title">Neues Foto</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="st-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Foto</legend>
+      <div class="adm-field">
+        <label class="adm-drop" id="st-drop">
+          <span data-icon="image"></span>
+          <span class="adm-drop-main">Foto hierher ziehen oder <u>auswählen</u></span>
+          <span class="adm-hint">WebP, JPG oder PNG; wird auf höchstens 2000 Pixel verkleinert. Am besten ein Hochformat, es füllt rechts die ganze Höhe.</span>
+          <input type="file" id="f-file" accept="image/*" aria-describedby="st-imginfo"/>
+        </label>
+        <span class="adm-hint" id="st-imginfo"></span>
+      </div>
+      <div class="adm-field full" style="margin-top:1.1rem">
+        <span class="adm-label">So sieht das Foto auf der Startseite aus</span>
+        <div class="adm-seg" role="group" aria-label="Anzeige">
+          <button type="button" class="adm-seg-btn" data-view="computer" aria-pressed="true">Computer</button>
+          <button type="button" class="adm-seg-btn" data-view="handy" aria-pressed="false">Handy</button>
+        </div>
+        <div class="adm-st-pan" id="st-pan" tabindex="0" role="group" aria-label="Ausschnitt: mit der Maus ziehen oder mit den Pfeiltasten verschieben"></div>
+        <div class="adm-pan-help" id="st-pan-help">
+          <span class="adm-hint" id="st-pan-note">Foto ziehen (oder Pfeiltasten), bis der gewünschte Ort zu sehen ist.</span>
+          <button type="button" class="adm-act" id="st-pan-reset">Ausschnitt zurücksetzen</button>
+        </div>
+        <input type="hidden" id="f-focus"/>
+      </div>
+    </fieldset>
+    <fieldset class="adm-fs">
+      <legend>Beschriftung</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-titel">Beschreibung<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-titel" required placeholder="z. B. Der Turm der Augustinerkirche"/>
+          <span class="adm-hint">Wird nicht angezeigt, sondern Sehbehinderten vorgelesen.</span>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-credit">Bildnachweis</label>
+          <input class="adm-input" type="text" id="f-credit" placeholder="z. B. © Augustiner Wien, Foto: Max Muster" aria-describedby="f-credit-hint"/>
+          <span class="adm-hint" id="f-credit-hint">Steht auf der Website klein unten im Foto.</span>
+        </div>
+        <div class="adm-field" id="st-pos-field">
+          <label class="adm-label" for="f-pos">Stelle in der Liste</label>
+          <select class="adm-input" id="f-pos">
+            <option value="ende">Am Ende anfügen</option>
+            <option value="anfang">Ganz vorne einfügen</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="st-delete" data-icon="trash">Entfernen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="st-form" class="btn btn-dark" id="st-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

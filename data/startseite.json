@@ -1,0 +1,47 @@
+{
+  "sekunden": 6,
+  "bilder": [
+    {
+      "titel": "Der Turm der Augustinerkirche",
+      "bild": "assets/img/kirche/turm.webp",
+      "breite": 712,
+      "hoehe": 1186,
+      "ausschnitt": "50% 20%"
+    },
+    {
+      "titel": "Außenansicht der Augustinerkirche",
+      "bild": "assets/img/kirche/exterior.webp",
+      "breite": 900,
+      "hoehe": 1316,
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Das Kirchenschiff",
+      "bild": "assets/img/kirche/interior-nave.webp",
+      "breite": 900,
+      "hoehe": 1350,
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Der Hochaltar",
+      "bild": "assets/img/kirche/hochaltar.webp",
+      "breite": 900,
+      "hoehe": 1351,
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Die Kanzel",
+      "bild": "assets/img/kirche/kanzel.webp",
+      "breite": 900,
+      "hoehe": 1351,
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Ein Seitenaltar",
+      "bild": "assets/img/kirche/seitenaltar.webp",
+      "breite": 900,
+      "hoehe": 1347,
+      "ausschnitt": ""
+    }
+  ]
+}

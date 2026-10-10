@@ -193,6 +193,20 @@ nav .nav-logo-sub{color:rgba(255,255,255,.62)}
   background-color:var(--blue);background-size:cover;background-position:center;
   animation:photo-rise 1.4s var(--ease) both;
 }
+/* Startseite: Foto groesser (Text bleibt links) und mehrere Fotos als Diashow (js/main.js, data/startseite.json) */
+.hero-home{grid-template-columns:minmax(0,1fr) minmax(0,52%)}
+.hero-show{overflow:hidden}
+.hero-slide{position:absolute;inset:0;background-color:var(--blue);background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s ease}
+.hero-slide.is-on{opacity:1}
+.hero-multi{cursor:pointer}
+.hero-arrow{position:absolute;top:50%;z-index:3;display:grid;place-items:center;width:3rem;height:3rem;margin-top:-1.5rem;padding:0;border:none;border-radius:50%;
+  background:rgba(16,25,46,.62);color:#fff;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s,background .2s}
+.hero-arrow-prev{left:.8rem}
+.hero-arrow-next{right:.8rem}
+.hero-arrow svg{width:1.4rem;height:1.4rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hero-show.show-arrows .hero-arrow,.hero-arrow:focus-visible{opacity:1;pointer-events:auto}
+.hero-arrow:hover{background:rgba(16,25,46,.85)}
+.hero-arrow:focus-visible{outline:2px solid var(--gold-l);outline-offset:2px}
 .hero-img[style*="aspersdorf"]{background-position:68% center}
 /* Kirchturm: Spitze immer im Bild, unten darf beschnitten werden */
 .hero-img[style*="turm"]{background-position:center 20%}
@@ -1083,7 +1097,7 @@ footer a:focus-visible,.herzgruft a:focus-visible,.sakr-band:not(.sakr-band-inli
 
 @media(orientation:portrait){
   /* Hochformat: Foto randlos über die volle Breite, Text darunter */
-  .hero{grid-template-columns:minmax(0,1fr);padding:0;min-height:0}
+  .hero,.hero-home{grid-template-columns:minmax(0,1fr);padding:0;min-height:0}
   .hero-img{grid-column:1;grid-row:1;width:100%;min-height:0;aspect-ratio:4/5;max-height:62vh;max-height:62svh}
   .hero:not(.hero-home) .hero-img{aspect-ratio:16/10;max-height:42vh;max-height:42svh}
   .hero-content,.hero:not(.hero-home) .hero-content{grid-column:1;grid-row:2;padding:2.2rem var(--edge) 2.8rem}
@@ -1191,6 +1205,7 @@ footer a:focus-visible,.herzgruft a:focus-visible,.sakr-band:not(.sakr-band-inli
 /* Reduzierte Bewegung */
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
+  .hero-slide,.hero-arrow{transition:none}
   .hero-img,.hero-content,.tab-pane.active,.news-dialog[open],.news-dialog::backdrop,.lightbox[open]{animation:none}
   .insta-skel::after{animation:none}
   .skip-link{transition:none}

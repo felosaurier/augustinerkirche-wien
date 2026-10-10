@@ -55,6 +55,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 |---|---|
 | **Übersicht** | Stand aller Bereiche, nächstes Hochamt, neueste Meldung, „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel) und die letzten Änderungen auf diesem Gerät |
 | **Hochämter** | Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
+| **Startseite** | Titelfotos ganz oben auf der Startseite: Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
 | **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick), dazu Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
@@ -175,6 +176,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   gottesdienste.html          Wochenplan, Pfarrkanzlei und Kontakt pflegen
   runden.html                 Runden pflegen
   rundgang.html               Kirchenrundgang pflegen
+  startseite.html             Titelfotos der Startseite pflegen
   personen.html               Mitbrüder, Leitung, Gastdirigenten, Organisten pflegen
   repertoire.html             Repertoire des Chores pflegen
   zugaenge.html               Zugänge und Rollen verwalten (nur Admin)
@@ -206,6 +208,7 @@ js/
   admin-gottesdienste.js      Wochenplan, Pfarrkanzlei und Kontakt
   admin-runden.js             Runden pflegen
   admin-rundgang.js           Kirchenrundgang pflegen
+  admin-startseite.js         Titelfotos der Startseite pflegen
   admin-personen.js           Personen pflegen
   admin-repertoire.js         Repertoire pflegen
   admin-zugaenge.js           Zugänge und Rollen verwalten
@@ -224,6 +227,7 @@ data/
   gottesdienste.json          Wochenplan der Gottesdienste
   runden.json                 Runden: Übersicht und Inhalt der Seiten
   rundgang.json               Bilder des Kirchenrundgangs (Chronik → Rundgang)
+  startseite.json             Titelfotos der Startseite (Diashow, Wechselzeit)
   personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten
   kontakt.json                Adresse, Telefon, E-Mail, Öffnungszeiten der Pfarrkanzlei
   repertoire.json             Repertoire des Chores

@@ -16,7 +16,7 @@
 
   async function loadAll() {
     const json = (path) => A.readText(path).then((t) => JSON.parse(t));
-    const [ha, news, sol, acc, gd, rd, ps, rp] = await Promise.allSettled([
+    const [ha, news, sol, acc, gd, rd, ps, rp, st] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -24,12 +24,13 @@
       json('data/gottesdienste.json'),
       json('data/runden.json'),
       json('data/personen.json'),
-      json('data/repertoire.json')
+      json('data/repertoire.json'),
+      json('data/startseite.json')
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
-      rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp)
+      rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st)
     };
   }
 
@@ -41,7 +42,7 @@
     '</article>';
   }
 
-  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp }) {
+  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
@@ -54,6 +55,11 @@
     const mine = (rd || []).filter((r) => A.canRunde(r.id));
 
     $('ov-tiles').innerHTML = [
+      can('startseite') ? tile({
+        href: 'startseite.html', ico: 'image', title: 'Startseite',
+        stat: st ? plural((st.bilder || []).length, 'Titelfoto', 'Titelfotos') : none,
+        addHref: 'startseite.html?neu=1', addLabel: 'Neues Foto'
+      }) : '',
       can('hochaemter') ? tile({
         href: 'hochaemter.html', ico: 'calendar', title: 'Hochämter',
         stat: ha ? plural(upcoming.length, 'kommender Termin', 'kommende Termine') : none,
