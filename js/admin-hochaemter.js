@@ -12,6 +12,9 @@
    - Verknuepfte Meldungen (Plakat): im Fenster anzeigen, Verknuepfung
      aufheben; beim Verschieben oder Loeschen eines Termins zieht die
      Meldung mit bzw. verliert ihre Verknuepfung
+   - Fotos je Termin (data/hochamt-fotos.json, Bilder in assets/img/hochaemter/):
+     mehrere hinzufuegen, Beschreibung und Bildnachweis, Reihenfolge, entfernen;
+     erscheinen auf der Seite des Termins. Beim Verschieben ziehen sie mit.
    Benoetigt js/hochaemter-data.js und js/admin.js.
    ============================================================ */
 (function () {
@@ -36,6 +39,12 @@
   const NEWS_PATH = 'data/news.csv';
   const HA_PREFIX = 'pages/hochamt.html?id=';
   let organists = null;
+  /* Fotos: {bilder: {Kennung: [{bild, alt, breite, hoehe}]}} und die im Fenster bearbeitete Liste */
+  const PHOTOS_PATH = 'data/hochamt-fotos.json';
+  const PHOTO_DIR = 'assets/img/hochaemter/';
+  let photoMap = {};
+  let photos = [];         /* {path, url, blob, ext, w, h, alt, credit, key} */
+  let photoSeq = 0;
   const knownVoices = new Map();  /* Name -> Stimme, fuer das automatische Ergaenzen */
 
   const F = (k) => $(`f-${k}`);
@@ -270,6 +279,95 @@
     return list.length;
   }
 
+  /* ---------- Fotos ---------- */
+  async function loadPhotos() {
+    try {
+      photoMap = JSON.parse(await A.readText(PHOTOS_PATH)).bilder || {};
+    } catch (e) {
+      photoMap = {};
+      if (!notFound(e)) A.toast('Die Fotos der Hochämter konnten nicht geladen werden.', 'err');
+    }
+  }
+  const dirtyState = () => A.snapshot($('ha-form')) + photos.map((p) => p.key).join(',');
+  function renderPhotos() {
+    $('ha-photos').innerHTML = photos.map((p, i) =>
+      `<div class="adm-ph" data-k="${p.key}">` +
+        `<span class="adm-thumb"><img src="${esc(p.url)}" alt=""/></span>` +
+        '<div class="adm-ph-fields">' +
+          `<label class="adm-label" for="ph-alt-${p.key}">Beschreibung <span class="adm-opt">steht unter dem Foto</span></label>` +
+          `<input class="adm-input" type="text" id="ph-alt-${p.key}" data-ph="alt" value="${esc(p.alt)}" placeholder="z. B. Chor und Orchester beim Gloria"/>` +
+          `<label class="adm-label" for="ph-cr-${p.key}">Bildnachweis</label>` +
+          `<input class="adm-input" type="text" id="ph-cr-${p.key}" data-ph="credit" value="${esc(p.credit)}" placeholder="z. B. © Augustiner Wien, Foto: Max Muster"/>` +
+        '</div>' +
+        '<div class="adm-ph-act">' +
+          `<button type="button" class="adm-act icon" data-ph-act="up" aria-label="Nach vorne"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
+          `<button type="button" class="adm-act icon" data-ph-act="down" aria-label="Nach hinten"${i === photos.length - 1 ? ' disabled' : ''}>${icon('down')}</button>` +
+          `<button type="button" class="adm-act icon danger" data-ph-act="del" aria-label="Foto entfernen">${icon('trash')}</button>` +
+        '</div></div>'
+    ).join('');
+  }
+  async function addPhotos(files) {
+    for (const file of Array.from(files || [])) {
+      if (!file.type.startsWith('image/')) {
+        A.toast(`„${file.name}“ ist keine Bilddatei.`, 'err');
+        continue;
+      }
+      try {
+        const conv = await A.toWebp(file);
+        let w = 0;
+        let h = 0;
+        try {
+          const bmp = await createImageBitmap(conv.blob);
+          w = bmp.width;
+          h = bmp.height;
+          if (bmp.close) bmp.close();
+        } catch { /* Groesse unbekannt */ }
+        photos.push({ key: `n${++photoSeq}`, path: '', url: URL.createObjectURL(conv.blob), blob: conv.blob, ext: conv.ext, w, h, alt: '', credit: '' });
+      } catch {
+        /* Meldung hat toWebp schon gezeigt */
+      }
+    }
+    $('ha-photo-file').value = '';
+    renderPhotos();
+  }
+  function setPhotos(key) {
+    for (const p of photos) if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
+    photos = ((key && photoMap[key]) || []).map((b) => ({
+      key: `p${++photoSeq}`, path: b.bild, url: A.imageUrl(b.bild), blob: null, ext: 'webp',
+      w: b.breite || 0, h: b.hoehe || 0, alt: b.alt || '', credit: A.credits.get(b.bild)
+    }));
+    renderPhotos();
+  }
+  const sameList = (a, b) => JSON.stringify(a || []) === JSON.stringify(b || []);
+  /* Speichert neue Dateien, Nachweise und die Liste dieses Termins; oldKey: bisherige Kennung (bei Verschiebung) */
+  async function savePhotos(oldKey, key) {
+    const used = new Set();
+    for (const p of photos) {
+      if (!p.blob) continue;
+      let path = `${PHOTO_DIR}${key}-${photos.indexOf(p) + 1}.${p.ext}`;
+      if (A.folder.state === 'ok') {
+        for (let n = 2; used.has(path) || await A.folder.exists(path); n++) path = `${PHOTO_DIR}${key}-${photos.indexOf(p) + 1}-${n}.${p.ext}`;
+      }
+      used.add(path);
+      await A.saveFile(path, p.blob);
+      p.path = path;
+    }
+    const list = photos.map((p) => ({ bild: p.path, alt: clean(p.alt), breite: p.w, hoehe: p.h }));
+    const next = { ...photoMap };
+    if (oldKey && oldKey !== key) delete next[oldKey];
+    if (list.length) next[key] = list;
+    else delete next[key];
+    let changed = false;
+    if (!sameList(photoMap[oldKey || key], list) || (oldKey && oldKey !== key) || Object.keys(next).length !== Object.keys(photoMap).length) {
+      const sorted = Object.fromEntries(Object.keys(next).sort().map((k) => [k, next[k]]));
+      await A.saveJSON(PHOTOS_PATH, { bilder: sorted });
+      photoMap = sorted;
+      changed = true;
+    }
+    await A.credits.save(Object.fromEntries(photos.map((p) => [p.path, p.credit])));
+    return changed;
+  }
+
   /* ---------- Fenster: Bearbeiten ---------- */
   function updateDay() {
     const iso = F('date').value;
@@ -294,13 +392,14 @@
     organists.set(org.length ? org : [{}]);
     updateDay();
     renderPoster();
+    setPhotos(mode === 'edit' ? keyOf(entry) : '');
     $('ha-dlg-tag').textContent = mode === 'edit' ? 'Termin bearbeiten' : 'Neuer Termin';
     $('ha-dlg-title').textContent = title || (mode === 'edit' ? `${A.fmtDate(entry.date)}, ${entry.time} Uhr` : 'Neues Hochamt');
     $('ha-delete').hidden = mode !== 'edit';
     $('ha-view').hidden = mode !== 'edit';
     if (mode === 'edit') $('ha-view').href = `../pages/hochamt.html?id=${encodeURIComponent(keyOf(entry))}`;
-    A.openDialog($('ha-dlg'), { isDirty: () => A.snapshot(form) !== snap });
-    snap = A.snapshot(form);
+    A.openDialog($('ha-dlg'), { isDirty: () => dirtyState() !== snap });
+    snap = dirtyState();
   }
 
   /* Naechster Sonntag (ab heute), an dem um 11:00 noch nichts eingetragen ist */
@@ -377,6 +476,7 @@
       const direct = await store(next);
       /* Datum oder Uhrzeit geaendert: verknuepfte Meldungen ziehen mit */
       const moved = oldKey && oldKey !== keyOf(e) ? await relinkNews(oldKey, keyOf(e)) : 0;
+      await savePhotos(oldKey, keyOf(e));
       $('ha-dlg').close();
       A.toast(savedNote(direct, `${A.fmtShort(e.date)} · ${e.piece}`) + (moved ? ' Die verknüpfte Meldung wurde mitgeändert.' : ''));
       A.log(`Hochamt ${A.fmtShort(e.date)} ${isNew ? 'angelegt' : 'geändert'}: ${e.piece}`);
@@ -402,6 +502,12 @@
     try {
       const direct = await store(entries.filter((x) => x !== e));
       await relinkNews(keyOf(e), '');
+      if (photoMap[keyOf(e)]) {
+        const rest = { ...photoMap };
+        delete rest[keyOf(e)];
+        await A.saveJSON(PHOTOS_PATH, { bilder: rest });
+        photoMap = rest;
+      }
       A.toast(direct ? `Gelöscht: ${A.fmtShort(e.date)} · ${e.piece || e.type}` : 'Gelöscht. Bitte unten die Datei herunterladen.');
       A.log(`Hochamt ${A.fmtShort(e.date)} gelöscht: ${e.piece || e.type}`);
       return true;
@@ -574,15 +680,39 @@
     $('ha-import-btn').addEventListener('click', () => $('ha-import').click());
     $('ha-import').addEventListener('change', importFile);
     $('ha-reload').addEventListener('click', reload);
-    A.guard(() => $('ha-dlg').open && A.snapshot($('ha-form')) !== snap);
-    A.folder.on((state) => { if (state === 'ok') { load(); loadNews(); } });
+    A.guard(() => $('ha-dlg').open && dirtyState() !== snap);
+    A.folder.on((state) => { if (state === 'ok') { load(); loadNews(); loadPhotos(); } });
+    $('ha-photo-file').addEventListener('change', (ev) => addPhotos(ev.target.files));
+    A.wireDrop($('ha-drop'), addPhotos);
+    $('ha-photos').addEventListener('input', (ev) => {
+      const k = ev.target.closest('.adm-ph');
+      const p = k && photos.find((x) => x.key === k.dataset.k);
+      if (p && ev.target.dataset.ph) p[ev.target.dataset.ph] = ev.target.value;
+    });
+    $('ha-photos').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-ph-act]');
+      const k = b && b.closest('.adm-ph');
+      if (!k) return;
+      const i = photos.findIndex((x) => x.key === k.dataset.k);
+      const act = b.dataset.phAct;
+      if (act === 'del') {
+        if (photos[i].url.startsWith('blob:')) URL.revokeObjectURL(photos[i].url);
+        photos.splice(i, 1);
+      } else {
+        const j = i + (act === 'up' ? -1 : 1);
+        if (j < 0 || j >= photos.length) return;
+        [photos[i], photos[j]] = [photos[j], photos[i]];
+      }
+      renderPhotos();
+    });
 
     $('ha-poster').addEventListener('click', (ev) => {
       const b = ev.target.closest('[data-unlink-news]');
       if (b) unlinkNews(b.dataset.unlinkNews);
     });
 
-    await Promise.all([loadKnownVoices(), loadNews()]);
+    A.credits.load();
+    await Promise.all([loadKnownVoices(), loadNews(), loadPhotos()]);
     await load();
 
     /* Direkt aus der Uebersicht: ?neu=1 oder ?bearbeiten=JJJJ-MM-TT-HHMM */

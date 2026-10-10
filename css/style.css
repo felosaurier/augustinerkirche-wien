@@ -839,6 +839,12 @@ html.nd-lock{overflow:hidden}
 .hd-nav-txt{font-family:var(--serif);font-size:1.25rem;color:var(--blue)}
 .hd-nav-date{font-size:.88rem;color:var(--text-light)}
 .hd-layout.has-poster{display:grid;grid-template-columns:minmax(0,46rem) minmax(0,19rem);gap:4rem;align-items:start}
+.hd-photos-wrap{margin-top:3rem}
+.hd-photos-title{margin-bottom:1.1rem}
+.hd-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(13.5rem,1fr));gap:1.2rem}
+.hd-photo{margin:0}
+.hd-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:var(--bg-warm);cursor:zoom-in}
+.hd-photo figcaption{margin-top:.45rem;font-size:.92rem;line-height:1.4;color:var(--text-mid)}
 .hd-poster .link-arr{display:flex;justify-content:center;margin-top:.9rem}
 .hd-poster-btn{display:flex;width:100%;margin-top:1.1rem}
 

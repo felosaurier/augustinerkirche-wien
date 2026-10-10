@@ -5,6 +5,8 @@
    und weitere Musik aus data/hochaemter.csv bzw. dem Jahresarchiv.
    Ist eine Meldung (data/news.csv) mit diesem Termin verknuepft
    (Link pages/hochamt.html?id=…), erscheint ihr Plakat daneben.
+   Fotos des Termins (data/hochamt-fotos.json, gepflegt in der Verwaltung)
+   erscheinen unter dem Programm und lassen sich vergroessern.
    ============================================================ */
 (function () {
   'use strict';
@@ -89,6 +91,33 @@
     }
   }
 
+  /* Fotos dieses Termins unter dem Programm zeigen */
+  async function showPhotos(id) {
+    const body = qs('#hd-body');
+    if (!body || !id) return;
+    let list;
+    try {
+      const res = await fetch('../data/hochamt-fotos.json');
+      if (!res.ok) return;
+      list = ((await res.json()).bilder || {})[id];
+    } catch {
+      return;
+    }
+    const shown = (Array.isArray(list) ? list : []).map((b) => ({ ...b, src: HD.safeUrl(b.bild, '../') })).filter((b) => b.src);
+    if (!shown.length || !body.lastElementChild) return;
+    const title = qs('#hd-title').textContent;
+    const sec = document.createElement('div');
+    sec.className = 'hd-photos-wrap';
+    sec.innerHTML = '<h2 class="s-title hd-photos-title">Fotos</h2><div class="hd-photos">' +
+      shown.map((b) => {
+        const cap = String(b.alt || '').trim();
+        const dim = b.breite && b.hoehe ? ` width="${Number(b.breite)}" height="${Number(b.hoehe)}"` : '';
+        return `<figure class="hd-photo"><img src="${HD.esc(b.src)}" alt="${HD.esc(cap || `Foto: ${title}`)}"${dim} loading="lazy" decoding="async"/>` +
+          (cap ? `<figcaption>${HD.esc(cap)}</figcaption>` : '') + '</figure>';
+      }).join('') + '</div>';
+    body.lastElementChild.before(sec);
+  }
+
   /* Plakat der verknuepften Meldung neben dem Programm zeigen */
   const NEWS_KEYS = {
     datum: 'date', titel: 'title', plakat: 'poster', vorschaubild: 'thumb', link: 'link',
@@ -145,6 +174,7 @@
     try {
       render(await loadEntries(id), id);
       showPoster(id);
+      showPhotos(id);
     } catch {
       qs('#hd-body').innerHTML = FALLBACK;
     }

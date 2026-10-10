@@ -843,11 +843,23 @@
      Groesse in WebP umgewandelt. square: quadratischer Ausschnitt (x/y von
      0 bis 1 = Lage des Ausschnitts) in size × size Pixeln. Klappt die
      Umwandlung nicht, bleibt das Original. */
+  /* Jedes hochgeladene Bild wird als WebP gespeichert (kleiner als JPG und PNG, von allen
+     aktuellen Browsern unterstuetzt). Dabei wird es auf hoechstens 2000 Pixel an der
+     laengsten Seite verkleinert (maxSize aendert das) und die Kamera-Angaben (Ort,
+     Geraet) fallen weg. Ein kleines WebP bleibt unveraendert. Kann der Browser das
+     Format nicht lesen (z. B. HEIC vom iPhone), bricht es mit einer Meldung ab. */
+  const MAX_SIDE = 2000;
+  const KEEP_WEBP_BYTES = 900 * 1024;
   async function toWebp(file, opts = {}) {
     const ext = (file.name.split('.').pop() || '').toLowerCase();
-    if (!opts.square && !opts.maxSize && (file.type === 'image/webp' || ext === 'webp')) return { blob: file, ext: 'webp' };
+    const isWebp = file.type === 'image/webp' || ext === 'webp';
+    const maxSize = opts.maxSize || MAX_SIDE;
     try {
       const bmp = await createImageBitmap(file);
+      if (!opts.square && isWebp && Math.max(bmp.width, bmp.height) <= maxSize && file.size <= KEEP_WEBP_BYTES) {
+        if (bmp.close) bmp.close();
+        return { blob: file, ext: 'webp' };
+      }
       const canvas = d.createElement('canvas');
       const ctx = canvas.getContext('2d');
       if (opts.square) {
@@ -859,7 +871,7 @@
         ctx.drawImage(bmp, (bmp.width - side) * (opts.x ?? 0.5), (bmp.height - side) * (opts.y ?? 0.5), side, side, 0, 0, size, size);
       } else {
         /* maxSize: laengste Seite hoechstens so viele Pixel */
-        const scale = opts.maxSize ? Math.min(1, opts.maxSize / Math.max(bmp.width, bmp.height)) : 1;
+        const scale = Math.min(1, maxSize / Math.max(bmp.width, bmp.height));
         canvas.width = Math.round(bmp.width * scale);
         canvas.height = Math.round(bmp.height * scale);
         ctx.imageSmoothingQuality = 'high';
@@ -868,9 +880,12 @@
       const blob = await new Promise((r) => canvas.toBlob(r, 'image/webp', opts.quality || 0.9));
       if (blob && blob.type === 'image/webp') return { blob, ext: 'webp', converted: true };
     } catch {
-      /* Browser kann das Format nicht umwandeln: Original verwenden */
+      /* Browser kann das Bild nicht umwandeln: unten entscheiden */
     }
-    return { blob: file, ext: ext || 'jpg' };
+    /* Ein Browser ohne WebP-Ausgabe: JPG, PNG und WebP bleiben, wie sie sind (das Web zeigt sie an) */
+    if (isWebp || ['jpg', 'jpeg', 'png'].includes(ext)) return { blob: file, ext: isWebp ? 'webp' : ext === 'jpeg' ? 'jpg' : ext };
+    toast('Dieses Bildformat kann der Browser nicht umwandeln. Bitte als JPG, PNG oder WebP speichern und noch einmal wählen.', 'err');
+    throw new Error('Bildformat nicht unterstützt');
   }
   /* Ablageflaeche: Ziehen und Ablegen hervorheben (das Dateifeld liegt darueber) */
   function wireDrop(label) {

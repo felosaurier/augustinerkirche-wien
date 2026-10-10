@@ -606,6 +606,16 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .zg-runden[disabled]{opacity:.45}
 @media (max-width:640px){.zg-rg-grid{grid-template-columns:1fr}}
 
+/* Hochaemter: Fotos eines Termins */
+.adm-ph-list{display:flex;flex-direction:column;gap:.8rem;margin-bottom:.9rem}
+.adm-ph{display:grid;grid-template-columns:6rem minmax(0,1fr) auto;gap:1rem;align-items:start;padding:.8rem;border:1px solid var(--line);background:var(--white)}
+.adm-ph .adm-thumb{width:6rem;aspect-ratio:4/3}
+.adm-ph .adm-thumb img{width:100%;height:100%;object-fit:cover}
+.adm-ph-fields{display:grid;gap:.25rem}
+.adm-ph-fields .adm-label{margin-top:.2rem}
+.adm-ph-act{display:flex;flex-direction:column;gap:.3rem}
+@media (max-width:640px){.adm-ph{grid-template-columns:5rem minmax(0,1fr)}.adm-ph-act{grid-column:1/-1;flex-direction:row}}
+
 /* Startseite: grosse Fotos in der Liste, grosses Fotofeld im Fenster */
 .adm-row-open.adm-st{grid-template-columns:8rem minmax(0,1fr);gap:1.1rem;min-height:96px}
 .adm-st .adm-thumb{width:8rem;aspect-ratio:4/5}
