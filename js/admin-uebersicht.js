@@ -18,7 +18,7 @@
 
   async function loadAll() {
     const json = (path) => A.readJSON(path);
-    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg] = await Promise.allSettled([
+    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -32,13 +32,15 @@
       json('data/paten.json'),
       json('data/cds.json'),
       json('data/rundgang.json'),
-      json('data/pgr.json')
+      json('data/pgr.json'),
+      json('data/hinweise.json'),
+      A.isDev() ? json('admin/mitteilungen.json') : Promise.resolve(null)
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
       rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st),
-      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg)
+      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt)
     };
   }
 
@@ -51,13 +53,14 @@
   }
 
   /* Bereiche nach Themen; jede Kachel erscheint nur, wenn die Person den Bereich bearbeiten darf */
-  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg }) {
+  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
     const count = (list) => (list || []).length;
     const people = (groups) => (ps ? groups.reduce((n, g) => n + count(ps[g]), 0) : null);
     const mine = (rd || []).filter((r) => A.canRunde(r.id));
+    const live = (list) => (list || []).filter((h) => A.noticeActive(h)).length;
     const cdN = cd ? (cd.gruppen || []).reduce((n, g) => n + count(g.cds), 0) : null;
 
     const groups = [
@@ -66,6 +69,11 @@
           href: 'startseite.html', ico: 'image', title: 'Startseite',
           stat: st ? plural(count(st.bilder), 'Titelfoto', 'Titelfotos') : none,
           addHref: 'startseite.html?neu=1', addLabel: 'Neues Foto'
+        }),
+        can('hinweise') && tile({
+          href: 'hinweise.html', ico: 'alert', title: 'Hinweisbanner',
+          stat: hw ? (live(hw.hinweise) ? `${plural(live(hw.hinweise), 'Hinweis', 'Hinweise')} sichtbar` : 'Gerade kein Hinweis sichtbar') : none,
+          addHref: 'hinweise.html?neu=1', addLabel: 'Neuer Hinweis'
         }),
         can('neuigkeiten') && tile({
           href: 'neuigkeiten.html', ico: 'news', title: 'Neuigkeiten',
@@ -145,6 +153,11 @@
         })
       ]],
       ['Verwaltung', [
+        A.isDev() && tile({
+          href: 'mitteilungen.html', ico: 'info', title: 'Mitteilungen',
+          stat: mt ? (live(mt.mitteilungen) ? `${plural(live(mt.mitteilungen), 'Mitteilung', 'Mitteilungen')} aktiv` : 'Gerade keine aktiv') : 'Gerade keine aktiv',
+          addHref: 'mitteilungen.html?neu=1', addLabel: 'Neue Mitteilung'
+        }),
         A.isAdmin() && tile({
           href: 'zugaenge.html', ico: 'key', title: 'Zugänge',
           stat: acc ? plural(acc.length, 'Zugang', 'Zugänge') : none,

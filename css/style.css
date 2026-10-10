@@ -1086,6 +1086,28 @@ summary.cal-row::-webkit-details-marker{display:none}
 .hero-img{position:relative}
 
 
+/* ══ HINWEISBANNER (data/hinweise.json, js/main.js) ══ */
+.site-banners{position:relative;z-index:5}
+.site-banner{background:var(--gold-pale);border-bottom:1px solid #ead9ad;color:var(--text)}
+.site-banner+.site-banner{border-top:1px solid #fff}
+.site-banner.is-wichtig{background:#fbeeec;border-bottom-color:#efcfca;box-shadow:inset 4px 0 0 #b4473a}
+.site-banner-in{max-width:var(--max);margin:0 auto;padding:.85rem var(--pad);display:flex;align-items:flex-start;gap:.85rem}
+.site-banner-ico{flex:none;width:1.35rem;height:1.35rem;margin-top:.1rem;fill:none;stroke:var(--gold);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.is-wichtig .site-banner-ico{stroke:#a33a2e}
+.site-banner-body{flex:1;min-width:0;font-size:1rem;line-height:1.5}
+.site-banner-title{display:block;font-weight:700;color:var(--blue)}
+.is-wichtig .site-banner-title{color:#7d2a21}
+/* Text immer in eigener Zeile unter der Ueberschrift, Link darunter */
+.site-banner-text{display:block;margin-top:.1rem;overflow-wrap:anywhere}
+.site-banner-link{display:inline-block;margin-top:.25rem;font-weight:600;color:var(--blue);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:.2em;white-space:nowrap}
+.is-wichtig .site-banner-link{color:#7d2a21;text-decoration-color:#d58b80}
+.site-banner-close{flex:none;display:grid;place-items:center;width:2.75rem;height:2.75rem;margin:-.6rem -.6rem -.6rem 0;background:none;border:0;border-radius:50%;cursor:pointer;color:inherit;opacity:.75;transition:opacity .2s,background-color .2s}
+.site-banner-close:hover{opacity:1;background:rgba(16,25,46,.08)}
+.is-wichtig .site-banner-close:hover{background:rgba(125,42,33,.08)}
+.site-banner-close svg{width:1.1rem;height:1.1rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.site-banner a:focus-visible,.site-banner button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.is-wichtig a:focus-visible,.is-wichtig button:focus-visible{outline-color:#a33a2e}
+
 /* ══ BARRIEREFREIHEIT ══ */
 /* Touch: kleine, alleinstehende Links bekommen eine unsichtbar größere Tippfläche */
 @media(pointer:coarse){

@@ -17,11 +17,16 @@
   let runden = [];      /* {id, titel} aus data/runden.json fuer die Auswahl der Rechte */
   let editIndex = -1;   /* -1 = neuer Zugang */
   let snap = '';
+  let shownRole = 'redaktion';   /* zuletzt bestaetigte Rolle im Fenster */
+  let devOk = false;             /* Entwickler-Code in diesem Fenster eingegeben */
 
   const me = () => (A.session() || {}).benutzer;
-  const ROLES = { admin: 'Admin', redaktion: 'Redaktion' };
+  const ROLES = { entwickler: 'Entwickler', admin: 'Admin', redaktion: 'Redaktion' };
   const role = () => (document.querySelector('input[name="rolle"]:checked') || {}).value || 'redaktion';
-  const admins = (list) => list.filter((a) => A.roleOf(a) === 'admin');
+  /* Admins zaehlen samt Entwicklern (die duerfen alles, was ein Admin darf) */
+  const admins = (list) => list.filter((a) => A.adminRole(a));
+  /* Einen Entwickler-Zugang aendert oder entfernt nur ein Entwickler */
+  const locked = (acc) => !!acc && A.roleOf(acc) === 'entwickler' && !A.isDev();
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
   function initials(name) {
     const parts = String(name || '?').trim().split(/\s+/);
@@ -40,7 +45,7 @@
   /* Ausgewaehlte Rechte eines Zugangs; Redaktion ohne Angabe darf (noch) alles */
   function rightsSel(acc) {
     const sel = { bereiche: new Set(), runden: new Set() };
-    if (!acc || A.roleOf(acc) === 'admin') return sel;
+    if (!acc || A.adminRole(acc)) return sel;
     if (!acc.rechte) {
       A.AREAS.forEach((a) => sel.bereiche.add(a.key));
       sel.bereiche.add(A.RUNDEN_KEY);
@@ -80,7 +85,7 @@
     const all = document.querySelector('#zg-rights input[value="runden"]');
     const set = document.querySelector('#zg-rights .zg-runden');
     if (all && set) set.disabled = all.checked;
-    $('zg-rights-fs').hidden = role() === 'admin';
+    $('zg-rights-fs').hidden = role() !== 'redaktion';
   }
   function setAllRights(on) {
     document.querySelectorAll('#zg-rights input[type="checkbox"]').forEach((i) => { i.checked = on; });
@@ -88,6 +93,7 @@
   }
   /* Kurzfassung fuer die Liste: was darf dieser Zugang bearbeiten? */
   function rightsSummary(acc) {
+    if (A.roleOf(acc) === 'entwickler') return 'Darf alles, Zugänge verwalten und Mitteilungen an die Verwaltung schreiben';
     if (A.roleOf(acc) === 'admin') return 'Darf alles und Zugänge verwalten';
     const sel = rightsSel(acc);
     if (!acc.rechte) return 'Darf alles bearbeiten';
@@ -121,14 +127,16 @@
             `<span class="adm-avatar" aria-hidden="true">${esc(initials(a.name))}</span>` +
             '<span class="adm-row-body">' +
               `<span class="adm-row-title">${esc(a.name)}${a.benutzer === self ? ' <span class="adm-badge">Du</span>' : ''}` +
-                ` <span class="adm-badge${A.roleOf(a) === 'admin' ? ' on' : ''}">${ROLES[A.roleOf(a)]}</span></span>` +
+                ` <span class="adm-badge${A.adminRole(a) ? ' on' : ''}">${ROLES[A.roleOf(a)]}</span></span>` +
               `<span class="adm-row-meta">Benutzername <code>${esc(a.benutzer)}</code>${a.angelegt ? ` · angelegt am ${esc(deDate(a.angelegt))}` : ''}</span>` +
               `<span class="adm-row-meta">${esc(rightsSummary(a))}</span>` +
             '</span><span></span>' +
           '</button>' +
           '<div class="adm-row-actions">' +
-            `<button type="button" class="adm-act" data-act="edit" data-i="${i}" aria-label="Name oder Passwort ändern: ${esc(a.name)}">${icon('key')}Passwort ändern</button>` +
-            `<button type="button" class="adm-act danger" data-act="del" data-i="${i}" aria-label="Zugang entfernen: ${esc(a.name)}">${icon('trash')}Entfernen</button>` +
+            (locked(a)
+              ? `<span class="adm-muted">${icon('lock')} Nur ein Entwickler kann diesen Zugang ändern</span>`
+              : `<button type="button" class="adm-act" data-act="edit" data-i="${i}" aria-label="Name oder Passwort ändern: ${esc(a.name)}">${icon('key')}Passwort ändern</button>` +
+                `<button type="button" class="adm-act danger" data-act="del" data-i="${i}" aria-label="Zugang entfernen: ${esc(a.name)}">${icon('trash')}Entfernen</button>`) +
           '</div></li>'
       ).join('') + '</ul>';
   }
@@ -154,6 +162,10 @@
 
   function openEditor(i) {
     const acc = i >= 0 ? accounts[i] : null;
+    if (locked(acc)) {
+      A.toast('Diesen Zugang kann nur ein Entwickler ändern.', 'err');
+      return;
+    }
     editIndex = i;
     const form = $('zg-form');
     form.reset();
@@ -163,7 +175,9 @@
     $('f-user').value = acc ? acc.benutzer : '';
     document.querySelector(`input[name="rolle"][value="${acc ? A.roleOf(acc) : 'redaktion'}"]`).checked = true;
     /* Der letzte Admin kann nicht zur Redaktion werden */
-    const lastAdmin = acc && A.roleOf(acc) === 'admin' && admins(accounts).length === 1;
+    const lastAdmin = acc && A.adminRole(acc) && admins(accounts).length === 1;
+    shownRole = acc ? A.roleOf(acc) : 'redaktion';
+    devOk = false;
     document.querySelector('input[name="rolle"][value="redaktion"]').disabled = lastAdmin;
     $('zg-rights').innerHTML = rightsHTML(rightsSel(acc));
     syncRights();
@@ -195,6 +209,9 @@
     if (!old) {
       if (!/^[a-z0-9._-]{2,30}$/.test(user)) errors.push([$('f-user'), 'Benutzername: 2 bis 30 Zeichen, nur Kleinbuchstaben, Ziffern, Punkt oder Bindestrich.']);
       else if (accounts.some((a) => a.benutzer === user)) errors.push([$('f-user'), `Den Benutzernamen „${user}“ gibt es schon.`]);
+    }
+    if (role() === 'entwickler' && !(old && A.roleOf(old) === 'entwickler') && !devOk) {
+      errors.push([$('zg-role-first'), 'Für die Rolle Entwickler bitte zuerst den Entwickler-Code eingeben (Rolle noch einmal antippen).']);
     }
     const rechte = role() === 'redaktion' ? collectRights() : null;
     if (rechte && !rechte.bereiche.length && !rechte.runden.length) {
@@ -247,7 +264,7 @@
       flash(acc.benutzer);
       const what = !old ? `Zugang „${acc.benutzer}“ angelegt (${ROLES[A.roleOf(acc)]})` : pw ? `Passwort für „${acc.benutzer}“ geändert` : `Zugang „${acc.benutzer}“ geändert`;
       /* Eigene Rolle zur Redaktion geaendert: Zugaenge sind dann nicht mehr erlaubt */
-      if (acc.benutzer === me() && direct && A.roleOf(acc) !== 'admin') setTimeout(() => location.replace('uebersicht.html'), 1500);
+      if (acc.benutzer === me() && direct && !A.adminRole(acc)) setTimeout(() => location.replace('uebersicht.html'), 1500);
       A.toast(direct ? `${what}.` : `${what}. Bitte unten die Datei herunterladen.`);
       A.log(what);
     } catch (err) {
@@ -263,7 +280,11 @@
       A.toast('Der letzte Zugang kann nicht entfernt werden, sonst könnte sich niemand mehr anmelden.', 'err');
       return false;
     }
-    if (A.roleOf(acc) === 'admin' && admins(accounts).length === 1) {
+    if (locked(acc)) {
+      A.toast('Diesen Zugang kann nur ein Entwickler entfernen.', 'err');
+      return false;
+    }
+    if (A.adminRole(acc) && admins(accounts).length === 1) {
       A.toast('Das ist der einzige Admin. Lege zuerst einen weiteren Admin an.', 'err');
       return false;
     }
@@ -290,11 +311,47 @@
     }
   }
 
+  /* ---------- Entwickler-Code ----------
+     Die Rolle Entwickler laesst sich nur mit dem Entwickler-Code vergeben:
+     beim Antippen der Rolle kommt ein Fenster, das ihn abfragt. */
+  async function askDevCode() {
+    if (!A.cryptoReady()) {
+      A.toast('Dafür braucht es eine sichere Verbindung (https oder localhost).', 'err');
+      return false;
+    }
+    const code = await A.passwordBox({
+      title: 'Entwickler-Code',
+      html: 'Die Rolle <strong>Entwickler</strong> lässt sich nur mit dem Entwickler-Code vergeben.',
+      label: 'Code', ok: 'Freischalten', numeric: true,
+      verify: async (v) => (await A.checkDevCode(v) ? '' : 'Der Code stimmt nicht.')
+    });
+    return !!code;
+  }
+  async function onRoleChange() {
+    const r = role();
+    const acc = editIndex >= 0 ? accounts[editIndex] : null;
+    if (r === 'entwickler' && !devOk && !(acc && A.roleOf(acc) === 'entwickler')) {
+      if (await askDevCode()) {
+        devOk = true;
+      } else {
+        const back = document.querySelector(`input[name="rolle"][value="${shownRole}"]`);
+        back.checked = true;
+        syncRights();
+        back.focus();
+        return;
+      }
+    }
+    shownRole = r;
+  }
+
   /* ---------- Start ---------- */
   A.start(async () => {
     $('zg-new').addEventListener('click', () => openEditor(-1));
     $('zg-form').addEventListener('submit', save);
-    $('zg-form').addEventListener('change', (ev) => { if (ev.target.name === 'rolle' || ev.target.name === 'recht') syncRights(); });
+    $('zg-form').addEventListener('change', (ev) => {
+      if (ev.target.name === 'rolle' || ev.target.name === 'recht') syncRights();
+      if (ev.target.name === 'rolle') onRoleChange();
+    });
     $('zg-rights-all').addEventListener('click', () => setAllRights(true));
     $('zg-rights-none').addEventListener('click', () => setAllRights(false));
     $('f-pw').addEventListener('input', updateMeter);

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Hinweisbanner — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-hinweise.js" defer></script>
+</head>
+<body class="adm" data-quelle="website">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Hinweisbanner <em>pflegen</em></h1>
+      <p class="ph-sub">Wichtige Hinweise als Streifen oben auf der <a href="../index.html" target="_blank" rel="noopener">Website</a>, z. B. Kirche geschlossen, Pfarrgemeinderatswahl oder geänderte Gottesdienstzeiten. Jeder Hinweis hat ein Start- und ein Enddatum und verschwindet danach von selbst.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="hw-new" data-icon="plus">Neuer Hinweis</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <p class="adm-count" id="hw-count" role="status" style="margin-bottom:1rem"></p>
+  <div id="hw-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<dialog class="adm-dialog" id="hw-dlg" aria-labelledby="hw-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="hw-dlg-tag">Neuer Hinweis</div>
+      <h2 class="adm-dlg-title" id="hw-dlg-title">Neuer Hinweis</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="hw-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Inhalt</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-titel">Überschrift<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-titel" required maxlength="120" placeholder="z. B. Kirche am Samstag geschlossen"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-text">Text</label>
+          <textarea class="adm-input" id="f-text" rows="3" maxlength="600" aria-describedby="f-text-hint" placeholder="z. B. Wegen Bauarbeiten bleibt die Kirche am 18. Oktober ganztägig geschlossen."></textarea>
+          <span class="adm-hint" id="f-text-hint">Optional, kurz halten. Zeilenumbrüche bleiben erhalten.</span>
+        </div>
+        <div class="adm-field full">
+          <span class="adm-label" id="f-art-l">Art</span>
+          <div class="adm-choice" role="radiogroup" aria-labelledby="f-art-l">
+            <label><input type="radio" name="hw-art" value="info" checked/><span><b>Information</b><span>Hell, mit goldenem Symbol.</span></span></label>
+            <label><input type="radio" name="hw-art" value="wichtig"/><span><b>Wichtig</b><span>Hellrot mit rotem Rand, fällt auf.</span></span></label>
+          </div>
+        </div>
+        <div class="adm-field full">
+          <span class="adm-label" id="f-seiten-l">Wo anzeigen</span>
+          <div class="adm-choice" role="radiogroup" aria-labelledby="f-seiten-l">
+            <label><input type="radio" name="hw-seiten" value="alle" checked/><span><b>Auf allen Seiten</b><span>Oben auf jeder Seite der Website.</span></span></label>
+            <label><input type="radio" name="hw-seiten" value="start"/><span><b>Nur auf der Startseite</b><span>Für Hinweise, die nicht überall stören sollen.</span></span></label>
+          </div>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-link">Link für mehr Infos</label>
+          <input class="adm-input" type="text" id="f-link" inputmode="url" placeholder="z. B. pages/pfarre.html oder www.beispiel.at" aria-describedby="f-link-hint"/>
+          <span class="adm-hint" id="f-link-hint">Optional. Eine Seite dieser Website oder eine andere Website.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-linktext">Text des Links</label>
+          <input class="adm-input" type="text" id="f-linktext" maxlength="40" placeholder="Mehr erfahren"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-check"><input type="checkbox" id="f-weg" checked/>Besucher dürfen den Hinweis wegklicken (×)</label>
+          <span class="adm-hint">Ausgeschaltet bleibt der Hinweis stehen, bis sein Enddatum erreicht ist, z. B. bei „Kirche geschlossen“.</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Wann sichtbar</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="f-von">Ab<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="date" id="f-von" required/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-von-zeit">Ab Uhrzeit</label>
+          <input class="adm-input" type="time" id="f-von-zeit" aria-describedby="f-von-zeit-hint"/>
+          <span class="adm-hint" id="f-von-zeit-hint">Leer = ab Beginn des Tages.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-bis">Bis einschließlich<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="date" id="f-bis" required aria-describedby="f-bis-hint"/>
+          <span class="adm-hint" id="f-bis-hint">Danach verschwindet der Hinweis von selbst.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-bis-zeit">Bis Uhrzeit</label>
+          <input class="adm-input" type="time" id="f-bis-zeit" aria-describedby="f-bis-zeit-hint"/>
+          <span class="adm-hint" id="f-bis-zeit-hint">Leer = bis Ende des Tages.</span>
+        </div>
+        <div class="adm-field full">
+          <div class="adm-quick" id="hw-quick" role="group" aria-label="Ende schnell wählen">
+            <span class="adm-hint">Ende schnell wählen:</span>
+            <button type="button" class="adm-act" data-days="0">Gleicher Tag</button>
+            <button type="button" class="adm-act" data-days="1">+1 Tag</button>
+            <button type="button" class="adm-act" data-days="7">+1 Woche</button>
+            <button type="button" class="adm-act" data-days="14">+2 Wochen</button>
+            <button type="button" class="adm-act" data-days="30">+1 Monat</button>
+          </div>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-check"><input type="checkbox" id="f-aktiv" checked/>Eingeschaltet</label>
+          <span class="adm-hint">Ausschalten blendet den Hinweis sofort aus, ohne ihn zu löschen.</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Vorschau</legend>
+      <div class="adm-hw-preview" id="hw-preview" aria-live="polite"></div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="hw-delete" data-icon="trash">Löschen</button>
+      <button type="button" class="adm-act" id="hw-copy" data-icon="copy">Als neu kopieren</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="hw-form" class="btn btn-dark" id="hw-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

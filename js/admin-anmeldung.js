@@ -202,7 +202,8 @@
     const btn = $('s-submit');
     busy(btn, true, 'Wird angelegt …');
     try {
-      const acc = await A.makeAccount({ benutzer: user.value, name: name.value, passwort: pw.value });
+      /* Wer die Verwaltung einrichtet, ist der Entwickler (hoechste Rolle) */
+      const acc = await A.makeAccount({ benutzer: user.value, name: name.value, passwort: pw.value, rolle: 'entwickler' });
       const json = A.accountsJSON([acc]);
       if (A.folder.state === 'ok') {
         await A.folder.write(A.ACCOUNTS, new Blob([json], { type: 'application/json' }));

@@ -694,6 +694,103 @@
     }, secs * 1000);
   }
 
+  /* ---------- Hinweisbanner (data/hinweise.json) ----------
+     Wichtige Hinweise (Kirche geschlossen, Pfarrgemeinderatswahl …), in der
+     Verwaltung unter Startseite → Hinweisbanner gepflegt. Sichtbar von "von"
+     bis einschliesslich "bis" (Datum oder Datum mit Uhrzeit), danach
+     verschwindet der Banner von selbst. Wegklicken gilt bis zum Schliessen
+     des Browsers (sessionStorage), ein geaenderter Text erscheint wieder. */
+  const BANNER_KEY = 'aug-hinweise-zu';
+  const bannerTime = (v, end) => {
+    const m = /^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}))?$/.exec(String(v || ''));
+    if (!m) return NaN;
+    return new Date(`${m[1]}T${m[2] || (end ? '23:59:59' : '00:00')}`).getTime();
+  };
+  function bannerActive(h, now) {
+    if (!h || h.aktiv === false || !h.titel) return false;
+    const from = h.von ? bannerTime(h.von, false) : -Infinity;
+    const to = h.bis ? bannerTime(h.bis, true) : Infinity;
+    return !Number.isNaN(from) && !Number.isNaN(to) && from <= now && now <= to;
+  }
+  /* Kennung samt Inhalt: wird der Text geaendert, erscheint der Banner wieder */
+  const bannerSig = (h) => {
+    const str = `${h.id}|${h.titel}|${h.text}|${h.link}`;
+    let x = 0;
+    for (let i = 0; i < str.length; i++) x = (x * 31 + str.charCodeAt(i)) | 0;
+    return `${h.id}:${(x >>> 0).toString(36)}`;
+  };
+  function bannerClosed() {
+    try {
+      return JSON.parse(window.sessionStorage.getItem(BANNER_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+  function bannerLink(link) {
+    const v = String(link || '').trim();
+    if (/^https?:\/\//i.test(v)) return v;
+    if (/^(pages\/|index\.html|data\/|assets\/)/.test(v)) return `${siteRoot}${v}`;
+    return '';
+  }
+  async function initBanner() {
+    const host = qs('main');
+    if (!host) return;
+    let list;
+    try {
+      const res = await fetch(`${siteRoot}data/hinweise.json`, { cache: 'no-cache' });
+      if (!res.ok) return;
+      list = (await res.json()).hinweise || [];
+    } catch {
+      return;
+    }
+    const path = location.pathname;
+    const home = path === siteRoot || path === `${siteRoot}index.html`;
+    const closed = bannerClosed();
+    const now = Date.now();
+    const show = list.filter((h) => bannerActive(h, now) && (h.seiten !== 'start' || home) && (h.wegklickbar === false || !closed.includes(bannerSig(h))))
+      /* Wichtiges zuerst */
+      .sort((a, b) => (b.art === 'wichtig') - (a.art === 'wichtig'));
+    if (!show.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'site-banners';
+    wrap.innerHTML = show.map((h) => {
+      const href = bannerLink(h.link);
+      const ext = /^https?:/i.test(href) && !href.startsWith(location.origin);
+      const wichtig = h.art === 'wichtig';
+      return `<section class="site-banner${wichtig ? ' is-wichtig' : ''}" aria-label="${wichtig ? 'Wichtiger Hinweis' : 'Hinweis'}" data-sig="${escHTML(bannerSig(h))}">` +
+        '<div class="site-banner-in">' +
+          `<svg class="site-banner-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${wichtig
+            ? '<path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>'
+            : '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'}</svg>` +
+          '<div class="site-banner-body">' +
+            `<strong class="site-banner-title">${escHTML(h.titel)}</strong>` +
+            (h.text ? `<span class="site-banner-text">${escHTML(h.text).replace(/\n/g, '<br>')}</span>` : '') +
+            (href ? `<a class="site-banner-link" href="${escHTML(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${escHTML(h.linktext || 'Mehr erfahren')}</a>` : '') +
+          '</div>' +
+          /* wegklickbar: false = Hinweis bleibt stehen (in der Verwaltung einstellbar) */
+          (h.wegklickbar !== false
+            ? `<button type="button" class="site-banner-close" aria-label="Hinweis ausblenden: ${escHTML(h.titel)}">` +
+              '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'
+            : '') +
+        '</div></section>';
+    }).join('');
+    host.prepend(wrap);
+    wrap.addEventListener('click', (e) => {
+      const btn = e.target.closest('.site-banner-close');
+      if (!btn) return;
+      const box = btn.closest('.site-banner');
+      try {
+        window.sessionStorage.setItem(BANNER_KEY, JSON.stringify([...bannerClosed(), box.dataset.sig].slice(-30)));
+      } catch {
+        /* ohne Speicher nur fuer diese Seite ausblenden */
+      }
+      const next = box.nextElementSibling;
+      box.remove();
+      if (!wrap.children.length) wrap.remove();
+      else if (next && qs('.site-banner-close', next)) qs('.site-banner-close', next).focus();
+    });
+  }
+
   function initMail() {
     decodeMail();
     new MutationObserver(decodeMail).observe(document.body, { childList: true, subtree: true });
@@ -708,6 +805,7 @@
     initMail();
     initHeroShow();
     initCredits();
+    initBanner();
     markCurrentNav();
     initAttributeFilter('.week-filter-btn[data-filter]', '.week-row', 'day');
 

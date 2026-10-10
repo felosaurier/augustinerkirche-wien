@@ -82,7 +82,7 @@ Fehlt `curl` im Container: `apt install -y curl`.
 Mit der Verwaltung auf dem Server gibt es **keinen Projektordner** mehr: Sie liest und schreibt die Dateien der Website direkt dort (über HTTP: GET, PUT, DELETE). Änderungen sind sofort auf der Website zu sehen. Der Schutz liegt beim Webserver, nicht in der Verwaltung:
 
 - Die Verwaltung läuft auf einem **eigenen Port** (8443, https) und nur nach einer **Anmeldung am Server** (Basic Auth). Die öffentliche Website (Port 80) kann nichts schreiben und liefert `admin/` nicht aus. Ein anderer Port bedeutet für den Browser eine andere Herkunft: Ein Skript auf der öffentlichen Seite kommt so nicht an die Verwaltung heran.
-- Schreiben erlaubt der Server nur in `data/` (Tabellen), `assets/` (Fotos, Hörproben) und für `admin/zugaenge.json`. Programmcode (`js/`, `css/`, `pages/`) lässt sich darüber nicht verändern.
+- Schreiben erlaubt der Server nur in `data/` (Tabellen), `assets/` (Fotos, Hörproben) und für `admin/zugaenge.json` und `admin/mitteilungen.json`. Programmcode (`js/`, `css/`, `pages/`) lässt sich darüber nicht verändern.
 - Die Anmeldung der Verwaltung selbst (Name, Passwort, Rechte je Person) bleibt wie gehabt. Sie braucht https, deshalb das Zertifikat unten.
 - Ein **langes Passwort** für den Server-Benutzer nehmen (mindestens 16 Zeichen) und Port 8443 **nicht ins Internet freigeben**, sondern nur im Heimnetz oder über ein VPN erreichbar machen (Proxmox-Firewall). Der Server sperrt nach Fehlversuchen nicht von selbst; wer das will, nimmt `fail2ban`.
 - Die Inhalte liegen danach auf dem Server: Zum Sichern den Container in Proxmox regelmäßig sichern lassen (Backup oder Snapshot).
@@ -111,7 +111,7 @@ Bei Apache der Ordner `/etc/apache2/augustinerkirche-tls`. Mit einem Namen statt
 
 ```bash
 chown -R www-data:www-data /var/www/augustinerkirche/data /var/www/augustinerkirche/assets
-chown www-data:www-data /var/www/augustinerkirche/admin /var/www/augustinerkirche/admin/zugaenge.json
+chown www-data:www-data /var/www/augustinerkirche/admin /var/www/augustinerkirche/admin/zugaenge.json /var/www/augustinerkirche/admin/mitteilungen.json
 ```
 
 **d) Konfiguration einbinden** (nginx). Die öffentliche Konfiguration aus Schritt 3a muss die aus diesem Paket sein (sie sperrt `admin/`), danach die für die Verwaltung:
@@ -149,12 +149,12 @@ Hinweis: Ohne https auf einer Adresse wie `http://192.168…` kann die Anmeldung
 Nach Änderungen im Projekt das Paket neu bauen (`python tools/paket.py{{OPTION}}`), wieder hochladen und die Schritte 1 und 2 wiederholen. Der Webserver muss dafür nicht neu gestartet werden.
 <!--[ohne-verwaltung-ende]-->
 <!--[verwaltung-anfang]-->
-Die Inhalte (Tabellen in `data/`, Fotos und Hörproben in `assets/img`, `assets/audio`, `assets/programme`, dazu `admin/zugaenge.json`) liegen jetzt auf dem Server und werden dort in der Verwaltung gepflegt. Beim Aktualisieren dürfen sie nicht überschrieben werden, deshalb **nicht** wieder `rm -rf` und kopieren, sondern nur den Programmcode erneuern:
+Die Inhalte (Tabellen in `data/`, Fotos und Hörproben in `assets/img`, `assets/audio`, `assets/programme`, dazu `admin/zugaenge.json` und `admin/mitteilungen.json`) liegen jetzt auf dem Server und werden dort in der Verwaltung gepflegt. Beim Aktualisieren dürfen sie nicht überschrieben werden, deshalb **nicht** wieder `rm -rf` und kopieren, sondern nur den Programmcode erneuern:
 
 ```bash
 apt install -y rsync
 cd /root && tar xzf {{PAKET}}
-rsync -a --exclude='/data/' --exclude='/admin/zugaenge.json' --exclude='/assets/img/' --exclude='/assets/audio/' --exclude='/assets/programme/' {{ORDNER}}/site/ /var/www/augustinerkirche/
+rsync -a --exclude='/data/' --exclude='/admin/zugaenge.json' --exclude='/admin/mitteilungen.json' --exclude='/assets/img/' --exclude='/assets/audio/' --exclude='/assets/programme/' {{ORDNER}}/site/ /var/www/augustinerkirche/
 chown -R www-data:www-data /var/www/augustinerkirche/admin
 ```
 
@@ -167,7 +167,7 @@ Wer die Website weiter in Git pflegt, holt vorher die Inhalte vom Server in den 
 ```bash
 scp -r root@<IP>:/var/www/augustinerkirche/data .
 scp -r root@<IP>:/var/www/augustinerkirche/assets .
-scp root@<IP>:/var/www/augustinerkirche/admin/zugaenge.json admin/
+scp root@<IP>:/var/www/augustinerkirche/admin/zugaenge.json root@<IP>:/var/www/augustinerkirche/admin/mitteilungen.json admin/
 ```
 
 Wer lokal im Projektordner weiterarbeitet und gleichzeitig auf dem Server, überschreibt sich sonst gegenseitig: eine Seite ist die Hauptquelle der Inhalte, die andere holt sie vorher.

@@ -7,7 +7,26 @@
       "salt": "vbfoH+h53ejjee+lNs1lWQ==",
       "iter": 600000,
       "hash": "38rFgi+gQDf3WtAaW0Zh1SCG+8t+uTRP4hoxZQ26wXA=",
+      "rolle": "entwickler",
       "angelegt": "2026-10-06"
+    },
+    {
+      "benutzer": "patermatthias",
+      "name": "Pater Matthias Schlögl",
+      "salt": "xEH4yD6GR+7kxpHA0gafrA==",
+      "iter": 600000,
+      "hash": "cQnINah2fcsodYGszSW4o+uHU/2YWUEQiV7NB5SV5E4=",
+      "rolle": "admin",
+      "angelegt": "2026-10-10"
+    },
+    {
+      "benutzer": "petertiefengraber",
+      "name": "Peter Tiefengraber",
+      "salt": "nZoVDDrAs0ESxMTiHj331w==",
+      "iter": 600000,
+      "hash": "LPZwp7Ym4EQdp4tkS7MgqSlMJotUc2+83VfmumyNlTQ=",
+      "rolle": "redaktion",
+      "angelegt": "2026-10-10"
     }
   ]
 }

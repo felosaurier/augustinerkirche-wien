@@ -46,7 +46,7 @@
       <b>Gut zu wissen</b>
       <ul>
         <li>Am besten bekommt jede Person einen eigenen Zugang. Wer nicht mehr mitarbeitet, wird einfach entfernt.</li>
-        <li><b>Admin</b> darf alles und Zugänge verwalten. Eine <b>Redaktion</b> darf nur, was ihr hier erlaubt wird: ganze Bereiche und einzelne Runden. Es muss immer mindestens einen Admin geben.</li>
+        <li><b>Admin</b> darf alles und Zugänge verwalten. Eine <b>Redaktion</b> darf nur, was ihr hier erlaubt wird: ganze Bereiche und einzelne Runden. Es muss immer mindestens einen Admin geben. Der <b>Entwickler</b> darf zusätzlich Mitteilungen an alle in der Verwaltung schreiben. Die Rolle lässt sich nur mit dem <b>Entwickler-Code</b> vergeben, und einen Entwickler-Zugang kann nur ein Entwickler ändern.</li>
         <li>Bei den <b>Runden</b> lässt sich entweder „Alle Runden“ erlauben (mit Neu anlegen, Löschen und Reihenfolge) oder nur bestimmte, z. B. die eigene Gruppe.</li>
         <li>Die Einschränkung gilt in der Verwaltung. Wer den Projektordner oder den Server selbst bearbeiten kann (oder die Anmeldung am Server kennt), ist dadurch nicht gebremst.</li>
         <li>Passwort vergessen? Hier ein neues vergeben. Das alte lässt sich nicht anzeigen.</li>
@@ -83,8 +83,9 @@
     <fieldset class="adm-fs">
       <legend>Rolle</legend>
       <div class="adm-choice" role="radiogroup" aria-label="Rolle">
-        <label><input type="radio" name="rolle" value="redaktion" checked/><span><b>Redaktion</b><span>Pflegt nur die Bereiche, die unten angehakt sind.</span></span></label>
+        <label><input type="radio" name="rolle" value="redaktion" id="zg-role-first" checked/><span><b>Redaktion</b><span>Pflegt nur die Bereiche, die unten angehakt sind.</span></span></label>
         <label><input type="radio" name="rolle" value="admin"/><span><b>Admin</b><span>Darf alles bearbeiten und zusätzlich Zugänge anlegen, ändern und entfernen.</span></span></label>
+        <label id="zg-role-dev"><input type="radio" name="rolle" value="entwickler"/><span><b>Entwickler</b><span>Wie Admin, dazu Mitteilungen an alle in der Verwaltung. Nur mit dem Entwickler-Code.</span></span></label>
       </div>
       <p class="adm-hint" id="zg-role-hint" style="margin-top:.6rem"></p>
     </fieldset>

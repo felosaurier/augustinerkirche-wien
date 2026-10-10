@@ -104,13 +104,20 @@
   /* Ohne Angabe gilt "admin" (so entstanden die ersten Zugaenge). Steht aber etwas anderes als
      "admin" da (ein Tippfehler, eine Zahl), gilt die Redaktion, und ohne Zugang auch: im Zweifel
      weniger Rechte. */
+  /* "entwickler" steht ueber "admin": darf alles wie ein Admin und dazu die
+     Mitteilungen der Verwaltung schreiben; nur Entwickler vergeben diese Rolle. */
+  const ROLES = ['redaktion', 'admin', 'entwickler'];
   const roleOf = (acc) => {
     if (!acc) return 'redaktion';
     const raw = acc.rolle;
     if (raw === undefined || raw === null || raw === '') return 'admin';
-    return typeof raw === 'string' && raw.trim().toLowerCase() === 'admin' ? 'admin' : 'redaktion';
+    const r = typeof raw === 'string' ? raw.trim().toLowerCase() : '';
+    return r === 'admin' || r === 'entwickler' ? r : 'redaktion';
   };
-  const isAdmin = () => roleOf(session()) === 'admin';
+  /* Admin oder hoeher */
+  const adminRole = (acc) => roleOf(acc) !== 'redaktion';
+  const isAdmin = () => adminRole(session());
+  const isDev = () => roleOf(session()) === 'entwickler';
 
   /* Rechte der Redaktion: Bereiche (je eine Seite der Verwaltung) und einzelne
      Runden. Admins duerfen alles. Redaktionszugaenge ohne Angabe "rechte" (aus
@@ -120,6 +127,7 @@
      Reihenfolge, sonst nur die einzeln genannten Runden bearbeiten. */
   const AREAS = [
     { key: 'startseite', label: 'Startseite (Titelfotos)', group: 'Allgemein', page: 'startseite.html' },
+    { key: 'hinweise', label: 'Hinweisbanner (oben auf der Website)', group: 'Allgemein', page: 'hinweise.html' },
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Allgemein', page: 'neuigkeiten.html' },
     { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Allgemein', page: 'termine.html' },
     { key: 'hochaemter', label: 'Hochämter', group: 'Kirchenmusik', page: 'hochaemter.html' },
@@ -140,7 +148,7 @@
   /* null = darf alles */
   function rightsOf(acc) {
     if (!acc) return { bereiche: [], runden: [] };
-    if (roleOf(acc) === 'admin' || !acc.rechte) return null;
+    if (adminRole(acc) || !acc.rechte) return null;
     const r = acc.rechte;
     return {
       bereiche: Array.isArray(r.bereiche) ? r.bereiche.map(String) : [],
@@ -170,7 +178,8 @@
   const allowed = (key) => !key || (key === RUNDEN_KEY ? canAnyRunde() : can(key));
 
   /* Ohne gueltige Sitzung sofort zur Anmeldung, bevor die Seite sichtbar wird;
-     Seiten nur fuer Admins (<html data-adm-rolle="admin">) und Seiten ohne
+     Seiten nur fuer Admins (<html data-adm-rolle="admin">), nur fuer Entwickler
+     (data-adm-rolle="entwickler") und Seiten ohne
      Berechtigung leiten sonst zur Uebersicht */
   if (!PUBLIC && !session()) {
     ROOT.style.visibility = 'hidden';
@@ -178,6 +187,9 @@
   } else if (!PUBLIC && ROOT.dataset.admRolle === 'admin' && !isAdmin()) {
     ROOT.style.visibility = 'hidden';
     location.replace('uebersicht.html?hinweis=nur-admin');
+  } else if (!PUBLIC && ROOT.dataset.admRolle === 'entwickler' && !isDev()) {
+    ROOT.style.visibility = 'hidden';
+    location.replace('uebersicht.html?hinweis=kein-recht');
   } else if (!PUBLIC && !allowed(rightOfPage(pageName()))) {
     ROOT.style.visibility = 'hidden';
     location.replace('uebersicht.html?hinweis=kein-recht');
@@ -260,7 +272,13 @@
       zugaenge: list
     }, null, 2) + '\n';
   }
-  /* rechte nur fuer die Redaktion; Admins brauchen keine */
+  /* Entwickler-Code: ohne ihn laesst sich die Rolle Entwickler nicht vergeben
+     (admin/zugaenge.html). Hier steht nur seine Pruefsumme (PBKDF2-SHA256). */
+  const DEV_CODE = { salt: 'RMBdt0feRjP16llsWXx/PA==', iter: 600000, hash: 'xxTZ72nVhfNyc38vPuOBSr2MdRYqicCAMXlgp8kRnYQ=' };
+  async function checkDevCode(code) {
+    return (await derive(String(code).trim(), DEV_CODE.salt, DEV_CODE.iter)) === DEV_CODE.hash;
+  }
+  /* rechte nur fuer die Redaktion; Admins und Entwickler brauchen keine */
   async function makeAccount({ benutzer, name, passwort, rolle, rechte }) {
     const salt = toB64(crypto.getRandomValues(new Uint8Array(16)));
     const acc = {
@@ -268,7 +286,7 @@
       name: String(name || '').trim() || normUser(benutzer),
       salt, iter: ITER,
       hash: await derive(passwort, salt, ITER),
-      rolle: rolle === 'redaktion' ? 'redaktion' : 'admin',
+      rolle: ROLES.includes(rolle) ? rolle : 'redaktion',
       angelegt: isoToday()
     };
     if (acc.rolle === 'redaktion' && rechte) acc.rechte = rechte;
@@ -751,7 +769,7 @@
     }
   }
   const markUnreadable = (path) => readState.set(path, 'fehler');
-  const GUARDED = /^(data\/.+\.(json|csv)|admin\/zugaenge\.json)$/;
+  const GUARDED = /^(data\/.+\.(json|csv)|admin\/(zugaenge|mitteilungen)\.json)$/;
   const fileName = (path) => path.split('/').pop();
   const dirName = (path) => path.replace(/[^/]+$/, '') || './';
   function typeFor(path) {
@@ -1006,6 +1024,76 @@
       dlg.showModal();
       ROOT.classList.add('adm-lock');
       (dlg.querySelector(`button[value="${focus}"]`) || dlg.querySelector('button[value]:last-child')).focus();
+    });
+  }
+
+  /* Passwort oder Code abfragen. numeric: Ziffern-Tastatur (Code).
+     verify(pw): liefert eine Fehlermeldung oder ''. Ergebnis: die Eingabe,
+     bei Abbrechen null. */
+  function passwordBox({ title, html, label = 'Passwort', ok = 'Bestätigen', numeric = false, verify }) {
+    return new Promise((resolve) => {
+      const id = `adm-pw-${++cfCount}`;
+      const dlg = d.createElement('dialog');
+      dlg.className = 'adm-dialog small';
+      dlg.setAttribute('aria-labelledby', `${id}-t`);
+      const field = (fid, lab) =>
+        `<div class="adm-field full"><label class="adm-label" for="${fid}">${esc(lab)}</label>` +
+        `<div class="adm-pw"><input class="adm-input${numeric ? ' adm-code' : ''}" type="password" id="${fid}" autocomplete="off"` +
+          `${numeric ? ' inputmode="numeric" pattern="[0-9]*" maxlength="12"' : ''}/>` +
+        `<button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false">${icon('eye')}</button></div></div>`;
+      dlg.innerHTML =
+        `<div class="adm-dlg-head"><div><div class="adm-dlg-tag">${icon('lock')} Geschützt</div><h2 class="adm-dlg-title" id="${id}-t">${esc(title)}</h2></div></div>` +
+        `<form class="adm-dlg-text" novalidate autocomplete="off"><div class="adm-pwbox-text">${html || ''}</div>` +
+          '<div class="adm-grid" style="margin-top:1rem">' +
+            field(`${id}-a`, label) +
+          '</div><div class="adm-pwbox-err" aria-live="assertive"></div>' +
+          `<button type="submit" hidden></button></form>` +
+        '<div class="adm-dlg-foot"><div class="adm-dlg-foot-r">' +
+          '<button type="button" class="btn btn-quiet" value="no">Abbrechen</button>' +
+          `<button type="button" class="btn btn-dark" value="yes">${icon('check')}${esc(ok)}</button>` +
+        '</div></div>';
+      d.body.appendChild(dlg);
+      const a = dlg.querySelector(`#${id}-a`);
+      const err = dlg.querySelector('.adm-pwbox-err');
+      const yes = dlg.querySelector('button[value="yes"]');
+      let result = null;
+      const fail = (msg, el) => {
+        err.innerHTML = `<div class="adm-error">${icon('alert')}<span>${esc(msg)}</span></div>`;
+        el.setAttribute('aria-invalid', 'true');
+        el.focus();
+        el.select();
+      };
+      async function submit() {
+        a.removeAttribute('aria-invalid');
+        const pw = a.value;
+        if (!pw) return fail(`Bitte ${numeric ? 'den Code' : 'das Passwort'} eingeben.`, a);
+        if (verify) {
+          yes.disabled = true;
+          const msg = await verify(pw);
+          yes.disabled = false;
+          if (msg) return fail(msg, a);
+        }
+        result = pw;
+        dlg.close();
+      }
+      dlg.querySelector('form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        submit();
+      });
+      dlg.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[value]');
+        if (!btn) return;
+        if (btn.value === 'yes') submit();
+        else dlg.close();
+      });
+      dlg.addEventListener('close', () => {
+        dlg.remove();
+        unlockIfLast();
+        resolve(result);
+      });
+      dlg.showModal();
+      ROOT.classList.add('adm-lock');
+      a.focus();
     });
   }
 
@@ -1343,7 +1431,10 @@
      Zeile. Zugaenge stehen (nur fuer Admins) rechts oben beim Namen. */
   const NAV = [
     { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
-    { label: 'Startseite', icon: 'image', href: 'startseite.html' },
+    { label: 'Startseite', icon: 'image', href: 'startseite.html', sub: [
+      ['startseite.html', 'Titelfotos'],
+      ['hinweise.html', 'Hinweisbanner']
+    ] },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
     { label: 'Termine', icon: 'calendar', href: 'termine.html' },
     { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [
@@ -1410,6 +1501,7 @@
         `<a class="adm-me" href="profil.html" title="Mein Profil: Passwort ändern"${here === 'profil.html' ? ' aria-current="page"' : ''}>` +
           `<span class="adm-avatar" aria-hidden="true">${esc(initials(s.name))}</span>` +
           `<span class="adm-user-name">${esc(s.name)}</span><span class="visually-hidden"> (Mein Profil)</span></a>` +
+        (isDev() ? `<a class="adm-iconbtn" href="mitteilungen.html" aria-label="Mitteilungen an die Verwaltung"${here === 'mitteilungen.html' ? ' aria-current="page"' : ''}>${icon('info')}<span class="lbl">Mitteilungen</span></a>` : '') +
         (isAdmin() ? `<a class="adm-iconbtn" href="zugaenge.html" aria-label="Zugänge"${here === 'zugaenge.html' ? ' aria-current="page"' : ''}>${icon('key')}<span class="lbl">Zugänge</span></a>` : '') +
         `<a class="adm-iconbtn" href="../index.html" target="_blank" rel="noopener" aria-label="Website ansehen (neues Fenster)">${icon('external')}<span class="lbl">Website</span></a>` +
         `<button type="button" class="adm-iconbtn" id="adm-logout" aria-label="Abmelden">${icon('logout')}<span class="lbl">Abmelden</span></button>` +
@@ -1434,6 +1526,85 @@
     /* Aktiven Reiter auf schmalen Bildschirmen sichtbar machen */
     el.querySelectorAll('.adm-nav [aria-current], .adm-subnav [aria-current]')
       .forEach((cur) => cur.scrollIntoView({ block: 'nearest', inline: 'center' }));
+  }
+
+  /* ---------- Mitteilungen an alle in der Verwaltung (admin/mitteilungen.json) ----------
+     Schreibt ein Entwickler unter admin/mitteilungen.html (z. B. Neustart des
+     Servers, kurzfristige Updates). Erscheinen auf jeder Seite der Verwaltung
+     und auf der Anmeldung, solange sie gelten (von/bis, Datum oder Datum mit
+     Uhrzeit). "Gelesen" blendet eine Mitteilung auf diesem Geraet aus; wird
+     sie geaendert, erscheint sie wieder. */
+  const NOTICES = 'admin/mitteilungen.json';
+  const KEY_READ = 'aug-admin-gelesen';
+  const NOTICE_ART = { info: 'Information', wartung: 'Wartung', wichtig: 'Wichtig' };
+  function noticeTime(v, end) {
+    const m = /^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}))?$/.exec(String(v || ''));
+    if (!m) return NaN;
+    return new Date(`${m[1]}T${m[2] || (end ? '23:59:59' : '00:00')}`).getTime();
+  }
+  function noticeActive(h, now = Date.now()) {
+    if (!h || h.aktiv === false || !h.titel) return false;
+    const from = h.von ? noticeTime(h.von, false) : -Infinity;
+    const to = h.bis ? noticeTime(h.bis, true) : Infinity;
+    return !Number.isNaN(from) && !Number.isNaN(to) && from <= now && now <= to;
+  }
+  function noticeSig(h) {
+    const str = `${h.id}|${h.titel}|${h.text}|${h.bis}`;
+    let x = 0;
+    for (let i = 0; i < str.length; i++) x = (x * 31 + str.charCodeAt(i)) | 0;
+    return `${h.id}:${(x >>> 0).toString(36)}`;
+  }
+  function noticeWhen(h) {
+    const f = (v) => {
+      const [dd, t] = String(v).split('T');
+      return `${fmtShort(dd)}${t ? `, ${t} Uhr` : ''}`;
+    };
+    return h.bis ? `gilt bis ${f(h.bis)}` : '';
+  }
+  function noticeHTML(h, closable = true) {
+    const a = NOTICE_ART[h.art] ? h.art : 'info';
+    const meta = [NOTICE_ART[a], h.von_wem ? `von ${h.von_wem}` : '', noticeWhen(h)].filter(Boolean).join(' · ');
+    return `<div class="adm-notice is-${a}" role="${a === 'info' ? 'status' : 'alert'}" data-sig="${esc(noticeSig(h))}">` +
+      `<span class="adm-notice-ico" aria-hidden="true">${icon(a === 'wichtig' ? 'alert' : a === 'wartung' ? 'refresh' : 'info')}</span>` +
+      '<div class="adm-notice-body">' +
+        `<strong class="adm-notice-title">${esc(h.titel)}</strong>` +
+        (h.text ? `<p class="adm-notice-text">${esc(h.text).replace(/\n/g, '<br>')}</p>` : '') +
+        `<span class="adm-notice-meta">${esc(meta)}</span>` +
+      '</div>' +
+      (closable ? `<button type="button" class="adm-act adm-notice-close" aria-label="Gelesen, ausblenden: ${esc(h.titel)}">${icon('check')}Gelesen</button>` : '') +
+    '</div>';
+  }
+  async function showNotices() {
+    let list;
+    try {
+      const text = folder.state === 'ok' ? await folder.read(NOTICES) : await fetchText(NOTICES);
+      list = JSON.parse(text).mitteilungen || [];
+    } catch {
+      return;   /* keine Mitteilungen (Datei fehlt) */
+    }
+    const read = get(KEY_READ) || [];
+    const show = list.filter((h) => noticeActive(h) && !read.includes(noticeSig(h)))
+      .sort((x, y) => (y.art === 'wichtig') - (x.art === 'wichtig'));
+    d.querySelectorAll('.adm-notices').forEach((el) => el.remove());
+    if (!show.length) return;
+    const box = d.createElement('div');
+    box.className = 'adm-notices';
+    box.setAttribute('role', 'region');
+    box.setAttribute('aria-label', 'Mitteilungen');
+    box.innerHTML = `<div class="adm-notices-in">${show.map((h) => noticeHTML(h)).join('')}</div>`;
+    const top = $('adm-top');
+    const login = d.querySelector('.login-panel-in') || d.querySelector('.login-panel');
+    if (top) top.after(box);
+    else if (login) login.prepend(box);
+    else d.body.prepend(box);
+    box.addEventListener('click', (e) => {
+      const btn = e.target.closest('.adm-notice-close');
+      if (!btn) return;
+      const n = btn.closest('.adm-notice');
+      put(KEY_READ, [...(get(KEY_READ) || []), n.dataset.sig].slice(-50));
+      n.remove();
+      if (!box.querySelector('.adm-notice')) box.remove();
+    });
   }
 
   /* Aktivitaet verlaengert die Sitzung; Abmelden in einem anderen Tab gilt ueberall */
@@ -1494,6 +1665,7 @@
     d.querySelectorAll('[data-icon]').forEach((el) => el.insertAdjacentHTML('afterbegin', icon(el.dataset.icon)));
     if (!PUBLIC) mountTop();
     await folder.restore();
+    showNotices();
     if (!PUBLIC) {
       watchSession();
       verifySession();
@@ -1557,15 +1729,16 @@
     start: (fn) => starters.push(fn),
     guard: (fn) => guards.push(fn),
     /* Anmeldung und Zugaenge */
-    session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, roleOf, personenBereich,
+    session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, isDev, adminRole, roleOf, ROLES, personenBereich,
     AREAS, RUNDEN_KEY, rightsOf, can, canRunde, canAllRunden, canAnyRunde,
-    parseAccounts, accountsJSON, makeAccount, checkPassword, normUser, stampOf,
+    parseAccounts, accountsJSON, makeAccount, checkDevCode, checkPassword, normUser, stampOf,
     pwLevel, pwProblem, suggestPassword, MIN_PW, ACCOUNTS,
     /* Dateien */
     folder, readText, readJSON, markUnreadable, fetchText, saveFile, saveJSON, discardFile, hasUnsaved, imageUrl, fileName, dirName, stableFile, stableImage: stableFile, focusPos: HD.focusPos,
     credits,
     /* Oberflaeche */
-    toast, confirmBox, choiceBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
+    toast, confirmBox, choiceBox, passwordBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
+    noticeHTML, noticeActive, showNotices,
     listEditor, checkBlankRows, isBlankRow, toWebp, wireDrop, log, recentLog, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
     /* Datum */
     isoToday, isoOf, fmtDate, fmtShort

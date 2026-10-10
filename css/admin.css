@@ -706,3 +706,43 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .fp-days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.2rem}
 .fp-days .adm-check{min-height:38px}
 .adm-group-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem 1rem}
+
+/* Hinweisbanner und Mitteilungen: Liste und Vorschau */
+.adm-row-open.adm-hw{grid-template-columns:2.8rem minmax(0,1fr);min-height:68px}
+.adm-hw-mark{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;justify-self:center;background:var(--gold-pale);color:var(--gold)}
+.adm-hw-mark.is-wichtig{background:#f8e3e1;color:#8f2a22}
+.adm-hw-mark.is-wartung{background:#e6ecf5;color:var(--blue)}
+.adm-hw-mark svg.i{width:1.2rem;height:1.2rem}
+.adm-hw-preview{border:1px solid var(--line);background:var(--white);overflow:hidden}
+.adm-hw-preview .site-banner-in{padding:.85rem 1.1rem}
+.adm-hw-preview .adm-notice{margin:0;border:0}
+
+/* Mitteilungen an alle in der Verwaltung (admin.js, showNotices) */
+.adm-notices{background:var(--bg-soft)}
+.adm-notices-in{max-width:var(--adm-max);margin:0 auto;padding:1rem 2rem 0;display:flex;flex-direction:column;gap:.6rem}
+.adm-notice{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.9rem;align-items:start;padding:.9rem 1rem .9rem 1.1rem;
+  background:var(--white);border:1px solid var(--line);border-left:4px solid var(--gold);box-shadow:0 6px 18px rgba(16,25,46,.05)}
+.adm-notice.is-wartung{border-left-color:var(--blue)}
+.adm-notice.is-wichtig{border-left-color:#a33;background:#fdf4f3}
+.adm-notice-ico{width:2.2rem;height:2.2rem;border-radius:50%;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold)}
+.adm-notice.is-wartung .adm-notice-ico{background:#e6ecf5;color:var(--blue)}
+.adm-notice.is-wichtig .adm-notice-ico{background:#f8e3e1;color:#8f2a22}
+.adm-notice-ico svg.i{width:1.15rem;height:1.15rem}
+.adm-notice-body{min-width:0}
+.adm-notice-title{display:block;font-size:1.08rem;font-weight:700;line-height:1.35;color:var(--black)}
+.adm-notice-text{margin-top:.2rem;font-size:1rem;line-height:1.55;color:var(--text);overflow-wrap:anywhere}
+.adm-notice-meta{display:block;margin-top:.3rem;font-size:.88rem;color:var(--text-light)}
+.adm-notice-close{border-color:var(--line);align-self:center;white-space:nowrap}
+/* Anmeldeseite: Mitteilungen ueber dem Formular */
+.login-panel .adm-notices{width:100%;max-width:30rem;background:none;margin-bottom:1.6rem}
+.login-panel .adm-notices-in{padding:0}
+@media(max-width:640px){
+  .adm-notices-in{padding:.8rem 1rem 0}
+  .adm-notice{grid-template-columns:auto minmax(0,1fr);padding:.8rem}
+  .adm-notice-close{grid-column:1/-1;justify-self:end}
+}
+
+/* Passwort- und Code-Abfrage (Entwickler-Code) */
+.adm-code{font-size:1.4rem;letter-spacing:.35em;font-variant-numeric:tabular-nums}
+.adm-pwbox-err:not(:empty){margin-top:.7rem}
+.adm-dlg-tag svg.i{width:.95rem;height:.95rem;vertical-align:-.12em}

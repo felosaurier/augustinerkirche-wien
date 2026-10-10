@@ -182,7 +182,7 @@ Nur Python 3, sonst wird nichts gebraucht. Das Paket enthält `site/` (die Websi
 Mit `python tools/paket.py --verwaltung` speichert die Verwaltung **direkt auf dem Webserver**, ohne Projektordner auf dem PC und ohne Hochladen: Jede Änderung ist sofort auf der Website zu sehen, oben in der Verwaltung steht „Mit dem Server verbunden“.
 
 - **So geht es:** Die Verwaltung erkennt den Server am Antwortkopf `X-Aug-Schreiben: ja` (eine `HEAD`-Anfrage an die eigene Seite). Dann liest sie Dateien per `GET`, schreibt per `PUT` und löscht Fotos per `DELETE`. Dafür gibt es in `js/admin.js` ein Objekt (`ServerDir`) mit denselben Methoden wie ein Ordner der File System Access API; der Rest der Verwaltung merkt nichts davon. Schutz vor Überschreiben, WebP-Umrechnung der Fotos und alle Prüfungen bleiben wie im Ordner-Modus. Ohne den Kopf (z. B. lokal mit `python -m http.server`) gilt weiter der Projektordner.
-- **Den Schutz übernimmt der Webserver**, nicht die Verwaltung: Sie läuft auf einem **eigenen Port** (8443, https; für den Browser also eine andere Herkunft als die öffentliche Seite) und nur nach einer **Anmeldung am Server** (Basic Auth). Schreiben erlaubt der Server nur für `data/*.csv`/`*.json`, `assets/…` (Bilder, MP3, PDF) und `admin/zugaenge.json`; auf PUT und DELETE für `js/`, `css/` und die Seiten antwortet er mit 405 oder 404. Die öffentliche Seite (Port 80) kann nichts schreiben und liefert `admin/` nicht aus. Die **Rollen und Rechte je Person** gelten weiter nur in der Oberfläche: Wer die Anmeldung am Server kennt, kann dort in `data/` und `assets/` schreiben.
+- **Den Schutz übernimmt der Webserver**, nicht die Verwaltung: Sie läuft auf einem **eigenen Port** (8443, https; für den Browser also eine andere Herkunft als die öffentliche Seite) und nur nach einer **Anmeldung am Server** (Basic Auth). Schreiben erlaubt der Server nur für `data/*.csv`/`*.json`, `assets/…` (Bilder, MP3, PDF), `admin/zugaenge.json` und `admin/mitteilungen.json`; auf PUT und DELETE für `js/`, `css/` und die Seiten antwortet er mit 405 oder 404. Die öffentliche Seite (Port 80) kann nichts schreiben und liefert `admin/` nicht aus. Die **Rollen und Rechte je Person** gelten weiter nur in der Oberfläche: Wer die Anmeldung am Server kennt, kann dort in `data/` und `assets/` schreiben.
 - **https ist Pflicht** für die Verwaltung: Die Anmeldung rechnet PBKDF2 im Browser, und der gibt das nur über https oder `localhost` frei. Zum Testen genügt ein selbstsigniertes Zertifikat (die Anleitung im Paket zeigt den Befehl), besser ist ein Reverse-Proxy mit gültigem Zertifikat.
 - **Die Inhalte liegen dann auf dem Server.** Beim Aktualisieren des Programmcodes werden sie nicht überschrieben (`rsync` mit Ausnahmen, in der `ANLEITUNG.md` des Pakets). Wer die Website zusätzlich in Git pflegt, holt vorher die Inhalte per `scp` in den Projektordner. Die Sicherung der Inhalte ist jetzt Sache des Servers (z. B. Proxmox-Sicherung des Containers).
 - **Geprüft** mit einem echten nginx (Podman): Ersteinrichtung, Anmeldung, Speichern, Foto-Upload, Schutz vor Überschreiben, gesperrte Pfade und Dateitypen, Größenbegrenzung, Anmeldung am Server. Die Apache-Fassung (`apache-verwaltung.conf`, WebDAV) ist vorbereitet, aber noch nicht mit einem echten Apache geprüft.
@@ -225,10 +225,13 @@ admin/                        Verwaltung (nur mit Anmeldung)
   runden.html                 Runden pflegen
   rundgang.html               Kirchenrundgang pflegen
   startseite.html             Titelfotos der Startseite pflegen
+  hinweise.html               Hinweisbanner oben auf der Website (mit Start- und Enddatum)
+  mitteilungen.html           Mitteilungen an alle in der Verwaltung (nur Entwickler)
   personen.html               Mitbrüder, Leitung, Gastdirigenten, Organisten pflegen
   repertoire.html             Repertoire des Chores pflegen
-  zugaenge.html               Zugänge und Rollen verwalten (nur Admin)
+  zugaenge.html               Zugänge und Rollen verwalten (nur Admin; Rollen: Redaktion, Admin, Entwickler)
   zugaenge.json               Zugänge (Passwörter nur als Prüfsumme)
+  mitteilungen.json           Mitteilungen an alle in der Verwaltung
 css/
   style.css                   Zentrales Stylesheet
   admin.css                   Zusätze für die Verwaltung
