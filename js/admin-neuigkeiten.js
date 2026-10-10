@@ -18,7 +18,6 @@
   const A = window.Admin;
   const { HD, $, esc, icon } = A;
   const PATH = 'data/news.csv';
-  const LATEST = A.NEWS_HOME;
   const TEASER_MAX = 160;
 
   let entries = [];       /* neueste zuerst, Schluessel wie die Spalten der Tabelle */
@@ -90,7 +89,7 @@
   async function loadTargets() {
     const [ha, rd] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
-      A.readText('data/runden.json').then((t) => JSON.parse(t).runden || [])
+      A.readJSON('data/runden.json').then((d) => d.runden || [])
     ]);
     haEntries = ha.status === 'fulfilled' ? ha.value : [];
     rundenList = rd.status === 'fulfilled' ? rd.value : [];
@@ -389,7 +388,7 @@
     $('nv-card').innerHTML = '<div class="news-card">' +
       `<div class="news-card-img${src ? ' adm-pan' : ''}"${src ? ' tabindex="0" role="group" aria-label="Bildausschnitt: mit der Maus ziehen oder mit den Pfeiltasten verschieben"' : ''}>` +
         (src
-          ? `<img class="news-thumb${kind() === 'photo' ? ' news-thumb-photo' : ''}" src="${esc(src)}" alt=""${$('f-focus').value ? ` style="object-position:${$('f-focus').value}"` : ''} draggable="false"/>`
+          ? `<img class="news-thumb${kind() === 'photo' ? ' news-thumb-photo' : ''}" src="${esc(src)}" alt=""${A.focusPos($('f-focus').value) ? ` style="object-position:${A.focusPos($('f-focus').value)}"` : ''} draggable="false"/>`
           : '<span class="news-noimg"><img src="../assets/logo-gold.png" alt="" width="64" height="64"/></span>') +
         (cat ? `<span class="news-card-cat">${esc(cat)}</span>` : '') +
       '</div><div class="news-card-body">' +
@@ -504,7 +503,7 @@
     image = null;
     removeImage = false;
     current = e ? imgOf(e) : '';
-    $('f-focus').value = e ? e.Bildausschnitt : '';
+    $('f-focus').value = e ? A.focusPos(e.Bildausschnitt) : '';
     $('f-credit').value = A.credits.get(current);
     document.querySelector(`input[name="kind"][value="${e && !e.Plakat && e.Vorschaubild ? 'photo' : 'poster'}"]`).checked = true;
     delete $('f-filename').dataset.touched;

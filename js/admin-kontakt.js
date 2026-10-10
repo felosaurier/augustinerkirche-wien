@@ -30,7 +30,7 @@
   }
   async function loadKontakt() {
     try {
-      kontakt = JSON.parse(await A.readText(KPATH));
+      kontakt = (await A.readJSON(KPATH));
     } catch {
       kontakt = {};
       A.toast('Die Kontaktdaten konnten nicht geladen werden.', 'err');

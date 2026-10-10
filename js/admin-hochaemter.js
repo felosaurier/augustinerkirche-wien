@@ -92,7 +92,7 @@
   }
   async function loadKnownVoices() {
     try {
-      for (const p of JSON.parse(await A.readText('data/solisten.json'))) {
+      for (const p of (await A.readJSON('data/solisten.json'))) {
         if (p.name && p.voice) knownVoices.set(p.name, p.voice);
       }
     } catch {
@@ -287,7 +287,7 @@
   /* ---------- Fotos ---------- */
   async function loadPhotos() {
     try {
-      photoMap = JSON.parse(await A.readText(PHOTOS_PATH)).bilder || {};
+      photoMap = (await A.readJSON(PHOTOS_PATH)).bilder || {};
     } catch (e) {
       photoMap = {};
       if (!notFound(e)) A.toast('Die Fotos der Hochämter konnten nicht geladen werden.', 'err');
@@ -321,7 +321,6 @@
   const formKey = () => (HD.isoDate(F('date').value)
     ? `${F('date').value}-${(HD.isoTime(F('time').value) || DEFAULTS.time).replace(':', '')}` : 'neu');
   const photoDir = (key) => `${PHOTO_DIR}${key}/`;
-  const basename = (p) => p.slice(p.lastIndexOf('/') + 1);
   /* Freier Name im Ordner: foto-1.webp, foto-2.webp … (auch gegenueber Fotos im Fenster) */
   async function freePhotoPath(key, ext, skip = []) {
     const taken = new Set([...photos.map((p) => p.path), ...skip]);
@@ -604,7 +603,7 @@
     try {
       let years = [];
       try {
-        years = JSON.parse(await A.readText(`${ARCHIVE_DIR}jahre.json`));
+        years = (await A.readJSON(`${ARCHIVE_DIR}jahre.json`));
       } catch (e) {
         if (!notFound(e)) throw e;
       }

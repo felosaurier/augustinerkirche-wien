@@ -8,7 +8,8 @@
      Instagram-Graph-API-Access-Token serverseitig haelt) zur
      Verfuegung steht, reicht es, die Konstante zu setzen.
      Wichtig: die Adresse dann auch in der Content-Security-Policy
-     (connect-src) aller Seiten ergaenzen.
+     (connect-src) der Startseite ergaenzen, ausserdem die Bildadresse der
+     Beitraege (img-src); beides ist bewusst nicht freigegeben.
    - Ohne konfigurierten Endpunkt rendert das Modul einen
      redaktionell gepflegten Hinweis mit Verweis auf das Profil.
    - Ist ein Endpunkt konfiguriert, wird per fetch() mit Timeout

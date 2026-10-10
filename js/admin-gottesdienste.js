@@ -89,7 +89,7 @@
 
   async function load() {
     try {
-      const d = JSON.parse(await A.readText(PATH));
+      const d = (await A.readJSON(PATH));
       termine = (d.termine || []).sort(byDay);
       ausfaelle = (d.entfaellt || []).filter((a) => a && A.HD.isoDate(a.datum)).sort(byDate);
       ferien = (d.ferien || []).filter((f) => f && A.HD.isoDate(f.von) && A.HD.isoDate(f.bis)).sort(byFrom);

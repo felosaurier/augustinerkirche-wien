@@ -26,7 +26,8 @@
   --gold-pale:#f6efdc;
   --text:#1f2535;
   --text-mid:#4a5063;
-  --text-light:#676c7b;
+  --text-light:#5f6574;       /* Kontrast 5.9:1 auf Weiß, 5.1:1 auf --bg-warm */
+  --gold-text:#7f5f20;        /* Gold für kleinen Text: 5.9:1 auf Weiß, 5.1:1 auf Beige und Goldgrund */
   --line:#e4dfd3;
   --line-dark:rgba(255,255,255,.14);
 
@@ -806,8 +807,9 @@ html.nd-lock{overflow:hidden}
 .runde-block{margin:2rem 0 .5rem}
 .termin-chips{display:flex;flex-wrap:wrap;gap:.45rem;list-style:none}
 .termin-chips li{display:inline-flex;align-items:baseline;gap:.45rem;padding:.42rem .8rem;border:1px solid var(--line);font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--blue)}
-.termin-chips li span{font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--gold)}
-.termin-chips li.vorbei{opacity:.45}
+.termin-chips li span{font-family:var(--sans);font-size:.88rem;font-weight:600;color:var(--gold-text)}
+.termin-chips li.vorbei{color:var(--text-light);background:var(--bg-soft);text-decoration:line-through}
+.termin-chips li.vorbei span{color:var(--text-light)}
 .runde-facts{margin:2rem 0 0;border-top:1px solid var(--blue)}
 .runde-fact{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:1rem;align-items:baseline;padding:.8rem 0;border-bottom:1px solid var(--line)}
 .runde-fact-label{font-size:.92rem;font-weight:600;color:var(--text-light)}
@@ -963,7 +965,8 @@ footer{
 .cal-filter[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
 .cal-filter[aria-pressed="true"] .cal-dot{box-shadow:0 0 0 1.5px #fff}
 .cal-filter[aria-pressed="true"] .cal-dot.g-veranstaltung{box-shadow:none;outline:0}
-.cal-filter .n{font-size:.78rem;font-weight:600;opacity:.7}
+.cal-filter .n{font-size:.88rem;font-weight:600;color:var(--text-light)}
+.cal-filter[aria-pressed="true"] .n{color:#fff}
 
 .cal-list{min-width:0;border-top:1px solid var(--blue)}
 .cal-empty{padding:1.6rem 0;font-size:1.02rem;color:var(--text-mid)}

@@ -175,6 +175,8 @@
   /* E-Mail-Adressen im (bereits escapten) Text als verschleierte Links
      (HD.mailHTML); das Muster enthaelt weder < > noch Anfuehrungszeichen. */
   function linkify(text) {
+    /* sehr lange Texte ohne Leerzeichen nur noch schlicht ausgeben (das Muster waere dort langsam) */
+    if (String(text).length > 4000) return esc(text);
     return esc(text).replace(/([A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[a-z]{2,})/g, (m) => HD.mailHTML(m));
   }
   function buildDialog() {

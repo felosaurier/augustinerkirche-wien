@@ -28,7 +28,7 @@
   /* ---------- Laden und Liste ---------- */
   async function load() {
     try {
-      const d = JSON.parse(await A.readText(PATH));
+      const d = (await A.readJSON(PATH));
       if (!d || !Array.isArray(d.bilder)) throw new Error('unerwarteter Inhalt');
       list = d.bilder;
       seconds = SECS.includes(Number(d.sekunden)) ? Number(d.sekunden) : 6;
@@ -42,7 +42,7 @@
   function rowHTML(b, i) {
     return `<li class="adm-row" data-key="${i}">` +
       `<button type="button" class="adm-row-open adm-st" data-act="edit" data-i="${i}">` +
-        `<span class="adm-thumb"><img src="${esc(A.imageUrl(b.bild))}" alt=""${b.ausschnitt ? ` style="object-position:${esc(b.ausschnitt)}"` : ''} loading="lazy"/></span>` +
+        `<span class="adm-thumb"><img src="${esc(A.imageUrl(b.bild))}" alt=""${A.focusPos(b.ausschnitt) ? ` style="object-position:${A.focusPos(b.ausschnitt)}"` : ''} loading="lazy"/></span>` +
         `<span class="adm-row-body"><span class="adm-row-title">${esc(b.titel)}</span>` +
         `<span class="adm-row-meta">${i === 0 ? 'Erstes Foto, steht beim Öffnen der Seite' : `Foto ${i + 1}`}</span></span>` +
       '</button>' +
@@ -128,7 +128,7 @@
     for (const b of document.querySelectorAll('.adm-seg-btn')) b.setAttribute('aria-pressed', String(b.dataset.view === view));
     box.hidden = !src;
     $('st-pan-help').hidden = !src;
-    box.innerHTML = src ? `<img src="${esc(src)}" alt="" draggable="false"${$('f-focus').value ? ` style="object-position:${$('f-focus').value}"` : ''}/>` : '';
+    box.innerHTML = src ? `<img src="${esc(src)}" alt="" draggable="false"${A.focusPos($('f-focus').value) ? ` style="object-position:${A.focusPos($('f-focus').value)}"` : ''}/>` : '';
   }
   const panImg = () => {
     const img = $('st-pan').querySelector('img');
@@ -227,7 +227,7 @@
     if (image) URL.revokeObjectURL(image.url);
     image = null;
     $('f-file').value = '';
-    $('f-focus').value = b && b.ausschnitt ? b.ausschnitt : '';
+    $('f-focus').value = b ? A.focusPos(b.ausschnitt) : '';
     renderImage();
     renderPan();
     $('f-pos').value = 'ende';

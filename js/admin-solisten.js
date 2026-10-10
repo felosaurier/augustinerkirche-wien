@@ -34,7 +34,7 @@
   /* ---------- Laden und Liste ---------- */
   async function load() {
     try {
-      const data = JSON.parse(await A.readText(PATH));
+      const data = (await A.readJSON(PATH));
       if (!Array.isArray(data)) throw new Error('unerwarteter Inhalt');
       people = data.sort(bySurname);
     } catch (e) {

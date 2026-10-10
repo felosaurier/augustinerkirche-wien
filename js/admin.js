@@ -27,13 +27,25 @@
   const HD = w.HochamtData;
   const ROOT = d.documentElement;
   const PUBLIC = ROOT.dataset.adm === 'public';
+
+  /* Die Verwaltung gehoert nicht in einen fremden Rahmen (Clickjacking): ein <iframe> auf
+     einer anderen Seite bekommt nur eine leere Seite. Ein Server-Header (X-Frame-Options)
+     waere besser, das geht bei einer statischen Seite aber nicht. */
+  if (w.top !== w.self) {
+    ROOT.style.display = 'none';
+    try {
+      w.top.location.href = w.self.location.href;
+    } catch {
+      /* ueber fremde Adresse geblockt: die Seite bleibt verborgen */
+    }
+  }
   const ACCOUNTS = 'admin/zugaenge.json';
   const KEY_SESSION = 'aug-admin-sitzung';
   const KEY_FAILS = 'aug-admin-fehlversuche';
   const KEY_LOG = 'aug-admin-protokoll';
   const IDLE_MS = 4 * 60 * 60 * 1000;
   const ITER = 600000;
-  const MIN_PW = 10;
+  const MIN_PW = 12;
 
   const { esc, pad } = HD;
   const $ = (id) => d.getElementById(id);
@@ -83,7 +95,15 @@
 
   /* Rollen: "admin" darf zusaetzlich Zugaenge verwalten, "redaktion" pflegt
      Inhalte. Zugaenge ohne Angabe (aus der ersten Fassung) gelten als Admin. */
-  const roleOf = (acc) => (acc && acc.rolle === 'redaktion' ? 'redaktion' : 'admin');
+  /* Ohne Angabe gilt "admin" (so entstanden die ersten Zugaenge). Steht aber etwas anderes als
+     "admin" da (ein Tippfehler, eine Zahl), gilt die Redaktion, und ohne Zugang auch: im Zweifel
+     weniger Rechte. */
+  const roleOf = (acc) => {
+    if (!acc) return 'redaktion';
+    const raw = acc.rolle;
+    if (raw === undefined || raw === null || raw === '') return 'admin';
+    return typeof raw === 'string' && raw.trim().toLowerCase() === 'admin' ? 'admin' : 'redaktion';
+  };
   const isAdmin = () => roleOf(session()) === 'admin';
 
   /* Rechte der Redaktion: Bereiche (je eine Seite der Verwaltung) und einzelne
@@ -252,6 +272,21 @@
     return (await derive(passwort, acc.salt, acc.iter || ITER)) === acc.hash;
   }
 
+  /* Passwort pruefen: liefert den Grund, warum es nicht geht, sonst ''. Das Passwort steht
+     nur als Pruefsumme in zugaenge.json, deshalb sollte es lang und nicht erratbar sein. */
+  const COMMON_PW = ['passwort', 'password', 'passwort123', 'willkommen', 'augustiner', 'augustinerkirche', 'augustinus',
+    'pfarre', 'kloster', 'admin', 'administrator', 'qwertz', 'qwertzuiop', 'qwerty', 'qwertyuiop', 'sommer', 'winter', 'herbst', 'fruehling'];
+  function pwProblem(pw, user = '') {
+    if (pw.length < MIN_PW) return `Das Passwort braucht mindestens ${MIN_PW} Zeichen.`;
+    const low = pw.toLowerCase();
+    const u = normUser(user);
+    if (u && (low === u || (u.length >= 4 && low.includes(u)))) return 'Das Passwort darf den Benutzernamen nicht enthalten.';
+    if (new Set(pw).size < 6) return 'Das Passwort besteht aus zu wenigen verschiedenen Zeichen.';
+    const letters = low.replace(/[^a-zäöüß]/g, '');
+    if (COMMON_PW.includes(letters) || /^(0123456789|1234567890|12345678|abcdefgh)/.test(low.replace(/\s/g, ''))) return 'Dieses Passwort ist zu leicht zu erraten.';
+    return '';
+  }
+
   /* Staerke grob einschaetzen: 0 leer, 1 zu kurz/schwach … 4 sehr gut */
   function pwLevel(pw) {
     if (!pw) return 0;
@@ -390,26 +425,62 @@
     }
   }
 
+  /* Kurze Pruefsumme eines Textes (FNV-1a), um zu erkennen, ob sich der Inhalt geaendert hat */
+  function hashText(t) {
+    let h = 2166136261;
+    for (let i = 0; i < t.length; i++) {
+      h ^= t.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return `${(h >>> 0).toString(36)}:${t.length}`;
+  }
   const folder = {
     supported: typeof w.showDirectoryPicker === 'function',
     state: 'none',       /* unsupported | none | prompt | ok */
     handle: null,
     subs: new Set(),
+    /* Pfad -> Stand der Datei beim letzten Lesen oder Schreiben (fuer Aenderungen von aussen) */
+    seen: new Map(),
     on(fn) { this.subs.add(fn); },
     async read(path) {
-      return (await (await handleFor(this.handle, path, false)).getFile()).text();
+      const file = await (await handleFor(this.handle, path, false)).getFile();
+      const text = await file.text();
+      this.seen.set(path, { stamp: `${file.lastModified}:${file.size}`, hash: hashText(text) });
+      return text;
+    },
+    /* Wurde die Datei seit dem Lesen von einem anderen Programm oder Tab veraendert, wird
+       nicht ueberschrieben: sonst gingen diese Aenderungen verloren. Nur der Inhalt zaehlt,
+       ein reines Neuschreiben mit gleichem Text (z. B. durch git) stoert nicht. */
+    async checkFresh(path) {
+      const before = this.seen.get(path);
+      if (!before) return;
+      let file;
+      try {
+        file = await (await handleFor(this.handle, path, false)).getFile();
+      } catch {
+        return;   /* Datei inzwischen weg: neu anlegen ist in Ordnung */
+      }
+      if (`${file.lastModified}:${file.size}` === before.stamp) return;
+      if (hashText(await file.text()) === before.hash) return;
+      throw Object.assign(new Error(`„${path}“ wurde inzwischen woanders geändert (Excel, ein anderer Tab, ein Git-Update …). Damit nichts überschrieben wird, wurde nicht gespeichert. Bitte die Seite neu laden und die Änderung noch einmal machen.`), { name: 'KonfliktError' });
     },
     /* Schreibt eine Datei. Wurde sie gerade von einem anderen Programm angefasst (Cloud-Sync,
        Virenscanner, Editor), meldet der Browser "state had changed since it was read from disk";
        dann klappt meist ein zweiter oder dritter Versuch. Die Meldung nennt die Datei. */
     async write(path, blob) {
       const RETRY = ['InvalidStateError', 'NotReadableError', 'NoModificationAllowedError'];
+      await this.checkFresh(path);
       for (let attempt = 0; ; attempt++) {
         try {
           const fh = await handleFor(this.handle, path, true);
           const out = await fh.createWritable();
           await out.write(blob);
           await out.close();
+          /* neuer Stand (nur Text-Dateien, die die Verwaltung auch liest) */
+          if (GUARDED.test(path)) {
+            const file = await fh.getFile();
+            this.seen.set(path, { stamp: `${file.lastModified}:${file.size}`, hash: hashText(await file.text()) });
+          }
           return;
         } catch (e) {
           if (attempt < 2 && RETRY.includes(e && e.name)) {
@@ -509,7 +580,7 @@
     switch (folder.state) {
       case 'ok':
         return `<span class="adm-folder-ico">${icon('checkCircle')}</span>` +
-          `<div class="adm-folder-txt"><strong>Projektordner verbunden</strong>Änderungen werden direkt im Ordner „${esc(folder.handle.name)}“ gespeichert.</div>` +
+          `<div class="adm-folder-txt"><strong>Projektordner verbunden</strong><span class="adm-folder-sub">Änderungen werden direkt im Ordner „${esc(folder.handle.name)}“ gespeichert.</span></div>` +
           '<button type="button" class="btn btn-quiet btn-sm" data-folder="disconnect">Trennen</button>';
       case 'prompt':
         return `<span class="adm-folder-ico">${icon('folder')}</span>` +
@@ -520,23 +591,45 @@
           '<div class="adm-folder-txt"><strong>Speichern per Download</strong>Dieser Browser kann nicht direkt in einen Ordner speichern. Du bekommst geänderte Dateien zum Herunterladen, mit Angabe, wohin sie gehören. Am bequemsten geht es mit Chrome oder Edge am Computer.</div>';
       default:
         return `<span class="adm-folder-ico">${icon('folder')}</span>` +
-          '<div class="adm-folder-txt"><strong>Projektordner noch nicht verbunden</strong>Einmal verbinden, dann speichert die Verwaltung alles direkt an der richtigen Stelle. Ohne Verbindung bekommst du die Dateien zum Herunterladen.</div>' +
+          '<div class="adm-folder-txt"><strong>Projektordner noch nicht verbunden</strong><span class="adm-folder-sub">Einmal verbinden, dann speichert die Verwaltung alles direkt an der richtigen Stelle. Ohne Verbindung bekommst du die Dateien zum Herunterladen.</span></div>' +
           `<button type="button" class="btn btn-dark" data-folder="connect">${icon('folder')}Projektordner verbinden</button>`;
     }
   }
   function renderFolderStrips() {
     d.querySelectorAll('[data-adm-folder]').forEach((el) => {
-      el.className = `adm-folder${folder.state === 'ok' ? ' is-ok' : ''}`;
+      el.className = `adm-folder is-${folder.state}`;
       el.innerHTML = folderStripHTML();
     });
   }
 
   /* ---------- Lesen und Speichern ---------- */
   /* Text einer Projektdatei: aus dem verbundenen Ordner, sonst vom Webserver */
+  /* Pfad -> 'ok' | 'fehlt' | 'fehler': Konnte eine Datei nicht gelesen werden (oder war sie
+     kaputt), darf sie in dieser Sitzung nicht geschrieben werden, sonst waere der Rest weg. */
+  const readState = new Map();
+  const notFoundErr = (e) => !!e && (e.name === 'NotFoundError' || e.status === 404);
   async function readText(path) {
-    if (folder.state === 'ok') return folder.read(path);
-    return fetchText(path);
+    try {
+      const text = folder.state === 'ok' ? await folder.read(path) : await fetchText(path);
+      readState.set(path, 'ok');
+      return text;
+    } catch (e) {
+      readState.set(path, notFoundErr(e) ? 'fehlt' : 'fehler');
+      throw e;
+    }
   }
+  /* Datei als JSON lesen; eine Datei, die nicht zu lesen ist, sperrt das Schreiben */
+  async function readJSON(path) {
+    const text = await readText(path);
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      readState.set(path, 'fehler');
+      throw e;
+    }
+  }
+  const markUnreadable = (path) => readState.set(path, 'fehler');
+  const GUARDED = /^(data\/.+\.(json|csv)|admin\/zugaenge\.json)$/;
   const fileName = (path) => path.split('/').pop();
   const dirName = (path) => path.replace(/[^/]+$/, '') || './';
   function typeFor(path) {
@@ -556,6 +649,9 @@
   /* Speichert eine Datei im Projektordner; ohne Ordner wird sie zum
      Herunterladen vorgemerkt. Liefert true, wenn direkt gespeichert. */
   async function saveFile(path, data) {
+    if (GUARDED.test(path) && readState.get(path) === 'fehler') {
+      throw new Error(`„${path}“ ließ sich vorher nicht lesen. Speichern würde den Rest der Datei überschreiben, deshalb wird nichts geändert. Bitte die Seite neu laden oder die Datei prüfen.`);
+    }
     let blob = data instanceof Blob ? data : new Blob([data], { type: typeFor(path) });
     /* Eine Datei von der Festplatte (Auswahl, Ordner) zuerst in den Arbeitsspeicher holen: so wird
        eine seit dem Auswaehlen veraenderte Datei gleich bemerkt und nicht erst mitten im Schreiben */
@@ -907,7 +1003,7 @@
      sonst erst beim spaeteren Lesen oder Speichern und meldet dann "state had changed since
      it was read from disk", z. B. bei Dateien in OneDrive, auf dem Handy oder solchen, die
      gerade noch geschrieben werden. Ein zweiter Versuch faengt kurze Aenderungen ab. */
-  async function stableImage(file) {
+  async function stableFile(file) {
     let lastError = null;
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
@@ -923,7 +1019,7 @@
   }
 
   async function toWebp(file, opts = {}) {
-    file = await stableImage(file);
+    file = await stableFile(file);
     const ext = (file.name.split('.').pop() || '').toLowerCase();
     const isWebp = file.type === 'image/webp' || ext === 'webp';
     const maxSize = opts.maxSize || MAX_SIDE;
@@ -1096,6 +1192,13 @@
         group.sub.map(([href, label]) => `<a href="${href}"${isHere(href) ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('') +
         '</div></nav>' : '');
     $('adm-logout').addEventListener('click', () => logout('abgemeldet'));
+    /* Der Seitenkopf mit der Ueberschrift steht ausserhalb von <main>: als benannter Bereich kennzeichnen */
+    const head = d.querySelector('.adm-head');
+    const h1 = head && head.querySelector('h1');
+    if (head && h1) {
+      head.setAttribute('role', 'region');
+      head.setAttribute('aria-label', h1.textContent.trim());
+    }
     /* Aktiven Reiter auf schmalen Bildschirmen sichtbar machen */
     el.querySelectorAll('.adm-nav [aria-current], .adm-subnav [aria-current]')
       .forEach((cur) => cur.scrollIntoView({ block: 'nearest', inline: 'center' }));
@@ -1184,7 +1287,7 @@
   async function loadCredits(force) {
     if (creditMap && !force) return creditMap;
     try {
-      creditMap = JSON.parse(await readText(CREDITS)).bilder || {};
+      creditMap = (await readJSON(CREDITS)).bilder || {};
     } catch {
       creditMap = creditMap || {};
     }
@@ -1225,9 +1328,9 @@
     session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, roleOf, personenBereich,
     AREAS, RUNDEN_KEY, rightsOf, can, canRunde, canAllRunden, canAnyRunde,
     parseAccounts, accountsJSON, makeAccount, checkPassword, normUser, stampOf,
-    pwLevel, suggestPassword, MIN_PW, ACCOUNTS,
+    pwLevel, pwProblem, suggestPassword, MIN_PW, ACCOUNTS,
     /* Dateien */
-    folder, readText, fetchText, saveFile, saveJSON, discardFile, hasUnsaved, imageUrl, fileName, dirName, stableImage,
+    folder, readText, readJSON, markUnreadable, fetchText, saveFile, saveJSON, discardFile, hasUnsaved, imageUrl, fileName, dirName, stableFile, stableImage: stableFile, focusPos: HD.focusPos,
     credits,
     /* Oberflaeche */
     toast, confirmBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,

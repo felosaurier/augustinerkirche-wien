@@ -34,7 +34,7 @@
   /* ---------- Laden und Liste ---------- */
   async function load() {
     try {
-      const d = JSON.parse(await A.readText(PATH));
+      const d = (await A.readJSON(PATH));
       if (!d || !Array.isArray(d.gruppen)) throw new Error('unerwarteter Inhalt');
       data = { gruppen: d.gruppen.map((g) => ({ titel: g.titel || '', cds: Array.isArray(g.cds) ? g.cds : [] })) };
     } catch (e) {
@@ -134,10 +134,21 @@
   }
 
   /* ---------- Fenster: Hoerproben ---------- */
-  function onAudio(files) {
-    for (const file of files) {
-      if (!/\.mp3$/i.test(file.name) && file.type !== 'audio/mpeg') {
-        A.toast(`${file.name}: bitte eine MP3-Datei wählen.`, 'err');
+  const MAX_AUDIO_MB = 30;
+  async function onAudio(files) {
+    for (const picked of files) {
+      if (!/\.mp3$/i.test(picked.name) && picked.type !== 'audio/mpeg') {
+        A.toast(`${picked.name}: bitte eine MP3-Datei wählen.`, 'err');
+        continue;
+      }
+      if (picked.size > MAX_AUDIO_MB * 1024 * 1024) {
+        A.toast(`${picked.name} ist größer als ${MAX_AUDIO_MB} MB. Hörproben sollten kurz sein, bitte kürzen oder stärker komprimieren.`, 'err');
+        continue;
+      }
+      let file;
+      try {
+        file = await A.stableFile(picked);   /* gleich einlesen: so fällt eine gesperrte oder geänderte Datei sofort auf */
+      } catch {
         continue;
       }
       const base = HD.slug(file.name.replace(/\.[^.]+$/, ''), 60) || 'hoerprobe';
@@ -330,5 +341,9 @@
     A.guard(() => $('cd-dlg').open && dirtyState() !== snap);
     A.folder.on((state) => { if (state === 'ok') load(); });
     await load();
+    if (new URLSearchParams(location.search).has('neu')) {
+      openEditor();
+      history.replaceState(null, '', location.pathname + location.search.replace(/[?&]neu=1/, '').replace(/^&/, '?'));
+    }
   });
 })();

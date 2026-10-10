@@ -47,7 +47,7 @@
   /* ---------- Liste ---------- */
   async function load() {
     try {
-      runden = JSON.parse(await A.readText(PATH)).runden || [];
+      runden = (await A.readJSON(PATH)).runden || [];
     } catch (e) {
       $('rd-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Runden konnten nicht geladen werden (${esc(e.message)}).</div></div>`;
       return;

@@ -178,7 +178,7 @@
     for (const a of archiveYears || []) {
       const y = Number(a && a.jahr !== undefined ? a.jahr : a);
       if (!y) continue;
-      if (a && a.anzahl) known.set(y, a.anzahl);
+      if (a && Number(a.anzahl) > 0) known.set(y, Math.round(Number(a.anzahl)));   /* nur Zahlen: der Wert landet im HTML */
       if (!counts.has(y)) counts.set(y, 0);
     }
     const years = [...counts.keys()].sort((a, b) => b - a);

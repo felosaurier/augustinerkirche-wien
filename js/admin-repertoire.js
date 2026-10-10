@@ -64,7 +64,7 @@
 
   async function load() {
     try {
-      data = JSON.parse(await A.readText(PATH));
+      data = (await A.readJSON(PATH));
       data.komponisten = sorted(data.komponisten || []);
     } catch (e) {
       $('rp-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Das Repertoire konnte nicht geladen werden (${esc(e.message)}).</div></div>`;

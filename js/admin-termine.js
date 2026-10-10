@@ -43,7 +43,7 @@
   /* ---------- Laden und Liste ---------- */
   async function load() {
     try {
-      const data = JSON.parse(await A.readText(PATH));
+      const data = (await A.readJSON(PATH));
       if (!data || !Array.isArray(data.termine)) throw new Error('unerwarteter Inhalt');
       termine = data.termine.filter((t) => HD.isoDate(t.datum)).sort(byDate);
     } catch (e) {

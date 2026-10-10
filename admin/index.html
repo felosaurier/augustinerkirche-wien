@@ -2,7 +2,7 @@
 <html lang="de" data-adm="public">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -98,7 +98,7 @@
               <button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
             </div>
             <div class="adm-strength" id="s-pw-meter" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-            <span class="adm-hint" id="s-pw-hint">Mindestens 10 Zeichen.</span>
+            <span class="adm-hint" id="s-pw-hint">Mindestens 12 Zeichen, am besten ein Satz oder der Vorschlag.</span>
             <div><button type="button" class="adm-list-add" id="s-suggest">Sicheres Passwort vorschlagen</button></div>
           </div>
           <div class="adm-field">

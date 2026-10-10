@@ -32,7 +32,7 @@
   /* ---------- Rechte ---------- */
   async function loadRunden() {
     try {
-      runden = (JSON.parse(await A.readText('data/runden.json')).runden || []).map((r) => ({ id: r.id, titel: r.titel }));
+      runden = ((await A.readJSON('data/runden.json')).runden || []).map((r) => ({ id: r.id, titel: r.titel }));
     } catch {
       runden = [];
     }
@@ -104,7 +104,8 @@
     try {
       accounts = A.parseAccounts(await A.readText(A.ACCOUNTS));
     } catch (e) {
-      $('zg-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Zugänge konnten nicht geladen werden (${esc(e.message)}).</div></div>`;
+      A.markUnreadable(A.ACCOUNTS);   /* sonst koennte ein neuer Zugang die Datei mit allen anderen ueberschreiben */
+      $('zg-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Zugänge konnten nicht geladen werden (${esc(e.message)}). Es wird nichts gespeichert, bevor das behoben ist.</div></div>`;
       return;
     }
     await loadRunden();
@@ -173,7 +174,7 @@
     $('f-user-hint').innerHTML = acc ? 'Der Benutzername bleibt gleich.' : 'Kleinbuchstaben, ohne Leerzeichen, z. B. <code>maria</code>.';
     $('zg-pw-legend').textContent = acc ? 'Neues Passwort' : 'Passwort';
     $('f-pw-label').textContent = acc ? 'Neues Passwort' : 'Passwort';
-    $('f-pw-hint').textContent = acc ? 'Leer lassen, um das bisherige Passwort zu behalten. Sonst mindestens 10 Zeichen.' : 'Mindestens 10 Zeichen.';
+    $('f-pw-hint').textContent = acc ? `Leer lassen, um das bisherige Passwort zu behalten. Sonst mindestens ${A.MIN_PW} Zeichen.` : `Mindestens ${A.MIN_PW} Zeichen, am besten ein Satz oder der Vorschlag.`;
     updateMeter();
     $('zg-dlg-tag').textContent = acc ? (acc.benutzer === me() ? 'Dein Zugang' : 'Zugang bearbeiten') : 'Neuer Zugang';
     $('zg-dlg-title').textContent = acc ? acc.name : 'Zugang anlegen';
@@ -200,8 +201,8 @@
       errors.push([$('zg-recht-first'), 'Bitte mindestens einen Bereich oder eine Runde auswählen, sonst kann die Person nichts bearbeiten.']);
     }
     if (!old || pw) {
-      if (pw.length < A.MIN_PW) errors.push([$('f-pw'), `Das Passwort braucht mindestens ${A.MIN_PW} Zeichen.`]);
-      else if (pw.toLowerCase() === (old ? old.benutzer : user)) errors.push([$('f-pw'), 'Das Passwort darf nicht der Benutzername sein.']);
+      const pwBad = A.pwProblem(pw, old ? old.benutzer : user);
+      if (pwBad) errors.push([$('f-pw'), pwBad]);
       if ($('f-pw2').value !== pw) errors.push([$('f-pw2'), 'Die beiden Passwörter stimmen nicht überein.']);
     }
     if (errors.length) {

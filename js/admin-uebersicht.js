@@ -1,9 +1,11 @@
 /* ============================================================
    Augustinerkirche Wien — admin-uebersicht.js
    Startseite der Verwaltung (admin/uebersicht.html): Begruessung,
-   je Bereich eine Kachel mit Stand und Schnellzugriff und eine Liste
-   "Noch offen" (fehlende Angaben bei den naechsten Hochaemtern,
-   Jahreswechsel). Gezeigt wird nur, was die angemeldete Person bearbeiten darf.
+   je Bereich eine Kachel mit Stand und Schnellzugriff (nach Themen
+   geordnet, jeder Bereich der Verwaltung ist hier erreichbar), eine
+   Liste "Noch offen" (fehlende Angaben bei den naechsten Hochaemtern,
+   Jahreswechsel) und "Zuletzt geaendert" (auf diesem Geraet).
+   Gezeigt wird nur, was die angemeldete Person bearbeiten darf.
    ============================================================ */
 (function () {
   'use strict';
@@ -15,8 +17,8 @@
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
   async function loadAll() {
-    const json = (path) => A.readText(path).then((t) => JSON.parse(t));
-    const [ha, news, sol, acc, gd, rd, ps, rp, st] = await Promise.allSettled([
+    const json = (path) => A.readJSON(path);
+    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -25,12 +27,18 @@
       json('data/runden.json'),
       json('data/personen.json'),
       json('data/repertoire.json'),
-      json('data/startseite.json')
+      json('data/startseite.json'),
+      json('data/termine.json'),
+      json('data/paten.json'),
+      json('data/cds.json'),
+      json('data/rundgang.json'),
+      json('data/pgr.json')
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
-      rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st)
+      rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st),
+      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg)
     };
   }
 
@@ -42,70 +50,125 @@
     '</article>';
   }
 
-  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st }) {
+  /* Bereiche nach Themen; jede Kachel erscheint nur, wenn die Person den Bereich bearbeiten darf */
+  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
-
-    /* Personen: je nach Recht Leitung & Organisten (musik) und/oder Mitbrueder (kloster) */
-    const personenArea = can('musik-personen') ? 'musik' : 'kloster';
-    const personenCount = ps ? [['musik-personen', ['leitung', 'gastdirigenten', 'organisten']], ['mitbrueder', ['mitbrueder']]]
-      .filter(([right]) => can(right))
-      .reduce((n, [, groups]) => n + groups.reduce((m, g) => m + (ps[g] || []).length, 0), 0) : 0;
+    const count = (list) => (list || []).length;
+    const people = (groups) => (ps ? groups.reduce((n, g) => n + count(ps[g]), 0) : null);
     const mine = (rd || []).filter((r) => A.canRunde(r.id));
+    const cdN = cd ? (cd.gruppen || []).reduce((n, g) => n + count(g.cds), 0) : null;
 
-    $('ov-tiles').innerHTML = [
-      can('startseite') ? tile({
-        href: 'startseite.html', ico: 'image', title: 'Startseite',
-        stat: st ? plural((st.bilder || []).length, 'Titelfoto', 'Titelfotos') : none,
-        addHref: 'startseite.html?neu=1', addLabel: 'Neues Foto'
-      }) : '',
-      can('hochaemter') ? tile({
-        href: 'hochaemter.html', ico: 'calendar', title: 'Hochämter',
-        stat: ha ? plural(upcoming.length, 'kommender Termin', 'kommende Termine') : none,
-        addHref: 'hochaemter.html?neu=1', addLabel: 'Neues Hochamt'
-      }) : '',
-      can('neuigkeiten') ? tile({
-        href: 'neuigkeiten.html', ico: 'news', title: 'Neuigkeiten',
-        stat: news ? `${plural(news.length, 'Meldung', 'Meldungen')}` : none,
-        addHref: 'neuigkeiten.html?neu=1', addLabel: 'Neue Meldung'
-      }) : '',
-      can('gottesdienste') ? tile({
-        href: 'gottesdienste.html', ico: 'clock', title: 'Gottesdienste',
-        stat: gd ? plural((gd.termine || []).length, 'Termin pro Woche', 'Termine pro Woche') : none,
-        addHref: 'gottesdienste.html?neu=1', addLabel: 'Neuer Termin'
-      }) : '',
-      A.canAnyRunde() ? tile({
-        href: 'runden.html', ico: 'users', title: A.canAllRunden() ? 'Runden' : mine.length === 1 ? 'Meine Runde' : 'Meine Runden',
-        stat: rd ? plural(mine.length, 'Runde', 'Runden') : none,
-        /* Wer nicht alle Runden darf, kann keine neue anlegen; Schnellzugriff dann auf die einzige eigene */
-        ...(A.canAllRunden()
-          ? { addHref: 'runden.html?neu=1', addLabel: 'Neue Runde' }
-          : { addHref: mine.length === 1 ? `runden.html?bearbeiten=${encodeURIComponent(mine[0].id)}` : 'runden.html', addLabel: 'Bearbeiten', addIcon: 'edit' })
-      }) : '',
-      can('musik-personen') || can('mitbrueder') ? tile({
-        href: `personen.html?bereich=${personenArea}`, ico: 'user', title: 'Personen',
-        stat: ps ? plural(personenCount, 'Person', 'Personen') : none,
-        ...(can('musik-personen') && can('mitbrueder')
-          ? { addHref: 'personen.html?bereich=kloster', addLabel: 'Mitbrüder', addIcon: 'user' }
-          : { addHref: `personen.html?bereich=${personenArea}`, addLabel: 'Bearbeiten', addIcon: 'edit' })
-      }) : '',
-      can('solisten') ? tile({
-        href: 'solisten.html', ico: 'music', title: 'Solisten',
-        stat: sol ? plural(sol.length, 'Solist', 'Solisten') : none,
-        addHref: 'solisten.html?neu=1', addLabel: 'Neu'
-      }) : '',
-      can('repertoire') ? tile({
-        href: 'repertoire.html', ico: 'book', title: 'Repertoire',
-        stat: rp ? plural((rp.komponisten || []).reduce((n, k) => n + k.werke.length, 0), 'Werk', 'Werke') : none,
-        addHref: 'repertoire.html?neu=1', addLabel: 'Komponist'
-      }) : '',
-      A.isAdmin() ? tile({
-        href: 'zugaenge.html', ico: 'key', title: 'Zugänge',
-        stat: acc ? plural(acc.length, 'Zugang', 'Zugänge') : none,
-        addHref: 'zugaenge.html?neu=1', addLabel: 'Neuer Zugang'
-      }) : ''
-    ].join('');
+    const groups = [
+      ['Website', [
+        can('startseite') && tile({
+          href: 'startseite.html', ico: 'image', title: 'Startseite',
+          stat: st ? plural(count(st.bilder), 'Titelfoto', 'Titelfotos') : none,
+          addHref: 'startseite.html?neu=1', addLabel: 'Neues Foto'
+        }),
+        can('neuigkeiten') && tile({
+          href: 'neuigkeiten.html', ico: 'news', title: 'Neuigkeiten',
+          stat: news ? plural(news.length, 'Meldung', 'Meldungen') : none,
+          addHref: 'neuigkeiten.html?neu=1', addLabel: 'Neue Meldung'
+        }),
+        can('termine') && tile({
+          href: 'termine.html', ico: 'calendar', title: 'Termine',
+          stat: tm ? plural(count(tm.termine), 'eigener Termin', 'eigene Termine') : none,
+          addHref: 'termine.html?neu=1', addLabel: 'Neuer Termin'
+        })
+      ]],
+      ['Kirchenmusik', [
+        can('hochaemter') && tile({
+          href: 'hochaemter.html', ico: 'calendar', title: 'Hochämter',
+          stat: ha ? plural(upcoming.length, 'kommender Termin', 'kommende Termine') : none,
+          addHref: 'hochaemter.html?neu=1', addLabel: 'Neues Hochamt'
+        }),
+        can('solisten') && tile({
+          href: 'solisten.html', ico: 'music', title: 'Solisten',
+          stat: sol ? plural(sol.length, 'Solist', 'Solisten') : none,
+          addHref: 'solisten.html?neu=1', addLabel: 'Neuer Solist'
+        }),
+        can('paten') && tile({
+          href: 'paten.html', ico: 'users', title: 'Paten',
+          stat: pt ? `${plural(count(pt.paten), 'Pate', 'Paten')} · ${plural(count(pt.ehrenpaten), 'Ehrenpate', 'Ehrenpaten')}` : none,
+          addHref: 'paten.html?neu=1', addLabel: 'Neuer Pate'
+        }),
+        can('cds') && tile({
+          href: 'cds.html', ico: 'music', title: 'CDs',
+          stat: cdN !== null ? plural(cdN, 'CD', 'CDs') : none,
+          addHref: 'cds.html?neu=1', addLabel: 'Neue CD'
+        }),
+        can('musik-personen') && tile({
+          href: 'personen.html?bereich=musik', ico: 'user', title: 'Leitung & Organisten',
+          stat: ps ? plural(people(['leitung', 'gastdirigenten', 'organisten']), 'Person', 'Personen') : none,
+          addHref: 'personen.html?bereich=musik&neu=1', addLabel: 'Neue Person'
+        }),
+        can('repertoire') && tile({
+          href: 'repertoire.html', ico: 'book', title: 'Repertoire',
+          stat: rp ? plural((rp.komponisten || []).reduce((n, k) => n + count(k.werke), 0), 'Werk', 'Werke') : none,
+          addHref: 'repertoire.html?neu=1', addLabel: 'Neuer Komponist'
+        })
+      ]],
+      ['Pfarre & Kloster', [
+        can('gottesdienste') && tile({
+          href: 'gottesdienste.html', ico: 'clock', title: 'Gottesdienste',
+          stat: gd ? plural(count(gd.termine), 'Termin pro Woche', 'Termine pro Woche') : none,
+          addHref: 'gottesdienste.html?neu=1', addLabel: 'Neuer Termin'
+        }),
+        A.canAnyRunde() && tile({
+          href: 'runden.html', ico: 'users', title: A.canAllRunden() ? 'Runden' : mine.length === 1 ? 'Meine Runde' : 'Meine Runden',
+          stat: rd ? plural(mine.length, 'Runde', 'Runden') : none,
+          /* Wer nicht alle Runden darf, kann keine neue anlegen; Schnellzugriff dann auf die einzige eigene */
+          ...(A.canAllRunden()
+            ? { addHref: 'runden.html?neu=1', addLabel: 'Neue Runde' }
+            : { addHref: mine.length === 1 ? `runden.html?bearbeiten=${encodeURIComponent(mine[0].id)}` : 'runden.html', addLabel: 'Bearbeiten', addIcon: 'edit' })
+        }),
+        can('rundgang') && tile({
+          href: 'rundgang.html', ico: 'image', title: 'Kirchenrundgang',
+          stat: rg ? plural(count(rg.bilder), 'Bild', 'Bilder') : none,
+          addHref: 'rundgang.html?neu=1', addLabel: 'Neues Bild'
+        }),
+        can('pgr') && tile({
+          href: 'pgr.html', ico: 'users', title: 'Pfarrgemeinderat',
+          stat: pg ? plural(count(pg.mitglieder) + count(pg.weitere), 'Person', 'Personen') : none,
+          addHref: 'pgr.html?neu=1', addLabel: 'Neue Person'
+        }),
+        can('mitbrueder') && tile({
+          href: 'personen.html?bereich=kloster', ico: 'user', title: 'Mitbrüder',
+          stat: ps ? plural(people(['mitbrueder']), 'Mitbruder', 'Mitbrüder') : none,
+          addHref: 'personen.html?bereich=kloster&neu=1', addLabel: 'Neuer Mitbruder'
+        }),
+        can('kontakt') && tile({
+          href: 'kontakt.html', ico: 'clock', title: 'Pfarrkanzlei & Kontakt',
+          stat: 'Öffnungszeiten, Telefon, E-Mail', addHref: 'kontakt.html', addLabel: 'Bearbeiten', addIcon: 'edit'
+        })
+      ]],
+      ['Verwaltung', [
+        A.isAdmin() && tile({
+          href: 'zugaenge.html', ico: 'key', title: 'Zugänge',
+          stat: acc ? plural(acc.length, 'Zugang', 'Zugänge') : none,
+          addHref: 'zugaenge.html?neu=1', addLabel: 'Neuer Zugang'
+        })
+      ]]
+    ];
+    $('ov-tiles').innerHTML = groups
+      .map(([title, tiles]) => [title, tiles.filter(Boolean)])
+      .filter(([, tiles]) => tiles.length)
+      .map(([title, tiles]) =>
+        `<section class="adm-tilegroup" aria-label="${esc(title)}"><h3 class="adm-tilegroup-h">${esc(title)}</h3>` +
+        `<div class="adm-tiles">${tiles.join('')}</div></section>`)
+      .join('');
+  }
+
+  /* Zuletzt geaendert: das Protokoll dieses Geraets (maximal 30 Eintraege, hier die letzten 8) */
+  function renderLog() {
+    const list = A.recentLog().slice(0, 8);
+    const panel = $('ov-log-h').closest('section');
+    panel.hidden = !list.length;
+    const when = (t) => new Date(t).toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    $('ov-log').innerHTML = `<ul class="adm-log">${list.map((e) =>
+      `<li><time datetime="${esc(new Date(e.zeit).toISOString())}">${esc(when(e.zeit))}</time><span>${esc(e.text)}${e.wer ? `<small>${esc(e.wer)}</small>` : ''}</span></li>`).join('')}</ul>`;
   }
 
   function renderTodo({ ha, sol, rd }) {
@@ -167,6 +230,7 @@
     const data = await loadAll();
     renderTiles(data);
     renderTodo(data);
+    renderLog();
   }
 
   A.start(async () => {

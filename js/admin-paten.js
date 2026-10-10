@@ -29,7 +29,7 @@
   /* ---------- Laden und Liste ---------- */
   async function load() {
     try {
-      const d = JSON.parse(await A.readText(PATH));
+      const d = (await A.readJSON(PATH));
       if (!d || !Array.isArray(d.paten)) throw new Error('unerwarteter Inhalt');
       data = { ehrenpaten: Array.isArray(d.ehrenpaten) ? d.ehrenpaten : [], paten: d.paten };
     } catch (e) {

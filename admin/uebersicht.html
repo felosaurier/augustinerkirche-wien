@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -35,12 +35,18 @@
   <div data-adm-folder></div>
 
   <h2 class="visually-hidden">Bereiche</h2>
-  <div class="adm-tiles" id="ov-tiles"></div>
+  <div id="ov-tiles"></div>
 
   <section class="adm-panel" aria-labelledby="ov-todo-h">
     <h2 class="adm-panel-title" id="ov-todo-h">Noch offen</h2>
     <p class="adm-panel-sub">Was bei den nächsten Terminen noch fehlt.</p>
     <div id="ov-todo"><p class="adm-muted">Wird geladen …</p></div>
+  </section>
+
+  <section class="adm-panel" aria-labelledby="ov-log-h" hidden>
+    <h2 class="adm-panel-title" id="ov-log-h">Zuletzt geändert</h2>
+    <p class="adm-panel-sub">Deine letzten Änderungen auf diesem Gerät.</p>
+    <div id="ov-log"></div>
   </section>
 </main>
 

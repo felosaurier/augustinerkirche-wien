@@ -177,8 +177,8 @@
     const errors = [];
     if (!name.value.trim()) errors.push([name, 'Bitte deinen Namen eingeben.']);
     if (!/^[a-z0-9._-]{2,30}$/.test(A.normUser(user.value))) errors.push([user, 'Benutzername: 2 bis 30 Zeichen, nur Kleinbuchstaben, Ziffern, Punkt oder Bindestrich.']);
-    if (pw.value.length < A.MIN_PW) errors.push([pw, `Das Passwort braucht mindestens ${A.MIN_PW} Zeichen.`]);
-    else if (pw.value.toLowerCase() === A.normUser(user.value)) errors.push([pw, 'Das Passwort darf nicht der Benutzername sein.']);
+    const pwBad = A.pwProblem(pw.value, user.value);
+    if (pwBad) errors.push([pw, pwBad]);
     if (pw2.value !== pw.value) errors.push([pw2, 'Die beiden Passwörter stimmen nicht überein.']);
     if (errors.length) {
       A.showErrors(form, errors);

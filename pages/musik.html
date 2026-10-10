@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="../favicon.ico" sizes="any"/>
@@ -277,8 +277,8 @@
           <p class="s-text" style="max-width:50rem;margin-bottom:1rem">Renommierte Sängerinnen und Sänger, die regelmäßig die Hochämter und Konzerte von St. Augustin mitgestalten.</p>
 
           <div class="week-filter" role="group" aria-label="Solisten sortieren">
-            <button type="button" class="week-filter-btn" id="solisten-sort-alpha" type="button">Alphabetisch</button>
-            <button type="button" class="week-filter-btn" id="solisten-sort-voice" type="button">Nach Stimmlage</button>
+            <button type="button" class="week-filter-btn" id="solisten-sort-alpha">Alphabetisch</button>
+            <button type="button" class="week-filter-btn" id="solisten-sort-voice">Nach Stimmlage</button>
             <span class="s-text" id="solisten-status" style="margin-left:0.8rem;font-size:0.8rem"></span>
           </div>
 
@@ -649,7 +649,7 @@
                   <h4 class="cd-title">Mozart: Krönungsmesse</h4>
                   <p class="cd-works">Krönungsmesse KV 317, Ave verum KV 626, Sub tuum præsidium KV 198, Confitebor und Beatus vir KV 339, Laudate Dominum F-Dur KV 339; L. Cherubini: O Deus, ego amo te; C. Czerny: Veritas mea</p>
                   <p class="cd-cast">Ana Puche Rosado, Frauke Schäfer, Lorena Espina, Rita-Lucia Schneider, Alexander Kaimbacher, Klemens Sander<span>Leitung: Ottokar Prochazka, Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/kroenungsmesse-kyrie.mp3" aria-pressed="false">Kyrie aus der Krönungsmesse</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/kroenungsmesse-veritas-mea.mp3" aria-pressed="false">Czerny: Veritas mea</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/kroenungsmesse-kyrie.mp3" aria-pressed="false">Kyrie aus der Krönungsmesse</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/kroenungsmesse-veritas-mea.mp3" aria-pressed="false">Czerny: Veritas mea</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -658,7 +658,7 @@
                   <h4 class="cd-title">Mozart: Missa solemnis</h4>
                   <p class="cd-works">Missa solemnis C-Dur KV 337, Benedictus sit Deus KV 117, Laudate Dominum A-Dur KV 321, Ergo interest KV 143, In te, Domine, speravi KV 427, Alma Dei creatoris KV 277, Regina coeli KV 276; B. Randhartinger: Ad te levavi animam meam</p>
                   <p class="cd-cast">Regine Hangler, Ingrid Haselberger, Annely Peebo, Rita-Lucia Schneider, Norbert Ernst, Martin Maier, Marcus Pelz<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/missa-solemnis-agnus-dei.mp3" aria-pressed="false">Agnus Dei aus der Missa solemnis</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/missa-solemnis-in-te-domine.mp3" aria-pressed="false">In te, Domine, speravi</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/missa-solemnis-agnus-dei.mp3" aria-pressed="false">Agnus Dei aus der Missa solemnis</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/missa-solemnis-in-te-domine.mp3" aria-pressed="false">In te, Domine, speravi</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -667,7 +667,7 @@
                   <h4 class="cd-title">Mozart: Missæ breves</h4>
                   <p class="cd-works">Spatzenmesse KV 220, Orgelsolomesse KV 259, Loretomesse KV 275, Kirchensonate C-Dur KV 336</p>
                   <p class="cd-cast">Brigitta Karwautz, Judith Kopecky, Ingrid Hofer, Gabriele Uher, Elisabeth Lang, Manfred Equiluz, Christian Bauer, Wolfgang Bankl, Kurt Schober<span>Leitung: Alois Glaßner</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/missae-breves-spatzenmesse-kyrie.mp3" aria-pressed="false">Kyrie aus der Spatzenmesse</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/missae-breves-loretomesse-kyrie.mp3" aria-pressed="false">Kyrie aus der Loretomesse</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/missae-breves-spatzenmesse-kyrie.mp3" aria-pressed="false">Kyrie aus der Spatzenmesse</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/missae-breves-loretomesse-kyrie.mp3" aria-pressed="false">Kyrie aus der Loretomesse</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -676,7 +676,7 @@
                   <h4 class="cd-title">Mozart: Requiem</h4>
                   <p class="cd-works">Requiem d-Moll KV 626, nach J. von Eybler und F. X. Süßmayr vervollständigt von H. C. Robbins Landon</p>
                   <p class="cd-cast">Ana Puche Rosado, Lorena Espina, Christian Bauer, Lars Woldt<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/requiem-dies-irae.mp3" aria-pressed="false">Dies irae</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/requiem-lux-aeterna.mp3" aria-pressed="false">Lux aeterna</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/requiem-dies-irae.mp3" aria-pressed="false">Dies irae</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/requiem-lux-aeterna.mp3" aria-pressed="false">Lux aeterna</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -685,7 +685,7 @@
                   <h4 class="cd-title">Haydn: Nelsonmesse | Jugendmesse</h4>
                   <p class="cd-works">Nelsonmesse Hob. XXII:11, Jugendmesse Hob. XXII:1; J. von Eybler: Fremit mare cum furore</p>
                   <p class="cd-cast">Frauke Schäfer, Rita-Lucia Schneider, Christian Bauer, Steffen Rössler<span>Leitung: Ottokar Prochazka, Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/nelsonmesse-kyrie.mp3" aria-pressed="false">Kyrie aus der Nelsonmesse</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/nelsonmesse-fremit-mare.mp3" aria-pressed="false">Eybler: Fremit mare cum furore</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/nelsonmesse-kyrie.mp3" aria-pressed="false">Kyrie aus der Nelsonmesse</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/nelsonmesse-fremit-mare.mp3" aria-pressed="false">Eybler: Fremit mare cum furore</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -694,7 +694,7 @@
                   <h4 class="cd-title">Haydn: Orgelsolomessen</h4>
                   <p class="cd-works">Kleine Orgelsolomesse Hob. XXII:7, Große Orgelsolomesse Hob. XXII:4; W. A. Mozart: Kirchensonaten KV 336 und KV 67</p>
                   <p class="cd-cast">Regine Hangler, Natalia Sharay, Annely Peebo, Juliette Mars, Clemens Kerschbaumer, Gernot Heinrich, Andreas Jankowitsch, Christoph Seidl; Wolfgang Capek, Orgel<span>Leitung: Thomas Böttcher</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/orgelsolomessen-kyrie.mp3" aria-pressed="false">Kyrie aus der Kleinen Orgelsolomesse</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/orgelsolomessen-gloria.mp3" aria-pressed="false">Gloria aus der Großen Orgelsolomesse</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/orgelsolomessen-kyrie.mp3" aria-pressed="false">Kyrie aus der Kleinen Orgelsolomesse</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/orgelsolomessen-gloria.mp3" aria-pressed="false">Gloria aus der Großen Orgelsolomesse</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -703,7 +703,7 @@
                   <h4 class="cd-title">Haydn: Paukenmesse</h4>
                   <p class="cd-works">Paukenmesse Hob. XXII:9, Ave Regina A-Dur Hob. XXIIIb:3</p>
                   <p class="cd-cast">Ana Puche Rosado, Rita-Lucia Schneider, Iurie Ciobanu, Andreas Jankowitsch<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/paukenmesse-pleni-sunt-coeli.mp3" aria-pressed="false">Pleni sunt coeli aus dem Sanctus</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/paukenmesse-ave-regina.mp3" aria-pressed="false">Ave Regina</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/paukenmesse-pleni-sunt-coeli.mp3" aria-pressed="false">Pleni sunt coeli aus dem Sanctus</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/paukenmesse-ave-regina.mp3" aria-pressed="false">Ave Regina</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -712,7 +712,7 @@
                   <h4 class="cd-title">Haydn: Theresienmesse</h4>
                   <p class="cd-works">Theresienmesse Hob. XXII:12, Salve Regina E-Dur Hob. XXIIIb:1</p>
                   <p class="cd-cast">Mara Mastalir, Cornelia Horak, Juliette Mars, Norbert Ernst, Georg Lehner<span>Leitung: Ottokar Prochazka</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/theresienmesse-amen.mp3" aria-pressed="false">Amen aus dem Gloria</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/theresienmesse-salve-regina.mp3" aria-pressed="false">Salve Regina</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/theresienmesse-amen.mp3" aria-pressed="false">Amen aus dem Gloria</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/theresienmesse-salve-regina.mp3" aria-pressed="false">Salve Regina</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -721,7 +721,7 @@
                   <h4 class="cd-title">Haydn | Schubert: Deutsche Messen</h4>
                   <p class="cd-works">J. M. Haydn: Deutsches Hochamt MH 560; F. Schubert: Deutsche Messe D 872; Lieder von W. Rattler, A. F. Kropfreiter und H. Bone</p>
                   <p class="cd-cast">Katrin Targo, Veronika Dünser, Alexander Kaimbacher, Michael Wagner; Robert Kovács, Orgel<span>Leitung: Thomas Böttcher</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/deutsche-messen-heilig.mp3" aria-pressed="false">Schubert: Heilig aus der Deutschen Messe</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/deutsche-messen-grosser-gott.mp3" aria-pressed="false">Großer Gott, arr. Robert Kovács</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/deutsche-messen-heilig.mp3" aria-pressed="false">Schubert: Heilig aus der Deutschen Messe</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/deutsche-messen-grosser-gott.mp3" aria-pressed="false">Großer Gott, arr. Robert Kovács</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -730,7 +730,7 @@
                   <h4 class="cd-title">Schubert: Messe G-Dur | Messe C-Dur</h4>
                   <p class="cd-works">Messe G-Dur D 167 (Fassung von Ferdinand Schubert), Messe C-Dur D 452, Salve Regina F-Dur D 223 und A-Dur D 676</p>
                   <p class="cd-cast">Ingrid Haselberger, Ana Puche Rosado, Martina Mikelic, Norbert Ernst, Alexander Kaimbacher, Günter Haumer, Klemens Sander<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/schubert-g-dur-benedictus.mp3" aria-pressed="false">Benedictus aus der Messe G-Dur</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/schubert-c-dur-credo.mp3" aria-pressed="false">Credo aus der Messe C-Dur</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/schubert-g-dur-benedictus.mp3" aria-pressed="false">Benedictus aus der Messe G-Dur</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/schubert-c-dur-credo.mp3" aria-pressed="false">Credo aus der Messe C-Dur</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -739,7 +739,7 @@
                   <h4 class="cd-title">Schubert: Große Messe As-Dur</h4>
                   <p class="cd-works">Große Messe As-Dur D 678, Salve Regina B-Dur D 106</p>
                   <p class="cd-cast">Regine Hangler, Annely Peebo, Christian Bauer, Norbert Ernst, Andreas Jankowitsch<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/schubert-as-dur-kyrie.mp3" aria-pressed="false">Kyrie</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/schubert-as-dur-gratias.mp3" aria-pressed="false">Gratias agimus tibi aus dem Gloria</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/schubert-as-dur-kyrie.mp3" aria-pressed="false">Kyrie</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/schubert-as-dur-gratias.mp3" aria-pressed="false">Gratias agimus tibi aus dem Gloria</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -748,7 +748,7 @@
                   <h4 class="cd-title">Beethoven: Große Messe C-Dur</h4>
                   <p class="cd-works">Messe C-Dur op. 86, Die Himmel rühmen des Ewigen Ehre op. 48/4</p>
                   <p class="cd-cast">Regine Hangler, Martina Mikelic, Ilker Arcayürek, Christian Hübner<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/beethoven-gloria.mp3" aria-pressed="false">Gloria</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/beethoven-die-himmel-ruehmen.mp3" aria-pressed="false">Die Himmel rühmen des Ewigen Ehre</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/beethoven-gloria.mp3" aria-pressed="false">Gloria</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/beethoven-die-himmel-ruehmen.mp3" aria-pressed="false">Die Himmel rühmen des Ewigen Ehre</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -757,7 +757,7 @@
                   <h4 class="cd-title">Gounod: Cäcilienmesse</h4>
                   <p class="cd-works">Cäcilienmesse op. 12; C. M. von Weber: Gloria et honore WeV A 3, In die solemnitatis WeV A 4</p>
                   <p class="cd-cast">Elisabeth Flechl, Norbert Ernst, Steffen Rössler<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/gounod-in-die-solemnitatis.mp3" aria-pressed="false">Weber: In die solemnitatis</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/gounod-in-die-solemnitatis.mp3" aria-pressed="false">Weber: In die solemnitatis</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -766,7 +766,7 @@
                   <h4 class="cd-title">Puccini: Messa di Gloria</h4>
                   <p class="cd-works">Messa di Gloria</p>
                   <p class="cd-cast">Norbert Ernst, Josef Wagner<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/puccini-qui-tollis.mp3" aria-pressed="false">Qui tollis aus dem Gloria</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/puccini-et-resurrexit.mp3" aria-pressed="false">Et resurrexit aus dem Credo</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/puccini-qui-tollis.mp3" aria-pressed="false">Qui tollis aus dem Gloria</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/puccini-et-resurrexit.mp3" aria-pressed="false">Et resurrexit aus dem Credo</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -775,7 +775,7 @@
                   <h4 class="cd-title">Widor | Vierne: Messe solennelle</h4>
                   <p class="cd-works">Ch.-M. Widor: Messe solennelle fis-Moll op. 36; L. Vierne: Messe solennelle cis-Moll op. 16; dazu Orgelwerke beider Komponisten und C. Saint-Saëns: Ave verum</p>
                   <p class="cd-cast">Wolfgang Capek, Orgel<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/widor-kyrie.mp3" aria-pressed="false">Widor: Kyrie</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/vierne-kyrie.mp3" aria-pressed="false">Vierne: Kyrie</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/widor-kyrie.mp3" aria-pressed="false">Widor: Kyrie</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/vierne-kyrie.mp3" aria-pressed="false">Vierne: Kyrie</button></div>
                 </div>
               </article>
             </div>
@@ -788,7 +788,7 @@
                   <h4 class="cd-title">Ostern in St. Augustin</h4>
                   <p class="cd-works">Werke von Kappel, Händel, J. M. Haydn, Albrechtsberger, F. Schmidt, B. Klein, Gassmann, F. Schubert, Mozart, Ferdinand Schubert und Widor</p>
                   <p class="cd-cast">Elisabeth Flechl, Cornelia Horak, Monika Riedler, Rita-Lucia Schneider, Alexander Kaimbacher, Jan Petryka, Klemens Sander<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/ostern-in-cosi-lieto-di.mp3" aria-pressed="false">Gassmann: In così lieto dì</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/ostern-regina-coeli.mp3" aria-pressed="false">Ferdinand Schubert: Regina coeli</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/ostern-in-cosi-lieto-di.mp3" aria-pressed="false">Gassmann: In così lieto dì</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/ostern-regina-coeli.mp3" aria-pressed="false">Ferdinand Schubert: Regina coeli</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -797,7 +797,7 @@
                   <h4 class="cd-title">Weihnachten in St. Augustin</h4>
                   <p class="cd-works">Werke von Kodály, Riedl, Mozart, Herbeck, Corelli, Schubert, Eybler, Manfredini, Diabelli, Händel, Schnabel, Saint-Saëns und Gruber</p>
                   <p class="cd-cast">Elisabeth Flechl, Ana Puche Rosado, Katrin Auzinger, Juliette Mars, Martina Mikelic, Norbert Ernst, Alexander Kaimbacher, Jan Petryka, Mathias Hausmann<span>Leitung: Robert Rieder</span></p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/weihnachten-adeste-fideles.mp3" aria-pressed="false">Adeste fideles</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/weihnachten-stille-nacht.mp3" aria-pressed="false">Stille Nacht, Halleiner Fassung</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/weihnachten-adeste-fideles.mp3" aria-pressed="false">Adeste fideles</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/weihnachten-stille-nacht.mp3" aria-pressed="false">Stille Nacht, Halleiner Fassung</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -806,7 +806,7 @@
                   <h4 class="cd-title">Trompete &amp; Orgel in St. Augustin</h4>
                   <p class="cd-works">Werke von Reiche, Clarke, Telemann, Händel, Loeillet, J. S. Bach, J. M. Haydn, J. Haydn, Scarlatti und Vivaldi</p>
                   <p class="cd-cast">Cornelia Horak, Sopran; Gernot Kahofer, Trompete; Elke Eckerstorfer, Orgel</p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/trompete-orgel-badinerie.mp3" aria-pressed="false">Bach: Badinerie</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/trompete-orgel-vivaldi.mp3" aria-pressed="false">Vivaldi: Allegro aus dem Concerto As-Dur</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/trompete-orgel-badinerie.mp3" aria-pressed="false">Bach: Badinerie</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/trompete-orgel-vivaldi.mp3" aria-pressed="false">Vivaldi: Allegro aus dem Concerto As-Dur</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -815,7 +815,7 @@
                   <h4 class="cd-title">Christmas Trumpet</h4>
                   <p class="cd-works">Werke von Händel, Martini, J. S. Bach, Telemann, Albinoni, Stachowicz, Caccini, Krebs, Hummel, Adam und Gruber</p>
                   <p class="cd-cast">Elisabeth Wimmer, Sopran; Günter Haumer, Bariton; Gernot Kahofer, Trompete; Elke Eckerstorfer, Orgel</p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/christmas-trumpet-cantique-de-noel.mp3" aria-pressed="false">Adam: Cantique de Noël</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/christmas-trumpet-toccata.mp3" aria-pressed="false">Martini: Toccata</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/christmas-trumpet-cantique-de-noel.mp3" aria-pressed="false">Adam: Cantique de Noël</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/christmas-trumpet-toccata.mp3" aria-pressed="false">Martini: Toccata</button></div>
                 </div>
               </article>
               <article class="cd">
@@ -824,7 +824,7 @@
                   <h4 class="cd-title">Große Postludien in St. Augustin</h4>
                   <p class="cd-works">Orgelwerke von J. S. Bach, Franck, Lefébure-Wély, Elgar, F. Schmidt, Saint-Saëns, Vierne, Widor, Capek, Mailly und Mulet</p>
                   <p class="cd-cast">Wolfgang Capek, Orgel</p>
-                  <div class="cd-samples" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/postludien-offertoire.mp3" aria-pressed="false">Lefébure-Wély: Offertoire C-Dur</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/postludien-widor-final.mp3" aria-pressed="false">Widor: Final aus der 6. Symphonie</button></div>
+                  <div class="cd-samples" role="group" aria-label="Hörproben"><button type="button" class="cd-play" data-audio="../assets/audio/cds/postludien-offertoire.mp3" aria-pressed="false">Lefébure-Wély: Offertoire C-Dur</button><button type="button" class="cd-play" data-audio="../assets/audio/cds/postludien-widor-final.mp3" aria-pressed="false">Widor: Final aus der 6. Symphonie</button></div>
                 </div>
               </article>
             </div>

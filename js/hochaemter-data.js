@@ -45,6 +45,16 @@
   /* Text fuer den Einbau in HTML (Inhalt und Attribute) unschaedlich machen */
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESC_MAP[c]);
 
+  /* Masse (Breite/Hoehe) aus den Datendateien: nur eine vernuenftige ganze Zahl wird
+     in width/height eingesetzt, sonst der Ersatzwert. So kann aus einem Zahlenfeld
+     kein Attribut oder Skript ausbrechen. */
+  function num(value, fallback) {
+    const n = Math.round(Number(value));
+    return Number.isFinite(n) && n > 0 && n <= 20000 ? n : fallback;
+  }
+  /* Bildausschnitt "x% y%" (z. B. "50% 20%"); alles andere ergibt '' */
+  const focusPos = (v) => (/^\d{1,3}% \d{1,3}%$/.test(String(v ?? '').trim()) ? String(v).trim() : '');
+
   /* Prueft eine Adresse aus den Tabellen, bevor sie in href/src landet.
      Relative Pfade erhalten das Praefix `base`; absolute Adressen muessen ein
      erlaubtes Protokoll haben. Die Pruefung laeuft ueber den URL-Parser des
@@ -75,8 +85,13 @@
      Link (Adressen der Website relativ zur Wurzel, Praefix `base`), *Wort*
      kursiv; E-Mail- und https-Adressen werden automatisch verlinkt. */
   const RICH = /\[([^\]\n]+)\]\(([^)\s]+)\)|\*([^*\n]+)\*|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])/g;
+  /* Die Muster oben sind bei sehr langen Woerter-Ketten ohne Leerzeichen langsam (quadratisch):
+     ein eingefuegter Riesen-Absatz koennte die Seite sekundenlang blockieren. Absaetze sind kurz,
+     darum wird nur der Anfang formatiert, der Rest als schlichter Text angehaengt. */
+  const RICH_MAX = 4000;
   function richText(s, base = '') {
     const text = String(s ?? '');
+    if (text.length > RICH_MAX) return richText(text.slice(0, RICH_MAX), base) + esc(text.slice(RICH_MAX));
     let html = '';
     let last = 0;
     for (const m of text.matchAll(RICH)) {
@@ -105,9 +120,13 @@
       .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, maxLength);
   }
 
-  /* Eine CSV-Zelle: nur bei Trennzeichen, Anfuehrungszeichen oder Zeilenumbruch quoten */
+  /* Eine CSV-Zelle: nur bei Trennzeichen, Anfuehrungszeichen oder Zeilenumbruch quoten.
+     Beginnt der Text mit = + - @ (Excel wuerde ihn als Formel ausfuehren, "CSV-Injection"),
+     steht davor ein Leerzeichen; beim Einlesen werden Zellen ohnehin getrimmt. Reine
+     Zahlen wie -5 oder +43 bleiben unveraendert. */
   function csvCell(v) {
-    const s = String(v ?? '');
+    let s = String(v ?? '');
+    if (/^[=+\-@\t\r]/.test(s) && !/^[+-]?\d[\d.,]*$/.test(s)) s = ` ${s}`;
     return /[;"\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   }
   /* Zeilen -> Excel-taugliche CSV (Semikolon, CRLF, UTF-8-BOM fuer die Umlaute) */
@@ -308,7 +327,7 @@
 
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
-    esc, pad, safeUrl, richText, mailHTML, telHref, slug, csvText, download,
+    esc, pad, num, focusPos, safeUrl, richText, mailHTML, telHref, slug, csvText, download,
     parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV

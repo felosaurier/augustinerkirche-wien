@@ -111,7 +111,7 @@
     const title = qs('#hd-title').textContent;
     const figures = shown.map((b) => {
       const cap = String(b.alt || '').trim();
-      const dim = b.breite && b.hoehe ? ` width="${Number(b.breite)}" height="${Number(b.hoehe)}"` : '';
+      const dim = b.breite && b.hoehe ? ` width="${HD.num(b.breite, 900)}" height="${HD.num(b.hoehe, 600)}"` : '';
       return `<figure class="hd-photo"><img src="${HD.esc(b.src)}" alt="${HD.esc(cap || `Foto: ${title}`)}"${dim} loading="lazy" decoding="async"/>` +
         (cap ? `<figcaption>${HD.esc(cap)}</figcaption>` : '') + '</figure>';
     }).join('');

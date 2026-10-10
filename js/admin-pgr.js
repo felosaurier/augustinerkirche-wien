@@ -30,7 +30,7 @@
   /* ---------- Laden und Liste ---------- */
   async function load() {
     try {
-      const d = JSON.parse(await A.readText(PATH));
+      const d = (await A.readJSON(PATH));
       if (!d || !Array.isArray(d.mitglieder)) throw new Error('unerwarteter Inhalt');
       data = { mitglieder: d.mitglieder, weitere: Array.isArray(d.weitere) ? d.weitere : [] };
     } catch (e) {
@@ -313,5 +313,9 @@
     A.guard(() => $('pg-dlg').open && dirtyState() !== snap);
     A.folder.on((state) => { if (state === 'ok') load(); });
     await load();
+    if (new URLSearchParams(location.search).has('neu')) {
+      openEditor('mitglieder');
+      history.replaceState(null, '', location.pathname + location.search.replace(/[?&]neu=1/, '').replace(/^&/, '?'));
+    }
   });
 })();

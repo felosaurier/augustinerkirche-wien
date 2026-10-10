@@ -85,7 +85,7 @@
 
   async function load() {
     try {
-      data = JSON.parse(await A.readText(PATH));
+      data = (await A.readJSON(PATH));
     } catch (e) {
       $('ps-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Personen konnten nicht geladen werden (${esc(e.message)}).</div></div>`;
       return;
@@ -296,5 +296,9 @@
     const g = new URLSearchParams(location.search).get('gruppe');
     if (g && area.groups.includes(g)) group = g;
     await load();
+    if (new URLSearchParams(location.search).has('neu')) {
+      openEditor(-1);
+      history.replaceState(null, '', location.pathname + location.search.replace(/[?&]neu=1/, '').replace(/^&/, '?'));
+    }
   });
 })();

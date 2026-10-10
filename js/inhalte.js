@@ -103,7 +103,7 @@
   function cardImg(b) {
     const src = b && url(b.pfad);
     if (!src) return '';
-    return `<div class="rk-img${b.art === 'plakat' ? ' plakat' : ''}"><img src="${esc(src)}" alt="" width="${b.breite || 800}" height="${b.hoehe || 600}" loading="lazy" decoding="async"/></div>`;
+    return `<div class="rk-img${b.art === 'plakat' ? ' plakat' : ''}"><img src="${esc(src)}" alt="" width="${HD.num(b.breite, 800)}" height="${HD.num(b.hoehe, 600)}" loading="lazy" decoding="async"/></div>`;
   }
 
   async function rundenListe() {
@@ -148,7 +148,7 @@
   function sideHTML(b) {
     const src = url(b.pfad);
     if (!src) return '';
-    const size = b.breite && b.hoehe ? ` width="${b.breite}" height="${b.hoehe}"` : '';
+    const size = b.breite && b.hoehe ? ` width="${HD.num(b.breite, 800)}" height="${HD.num(b.hoehe, 600)}"` : '';
     const img = `<img src="${esc(src)}" alt="${esc(b.alt || '')}"${size} loading="lazy" decoding="async"/>`;
     return b.art === 'plakat'
       ? `<aside class="runde-side"><a href="${esc(src)}" target="_blank" rel="noopener" title="Plakat in voller Größe öffnen" data-lightbox>${img}</a><div class="runde-side-cap">Plakat vergrößern</div></aside>`
@@ -213,7 +213,7 @@
       const compact = el.dataset.kompakt !== undefined ? ' compact' : '';
       el.innerHTML = (data[el.dataset.personen] || []).map((p) => {
         const src = url(p.bild);
-        const size = p.breite && p.hoehe ? ` width="${p.breite}" height="${p.hoehe}"` : '';
+        const size = p.breite && p.hoehe ? ` width="${HD.num(p.breite, 400)}" height="${HD.num(p.hoehe, 500)}"` : '';
         return `<div class="person-card-wide${compact}${src ? '' : ' no-img'}">` +
           (src ? `<img src="${esc(src)}" alt="${esc(p.bildtext || p.name)}" loading="lazy"${size} decoding="async"/>` : '') +
           `<div class="person-body"><div class="person-name">${esc(p.name)}</div>` +
@@ -254,12 +254,12 @@
     const cover = c.cover && url(c.cover.pfad);
     const samples = (c.hoerproben || []).filter((h) => h.datei && url(h.datei));
     return '<article class="cd">' +
-      (cover ? `<img class="cd-cover" src="${esc(cover)}" alt="" width="${c.cover.breite || 400}" height="${c.cover.hoehe || 400}" loading="lazy" decoding="async"/>` : '') +
+      (cover ? `<img class="cd-cover" src="${esc(cover)}" alt="" width="${HD.num(c.cover.breite, 400)}" height="${HD.num(c.cover.hoehe, 400)}" loading="lazy" decoding="async"/>` : '') +
       '<div class="cd-body">' +
         `<h4 class="cd-title">${esc(c.titel)}</h4>` +
         (c.werke ? `<p class="cd-works">${esc(c.werke)}</p>` : '') +
         (c.mitwirkende || c.leitung ? `<p class="cd-cast">${esc(c.mitwirkende || '')}${c.leitung ? `<span>Leitung: ${esc(c.leitung)}</span>` : ''}</p>` : '') +
-        (samples.length ? `<div class="cd-samples" aria-label="Hörproben">${samples.map((h) =>
+        (samples.length ? `<div class="cd-samples" role="group" aria-label="Hörproben">${samples.map((h) =>
           `<button type="button" class="cd-play" data-audio="${esc(url(h.datei))}" aria-pressed="false">${esc(h.titel || 'Hörprobe')}</button>`).join('')}</div>` : '') +
       '</div></article>';
   }
@@ -280,10 +280,10 @@
     const list = (data.bilder || []).filter((b) => b.bild && url(b.bild));
     if (!list.length) return;
     const cls = (b) => (b.format === 'breit' ? ' g-breit' : b.format === 'hoch' ? ' g-hoch' : '');
-    const pos = (b) => (/^\d{1,3}% \d{1,3}%$/.test(b.ausschnitt || '') ? ` style="object-position:${b.ausschnitt}"` : '');
+    const pos = (b) => (HD.focusPos(b.ausschnitt) ? ` style="object-position:${HD.focusPos(b.ausschnitt)}"` : '');
     host.innerHTML = list.map((b) =>
       `<div class="g-item${cls(b)}"><a href="${esc(url(b.bild))}" data-lightbox title="Bild vergrößern">` +
-      `<img src="${esc(url(b.bild))}" alt="${esc(b.titel)}" loading="lazy" width="${b.breite || 900}" height="${b.hoehe || 600}" decoding="async"${pos(b)}/></a>` +
+      `<img src="${esc(url(b.bild))}" alt="${esc(b.titel)}" loading="lazy" width="${HD.num(b.breite, 900)}" height="${HD.num(b.hoehe, 600)}" decoding="async"${pos(b)}/></a>` +
       (b.titel ? `<div class="g-cap">${esc(b.titel)}</div>` : '') + '</div>').join('');
   }
 
@@ -294,7 +294,7 @@
       p.email ? HD.mailHTML(p.email) : ''
     ].filter(Boolean).join(', ');
     const src = p.bild && url(p.bild);
-    const photo = src ? `<img class="pgr-photo" src="${esc(src)}" alt="${esc(p.name)}" width="${p.breite || 400}" height="${p.hoehe || 500}" loading="lazy" decoding="async"/>` : '';
+    const photo = src ? `<img class="pgr-photo" src="${esc(src)}" alt="${esc(p.name)}" width="${HD.num(p.breite, 400)}" height="${HD.num(p.hoehe, 500)}" loading="lazy" decoding="async"/>` : '';
     return `<li class="pgr-item"><div class="pgr-person">${photo}<div>` +
       `<div class="pgr-name">${esc(p.name)}</div>` +
       (p.rolle ? `<div class="pgr-role">${esc(p.rolle)}</div>` : '') +

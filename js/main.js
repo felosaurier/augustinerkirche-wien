@@ -461,7 +461,10 @@
     for (const a of qsa('a.mail[data-mail]')) {
       const addr = [...a.dataset.mail.replace('|', '@')].reverse().join('');
       const subject = a.dataset.subject;
-      a.href = `mailto:${addr}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
+      /* Nur eine einfache Adresse wird ein Link; Zeichen wie ? & # : / bleiben draussen */
+      if (/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(addr)) {
+        a.href = `mailto:${addr}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
+      }
       /* Nur die Ersatzschreibweise name(at)… ersetzen, eine Beschriftung wie "CDs bestellen" bleibt */
       if (a.textContent.includes('(at)')) a.textContent = addr;
       a.removeAttribute('data-mail');
