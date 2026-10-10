@@ -1,5 +1,6 @@
 {
   "bilder": {
+    "assets/img/kirche/turm.webp": "(C) test",
     "assets/img/musik/orchester-gruppe.webp": "© Augustiner Wien, Foto: Franz Josef Rupprecht",
     "assets/img/personen/dirigenten/dirigent-boettcher.webp": "© Franz Josef Rupprecht",
     "assets/img/personen/dirigenten/dirigent-fragner.webp": "Foto: © Gottfried Fragner",
@@ -11,7 +12,7 @@
     "assets/img/personen/patres/pater-sadrawetz.webp": "© Augustiner Wien, Foto: Franz Josef Rupprecht",
     "assets/img/personen/patres/pater-schachtner.webp": "© Augustiner Wien, Foto: Franz Josef Rupprecht",
     "assets/img/personen/patres/pater-schloegl.webp": "© Augustiner Wien, Foto: Franz Josef Rupprecht",
-    "assets/img/personen/patres/pfarrer-ordenseintritt-1992.webp": "© Augustiner Wien",
-    "assets/img/personen/patres/pfarrer-amtseinfuehrung-2011.webp": "© Augustiner Wien, Foto: Franz Josef Rupprecht"
+    "assets/img/personen/patres/pfarrer-amtseinfuehrung-2011.webp": "© Augustiner Wien, Foto: Franz Josef Rupprecht",
+    "assets/img/personen/patres/pfarrer-ordenseintritt-1992.webp": "© Augustiner Wien"
   }
 }
