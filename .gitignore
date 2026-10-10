@@ -5,3 +5,7 @@ Thumbs.db
 
 # Zwischendateien des Browsers beim Speichern
 *.crswap
+
+# Pakete fuer den Webserver (python tools/paket.py)
+dist/
+__pycache__/

@@ -119,7 +119,12 @@
     const state = A.folder.state;
     step.classList.toggle('done', state === 'ok');
     step.querySelector('.login-step-n').innerHTML = state === 'ok' ? icon('check') : '1';
-    if (state === 'ok') {
+    if (state === 'ok' && A.folder.server) {
+      /* Verwaltung auf dem Webserver: dort wird gespeichert, ein Ordner ist nicht nötig */
+      step.querySelector('b').textContent = 'Mit dem Server verbunden';
+      txt.innerHTML = `Der Zugang wird direkt auf dem Server „${esc(A.folder.handle.name)}“ gespeichert.`;
+      btn.hidden = true;
+    } else if (state === 'ok') {
       txt.innerHTML = `Verbunden mit „${esc(A.folder.handle.name)}“.`;
       btn.hidden = true;
     } else if (state === 'prompt') {

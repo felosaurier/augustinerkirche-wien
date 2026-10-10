@@ -11,13 +11,19 @@
      (der Ordner wird in IndexedDB gemerkt).
    - Speichern: direkt in den Projektordner, sonst als Download
      mit Angabe, wohin die Datei gehört.
+   - Server-Modus: Liegt die Verwaltung auf einem Webserver, der
+     Änderungen annimmt (Antwortkopf X-Aug-Schreiben: ja, siehe
+     tools/server), gibt es keinen Projektordner. Dateien werden
+     direkt auf dem Server gelesen (GET), geschrieben (PUT) und
+     gelöscht (DELETE).
    - Meldungen (Toast), Rückfragen, Fenster, Formularfehler,
      Listen-Eingabe, Bilder in WebP, Änderungsprotokoll.
 
-   Hinweis zur Sicherheit: Die Website ist statisch, es gibt keinen
-   Server, der Passwörter prüft. Die Anmeldung hält Unbefugte von
-   der Verwaltung fern; ändern lässt sich die öffentliche Website
-   aber ohnehin nur über den Projektordner (commit und push).
+   Hinweis zur Sicherheit: Die Anmeldung hier hält Unbefugte nur in
+   der Oberfläche fern; ändern lässt sich die öffentliche Website
+   über den Projektordner (commit und push) oder, im Server-Modus,
+   über den Webserver. Dort schützt die Anmeldung des Webservers
+   (Basic Auth) und die Liste der beschreibbaren Pfade.
 
    Wird im <head> nach js/hochaemter-data.js geladen (ohne defer).
    ============================================================ */
@@ -45,7 +51,7 @@
   const KEY_LOG = 'aug-admin-protokoll';
   const IDLE_MS = 4 * 60 * 60 * 1000;
   const ITER = 600000;
-  const MIN_PW = 12;
+  const MIN_PW = 8;
 
   const { esc, pad } = HD;
   const $ = (id) => d.getElementById(id);
@@ -273,17 +279,12 @@
   }
 
   /* Passwort pruefen: liefert den Grund, warum es nicht geht, sonst ''. Das Passwort steht
-     nur als Pruefsumme in zugaenge.json, deshalb sollte es lang und nicht erratbar sein. */
-  const COMMON_PW = ['passwort', 'password', 'passwort123', 'willkommen', 'augustiner', 'augustinerkirche', 'augustinus',
-    'pfarre', 'kloster', 'admin', 'administrator', 'qwertz', 'qwertzuiop', 'qwerty', 'qwertyuiop', 'sommer', 'winter', 'herbst', 'fruehling'];
+     nur als Pruefsumme in zugaenge.json, deshalb sollte es nicht zu kurz sein. */
   function pwProblem(pw, user = '') {
     if (pw.length < MIN_PW) return `Das Passwort braucht mindestens ${MIN_PW} Zeichen.`;
     const low = pw.toLowerCase();
     const u = normUser(user);
     if (u && (low === u || (u.length >= 4 && low.includes(u)))) return 'Das Passwort darf den Benutzernamen nicht enthalten.';
-    if (new Set(pw).size < 6) return 'Das Passwort besteht aus zu wenigen verschiedenen Zeichen.';
-    const letters = low.replace(/[^a-zäöüß]/g, '');
-    if (COMMON_PW.includes(letters) || /^(0123456789|1234567890|12345678|abcdefgh)/.test(low.replace(/\s/g, ''))) return 'Dieses Passwort ist zu leicht zu erraten.';
     return '';
   }
 
@@ -434,8 +435,113 @@
     }
     return `${(h >>> 0).toString(36)}:${t.length}`;
   }
+  /* ---------- Server-Modus ----------
+     Meldet der Webserver mit dem Kopf "X-Aug-Schreiben: ja", dass er Aenderungen der Verwaltung
+     annimmt (nginx oder Apache, siehe tools/server), gibt es keinen Projektordner: Dateien werden
+     dort gelesen (GET), geschrieben (PUT) und geloescht (DELETE), wo die Website liegt. Die beiden
+     Klassen haben dieselben Methoden wie Ordner und Dateien der File System Access API, damit
+     der Rest der Verwaltung nichts davon merkt. Vor unbefugtem Schreiben schuetzt der Webserver
+     (Anmeldung, Liste der beschreibbaren Pfade), nicht diese Seite. */
+  function serverUrl(path) {
+    const parts = path.split('/');
+    /* nie aus der Website hinaus: kein "..", kein "." und keine leeren Teile (ausser am Ende, bei Ordnern) */
+    if (parts.some((p, i) => p === '..' || p === '.' || (p === '' && i < parts.length - 1))) {
+      throw new DOMException(`Ungültiger Pfad: ${path}`, 'SyntaxError');
+    }
+    return `../${parts.map(encodeURIComponent).join('/')}`;
+  }
+  const notFoundError = (path) => new DOMException(`„${path}“ gibt es auf dem Server nicht.`, 'NotFoundError');
+  function serverError(res, path, verb) {
+    const verboten = 'Der Server erlaubt dort kein Schreiben (PUT und DELETE sind nur für data/ und assets/ eingerichtet).';
+    const was = {
+      401: 'Der Server verlangt eine Anmeldung. Bitte die Seite neu laden und beim Server anmelden.',
+      403: 'Der Server erlaubt dort kein Schreiben (Dateirechte oder Zugriffsregeln).',
+      405: verboten,
+      /* ein PUT auf einen Pfad ausserhalb der freigegebenen Ordner endet bei nginx in 404 */
+      404: verb === 'PUT' || verb === 'MKCOL' ? verboten : 'Die Datei gibt es auf dem Server nicht.',
+      413: 'Die Datei ist dem Server zu groß (client_max_body_size).',
+      507: 'Auf dem Server ist kein Speicherplatz mehr frei.'
+    }[res.status] || `Der Server antwortet mit HTTP ${res.status}.`;
+    return Object.assign(new Error(`${was} (${verb} ${path})`), { status: res.status, name: res.status === 401 || res.status === 403 ? 'NotAllowedError' : 'Error' });
+  }
+  async function serverPut(path, body) {
+    const put = () => fetch(serverUrl(path), { method: 'PUT', body, headers: body.type ? { 'Content-Type': body.type } : {} });
+    let res = await put();
+    if (res.status === 409) {
+      /* Der Ordner fehlt (Apache/WebDAV legt ihn nicht von selbst an): anlegen, dann noch einmal */
+      let dir = '';
+      for (const part of path.split('/').slice(0, -1)) {
+        dir += `${part}/`;
+        const made = await fetch(serverUrl(dir), { method: 'MKCOL' });
+        if (!made.ok && made.status !== 405) throw serverError(made, dir, 'MKCOL');   /* 405: gibt es schon */
+      }
+      res = await put();
+    }
+    if (!res.ok) throw serverError(res, path, 'PUT');
+  }
+  class ServerFile {
+    constructor(path) {
+      this.kind = 'file';
+      this.path = path;
+      this.name = path.split('/').pop();
+    }
+    async getFile() {
+      const res = await fetch(serverUrl(this.path), { cache: 'no-store' });
+      if (res.status === 404) throw notFoundError(this.path);
+      if (!res.ok) throw serverError(res, this.path, 'GET');
+      const blob = await res.blob();
+      const modified = Date.parse(res.headers.get('Last-Modified') || '');
+      return new File([blob], this.name, { type: blob.type, lastModified: Number.isNaN(modified) ? 0 : modified });
+    }
+    async createWritable() {
+      const parts = [];
+      return {
+        write: async (data) => { parts.push(data); },
+        close: async () => serverPut(this.path, parts.length === 1 && parts[0] instanceof Blob ? parts[0] : new Blob(parts))
+      };
+    }
+  }
+  class ServerDir {
+    constructor(prefix, name) {
+      this.kind = 'directory';
+      this.prefix = prefix;
+      this.name = name;
+    }
+    async getDirectoryHandle(name) {
+      return new ServerDir(`${this.prefix}${name}/`, name);
+    }
+    async getFileHandle(name, options) {
+      const path = this.prefix + name;
+      if (!(options && options.create)) {
+        const res = await fetch(serverUrl(path), { method: 'HEAD', cache: 'no-store' });
+        if (res.status === 404) throw notFoundError(path);
+        if (!res.ok) throw serverError(res, path, 'HEAD');
+      }
+      return new ServerFile(path);
+    }
+    async removeEntry(name) {
+      const path = this.prefix + name;
+      const res = await fetch(serverUrl(path), { method: 'DELETE' });
+      if (res.status === 404) throw notFoundError(path);
+      if (!res.ok) throw serverError(res, path, 'DELETE');
+    }
+  }
+  let serverFlag;
+  async function serverMode() {
+    if (serverFlag === undefined) {
+      try {
+        const res = await fetch(w.location.href, { method: 'HEAD', cache: 'no-store' });
+        serverFlag = res.headers.get('X-Aug-Schreiben') === 'ja';
+      } catch {
+        serverFlag = false;
+      }
+    }
+    return serverFlag;
+  }
+
   const folder = {
     supported: typeof w.showDirectoryPicker === 'function',
+    server: false,       /* true: die Verwaltung liegt auf dem Webserver und speichert dort direkt */
     state: 'none',       /* unsupported | none | prompt | ok */
     handle: null,
     subs: new Set(),
@@ -483,10 +589,13 @@
           }
           return;
         } catch (e) {
-          if (attempt < 2 && RETRY.includes(e && e.name)) {
+          /* Im Server-Modus auch bei einem kurzen Netzwerkfehler noch einmal versuchen (PUT ist wiederholbar) */
+          if (attempt < 2 && (RETRY.includes(e && e.name) || (this.server && e instanceof TypeError))) {
             await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
             continue;
           }
+          if (this.server && e instanceof TypeError) throw Object.assign(new Error(`„${path}“ ließ sich nicht speichern: keine Verbindung zum Server, oder die Anmeldung ist abgelaufen (z. B. bei Cloudflare Access). Bitte die Seite neu laden.`), { cause: e });
+          if (this.server) throw Object.assign(new Error(`„${path}“ ließ sich nicht auf dem Server speichern: ${e && e.message || e}`), { cause: e });
           throw Object.assign(new Error(`„${path}“ lässt sich nicht schreiben (${e && e.message || e}). Ist die Datei noch in einem anderen Programm geöffnet (z. B. Excel)? Bitte dort schließen und noch einmal speichern. Liegt der Projektordner in OneDrive, kann auch der Sync stören.`), { cause: e });
         }
       }
@@ -504,6 +613,12 @@
       await cur.removeEntry(parts[parts.length - 1]);
     },
     async restore() {
+      if (await serverMode()) {
+        this.server = true;
+        this.supported = true;
+        this.handle = new ServerDir('', w.location.host);
+        return setFolderState('ok');
+      }
       if (!this.supported) return setFolderState('unsupported');
       try {
         const h = await idbGet('ordner');
@@ -516,6 +631,7 @@
       }
     },
     async connect() {
+      if (this.server) return true;
       let dir;
       try {
         dir = await w.showDirectoryPicker({ id: 'augustiner-website', mode: 'readwrite' });
@@ -538,6 +654,7 @@
       return true;
     },
     async allow() {
+      if (this.server) return true;
       try {
         const p = await this.handle.requestPermission({ mode: 'readwrite' });
         if (p !== 'granted') {
@@ -552,6 +669,7 @@
       return true;
     },
     async disconnect() {
+      if (this.server) return;
       try {
         await idbDel('ordner');
       } catch {
@@ -579,6 +697,10 @@
   function folderStripHTML() {
     switch (folder.state) {
       case 'ok':
+        if (folder.server) {
+          return `<span class="adm-folder-ico">${icon('checkCircle')}</span>` +
+            `<div class="adm-folder-txt"><strong>Mit dem Server verbunden</strong><span class="adm-folder-sub">Änderungen werden direkt auf dem Server (${esc(folder.handle.name)}) gespeichert und sind sofort auf der Website zu sehen.</span></div>`;
+        }
         return `<span class="adm-folder-ico">${icon('checkCircle')}</span>` +
           `<div class="adm-folder-txt"><strong>Projektordner verbunden</strong><span class="adm-folder-sub">Änderungen werden direkt im Ordner „${esc(folder.handle.name)}“ gespeichert.</span></div>` +
           '<button type="button" class="btn btn-quiet btn-sm" data-folder="disconnect">Trennen</button>';
@@ -1176,8 +1298,9 @@
         '<div><div class="nav-logo-text">Augustiner<span>kirche</span> Wien</div><span class="nav-logo-sub">Verwaltung</span></div>' +
       '</a>' +
       '<div class="adm-user">' +
-        `<span class="adm-avatar" aria-hidden="true" title="${esc(s.name)}">${esc(initials(s.name))}</span>` +
-        `<span class="adm-user-name">${esc(s.name)}</span>` +
+        `<a class="adm-me" href="profil.html" title="Mein Profil: Passwort ändern"${here === 'profil.html' ? ' aria-current="page"' : ''}>` +
+          `<span class="adm-avatar" aria-hidden="true">${esc(initials(s.name))}</span>` +
+          `<span class="adm-user-name">${esc(s.name)}</span><span class="visually-hidden"> (Mein Profil)</span></a>` +
         (isAdmin() ? `<a class="adm-iconbtn" href="zugaenge.html" aria-label="Zugänge"${here === 'zugaenge.html' ? ' aria-current="page"' : ''}>${icon('key')}<span class="lbl">Zugänge</span></a>` : '') +
         `<a class="adm-iconbtn" href="../index.html" target="_blank" rel="noopener" aria-label="Website ansehen (neues Fenster)">${icon('external')}<span class="lbl">Website</span></a>` +
         `<button type="button" class="adm-iconbtn" id="adm-logout" aria-label="Abmelden">${icon('logout')}<span class="lbl">Abmelden</span></button>` +

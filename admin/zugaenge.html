@@ -48,9 +48,9 @@
         <li>Am besten bekommt jede Person einen eigenen Zugang. Wer nicht mehr mitarbeitet, wird einfach entfernt.</li>
         <li><b>Admin</b> darf alles und Zugänge verwalten. Eine <b>Redaktion</b> darf nur, was ihr hier erlaubt wird: ganze Bereiche und einzelne Runden. Es muss immer mindestens einen Admin geben.</li>
         <li>Bei den <b>Runden</b> lässt sich entweder „Alle Runden“ erlauben (mit Neu anlegen, Löschen und Reihenfolge) oder nur bestimmte, z. B. die eigene Gruppe.</li>
-        <li>Die Einschränkung gilt in der Verwaltung. Wer den Projektordner selbst bearbeiten kann, ist dadurch nicht gebremst.</li>
+        <li>Die Einschränkung gilt in der Verwaltung. Wer den Projektordner oder den Server selbst bearbeiten kann (oder die Anmeldung am Server kennt), ist dadurch nicht gebremst.</li>
         <li>Passwort vergessen? Hier ein neues vergeben. Das alte lässt sich nicht anzeigen.</li>
-        <li>Änderungen gelten sofort, sobald <code>admin/zugaenge.json</code> im Projektordner gespeichert ist; auf der veröffentlichten Website nach dem Veröffentlichen.</li>
+        <li>Änderungen gelten sofort, sobald <code>admin/zugaenge.json</code> gespeichert ist (im Projektordner bzw. direkt auf dem Server); wird im Projektordner gespeichert, auf der veröffentlichten Website erst nach dem Veröffentlichen.</li>
       </ul>
     </div>
   </div>
@@ -107,7 +107,7 @@
             <button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false" data-icon="eye"></button>
           </div>
           <div class="adm-strength" id="f-pw-meter" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-          <span class="adm-hint" id="f-pw-hint">Mindestens 12 Zeichen, am besten ein Satz oder der Vorschlag.</span>
+          <span class="adm-hint" id="f-pw-hint">Mindestens 8 Zeichen, länger ist besser.</span>
           <div><button type="button" class="adm-list-add" id="zg-suggest" data-icon="dice">Sicheres Passwort vorschlagen</button></div>
         </div>
         <div class="adm-field full">

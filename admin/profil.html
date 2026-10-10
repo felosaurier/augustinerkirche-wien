@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Mein Profil — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-profil.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Mein <em>Profil</em></h1>
+      <p class="ph-sub">Hier änderst du dein Passwort. Name und Rechte ändert bei Bedarf ein Admin unter „Zugänge“.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <section class="adm-panel" aria-labelledby="pf-h">
+    <h2 class="adm-group-title" id="pf-h">Passwort ändern</h2>
+    <p class="adm-hint" id="pf-who"></p>
+    <form id="pf-form" novalidate autocomplete="off">
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="pf-alt">Bisheriges Passwort</label>
+          <input class="adm-input" type="password" id="pf-alt" autocomplete="current-password"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="pf-neu">Neues Passwort</label>
+          <div class="adm-pw">
+            <input class="adm-input" type="password" id="pf-neu" autocomplete="new-password" aria-describedby="pf-hint"/>
+            <button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false" data-icon="eye"></button>
+          </div>
+          <div class="adm-strength" id="pf-meter" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <span class="adm-hint" id="pf-hint">Mindestens 8 Zeichen, länger ist besser.</span>
+          <div><button type="button" class="adm-list-add" id="pf-suggest" data-icon="dice">Sicheres Passwort vorschlagen</button></div>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="pf-neu2">Neues Passwort wiederholen</label>
+          <input class="adm-input" type="password" id="pf-neu2" autocomplete="new-password"/>
+        </div>
+      </div>
+      <div class="adm-dlg-foot-r" style="margin-top:1rem"><button type="submit" class="btn btn-dark" id="pf-save">Passwort ändern</button></div>
+    </form>
+  </section>
+</main>
+</body>
+</html>

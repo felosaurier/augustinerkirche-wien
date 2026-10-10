@@ -235,7 +235,9 @@
 
   A.start(async () => {
     const s = A.session();
-    const first = String(s.name || s.benutzer).split(/\s+/)[0];
+    /* Titel (Pater, Dr. …) ueberspringen: "Guten Abend, Matthias" statt "Guten Abend, Pater" */
+    const words = String(s.name || s.benutzer).trim().split(/\s+/);
+    const first = words.find((w) => !/^(pater|p\.|dr\.|mag\.|mmag\.|prof\.|dipl\.-ing\.|frau|herr|br\.|bruder|fr\.)$/i.test(w)) || words[0];
     const hour = new Date().getHours();
     $('ov-greet').innerHTML = `${hour < 11 ? 'Guten Morgen' : hour >= 18 ? 'Guten Abend' : 'Grüß Gott'}, <em>${esc(first)}</em>`;
     $('ov-today').textContent = `${A.fmtDate(A.isoToday())}`;

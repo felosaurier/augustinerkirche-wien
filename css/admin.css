@@ -55,6 +55,8 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 .adm-user{display:flex;align-items:center;gap:.3rem;flex:none;margin-left:auto}
 .adm-avatar{width:2.3rem;height:2.3rem;border-radius:50%;background:var(--blue);color:var(--gold-l);display:grid;place-items:center;
   font-family:var(--serif);font-size:1.05rem;font-weight:600;letter-spacing:.02em;flex:none}
+.adm-me{display:flex;align-items:center;color:inherit;text-decoration:none;border-radius:2rem}
+.adm-me:hover .adm-user-name,.adm-me[aria-current] .adm-user-name{text-decoration:underline;text-decoration-color:var(--gold-l);text-underline-offset:.25em}
 .adm-user-name{font-size:.98rem;color:var(--text);margin:0 .7rem 0 .45rem;white-space:nowrap}
 .adm-iconbtn{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:0 .8rem;background:none;border:1px solid transparent;cursor:pointer;
   font:inherit;font-size:.9rem;font-weight:600;color:var(--text-mid);text-decoration:none;transition:color .2s,border-color .2s,background .2s}
@@ -83,7 +85,7 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
   .adm-nav-in{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 2rem),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 2rem),transparent)}
 }
 @media(max-width:480px){
-  .adm-bar .nav-logo-sub,.adm-top .adm-avatar{display:none}
+  .adm-bar .nav-logo-sub{display:none}
   .adm-bar .nav-logo-text{font-size:.9rem}
 }
 
