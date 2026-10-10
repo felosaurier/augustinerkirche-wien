@@ -118,6 +118,11 @@
       A.toast('Bitte eine Bilddatei wählen (WebP, JPG oder PNG).', 'err');
       return;
     }
+    try {
+      file = await A.stableImage(file);
+    } catch {
+      return;
+    }
     let bmp;
     try {
       bmp = await createImageBitmap(file);

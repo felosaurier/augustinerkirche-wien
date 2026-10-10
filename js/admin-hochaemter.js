@@ -12,9 +12,14 @@
    - Verknuepfte Meldungen (Plakat): im Fenster anzeigen, Verknuepfung
      aufheben; beim Verschieben oder Loeschen eines Termins zieht die
      Meldung mit bzw. verliert ihre Verknuepfung
-   - Fotos je Termin (data/hochamt-fotos.json, Bilder in assets/img/hochaemter/):
+   - Fotos je Termin (data/hochamt-fotos.json, Bilder in assets/img/hochaemter/<Kennung>/,
+     jedes Hochamt hat seinen eigenen Ordner):
      mehrere hinzufuegen, Beschreibung und Bildnachweis, Reihenfolge, entfernen;
      erscheinen auf der Seite des Termins. Beim Verschieben ziehen sie mit.
+     Ein Foto wird gleich beim Hinzufuegen als WebP in den Ordner geschrieben;
+     wird das Fenster ohne Speichern geschlossen oder das Foto entfernt,
+     wird die Datei wieder geloescht. Aendert sich Datum oder Uhrzeit des Termins,
+     ziehen die Fotos in den neuen Ordner um (mit verbundenem Projektordner).
    Benoetigt js/hochaemter-data.js und js/admin.js.
    ============================================================ */
 (function () {
@@ -43,7 +48,7 @@
   const PHOTOS_PATH = 'data/hochamt-fotos.json';
   const PHOTO_DIR = 'assets/img/hochaemter/';
   let photoMap = {};
-  let photos = [];         /* {path, url, blob, ext, w, h, alt, credit, key} */
+  let photos = [];         /* {path, url, ext, w, h, alt, credit, key, fresh}; fresh = in diesem Fenster neu geschrieben */
   let photoSeq = 0;
   const knownVoices = new Map();  /* Name -> Stimme, fuer das automatische Ergaenzen */
 
@@ -289,7 +294,13 @@
     }
   }
   const dirtyState = () => A.snapshot($('ha-form')) + photos.map((p) => p.key).join(',');
+  /* Gibt es zu diesem Termin ein Plakat (verknuepfte Meldung mit Bild)? Dann zeigt die Seite keine Fotos */
+  function hasPoster() {
+    const entry = editIndex >= 0 ? entries[editIndex] : null;
+    return !!entry && linkedNews(keyOf(entry)).some((n) => n.Plakat || n.Vorschaubild);
+  }
   function renderPhotos() {
+    $('ha-photo-note').hidden = !hasPoster();
     $('ha-photos').innerHTML = photos.map((p, i) =>
       `<div class="adm-ph" data-k="${p.key}">` +
         `<span class="adm-thumb"><img src="${esc(p.url)}" alt=""/></span>` +
@@ -305,6 +316,19 @@
           `<button type="button" class="adm-act icon danger" data-ph-act="del" aria-label="Foto entfernen">${icon('trash')}</button>` +
         '</div></div>'
     ).join('');
+  }
+  /* Kennung nach dem Stand des Formulars; fehlt das Datum noch, ein Ordner "neu" */
+  const formKey = () => (HD.isoDate(F('date').value)
+    ? `${F('date').value}-${(HD.isoTime(F('time').value) || DEFAULTS.time).replace(':', '')}` : 'neu');
+  const photoDir = (key) => `${PHOTO_DIR}${key}/`;
+  const basename = (p) => p.slice(p.lastIndexOf('/') + 1);
+  /* Freier Name im Ordner: foto-1.webp, foto-2.webp … (auch gegenueber Fotos im Fenster) */
+  async function freePhotoPath(key, ext, skip = []) {
+    const taken = new Set([...photos.map((p) => p.path), ...skip]);
+    for (let n = 1; ; n++) {
+      const path = `${photoDir(key)}foto-${n}.${ext}`;
+      if (!taken.has(path) && !(A.folder.state === 'ok' && await A.folder.exists(path))) return path;
+    }
   }
   async function addPhotos(files) {
     for (const file of Array.from(files || [])) {
@@ -322,7 +346,12 @@
           h = bmp.height;
           if (bmp.close) bmp.close();
         } catch { /* Groesse unbekannt */ }
-        photos.push({ key: `n${++photoSeq}`, path: '', url: URL.createObjectURL(conv.blob), blob: conv.blob, ext: conv.ext, w, h, alt: '', credit: '' });
+        /* Gleich in den Ordner dieses Hochamts schreiben (Name foto-1, foto-2 …) */
+        const path = await freePhotoPath(formKey(), conv.ext);
+        await A.saveFile(path, conv.blob);
+        ++photoSeq;
+        photos.push({ key: `n${photoSeq}`, path, url: URL.createObjectURL(conv.blob), ext: conv.ext, w, h, alt: '', credit: '', fresh: true });
+        A.toast(A.folder.state === 'ok' ? `Foto gespeichert: ${path}` : `Foto bereit: ${path}. Bitte unten herunterladen.`);
       } catch {
         /* Meldung hat toWebp schon gezeigt */
       }
@@ -330,28 +359,47 @@
     $('ha-photo-file').value = '';
     renderPhotos();
   }
+  /* Fotos, die in diesem Fenster neu dazukamen und nicht uebernommen wurden, wieder loeschen */
+  async function discardFresh(list) {
+    for (const p of list) {
+      if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
+      if (p.fresh) await A.discardFile(p.path);
+    }
+  }
   function setPhotos(key) {
     for (const p of photos) if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
     photos = ((key && photoMap[key]) || []).map((b) => ({
-      key: `p${++photoSeq}`, path: b.bild, url: A.imageUrl(b.bild), blob: null, ext: 'webp',
+      key: `p${++photoSeq}`, path: b.bild, url: A.imageUrl(b.bild), ext: 'webp',
       w: b.breite || 0, h: b.hoehe || 0, alt: b.alt || '', credit: A.credits.get(b.bild)
     }));
     renderPhotos();
   }
   const sameList = (a, b) => JSON.stringify(a || []) === JSON.stringify(b || []);
   /* Speichert neue Dateien, Nachweise und die Liste dieses Termins; oldKey: bisherige Kennung (bei Verschiebung) */
-  async function savePhotos(oldKey, key) {
-    const used = new Set();
+  /* Fotos, die nicht im Ordner dieses Hochamts liegen (Datum geaendert), dorthin verschieben */
+  async function moveToKeyFolder(key) {
+    if (A.folder.state !== 'ok') return;
+    const dir = photoDir(key);
+    const creditChanges = {};
     for (const p of photos) {
-      if (!p.blob) continue;
-      let path = `${PHOTO_DIR}${key}-${photos.indexOf(p) + 1}.${p.ext}`;
-      if (A.folder.state === 'ok') {
-        for (let n = 2; used.has(path) || await A.folder.exists(path); n++) path = `${PHOTO_DIR}${key}-${photos.indexOf(p) + 1}-${n}.${p.ext}`;
+      if (p.path.startsWith(dir) || !p.path.startsWith(PHOTO_DIR)) continue;
+      try {
+        const blob = await A.folder.readBlob(p.path);
+        const target = await freePhotoPath(key, p.ext, photos.map((x) => x.path));
+        await A.saveFile(target, blob);
+        creditChanges[p.path] = '';
+        creditChanges[target] = p.credit;
+        await A.discardFile(p.path);
+        p.path = target;
+        p.url = A.imageUrl(target);
+      } catch {
+        /* bleibt im alten Ordner und funktioniert weiter */
       }
-      used.add(path);
-      await A.saveFile(path, p.blob);
-      p.path = path;
     }
+    if (Object.keys(creditChanges).length) await A.credits.save(creditChanges);
+  }
+  async function savePhotos(oldKey, key) {
+    await moveToKeyFolder(key);
     const list = photos.map((p) => ({ bild: p.path, alt: clean(p.alt), breite: p.w, hoehe: p.h }));
     const next = { ...photoMap };
     if (oldKey && oldKey !== key) delete next[oldKey];
@@ -365,6 +413,7 @@
       changed = true;
     }
     await A.credits.save(Object.fromEntries(photos.map((p) => [p.path, p.credit])));
+    for (const p of photos) p.fresh = false;   /* uebernommen: bleibt auch beim Schliessen */
     return changed;
   }
 
@@ -681,6 +730,10 @@
     $('ha-import').addEventListener('change', importFile);
     $('ha-reload').addEventListener('click', reload);
     A.guard(() => $('ha-dlg').open && dirtyState() !== snap);
+    $('ha-dlg').addEventListener('close', () => {
+      discardFresh(photos.filter((p) => p.fresh));
+      photos = [];
+    });
     A.folder.on((state) => { if (state === 'ok') { load(); loadNews(); loadPhotos(); } });
     $('ha-photo-file').addEventListener('change', (ev) => addPhotos(ev.target.files));
     A.wireDrop($('ha-drop'), addPhotos);
@@ -696,7 +749,7 @@
       const i = photos.findIndex((x) => x.key === k.dataset.k);
       const act = b.dataset.phAct;
       if (act === 'del') {
-        if (photos[i].url.startsWith('blob:')) URL.revokeObjectURL(photos[i].url);
+        discardFresh([photos[i]]);
         photos.splice(i, 1);
       } else {
         const j = i + (act === 'up' ? -1 : 1);

@@ -839,12 +839,17 @@ html.nd-lock{overflow:hidden}
 .hd-nav-txt{font-family:var(--serif);font-size:1.25rem;color:var(--blue)}
 .hd-nav-date{font-size:.88rem;color:var(--text-light)}
 .hd-layout.has-poster{display:grid;grid-template-columns:minmax(0,46rem) minmax(0,19rem);gap:4rem;align-items:start}
+/* Fotos eines Hochamts: ohne Plakat in der Spalte neben dem Programm, mit Plakat als Raster unter dem Programm */
+.hd-aside-photos{display:flex;flex-direction:column;gap:1.4rem}
 .hd-photos-wrap{margin-top:3rem}
 .hd-photos-title{margin-bottom:1.1rem}
 .hd-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(13.5rem,1fr));gap:1.2rem}
+.hd-photos .hd-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:var(--bg-warm)}
 .hd-photo{margin:0}
-.hd-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:var(--bg-warm);cursor:zoom-in}
-.hd-photo figcaption{margin-top:.45rem;font-size:.92rem;line-height:1.4;color:var(--text-mid)}
+.hd-photo img{cursor:zoom-in}
+.hd-photo figcaption{margin-top:.5rem;font-size:.92rem;line-height:1.4;color:var(--text-mid)}
+/* Mit mehreren Fotos ist die Spalte hoeher als der Bildschirm: nicht mitlaufen lassen */
+.hd-poster.has-photos{position:static}
 .hd-poster .link-arr{display:flex;justify-content:center;margin-top:.9rem}
 .hd-poster-btn{display:flex;width:100%;margin-top:1.1rem}
 

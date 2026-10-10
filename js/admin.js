@@ -399,14 +399,38 @@
     async read(path) {
       return (await (await handleFor(this.handle, path, false)).getFile()).text();
     },
+    /* Schreibt eine Datei. Wurde sie gerade von einem anderen Programm angefasst (Cloud-Sync,
+       Virenscanner, Editor), meldet der Browser "state had changed since it was read from disk";
+       dann klappt meist ein zweiter oder dritter Versuch. Die Meldung nennt die Datei. */
     async write(path, blob) {
-      const fh = await handleFor(this.handle, path, true);
-      const out = await fh.createWritable();
-      await out.write(blob);
-      await out.close();
+      const RETRY = ['InvalidStateError', 'NotReadableError', 'NoModificationAllowedError'];
+      for (let attempt = 0; ; attempt++) {
+        try {
+          const fh = await handleFor(this.handle, path, true);
+          const out = await fh.createWritable();
+          await out.write(blob);
+          await out.close();
+          return;
+        } catch (e) {
+          if (attempt < 2 && RETRY.includes(e && e.name)) {
+            await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+            continue;
+          }
+          throw Object.assign(new Error(`„${path}“ lässt sich nicht schreiben (${e && e.message || e}). Ist die Datei noch in einem anderen Programm geöffnet (z. B. Excel)? Bitte dort schließen und noch einmal speichern. Liegt der Projektordner in OneDrive, kann auch der Sync stören.`), { cause: e });
+        }
+      }
     },
     exists(path) {
       return existsIn(this.handle, path);
+    },
+    async readBlob(path) {
+      return (await handleFor(this.handle, path, false)).getFile();
+    },
+    async remove(path) {
+      const parts = path.split('/');
+      let cur = this.handle;
+      for (const part of parts.slice(0, -1)) cur = await cur.getDirectoryHandle(part);
+      await cur.removeEntry(parts[parts.length - 1]);
     },
     async restore() {
       if (!this.supported) return setFolderState('unsupported');
@@ -532,7 +556,16 @@
   /* Speichert eine Datei im Projektordner; ohne Ordner wird sie zum
      Herunterladen vorgemerkt. Liefert true, wenn direkt gespeichert. */
   async function saveFile(path, data) {
-    const blob = data instanceof Blob ? data : new Blob([data], { type: typeFor(path) });
+    let blob = data instanceof Blob ? data : new Blob([data], { type: typeFor(path) });
+    /* Eine Datei von der Festplatte (Auswahl, Ordner) zuerst in den Arbeitsspeicher holen: so wird
+       eine seit dem Auswaehlen veraenderte Datei gleich bemerkt und nicht erst mitten im Schreiben */
+    if (data instanceof Blob) {
+      try {
+        blob = new Blob([await data.arrayBuffer()], { type: data.type });
+      } catch (e) {
+        throw Object.assign(new Error(`Die Quelle für „${path}“ lässt sich nicht lesen (${e && e.message || e}). Bitte die Datei noch einmal wählen.`), { cause: e });
+      }
+    }
     if (blob.type.startsWith('image/')) {
       if (localImages.has(path)) URL.revokeObjectURL(localImages.get(path));
       localImages.set(path, URL.createObjectURL(blob));
@@ -546,6 +579,25 @@
     return false;
   }
   const saveJSON = (path, data) => saveFile(path, JSON.stringify(data, null, 2) + '\n');
+  /* Eine eben erst geschriebene Datei wieder verwerfen (z. B. Foto, das doch nicht
+     uebernommen wird): aus dem Ordner loeschen bzw. aus der Download-Leiste nehmen */
+  async function discardFile(path) {
+    if (pending.has(path)) {
+      pending.delete(path);
+      renderPending();
+    }
+    if (localImages.has(path)) {
+      URL.revokeObjectURL(localImages.get(path));
+      localImages.delete(path);
+    }
+    if (folder.state === 'ok') {
+      try {
+        await folder.remove(path);
+      } catch {
+        /* war schon weg */
+      }
+    }
+  }
 
   /* Offene Downloads in den gerade verbundenen Ordner schreiben; was
      nicht geklappt hat, bleibt zum Herunterladen stehen */
@@ -850,7 +902,28 @@
      Format nicht lesen (z. B. HEIC vom iPhone), bricht es mit einer Meldung ab. */
   const MAX_SIDE = 2000;
   const KEEP_WEBP_BYTES = 900 * 1024;
+
+  /* Eine gewaehlte Datei sofort in den Arbeitsspeicher lesen. Der Browser prueft die Datei
+     sonst erst beim spaeteren Lesen oder Speichern und meldet dann "state had changed since
+     it was read from disk", z. B. bei Dateien in OneDrive, auf dem Handy oder solchen, die
+     gerade noch geschrieben werden. Ein zweiter Versuch faengt kurze Aenderungen ab. */
+  async function stableImage(file) {
+    let lastError = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const buf = await file.arrayBuffer();
+        return new File([buf], file.name, { type: file.type, lastModified: file.lastModified });
+      } catch (e) {
+        lastError = e;
+        await new Promise((r) => setTimeout(r, 400));
+      }
+    }
+    toast(`„${file.name}“ lässt sich nicht lesen. Liegt die Datei in einem Cloud-Ordner (OneDrive …) oder auf dem Handy, oder wird sie noch bearbeitet? Bitte zuerst auf den Computer kopieren und dann noch einmal wählen.`, 'err');
+    throw lastError;
+  }
+
   async function toWebp(file, opts = {}) {
+    file = await stableImage(file);
     const ext = (file.name.split('.').pop() || '').toLowerCase();
     const isWebp = file.type === 'image/webp' || ext === 'webp';
     const maxSize = opts.maxSize || MAX_SIDE;
@@ -1154,7 +1227,7 @@
     parseAccounts, accountsJSON, makeAccount, checkPassword, normUser, stampOf,
     pwLevel, suggestPassword, MIN_PW, ACCOUNTS,
     /* Dateien */
-    folder, readText, fetchText, saveFile, saveJSON, hasUnsaved, imageUrl, fileName, dirName,
+    folder, readText, fetchText, saveFile, saveJSON, discardFile, hasUnsaved, imageUrl, fileName, dirName, stableImage,
     credits,
     /* Oberflaeche */
     toast, confirmBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,

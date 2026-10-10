@@ -6,7 +6,8 @@
    Ist eine Meldung (data/news.csv) mit diesem Termin verknuepft
    (Link pages/hochamt.html?id=…), erscheint ihr Plakat daneben.
    Fotos des Termins (data/hochamt-fotos.json, gepflegt in der Verwaltung)
-   erscheinen unter dem Programm und lassen sich vergroessern.
+   erscheinen neben dem Programm, wo sonst das Plakat steht; gibt es ein
+   Plakat, stehen sie unter dem Programm. Sie lassen sich vergroessern.
    ============================================================ */
 (function () {
   'use strict';
@@ -91,10 +92,12 @@
     }
   }
 
-  /* Fotos dieses Termins unter dem Programm zeigen */
-  async function showPhotos(id) {
+  /* Fotos dieses Termins zeigen: ohne Plakat neben dem Programm (Spalte des Plakats),
+     mit Plakat unter dem Programm */
+  async function showPhotos(id, hasPoster) {
+    const aside = qs('#hd-poster');
     const body = qs('#hd-body');
-    if (!body || !id) return;
+    if (!aside || !body || !id) return;
     let list;
     try {
       const res = await fetch('../data/hochamt-fotos.json');
@@ -104,18 +107,31 @@
       return;
     }
     const shown = (Array.isArray(list) ? list : []).map((b) => ({ ...b, src: HD.safeUrl(b.bild, '../') })).filter((b) => b.src);
-    if (!shown.length || !body.lastElementChild) return;
+    if (!shown.length) return;
     const title = qs('#hd-title').textContent;
-    const sec = document.createElement('div');
-    sec.className = 'hd-photos-wrap';
-    sec.innerHTML = '<h2 class="s-title hd-photos-title">Fotos</h2><div class="hd-photos">' +
-      shown.map((b) => {
-        const cap = String(b.alt || '').trim();
-        const dim = b.breite && b.hoehe ? ` width="${Number(b.breite)}" height="${Number(b.hoehe)}"` : '';
-        return `<figure class="hd-photo"><img src="${HD.esc(b.src)}" alt="${HD.esc(cap || `Foto: ${title}`)}"${dim} loading="lazy" decoding="async"/>` +
-          (cap ? `<figcaption>${HD.esc(cap)}</figcaption>` : '') + '</figure>';
-      }).join('') + '</div>';
-    body.lastElementChild.before(sec);
+    const figures = shown.map((b) => {
+      const cap = String(b.alt || '').trim();
+      const dim = b.breite && b.hoehe ? ` width="${Number(b.breite)}" height="${Number(b.hoehe)}"` : '';
+      return `<figure class="hd-photo"><img src="${HD.esc(b.src)}" alt="${HD.esc(cap || `Foto: ${title}`)}"${dim} loading="lazy" decoding="async"/>` +
+        (cap ? `<figcaption>${HD.esc(cap)}</figcaption>` : '') + '</figure>';
+    }).join('');
+    if (hasPoster) {
+      /* Unter dem Programm, vor dem Link "Alle Hochaemter" */
+      if (!body.lastElementChild) return;
+      const sec = document.createElement('div');
+      sec.className = 'hd-photos-wrap';
+      sec.innerHTML = `<h2 class="s-title hd-photos-title">Fotos</h2><div class="hd-photos">${figures}</div>`;
+      body.lastElementChild.before(sec);
+      return;
+    }
+    const host = document.createElement('div');
+    host.className = 'hd-aside-photos';
+    host.innerHTML = figures;
+    aside.append(host);
+    aside.classList.add('has-photos');
+    aside.setAttribute('aria-label', 'Plakat und Fotos');
+    aside.hidden = false;
+    qs('#hd-layout').classList.add('has-poster');
   }
 
   /* Plakat der verknuepften Meldung neben dem Programm zeigen */
@@ -125,33 +141,41 @@
   };
   async function showPoster(id) {
     const aside = qs('#hd-poster');
-    if (!aside || !id) return;
+    if (!aside || !id) return false;
     let rows;
     try {
       const res = await fetch('../data/news.csv');
-      if (!res.ok) return;
+      if (!res.ok) return false;
       rows = HD.rowsToRaw(HD.parseCSV(await res.text()), NEWS_KEYS);
     } catch {
-      return;
+      return false;
     }
     const target = `pages/hochamt.html?id=${id}`;
     const n = rows.find((r) => (r.poster || r.thumb) && decodeURIComponent(String(r.link || '').trim()) === target);
     const src = n && HD.safeUrl(n.poster || n.thumb, '../');
-    if (!src) return;
+    if (!src) return false;
     const newsId = `${HD.isoDate(n.date)}-${HD.slug(n.title)}`;
     const img = `<img src="${HD.esc(src)}" alt="${HD.esc(`Plakat: ${n.title}`)}" loading="lazy" decoding="async"/>`;
-    aside.innerHTML = n.poster
+    /* Eigener Block, damit die Fotos darunter nicht ueberschrieben werden */
+    let host = aside.querySelector('.hd-aside-poster');
+    if (!host) {
+      host = document.createElement('div');
+      host.className = 'hd-aside-poster';
+      aside.prepend(host);
+    }
+    host.innerHTML = n.poster
       ? `<a href="${HD.esc(src)}" target="_blank" rel="noopener" title="Plakat in voller Größe öffnen" data-lightbox>${img}</a><div class="runde-side-cap">Plakat vergrößern</div>`
       : img;
     /* Zweite Schaltflaeche der Meldung, z. B. Kartenverkauf */
     const link2 = HD.safeUrl(n.link2, '../');
     if (link2) {
       const ext = /^https?:/i.test(link2) ? ' target="_blank" rel="noopener"' : '';
-      aside.insertAdjacentHTML('beforeend', `<a class="btn btn-gold hd-poster-btn" href="${HD.esc(link2)}"${ext}>${HD.esc(n.linktext2 || 'Mehr Informationen')}</a>`);
+      host.insertAdjacentHTML('beforeend', `<a class="btn btn-gold hd-poster-btn" href="${HD.esc(link2)}"${ext}>${HD.esc(n.linktext2 || 'Mehr Informationen')}</a>`);
     }
-    aside.insertAdjacentHTML('beforeend', `<a class="link-arr" href="../index.html?news=${encodeURIComponent(newsId)}">Zur Meldung</a>`);
+    host.insertAdjacentHTML('beforeend', `<a class="link-arr" href="../index.html?news=${encodeURIComponent(newsId)}">Zur Meldung</a>`);
     aside.hidden = false;
     qs('#hd-layout').classList.add('has-poster');
+    return true;
   }
 
   /* Aktuelle Tabelle laden; fehlt der Termin, im Archiv seines Jahres nachsehen */
@@ -173,8 +197,8 @@
     const id = new URLSearchParams(location.search).get('id') || '';
     try {
       render(await loadEntries(id), id);
-      showPoster(id);
-      showPhotos(id);
+      /* Fotos neben dem Programm; gibt es ein Plakat, darunter */
+      showPhotos(id, await showPoster(id));
     } catch {
       qs('#hd-body').innerHTML = FALLBACK;
     }
