@@ -37,7 +37,7 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 | Seite | Inhalt |
 |---|---|
 | **Startseite** | Aktuelles, Identität von Pfarre und Kloster, Herzgruft, die nächsten Hochämter |
-| **Kalender** | Alle Termine von St. Augustin: Hochämter und Konzerte, Termine der Runden, eigene Termine wie Ausflüge und Feste; Monatsblatt mit Punkten je Gruppe, Filter, im laufenden Monat ab heute |
+| **Kalender** | Alle Termine von St. Augustin: Hochämter (Kreuz, Gold) getrennt von den Gottesdiensten (Heilige Messen, Kreis, Bordeaux), Konzerte, die regelmäßigen Messen aus dem Wochenplan (ein Jahr voraus; ausgefallene bleiben durchgestrichen stehen), Termine der Runden, eigene Termine wie Ausflüge und Feste; Monatsblatt mit Punkten je Gruppe, Filter, im laufenden Monat ab heute |
 | **Gottesdienste** | Liturgiezeiten, Wochenüberblick, Runden in St. Augustin |
 | **Sakramente** | Taufe, Eucharistie, Firmung, Trauung, Wiedereintritt und mehr |
 | **Kirchenmusik** | Hochämter und Archiv, Chor, Kammerchor, Repertoire des Chores (mit Suche), Orchester, Solisten, Organisten, Orgeln |
@@ -58,7 +58,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Startseite** | Titelfotos ganz oben auf der Startseite: Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
-| **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick), dazu Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
+| **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen), dazu Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
 | **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
 | **Pfarrgemeinderat** | Mitglieder sowie Ersatzmitglieder und weitere Verantwortliche für Pfarre → Pfarrgemeinderat: Name, Funktion, Beruf, Aufgaben, E-Mail, Telefon, Foto (mit Bildnachweis); Reihenfolge per Pfeil |
 | **Personen** | Mitbrüder, Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto, Aufgabe und Text |

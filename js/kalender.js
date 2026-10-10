@@ -1,10 +1,16 @@
 /* ============================================================
    Augustinerkirche Wien — kalender.js
    Kalender der Pfarre St. Augustin (pages/kalender.html).
-   Sammelt alle Termine aus drei Quellen:
+   Sammelt alle Termine aus vier Quellen:
    - data/hochaemter.csv: Hochämter, Gottesdienste und Konzerte
    - data/runden.json:    Terminreihen der Runden (mit Uhrzeit und Ort)
    - data/termine.json:   eigene Termine wie Ausflüge, Feste, Vorträge
+   - data/gottesdienste.json: der Wochenplan der regelmäßigen Messen (ab dem
+     laufenden Monat ein Jahr voraus, ohne die, die es schon als Hochamt gibt;
+     je Messe nur in den Monaten von/bis und nicht in den "ferien":
+     [{name, von, bis, tage: ["di", "do", …]}], die Pause gilt nur an diesen Wochentagen)
+     und "entfaellt": Tage, an denen ein Gottesdienst ausfällt (bleibt im
+     Kalender stehen, durchgestrichen und mit dem Hinweis "Entfällt")
    Links ein Monatsblatt (Tage mit Terminen haben Punkte in der Farbe
    der Gruppe), rechts bzw. darunter die Termine des Monats nach Tagen.
    Aufruf mit ?monat=JJJJ-MM öffnet einen Monat direkt.
@@ -20,8 +26,10 @@
   const { esc, pad, MONTHS, WEEKDAYS } = HD;
   const base = root.dataset.base || '';
 
-  /* Gruppen in der Reihenfolge der Filter */
+  /* Gruppen in der Reihenfolge der Filter: Hochämter (mit Chor und Orchester) und
+     die übrigen Gottesdienste (Heilige Messen u. a.) sind getrennt */
   const GROUPS = [
+    ['hochamt', 'Hochämter'],
     ['gottesdienst', 'Gottesdienste'],
     ['konzert', 'Konzerte'],
     ['runde', 'Runden'],
@@ -29,7 +37,11 @@
   ];
   const groupName = new Map(GROUPS);
   /* Eigene Termine: Art -> Gruppe (alles andere ist eine Veranstaltung) */
-  const ART_GROUP = { Gottesdienst: 'gottesdienst', Konzert: 'konzert' };
+  const ART_GROUP = { Hochamt: 'hochamt', Gottesdienst: 'gottesdienst', Konzert: 'konzert' };
+  /* Welche Anlässe der Hochamt-Liste ein Hochamt im engeren Sinn sind; alles andere
+     (Begräbnis, Trauung, Karfreitagsliturgie, Messe vom Abendmahl …) zählt als Gottesdienst */
+  const HOCHAMT = /hochamt|pontifikal|requiem|festmesse|christmette|osternacht/i;
+  const isMass = (g) => g === 'hochamt' || g === 'gottesdienst';
 
   let items = [];
   let month = null;             /* {y, m} mit m = 0..11 */
@@ -45,7 +57,7 @@
     return list.map((e) => {
       const konzert = /konzert|adventlicht/i.test(e.type);
       return {
-        date: e.date, time: e.time, group: konzert ? 'konzert' : 'gottesdienst',
+        date: e.date, time: e.time, group: konzert ? 'konzert' : HOCHAMT.test(e.type) ? 'hochamt' : 'gottesdienst',
         title: e.type, sub: [e.piece, e.location !== 'Augustinerkirche' ? e.location : ''].filter(Boolean).join(', '),
         href: `${base}pages/hochamt.html?id=${encodeURIComponent(e.id)}`
       };
@@ -89,6 +101,56 @@
     }).filter(Boolean);
   }
 
+  /* Regelmäßige Messen aus dem Wochenplan; nur echte Gottesdienste (liturgie), keine Proben.
+     von/bis: Monate 1..12, auch über den Jahreswechsel (9 bis 6 = September bis Juni) */
+  const DAY_IDX = { so: 0, mo: 1, di: 2, mi: 3, do: 4, fr: 5, sa: 6 };
+  const inSeason = (t, m) => {
+    const von = Number(t.von);
+    const bis = Number(t.bis);
+    if (!von || !bis) return true;
+    return von <= bis ? m >= von && m <= bis : m >= von || m <= bis;
+  };
+  function fromWochenplan(data, existing) {
+    const out = [];
+    const plan = ((data && data.termine) || []).filter((t) => t.liturgie && t.name && t.tag in DAY_IDX && HD.isoTime(t.zeit));
+    if (!plan.length) return out;
+    /* Was es schon gibt (z. B. das Hochamt am Sonntag), wird nicht doppelt gezeigt */
+    const taken = new Set(existing.filter((it) => isMass(it.group)).map((it) => `${it.date} ${it.time}`));
+    const ferien = ((data && data.ferien) || [])
+      .map((f) => ({ von: HD.isoDate(f.von), bis: HD.isoDate(f.bis), tage: Array.isArray(f.tage) ? f.tage : Object.keys(DAY_IDX) }))
+      .filter((f) => f.von && f.bis);
+    /* Pause an diesem Tag? Sie gilt nur für die Wochentage, die bei ihr stehen */
+    const inFerien = (iso, tag) => ferien.some((f) => iso >= f.von && iso <= f.bis && f.tage.includes(tag));
+    const now = new Date();
+    const end = new Date(now.getFullYear(), now.getMonth() + 13, 0);
+    for (const d = new Date(now.getFullYear(), now.getMonth(), 1); d <= end; d.setDate(d.getDate() + 1)) {
+      const date = isoOf(d);
+      for (const t of plan) {
+        if (DAY_IDX[t.tag] !== d.getDay() || !inSeason(t, d.getMonth() + 1)) continue;
+        if (inFerien(date, t.tag)) continue;
+        const time = HD.isoTime(t.zeit);
+        if (taken.has(`${date} ${time}`)) continue;
+        const note = /Augustinerkirche|^September bis Juni/i.test(t.hinweis || '') ? '' : t.hinweis || '';
+        out.push({ date, time, group: /hochamt/i.test(t.name) ? 'hochamt' : 'gottesdienst', title: t.name, sub: note });
+      }
+    }
+    return out;
+  }
+  /* Ausfälle: ohne Uhrzeit entfallen alle Gottesdienste des Tages */
+  function applyAusfaelle(data) {
+    for (const a of (data && data.entfaellt) || []) {
+      const date = HD.isoDate(a.datum);
+      if (!date) continue;
+      const time = HD.isoTime(a.zeit);
+      for (const it of items) {
+        if (isMass(it.group) && it.date === date && (!time || it.time === time)) {
+          it.cancelled = true;
+          it.why = String(a.grund || '');
+        }
+      }
+    }
+  }
+
   async function getJSON(url) {
     try {
       const res = await fetch(url);
@@ -111,10 +173,12 @@
     const days = new Date(month.y, month.m + 1, 0).getDate();
     const lead = (first.getDay() + 6) % 7;         /* Montag zuerst */
     const today = todayIso();
+    /* Tag -> Gruppe -> gibt es mindestens einen Termin, der stattfindet? */
     const byDay = new Map();
     for (const it of visible().filter(inMonth)) {
-      if (!byDay.has(it.date)) byDay.set(it.date, new Set());
-      byDay.get(it.date).add(it.group);
+      if (!byDay.has(it.date)) byDay.set(it.date, new Map());
+      const g = byDay.get(it.date);
+      g.set(it.group, g.get(it.group) || !it.cancelled);
     }
     let cells = '';
     for (let i = 0; i < lead; i++) cells += '<span class="cal-cell empty" aria-hidden="true"></span>';
@@ -126,9 +190,11 @@
         cells += `<span class="${cls}"><span class="cal-num">${d}</span></span>`;
         continue;
       }
-      const dots = GROUPS.filter(([g]) => groups.has(g)).map(([g]) => `<i class="cal-dot g-${g}"></i>`).join('');
+      /* Fällt eine Gruppe an diesem Tag ganz aus, ist ihr Zeichen nur ein Umriss */
+      const dots = GROUPS.filter(([g]) => groups.has(g)).map(([g]) => `<i class="cal-dot g-${g}${groups.get(g) ? '' : ' off'}"></i>`).join('');
       const wd = WEEKDAYS[new Date(month.y, month.m, d).getDay()];
-      cells += `<button type="button" class="${cls} has" data-day="${iso}" aria-label="${wd}, ${d}. ${MONTHS[month.m]}: ${[...groups].map((g) => groupName.get(g)).join(', ')}">` +
+      const names = [...groups].map(([g, on]) => groupName.get(g) + (on ? '' : ' (entfällt)')).join(', ');
+      cells += `<button type="button" class="${cls} has" data-day="${iso}" aria-label="${wd}, ${d}. ${MONTHS[month.m]}: ${names}">` +
         `<span class="cal-num">${d}</span><span class="cal-dots" aria-hidden="true">${dots}</span></button>`;
     }
     return '<div class="cal-week" aria-hidden="true"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div>' +
@@ -140,10 +206,11 @@
     const head = `<span class="cal-time${time ? '' : ' empty'}">${esc(time) || '&nbsp;'}</span>` +
       '<span class="cal-main">' +
         `<span class="cal-title">${esc(it.title)}</span>` +
+        (it.cancelled ? `<span class="cal-flag">Entfällt${it.why ? `: ${esc(it.why)}` : ''}</span>` : '') +
         (it.sub ? `<span class="cal-sub">${esc(it.sub)}</span>` : '') +
       '</span>' +
       `<span class="cal-cat"><i class="cal-dot g-${it.group}"></i>${esc(it.art || groupName.get(it.group))}</span>`;
-    const cls = `cal-item g-${it.group}${past ? ' past' : ''}`;
+    const cls = `cal-item g-${it.group}${past ? ' past' : ''}${it.cancelled ? ' cancelled' : ''}`;
     if (it.href) return `<li class="${cls}"><a class="cal-row" href="${esc(it.href)}">${head}</a></li>`;
     if (it.text) {
       return `<li class="${cls}"><details class="cal-more"><summary class="cal-row">${head}</summary>` +
@@ -248,12 +315,15 @@
     const now = new Date();
     month = m ? { y: Number(m[1]), m: Math.min(11, Math.max(0, Number(m[2]) - 1)) } : { y: now.getFullYear(), m: now.getMonth() };
 
-    const [ha, rd, tm] = await Promise.all([
+    const [ha, rd, tm, gd] = await Promise.all([
       HD.load(`${base}data/hochaemter.csv`).catch(() => []),
       getJSON(`${base}data/runden.json`),
-      getJSON(`${base}data/termine.json`)
+      getJSON(`${base}data/termine.json`),
+      getJSON(`${base}data/gottesdienste.json`)
     ]);
     items = [...fromHochaemter(ha), ...fromRunden(rd), ...fromTermine(tm)];
+    items.push(...fromWochenplan(gd, items));
+    applyAusfaelle(gd);
     root.classList.add('ready');
     render();
 

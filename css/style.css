@@ -909,8 +909,8 @@ footer{
 /* ══ KALENDER (pages/kalender.html, js/kalender.js) ══
    Links das Monatsblatt mit Punkten je Gruppe, rechts die Termine nach Tagen. */
 /* Vier klar unterscheidbare Farben (auch bei Farbschwäche) und zusätzlich vier Formen:
-   Gottesdienst Kreis, Konzert Raute, Runde Quadrat, Veranstaltung Dreieck */
-.cal{--g-gottesdienst:#0b5cad;--g-konzert:#e08a00;--g-runde:#12915e;--g-veranstaltung:#c2307a;
+   Hochamt Kreuz, Gottesdienst Kreis, Konzert Raute, Runde Quadrat, Veranstaltung Dreieck */
+.cal{--g-hochamt:#c8981e;--g-gottesdienst:#9b2335;--g-konzert:#e0661a;--g-runde:#12915e;--g-veranstaltung:#1b8fc4;
   display:grid;grid-template-columns:minmax(0,29rem) minmax(0,1fr);gap:clamp(2.5rem,5vw,5rem);align-items:start}
 .cal-side{position:sticky;top:calc(var(--nav-h) + 2rem)}
 .cal-head{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:1.2rem}
@@ -934,10 +934,13 @@ footer{
 .cal-cell.has.past .cal-num{color:var(--text-light)}
 .cal-cell.today .cal-num{display:inline-flex;align-items:center;justify-content:center;width:2.05rem;height:2.05rem;margin-top:-.25rem;border-radius:50%;background:var(--blue);color:#fff}
 .cal-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:4px}
-.cal-dot{display:inline-block;width:.7rem;height:.7rem;border-radius:50%;background:var(--g-gottesdienst);flex:none}
-.cal-dot.g-konzert{background:var(--g-konzert);border-radius:1px;transform:rotate(45deg) scale(.82)}
-.cal-dot.g-runde{background:var(--g-runde);border-radius:1px}
-.cal-dot.g-veranstaltung{background:var(--g-veranstaltung);border-radius:0;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.cal-dot{--c:var(--g-gottesdienst);display:inline-block;width:.7rem;height:.7rem;border-radius:50%;background:var(--c);flex:none}
+.cal-dot.g-hochamt{--c:var(--g-hochamt);border-radius:0;clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)}
+.cal-dot.g-konzert{--c:var(--g-konzert);border-radius:1px;transform:rotate(45deg) scale(.82)}
+.cal-dot.g-runde{--c:var(--g-runde);border-radius:1px}
+.cal-dot.g-veranstaltung{--c:var(--g-veranstaltung);border-radius:0;clip-path:polygon(50% 0,100% 100%,0 100%)}
+/* Entfällt: nur der Umriss */
+.cal-dot.off{background:#fff;box-shadow:inset 0 0 0 2px var(--c)}
 .cal-today{display:block;margin:.8rem auto 0;padding:.4rem .2rem;background:none;border:0;cursor:pointer;
   font:inherit;font-size:.92rem;font-weight:500;color:var(--blue);text-decoration:underline;text-decoration-color:var(--gold-l);text-underline-offset:.3em}
 .cal-today[hidden]{display:none}
@@ -967,11 +970,17 @@ footer{
 .cal-day.past .cal-d{color:var(--text-light)}
 .cal-items{list-style:none;display:flex;flex-direction:column}
 .cal-item{position:relative;padding-left:1.1rem}
-.cal-item::before{content:'';position:absolute;left:0;top:.35rem;bottom:.35rem;width:4px;border-radius:2px;background:var(--g-gottesdienst)}
-.cal-item.g-konzert::before{background:var(--g-konzert)}
-.cal-item.g-runde::before{background:var(--g-runde)}
-.cal-item.g-veranstaltung::before{background:var(--g-veranstaltung)}
+.cal-item{--c:var(--g-gottesdienst)}
+.cal-item.g-hochamt{--c:var(--g-hochamt)}
+.cal-item.g-konzert{--c:var(--g-konzert)}
+.cal-item.g-runde{--c:var(--g-runde)}
+.cal-item.g-veranstaltung{--c:var(--g-veranstaltung)}
+.cal-item::before{content:'';position:absolute;left:0;top:.35rem;bottom:.35rem;width:4px;border-radius:2px;background:var(--c)}
 .cal-item.past::before{opacity:.45}
+/* Gottesdienst, der entfällt: durchgestrichen, Hinweis in Rot, Balken nur als Umriss */
+.cal-flag{display:inline-block;align-self:flex-start;margin:.1rem 0;padding:.05rem .55rem;border:1px solid #b3261e;border-radius:2px;font-size:.88rem;font-weight:600;color:#b3261e}
+.cal-item.cancelled .cal-title,.cal-item.cancelled .cal-time{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--text-light)}
+.cal-item.cancelled::before{background:transparent;box-shadow:inset 0 0 0 2px var(--c)}
 .cal-item+.cal-item{border-top:1px solid var(--line)}
 .cal-row{display:grid;grid-template-columns:4.6rem minmax(0,1fr) auto;gap:1rem;align-items:baseline;
   padding:.75rem .2rem;color:inherit;text-decoration:none;border-left:2px solid transparent}

@@ -622,3 +622,8 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-st-speed{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.8rem 1.4rem;padding:1rem 1.2rem;margin-bottom:1rem}
 .adm-st-speed .adm-field{min-width:12rem}
 .adm-st-speed .adm-hint{flex:1;min-width:12rem}
+
+/* Gottesdienste: Ueberschrift mit Knopf daneben */
+.fp-days{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.2rem}
+.fp-days .adm-check{min-height:38px}
+.adm-group-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem 1rem}

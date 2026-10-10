@@ -20,9 +20,11 @@
       "tag": "di",
       "zeit": "18:30",
       "name": "Heilige Messe",
-      "hinweis": "Augustinerkirche",
+      "hinweis": "Augustinerkirche, September bis Juni, nicht in den Ferien",
       "liturgie": true,
-      "hervorheben": false
+      "hervorheben": false,
+      "von": 9,
+      "bis": 6
     },
     {
       "tag": "mi",
@@ -36,9 +38,11 @@
       "tag": "do",
       "zeit": "18:30",
       "name": "Heilige Messe",
-      "hinweis": "Augustinerkirche",
+      "hinweis": "Augustinerkirche, September bis Juni, nicht in den Ferien",
       "liturgie": true,
-      "hervorheben": false
+      "hervorheben": false,
+      "von": 9,
+      "bis": 6
     },
     {
       "tag": "fr",
@@ -46,7 +50,9 @@
       "name": "Heilige Messe",
       "hinweis": "September bis Juni, nicht in den Ferien",
       "liturgie": true,
-      "hervorheben": false
+      "hervorheben": false,
+      "von": 9,
+      "bis": 6
     },
     {
       "tag": "sa",
@@ -54,7 +60,11 @@
       "name": "Vorabendmesse",
       "hinweis": "September bis Juni, nicht in den Ferien",
       "liturgie": true,
-      "hervorheben": false
+      "hervorheben": false,
+      "von": 9,
+      "bis": 6
     }
-  ]
+  ],
+  "ferien": [],
+  "entfaellt": []
 }
