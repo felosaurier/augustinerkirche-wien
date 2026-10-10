@@ -1,27 +1,14 @@
 /* ============================================================
    Augustinerkirche Wien — zentrales Stylesheet
    Gestaltung: Marine und Gold auf Weiß.
-   - Bodoni Moda (immer aufrecht, nie kursiv) für Überschriften,
-     Namen, Daten und Uhrzeiten — die Schrift der klassizistischen
-     Notendrucke aus der Zeit von Haydn und Mozart. Mit kleiner
-     optischer Größe gesetzt, damit die Haarlinien kräftig bleiben.
-   - Hanken Grotesk für Fließtext, Navigation und Bedienelemente,
-     immer in normaler Schreibung (keine Versal-Labels).
+   - Calibri für die ganze Seite (Ersatz: Carlito), immer in normaler
+     Schreibung (keine Versal-Labels).
    - Kopfbereich: im Querformat Foto randlos rechts neben dem Titel,
      im Hochformat randlos über die volle Breite oberhalb des Titels.
    - Linien statt Kästen, keine Schatten außer bei Fenstern.
    ============================================================ */
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-/* Bindestrich und Gedankenstrich sind in der Bodoni nur Haarlinien und
-   in "Rieger-Orgel" oder "1863–1945" kaum zu sehen: diese drei Zeichen
-   kommen aus einer Systemschrift mit kräftigerem Strich. */
-@font-face{
-  font-family:'Bodoni Striche';
-  src:local('Georgia'),local('Times New Roman'),local('Noto Serif'),local('DejaVu Serif');
-  unicode-range:U+2D,U+2013,U+2014;
-}
 
 :root{
   /* Farben (unverändert: Marine, Gold, Weiß) */
@@ -43,8 +30,8 @@
   --line:#e4dfd3;
   --line-dark:rgba(255,255,255,.14);
 
-  --serif:'Bodoni Striche','Bodoni Moda','Bodoni 72',Didot,Georgia,serif;
-  --sans:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --serif:Calibri,Carlito,'Segoe UI',system-ui,sans-serif;
+  --sans:Calibri,Carlito,'Segoe UI',system-ui,sans-serif;
 
   --nav-h:76px;
   --max:1240px;
