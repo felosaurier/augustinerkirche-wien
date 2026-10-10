@@ -894,6 +894,42 @@ footer{
 .f-links a{font-size:.95rem;color:rgba(255,255,255,.75);text-decoration:none;transition:color .2s}
 .f-links a:hover{color:var(--gold-l)}
 .f-copy{font-size:.88rem;color:rgba(255,255,255,.55)}
+/* "Cookie-Einstellungen" (js/statistik.js) sieht aus wie die Links daneben */
+.f-links .cc-open{padding:0;border:0;background:none;font-size:.95rem;color:rgba(255,255,255,.75);cursor:pointer;transition:color .2s}
+.f-links .cc-open:hover{color:var(--gold-l)}
+
+
+/* ══ COOKIE-HINWEIS (js/statistik.js) ══
+   Liegt fest am unteren Rand, unter Navigation und Handy-Menue. "Ablehnen" und
+   "Zustimmen" sehen bewusst gleich aus. Die Seite bekommt unten so viel Platz
+   (--cc-h), dass die Fusszeile erreichbar bleibt. */
+.cc{position:fixed;left:0;right:0;bottom:0;z-index:250;padding:0 var(--pad) 1rem;pointer-events:none}
+.cc-box{
+  max-width:42rem;max-height:calc(100vh - var(--nav-h) - 2rem);margin:0 auto;padding:1.3rem 1.5rem 1.4rem;overflow:auto;pointer-events:auto;
+  background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);box-shadow:0 12px 44px rgba(16,25,46,.28);
+}
+.cc-box:focus:not(:focus-visible){outline:none}
+.cc-box:focus-visible{outline:2px solid var(--gold);outline-offset:-5px}
+.cc-titel{margin-bottom:.45rem;font-family:var(--serif);font-size:1.35rem;font-weight:500;line-height:1.2;color:var(--blue)}
+.cc-text{font-size:1rem;line-height:1.6;color:var(--text-mid)}
+.cc-text a{color:var(--blue);text-decoration-color:var(--gold-l);text-underline-offset:.25em}
+.cc-status{margin-top:.55rem;font-size:.95rem;font-weight:600;color:var(--blue)}
+.cc-status:empty{display:none}
+.cc-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.1rem}
+.cc-btn{
+  flex:1 1 7rem;min-height:2.9rem;padding:.65rem 1.2rem;border:2px solid var(--blue);background:var(--blue);
+  font-size:1rem;font-weight:600;line-height:1.2;color:#fff;cursor:pointer;transition:background-color .15s,border-color .15s;
+}
+.cc-btn:hover{border-color:var(--blue-deep);background:var(--blue-deep)}
+body.cc-offen{padding-bottom:var(--cc-h,0)}
+@media (max-width:600px){
+  .cc{padding-bottom:.6rem}
+  .cc-box{padding:1rem 1.1rem 1.1rem}
+  .cc-titel{font-size:1.2rem}
+  .cc-text{font-size:.97rem;line-height:1.5}
+  .cc-actions{gap:.6rem;margin-top:.9rem}
+}
+@media print{.cc{display:none}}
 
 
 /* Früher: Einblenden beim Scrollen. Inhalte stehen jetzt sofort da. */
@@ -1050,12 +1086,12 @@ summary.cal-row::-webkit-details-marker{display:none}
   .link-arr,.hs-all{position:relative}
   .link-arr::after,.hs-all::after{content:'';position:absolute;inset:-.6rem -.4rem}
   .f-links{gap:.2rem 1.5rem}
-  .f-links a{display:inline-flex;align-items:center;min-height:2.75rem}
+  .f-links a,.f-links .cc-open{display:inline-flex;align-items:center;min-height:2.75rem}
   .cs-val{line-height:2.2}
 }
 a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 nav a:focus-visible,nav button:focus-visible,.mobile-menu a:focus-visible,.hero a:focus-visible,.page-hero a:focus-visible,
-footer a:focus-visible,.herzgruft a:focus-visible,.sakr-band:not(.sakr-band-inline) button:focus-visible,.patron-box a:focus-visible{outline-color:var(--gold-l)}
+footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.sakr-band:not(.sakr-band-inline) button:focus-visible,.patron-box a:focus-visible{outline-color:var(--gold-l)}
 .mega a:focus-visible{outline-color:var(--gold);outline-offset:-2px}
 
 /* Nur für Screenreader: optisch unsichtbar, aber vorgelesen */

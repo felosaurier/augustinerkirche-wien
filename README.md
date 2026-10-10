@@ -136,6 +136,24 @@ Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine
 - Jede Meldung hat einen eigenen Link, z. B. `index.html?news=…`, der das Fenster direkt öffnet.
 - **Neues Plakat:** Bild als WebP in den **Jahresordner** legen, passend zum Datum der Meldung: Plakate von 2026 nach `assets/img/news/2026/`, Plakate von 2027 nach `assets/img/news/2027/` usw. Dann eine Zeile in `news.csv` ergänzen und dort den Pfad eintragen, z. B. `assets/img/news/2026/bibelpur-2026-27.webp`. Ein Bild reicht, die Vorschau wird automatisch zugeschnitten.
 
+## Cookies und Besucherstatistik
+
+Die Seiten setzen von sich aus **keine Cookies**. Für eine Besucherstatistik ist **Google Analytics 4** vorbereitet, aber ausgeschaltet, solange in [`js/statistik.js`](js/statistik.js) keine Mess-ID steht.
+
+**Einschalten:** In Google Analytics (analytics.google.com) eine Property für die Website anlegen, unter *Verwaltung → Datenstreams* die Mess-ID (`G-…`) kopieren und in `js/statistik.js` bei `const GA_ID = '';` zwischen die Anführungszeichen schreiben. Danach erscheint auf allen öffentlichen Seiten der Cookie-Hinweis. Die alte Universal-Analytics-Kennung (`UA-…`) funktioniert seit Juli 2024 nicht mehr.
+
+**So arbeitet es:**
+
+- Beim ersten Besuch fragt ein Hinweis am unteren Rand. „Ablehnen“ und „Zustimmen“ sind gleichwertig; die Website funktioniert in beiden Fällen gleich.
+- **Vor der Zustimmung** gibt es weder Cookies noch eine Verbindung zu Google. Erst nach „Zustimmen“ lädt `statistik.js` das Skript von Google.
+- Die Auswahl steht im Browser (`localStorage`, Eintrag `aug-cookies`) und gilt ein Jahr. „Cookie-Einstellungen“ in der Fußzeile und auf der Datenschutzseite öffnet den Hinweis erneut; „Ablehnen“ löscht die Analytics-Cookies wieder.
+- Es wird nur Statistik gemessen: Werbefunktionen und Google Signals sind aus, IP-Adressen speichert Google Analytics 4 nicht, der Cookie hält sechs Monate (`COOKIE_TAGE`).
+- **Nie gemessen** wird auf `localhost` (der Hinweis erscheint dort trotzdem, zum Ansehen) und in einem Browser, in dem gerade jemand in der Verwaltung angemeldet ist. Die Verwaltung selbst lädt `statistik.js` nie.
+
+**Einstellungen in Google Analytics, damit die Datenschutzerklärung stimmt:** Datenaufbewahrung auf *2 Monate* (Verwaltung → Property → Datenerhebung und -änderung → Datenaufbewahrung), *Google Signals* aus, unter *Datenfreigabe-Einstellungen* alles ausschalten, die *Datenverarbeitungsbedingungen* akzeptieren. Danach den gelb markierten Hinweis am Ende des Abschnitts „Besucherstatistik“ in `pages/datenschutz.html` löschen.
+
+**Sicherheit:** Die Content-Security-Policy der öffentlichen Seiten erlaubt dafür genau `www.googletagmanager.com/gtag/` (das Skript; der Container-Lader `gtm.js`, über den sich fremder Code einschleusen ließe, bleibt gesperrt) sowie `google-analytics.com` und `analytics.google.com` (Messdaten); die Verwaltung bleibt bei `'self'`. Ein Skript von Google läuft mit allen Rechten der Seite. Deshalb gilt: den Ordner `admin/` nicht auf denselben öffentlichen Server legen wie die Website (oder dort mit einem Passwort schützen), solange Google Analytics eingeschaltet ist. Wer gar keine Einwilligung einholen möchte, nimmt eine Statistik ohne Cookies (z. B. Matomo oder Plausible); dann entfallen Hinweis und Google-Freigabe in der Richtlinie.
+
 ## Lokal ansehen
 
 Damit der Hochamt-Kalender seine Tabelle laden kann, braucht die Seite einen lokalen Webserver (Browser blockieren `fetch()` bei direkt geöffneten Dateien):
@@ -219,6 +237,7 @@ js/
   admin-zugaenge.js           Zugänge und Rollen verwalten
   inhalte.js                  Zeichnet Gottesdienste, Runden, Personen, Kontakt und Repertoire aus data/
   instagram.js                Instagram-Bereich mit Fallback (derzeit nicht auf der Startseite eingebunden)
+  statistik.js                Cookie-Hinweis und Google Analytics (nur mit Zustimmung; ohne Mess-ID aus)
 data/
   hochaemter.csv              Hochamt-Termine ab dem laufenden Jahr inkl. Mitwirkende
   archiv/                     Hochamt-Archiv 2015–2025: hochaemter-JJJJ.csv je Jahr, jahre.json
@@ -261,7 +280,7 @@ assets/
 
 Alle Pfade sind **relativ**, die Seite funktioniert daher in jedem Unterverzeichnis eines Webservers.
 
-**Sicherheit:** Jede Seite trägt im `<head>` eine Content-Security-Policy (nur eigene Skripte, keine Inline-Skripte). Inhalte aus den Tabellen werden vor der Ausgabe escaped, Links und Bildpfade nur mit `http(s)`, `mailto` oder als relativer Pfad übernommen. E-Mail-Adressen stehen nie im Klartext im Quelltext der Seiten: `HochamtData.mailHTML` (in `js/hochaemter-data.js`) legt sie rückwärts in `data-mail` ab, `js/main.js` macht beim Anzeigen wieder normale Links daraus; ohne JavaScript erscheint „name(at)domain(dot)at“. Neue Adressen in HTML-Seiten bitte ebenfalls so einbauen, in den Datendateien genügt die normale Schreibweise. Die Richtlinie erlaubt nur eigene Skripte, Bilder, Schriften und Verbindungen (`'self'`), keine Rahmen und keine Plugins; Google Fonts und andere Fremdquellen sind ausdrücklich nicht freigegeben. Zahlen aus den Datendateien (Breite und Höhe von Bildern) und Bildausschnitte werden vor dem Einsetzen geprüft (`HochamtData.num`, `HochamtData.focusPos`), E-Mail-Links nur für einfache, wohlgeformte Adressen gebaut. Wird später ein Instagram-Endpunkt in `js/instagram.js` eingetragen, muss seine Adresse in der Richtlinie unter `connect-src` und die Adresse der Beitragsbilder unter `img-src` ergänzt werden.
+**Sicherheit:** Jede Seite trägt im `<head>` eine Content-Security-Policy (nur eigene Skripte, keine Inline-Skripte). Inhalte aus den Tabellen werden vor der Ausgabe escaped, Links und Bildpfade nur mit `http(s)`, `mailto` oder als relativer Pfad übernommen. E-Mail-Adressen stehen nie im Klartext im Quelltext der Seiten: `HochamtData.mailHTML` (in `js/hochaemter-data.js`) legt sie rückwärts in `data-mail` ab, `js/main.js` macht beim Anzeigen wieder normale Links daraus; ohne JavaScript erscheint „name(at)domain(dot)at“. Neue Adressen in HTML-Seiten bitte ebenfalls so einbauen, in den Datendateien genügt die normale Schreibweise. Die Richtlinie erlaubt nur eigene Skripte, Bilder, Schriften und Verbindungen (`'self'`), keine Rahmen und keine Plugins; Google Fonts und andere Fremdquellen sind ausdrücklich nicht freigegeben. Einzige Ausnahme sind die öffentlichen Seiten für die optionale Besucherstatistik (`googletagmanager.com`, `google-analytics.com`, `analytics.google.com`, siehe [Cookies und Besucherstatistik](#cookies-und-besucherstatistik)). Zahlen aus den Datendateien (Breite und Höhe von Bildern) und Bildausschnitte werden vor dem Einsetzen geprüft (`HochamtData.num`, `HochamtData.focusPos`), E-Mail-Links nur für einfache, wohlgeformte Adressen gebaut. Wird später ein Instagram-Endpunkt in `js/instagram.js` eingetragen, muss seine Adresse in der Richtlinie unter `connect-src` und die Adresse der Beitragsbilder unter `img-src` ergänzt werden.
 
 ## Gestaltung
 
@@ -281,7 +300,7 @@ Marine und Gold auf Weiß — klar, ruhig und festlich, passend zu einer Hofkirc
 
 ## Vor dem Veröffentlichen
 
-Im **Impressum** und in der **Datenschutzerklärung** sind gelb markierte Stellen in eckigen Klammern zu ergänzen, etwa Rechtsform, Registernummer, Hosting-Anbieter und Datenschutz-Kontakt. Beide Texte sollten von der Pfarre bzw. dem Vikariat geprüft werden.
+Im **Impressum** und in der **Datenschutzerklärung** sind gelb markierte Stellen in eckigen Klammern zu ergänzen, etwa Rechtsform, Registernummer, Hosting-Anbieter und Datenschutz-Kontakt. Dazu gehören auch die Angaben zu Cookies und Google Analytics (siehe [Cookies und Besucherstatistik](#cookies-und-besucherstatistik)). Beide Texte sollten von der Pfarre bzw. dem Vikariat geprüft werden.
 
 ## Quellen
 

@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com/gtag/; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="../favicon.ico" sizes="any"/>
@@ -193,6 +193,9 @@
       </dl>
       <p>Alle Konten beim Bankhaus Schelhammer &amp; Schattera, BIC BSSWATWW. Spenden für die Kirchenmusik: siehe <a href="musik.html#p-patenschaft">Patenschaft St. Augustin</a>.</p>
 
+      <h2>Konzept, Webdesign und technische Realisierung</h2>
+      <p><span class="todo">[Name ergänzen]</span></p>
+
       <h2>Inhalt und Bildnachweis</h2>
       <p>Die Inhalte dieser Website wurden mit Sorgfalt erstellt; für Richtigkeit, Vollständigkeit und Aktualität kann keine Gewähr übernommen werden. Fotos und Texte stammen, soweit nicht anders angegeben, von der Pfarre St. Augustin bzw. dem Augustiner-Vikariat Wien. Urheber sind bei einzelnen Bildern in der jeweiligen Bildunterschrift genannt. <span class="todo">[Bildrechte aller Fotos abschließend prüfen]</span></p>
 
@@ -201,6 +204,9 @@
 
       <h2>Urheberrecht</h2>
       <p>Inhalte und Bilder dieser Website unterliegen dem Urheberrecht. Vervielfältigung und Weitergabe bedürfen der Zustimmung der Rechteinhaber.</p>
+
+      <h2>Cookies und Statistik</h2>
+      <p>Diese Website setzt nur mit Ihrer Zustimmung Cookies und verwendet nur dann Google Analytics. Einzelheiten und die Möglichkeit zum Widerruf stehen in der <a href="datenschutz.html#cookies">Datenschutzerklärung</a>.</p>
     </div>
   </div>
 </section>
@@ -214,6 +220,7 @@
 </footer>
 
 <script src="../js/main.js"></script>
+<script src="../js/statistik.js"></script>
 <script src="../js/hochaemter-data.js"></script>
 <script src="../js/inhalte.js"></script>
 <script src="../js/lightbox.js"></script>

@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com/gtag/; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="../../favicon.ico" sizes="any"/>
@@ -201,6 +201,7 @@
 </footer>
 
 <script src="../../js/main.js"></script>
+<script src="../../js/statistik.js"></script>
 <script src="../../js/hochaemter-data.js"></script>
 <script src="../../js/inhalte.js"></script>
 <script src="../../js/lightbox.js"></script>
