@@ -66,8 +66,8 @@
     for (const el of week) {
       el.innerHTML = list.map((t) =>
         `<div class="week-row" data-day="${esc(t.tag)}"><div class="week-day">${esc(DAYS[t.tag] || '')}</div>` +
-        `<div><div class="week-name">${esc(t.name)}</div>${t.hinweis ? `<div class="week-loc">${esc(t.hinweis)}</div>` : ''}</div>` +
-        `<div class="week-time">${esc(t.zeit)}</div></div>`
+        `<div class="week-time">${esc(t.zeit)}</div>` +
+        `<div><div class="week-name">${esc(t.name)}</div>${t.hinweis ? `<div class="week-loc">${esc(t.hinweis)}</div>` : ''}</div></div>`
       ).join('');
     }
     /* Gewaehlten Wochentag erneut anwenden */

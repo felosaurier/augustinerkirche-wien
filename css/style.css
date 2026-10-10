@@ -578,7 +578,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 }
 .week-filter-btn:hover{border-color:var(--blue);color:var(--blue)}
 .week-filter-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
-.week-row{display:grid;grid-template-columns:8rem minmax(0,1fr) auto;gap:1.5rem;align-items:baseline;padding:1.15rem 0;border-bottom:1px solid var(--line)}
+.week-row{display:grid;grid-template-columns:8rem 5.2rem minmax(0,1fr);gap:1.5rem;align-items:baseline;padding:1.15rem 0;border-bottom:1px solid var(--line)}
 .week-row:first-child{border-top:1px solid var(--blue)}
 .week-day{font-size:.98rem;font-weight:600;color:var(--blue)}
 .week-name{font-family:var(--serif);font-size:1.3rem;font-weight:500;line-height:1.25;color:var(--blue)}
@@ -1146,8 +1146,9 @@ footer a:focus-visible,.herzgruft a:focus-visible,.sakr-band:not(.sakr-band-inli
   .gallery{display:flex;flex-direction:column}
   .g-item img,.g-item a{height:auto}
   .g-item.g-breit,.g-item.g-hoch{grid-column:auto;grid-row:auto}
-  .week-row{grid-template-columns:minmax(0,1fr) auto;gap:.2rem 1rem}
-  .week-day{grid-column:1/-1}
+  /* Handy: Wochentag und Uhrzeit in einer Zeile, darunter die Bezeichnung */
+  .week-row{grid-template-columns:auto minmax(0,1fr);gap:.2rem 1rem}
+  .week-row>div:nth-child(3){grid-column:1/-1}
   .hd-row{grid-template-columns:1fr;gap:.3rem;padding:1.1rem 0}
   .hd-nav{grid-template-columns:1fr}
   .hd-next{text-align:left}
