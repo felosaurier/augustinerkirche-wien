@@ -67,6 +67,10 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
   /* Tablet: die sechs Reiter sollen ohne Verschieben sichtbar bleiben */
   .adm-nav a{padding:0 .65rem;gap:.4rem;font-size:.9rem}
   .adm-nav a[aria-current="page"]::after,.adm-nav a.is-open::after{left:.65rem;right:.65rem}
+  /* iPad hoch: Name ausblenden (das Kürzel bleibt), sonst ragt "Abmelden" hinaus */
+  .adm-bar{padding:0 1.2rem;gap:1rem}
+  .adm-user-name{display:none}
+  .adm-me{margin-right:.3rem}
 }
 @media(max-width:760px){
   /* Handy: die Kopfleiste (drei Zeilen hoch) scrollt mit, sonst bleibt zu wenig Platz fuer den Inhalt */
@@ -229,7 +233,7 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 /* ══ FENSTER (Bearbeiten, Rückfrage) ══ */
 html.adm-lock{overflow:hidden}
 .adm-dialog{border:none;padding:0;margin:auto;background:var(--white);color:var(--text);width:min(940px,calc(100vw - 2rem));max-width:none;
-  max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);box-shadow:0 30px 90px rgba(16,25,46,.4);overflow:hidden}
+  max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);max-height:calc(var(--adm-vh,100dvh) - 2rem);box-shadow:0 30px 90px rgba(16,25,46,.4);overflow:hidden}
 .adm-dialog[open]{display:flex;flex-direction:column;animation:nd-in .3s var(--ease)}
 .adm-dialog::backdrop{background:rgba(16,25,46,.7);animation:nd-fade .25s ease}
 .adm-dialog.wide{width:min(1180px,calc(100vw - 2rem))}
@@ -338,37 +342,47 @@ select.adm-input{-webkit-appearance:none;appearance:none;padding-right:2.6rem;cu
 .adm-strength[data-level="3"] span:nth-child(-n+3){background:var(--gold-l)}
 .adm-strength[data-level="4"] span{background:var(--ok)}
 
-/* Mehrzeilige Listen (Solisten, Organisten, Infos) */
+/* Mehrzeilige Listen (Solisten, Organisten, Infos): Felder, dahinter
+   Pfeile zum Verschieben und Entfernen */
 .adm-list{display:flex;flex-direction:column;gap:.5rem}
-.adm-list-row{display:grid;grid-template-columns:minmax(0,1fr) 2.9rem;gap:.5rem;align-items:stretch}
-.adm-list-row.pair{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 2.9rem}
-.adm-list-row.pair.label-first{grid-template-columns:minmax(0,10rem) minmax(0,1fr) 2.9rem}
-.adm-list-del{width:2.9rem;min-height:46px;display:grid;place-items:center;background:none;border:1px solid var(--line);color:var(--text-light);cursor:pointer;transition:color .2s,border-color .2s,background .2s}
-.adm-list-del:hover{color:var(--err);border-color:#e3c4c1;background:var(--err-pale)}
-.adm-list-del:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.adm-list-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem;align-items:stretch}
+.adm-list-row.pair{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) auto}
+.adm-list-row.pair.label-first{grid-template-columns:minmax(0,10rem) minmax(0,1fr) auto}
+.adm-list-row.triple{grid-template-columns:minmax(0,9rem) minmax(0,1.5fr) minmax(0,1fr) auto}
+.adm-list-tools{display:flex;gap:.25rem}
+.adm-list-btn{width:2.6rem;min-height:46px;display:grid;place-items:center;padding:0;background:none;border:1px solid var(--line);color:var(--text-light);cursor:pointer;transition:color .2s,border-color .2s,background .2s}
+.adm-list-btn:hover:not(:disabled){color:var(--blue);border-color:var(--gold-l);background:var(--gold-pale)}
+.adm-list-btn:disabled{opacity:.35;cursor:default}
+.adm-list-btn:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.adm-list-del:hover:not(:disabled){color:var(--err);border-color:#e3c4c1;background:var(--err-pale)}
+/* ganz leere Zeile = Abstand: gestrichelt, damit sie auffaellt */
+.adm-list-row.is-blank .adm-input{border-style:dashed;background:var(--bg-soft)}
+.adm-list-row.moved{animation:adm-moved .6s var(--ease)}
+@keyframes adm-moved{from{background:var(--gold-pale);box-shadow:0 0 0 4px var(--gold-pale)}}
 .adm-list-add{align-self:flex-start;display:inline-flex;align-items:center;gap:.45rem;min-height:40px;padding:0 .9rem;margin-top:.1rem;
   background:none;border:1px dashed var(--gold-l);color:var(--gold);cursor:pointer;font:inherit;font-size:.94rem;font-weight:600;transition:background .2s,border-color .2s}
 .adm-list-add:hover{background:var(--gold-pale);border-color:var(--gold)}
 .adm-list-add:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-@media(max-width:600px){
-  .adm-list-row.pair,.adm-list-row.pair.label-first{grid-template-columns:minmax(0,1fr) 2.9rem}
-  .adm-list-row.pair>:nth-child(2){grid-row:2;grid-column:1}
-  .adm-list-row.pair>.adm-list-del{grid-row:1/3;grid-column:2}
+/* Tablet hoch: drittes Feld (Zusatz) in eine zweite Zeile */
+@media(max-width:900px){
+  .adm-list-row.triple{grid-template-columns:minmax(0,9rem) minmax(0,1fr) auto}
+  .adm-list-row.triple>:nth-child(3){grid-row:2;grid-column:2}
+  .adm-list-row.triple>.adm-list-tools{grid-row:1;grid-column:3}
 }
-
-/* Drei Felder je Zeile (z. B. Bezeichnung, Wert, Zusatz) */
-.adm-list-row.triple{grid-template-columns:minmax(0,9rem) minmax(0,1.5fr) minmax(0,1fr) 2.9rem}
+/* Handy: Felder untereinander, Knoepfe darunter rechts */
 @media(max-width:600px){
-  .adm-list-row.triple{grid-template-columns:minmax(0,1fr) 2.9rem}
-  .adm-list-row.triple>:nth-child(2){grid-row:2;grid-column:1}
-  .adm-list-row.triple>:nth-child(3){grid-row:3;grid-column:1}
-  .adm-list-row.triple>.adm-list-del{grid-row:1/4;grid-column:2}
+  .adm-list{gap:.8rem}
+  .adm-list-row.pair,.adm-list-row.pair.label-first,.adm-list-row.triple{grid-template-columns:minmax(0,1fr);gap:.35rem;padding-bottom:.8rem;border-bottom:1px solid var(--line)}
+  .adm-list-row.pair>*,.adm-list-row.triple>*{grid-row:auto!important;grid-column:1!important}
+  .adm-list-row.pair>.adm-list-tools,.adm-list-row.triple>.adm-list-tools{justify-content:flex-end}
+  .adm-list+.adm-list-add{margin-top:.3rem}
 }
 
 /* Terminreihen einer Runde: je Reihe eine Ueberschrift und Daten */
 .adm-blocks{display:flex;flex-direction:column;gap:.9rem}
 .adm-block{border:1px solid var(--line);border-left:3px solid var(--gold-l);background:var(--bg-soft);padding:1rem 1.1rem}
 .adm-block-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem;align-items:end;margin-bottom:.8rem}
+.adm-block-tools{display:flex;align-items:center;gap:.25rem;flex-wrap:wrap;justify-content:flex-end}
 .adm-dates{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:.6rem}
 .adm-date-chip{display:inline-flex;align-items:center;gap:.2rem;background:var(--white);border:1px solid var(--line);padding:.15rem .15rem .15rem .6rem;font-size:.98rem}
 .adm-date-chip.past{opacity:.55}
@@ -562,9 +576,39 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
   .adm-act,.adm-list-add,.btn-sm{min-height:44px!important}
 }
 
+/* ══ NIEDRIGE FENSTER (iPad quer, eingeblendete Tastatur) ══
+   Klassen setzt admin.js nach der sichtbaren Hoehe (auch bei Tastatur).
+   Kopf- und Fussleisten duerfen nicht den ganzen Platz belegen: die
+   Kopfleiste der Verwaltung scrollt mit, Fenster werden kompakter, und
+   ganz niedrig scrollt das ganze Fenster (Kopf weg), nur die Knoepfe
+   unten bleiben stehen. */
+.adm-low .adm-top{position:relative}
+.adm-low .adm-dialog{max-height:calc(var(--adm-vh,100dvh) - 1rem)}
+.adm-low .adm-dlg-head{padding:.9rem 1.5rem .8rem}
+.adm-low .adm-dlg-title{font-size:1.45rem}
+.adm-low .adm-dlg-tag{font-size:.85rem;margin-bottom:.1rem}
+.adm-low .adm-dlg-close{width:2.6rem;height:2.6rem}
+.adm-low .adm-dlg-foot{padding:.6rem 1.5rem}
+
+.adm-short .adm-pending{position:static}
+.adm-short .adm-dialog,.adm-short .adm-dialog.wide{max-height:calc(var(--adm-vh,100dvh) - .5rem)}
+.adm-short .adm-dialog[open]:not(.small){display:block;overflow-y:auto;overscroll-behavior:contain}
+.adm-short .adm-dialog:not(.small) .adm-dlg-body{overflow:visible}
+.adm-short .adm-dialog:not(.small) .adm-dlg-foot{position:sticky;bottom:0;z-index:2;box-shadow:0 -6px 18px rgba(16,25,46,.08)}
+.adm-short .adm-dlg-head{padding:.6rem 1.3rem .55rem}
+.adm-short .adm-dlg-tag{display:none}
+.adm-short .adm-dlg-title{font-size:1.25rem}
+.adm-short .adm-dlg-foot{padding:.45rem 1.3rem}
+.adm-short .adm-dlg-foot .btn{min-height:42px;padding-top:.5rem;padding-bottom:.5rem}
+.adm-short .adm-split-side{position:static}
+
+/* Tastatur offen: iOS verschiebt den sichtbaren Bereich, das Fenster
+   haengt sich oben an dessen Rand statt an die Mitte des ganzen Layouts */
+.adm-kb .adm-dialog[open]{inset:auto 0;top:calc(var(--adm-vt,0px) + .25rem);margin:0 auto}
+
 /* ══ BEWEGUNG UND KONTRAST ══ */
 @media(prefers-reduced-motion:reduce){
-  .adm-dialog[open],.adm-dialog::backdrop,.adm-toast,.adm-row.flash,.adm-person.flash{animation:none}
+  .adm-dialog[open],.adm-dialog::backdrop,.adm-toast,.adm-list-row.moved,.adm-row.flash,.adm-person.flash{animation:none}
   .adm-tile,.adm-person{transition:none}
   .login-busy{animation-duration:2s}
 }

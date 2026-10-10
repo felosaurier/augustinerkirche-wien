@@ -46,11 +46,12 @@
       A.showErrors(form, [[$('kt-email'), 'Diese E-Mail-Adresse sieht nicht richtig aus.']]);
       return;
     }
+    if (!await A.checkBlankRows([hours])) return;
     const next = {
       adresse: clean($('kt-adresse').value), ort: clean($('kt-ort').value), eingang: clean($('kt-eingang').value),
       telefon: phones.values().filter((t) => t.nummer).map((t) => ({ nummer: clean(t.nummer), bezeichnung: clean(t.bezeichnung) })),
       email,
-      kanzlei: hours.values().filter((h) => h.tage || h.zeit).map((h) => ({ tage: clean(h.tage), zeit: clean(h.zeit) }))
+      kanzlei: hours.values().filter((h) => h.tage || h.zeit || A.isBlankRow(h)).map((h) => ({ tage: clean(h.tage), zeit: clean(h.zeit) }))
     };
     try {
       const direct = await A.saveJSON(KPATH, next);
@@ -71,7 +72,8 @@
         { key: 'tage', label: 'Tage', placeholder: 'z. B. Mo, Mi, Fr' },
         { key: 'zeit', label: 'Zeit', placeholder: 'z. B. 09–12 Uhr' }
       ],
-      addLabel: 'Weitere Öffnungszeit', rowLabel: 'Öffnungszeit', labelFirst: true
+      addLabel: 'Weitere Öffnungszeit', rowLabel: 'Öffnungszeit', labelFirst: true,
+      blanks: true, name: 'den Öffnungszeiten'
     });
     phones = A.listEditor($('kt-tel'), {
       fields: [

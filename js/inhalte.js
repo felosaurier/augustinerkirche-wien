@@ -182,7 +182,12 @@
     const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
     const para = (list) => (list || []).filter(Boolean).map((p) => `<p class="bio-p">${rich(p)}</p>`).join('');
     const s = r.schwerpunkt;
-    const facts = (r.fakten || []).filter((f) => f.label || f.wert);
+    /* Leere Zeile = Abstand: teilt die Angaben in einzelne Bloecke */
+    const factGroups = (r.fakten || []).reduce((groups, f) => {
+      if (f.label || f.wert) groups[groups.length - 1].push(f);
+      else if (groups[groups.length - 1].length) groups.push([]);
+      return groups;
+    }, [[]]).filter((g) => g.length);
     const html = para(r.einleitung) +
       (s && (s.titel || s.text) ? '<div class="runde-lead">' +
         (s.label ? `<div class="runde-label">${esc(s.label)}</div>` : '') +
@@ -193,10 +198,10 @@
         `<div class="runde-block"><div class="runde-label">${esc(b.label || 'Termine')}</div>` +
         `<ul class="termin-chips">${b.daten.slice().sort().map((d) => chip(d, today)).join('')}</ul></div>`
       ).join('') +
-      (facts.length ? `<div class="runde-facts">${facts.map((f) =>
+      factGroups.map((facts) => `<div class="runde-facts">${facts.map((f) =>
         `<div class="runde-fact"><div class="runde-fact-label">${esc(f.label)}</div>` +
         `<div class="runde-fact-value">${rich(f.wert)}${f.zusatz ? `<br><small>${rich(f.zusatz)}</small>` : ''}</div></div>`
-      ).join('')}</div>` : '') +
+      ).join('')}</div>`).join('') +
       (r.kontakt && (r.kontakt.email || r.kontakt.telefon || r.kontakt.anschrift) ? kontaktHTML(r.kontakt) : '') +
       back;
     const side = r.bild ? sideHTML(r.bild) : '';
@@ -230,7 +235,12 @@
     const lines = qsa('[data-inhalt="kanzlei"]');
     if (!strips.length && !lines.length) return;
     const k = await load('kontakt.json');
-    const hours = (k.kanzlei || []).filter((h) => h.tage || h.zeit);
+    /* Leere Zeile = kleiner Abstand (nicht am Anfang oder Ende) */
+    const all = k.kanzlei || [];
+    const filled = (h) => h.tage || h.zeit;
+    const first = all.findIndex(filled);
+    const hours = first < 0 ? [] : all.slice(first, all.length - [...all].reverse().findIndex(filled))
+      .filter((h, i, a) => filled(h) || filled(a[i - 1]));
     for (const el of strips) {
       el.innerHTML =
         `<div><div class="cs-label">Adresse</div><div class="cs-val">${esc(k.adresse)}<br>${esc(k.ort)}` +
@@ -238,11 +248,11 @@
         `<div><div class="cs-label">Telefon</div><div class="cs-val">${(k.telefon || []).map((t) =>
           `<a href="${esc(HD.telHref(t.nummer))}">${esc(t.nummer)}</a>${t.bezeichnung ? ` <span class="cs-note">${esc(t.bezeichnung)}</span>` : ''}`).join('<br>')}</div></div>` +
         `<div><div class="cs-label">E-Mail</div><div class="cs-val">${HD.mailHTML(k.email)}</div></div>` +
-        `<div><div class="cs-label">Pfarrkanzlei</div><div class="cs-val cs-hours">${hours.map((h) =>
-          `<span>${esc(h.tage)}</span><span>${esc(h.zeit)}</span>`).join('')}</div></div>`;
+        `<div><div class="cs-label">Pfarrkanzlei</div><div class="cs-val cs-hours">${hours.map((h) => (filled(h)
+          ? `<span>${esc(h.tage)}</span><span>${esc(h.zeit)}</span>` : '<span class="cs-gap" aria-hidden="true"></span>')).join('')}</div></div>`;
     }
     for (const el of lines) {
-      el.textContent = `Pfarrkanzlei: ${hours.map((h) => `${h.tage} ${h.zeit}`.trim()).join(' ')}`;
+      el.textContent = `Pfarrkanzlei: ${hours.filter(filled).map((h) => `${h.tage} ${h.zeit}`.trim()).join(' ')}`;
     }
   }
 

@@ -142,7 +142,13 @@
           `<label class="adm-label" for="blk-${i}">Überschrift der Reihe ${i + 1}</label>` +
           `<input class="adm-input" type="text" id="blk-${i}" data-blk="${i}" data-key="label" value="${esc(b.label)}" placeholder="z. B. Termine 2026/27 · donnerstags"/>` +
         '</div>' +
-        `<button type="button" class="adm-act danger" data-del-block="${i}">${icon('trash')}Reihe entfernen</button></div>` +
+        '<div class="adm-block-tools">' +
+          (blocks.length > 1
+            ? `<button type="button" class="adm-list-btn" data-move-block="${i}" data-dir="-1" aria-label="Reihe ${i + 1} nach oben" title="Nach oben"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
+              `<button type="button" class="adm-list-btn" data-move-block="${i}" data-dir="1" aria-label="Reihe ${i + 1} nach unten" title="Nach unten"${i === blocks.length - 1 ? ' disabled' : ''}>${icon('down')}</button>`
+            : '') +
+          `<button type="button" class="adm-act danger" data-del-block="${i}">${icon('trash')}Reihe entfernen</button>` +
+        '</div></div>' +
         /* Fuer den Kalender: Name des Termins, Uhrzeit und Ort */
         '<div class="adm-grid adm-blk-cal">' +
           '<div class="adm-field">' +
@@ -201,6 +207,16 @@
       const b = blocks[Number(t.dataset.clearPast)];
       b.daten = b.daten.filter((d) => d >= A.isoToday());
       renderBlocks(`[data-date-input="${t.dataset.clearPast}"]`);
+    }
+    if (t.dataset.moveBlock !== undefined) {
+      const i = Number(t.dataset.moveBlock);
+      const j = i + Number(t.dataset.dir);
+      if (j < 0 || j >= blocks.length) return;
+      [blocks[i], blocks[j]] = [blocks[j], blocks[i]];
+      /* Fokus wandert mit der Reihe; am Rand auf den anderen Pfeil */
+      const edge = j === 0 || j === blocks.length - 1;
+      renderBlocks(`[data-move-block="${j}"][data-dir="${edge ? -Number(t.dataset.dir) : t.dataset.dir}"]`);
+      $('rd-form').dispatchEvent(new Event('input', { bubbles: true }));
     }
     if (t.dataset.delBlock !== undefined) {
       blocks.splice(Number(t.dataset.delBlock), 1);
@@ -351,6 +367,7 @@
       A.showErrors(form, errors);
       return;
     }
+    if (art() === 'seite' && !await A.checkBlankRows([fakten])) return;
 
     const id = old ? old.id : uniqueId(titel);
     const r = { id, titel, kurztext, sichtbar: $('f-sichtbar').checked };
@@ -371,7 +388,7 @@
         text: lines($('f-text').value),
         termine: blocks.map((b) => ({ label: clean(b.label), name: clean(b.name), zeit: HD.isoTime(b.zeit), ort: clean(b.ort), daten: b.daten.slice().sort() }))
           .filter((b) => b.daten.length || b.label),
-        fakten: fakten.values().map((f) => ({ label: clean(f.label), wert: clean(f.wert), zusatz: clean(f.zusatz) })).filter((f) => f.wert),
+        fakten: fakten.values().map((f) => ({ label: clean(f.label), wert: clean(f.wert), zusatz: clean(f.zusatz) })).filter((f) => f.wert || A.isBlankRow(f)),
         kontakt: ko.email || ko.telefon || ko.anschrift ? ko : null,
         bild: currentImage() ? { ...currentImage(), art: bildart(), alt: clean($('f-alt').value) } : null
       });
@@ -429,7 +446,8 @@
         { key: 'wert', label: 'Angabe', placeholder: 'z. B. Pfarrsaal, Augustinerstraße 3' },
         { key: 'zusatz', label: 'Zusatz', placeholder: 'klein darunter (optional)' }
       ],
-      addLabel: 'Zeile hinzufügen', rowLabel: 'Angabe', labelFirst: true
+      addLabel: 'Zeile hinzufügen', rowLabel: 'Angabe', labelFirst: true,
+      blanks: true, name: '„Auf einen Blick“'
     });
     $('rd-new').hidden = !A.canAllRunden();
     $('rd-new').addEventListener('click', () => openEditor(-1));

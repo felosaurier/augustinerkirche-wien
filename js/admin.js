@@ -956,9 +956,28 @@
     dlg.close();
   }
 
+  /* Sichtbare Hoehe beobachten. Auf iPad/iPhone verdeckt die
+     Bildschirmtastatur den unteren Teil, ohne dass sich 100vh/100dvh oder
+     Media Queries aendern; daher Klassen und Variablen aus visualViewport:
+     adm-low (bis 760 px hoch), adm-short (bis 600 px), adm-kb (Tastatur
+     offen), --adm-vh / --adm-vt = Hoehe und Lage des sichtbaren Teils. */
+  function syncViewport() {
+    const vv = w.visualViewport;
+    const h = vv ? vv.height : w.innerHeight;
+    ROOT.style.setProperty('--adm-vh', `${Math.round(h)}px`);
+    ROOT.style.setProperty('--adm-vt', `${Math.round(vv ? vv.offsetTop : 0)}px`);
+    ROOT.classList.toggle('adm-low', h <= 760);
+    ROOT.classList.toggle('adm-short', h <= 600);
+    ROOT.classList.toggle('adm-kb', !!vv && w.innerHeight - vv.height > 80);
+  }
+  (w.visualViewport || w).addEventListener('resize', syncViewport);
+  if (w.visualViewport) w.visualViewport.addEventListener('scroll', syncViewport);
+  syncViewport();
+
   let cfCount = 0;
-  /* Rueckfrage als eigenes Fenster; liefert true bei Bestaetigung */
-  function confirmBox({ title, text, html, ok = 'OK', cancel = 'Abbrechen', danger = false }) {
+  /* Rueckfrage als eigenes Fenster mit frei waehlbaren Knoepfen;
+     liefert den value des gedrueckten Knopfes, bei Escape null */
+  function choiceBox({ title, text, html, buttons, focus }) {
     return new Promise((resolve) => {
       const id = `adm-cf-${++cfCount}`;
       const dlg = d.createElement('dialog');
@@ -969,15 +988,14 @@
         `<div class="adm-dlg-head"><div><div class="adm-dlg-tag">Rückfrage</div><h2 class="adm-dlg-title" id="${id}-t">${esc(title)}</h2></div></div>` +
         `<div class="adm-dlg-text" id="${id}-x">${html || esc(text)}</div>` +
         '<div class="adm-dlg-foot"><div class="adm-dlg-foot-r">' +
-          `<button type="button" class="btn btn-quiet" value="no">${esc(cancel)}</button>` +
-          `<button type="button" class="btn ${danger ? 'btn-danger' : 'btn-dark'}" value="yes">${esc(ok)}</button>` +
+          buttons.map((b) => `<button type="button" class="btn ${b.cls || 'btn-quiet'}" value="${esc(b.value)}">${esc(b.label)}</button>`).join('') +
         '</div></div>';
       d.body.appendChild(dlg);
-      let result = false;
+      let result = null;
       dlg.addEventListener('click', (e) => {
         const b = e.target.closest('button[value]');
         if (!b) return;
-        result = b.value === 'yes';
+        result = b.value;
         dlg.close();
       });
       dlg.addEventListener('close', () => {
@@ -987,8 +1005,18 @@
       });
       dlg.showModal();
       ROOT.classList.add('adm-lock');
-      dlg.querySelector(danger ? 'button[value="no"]' : 'button[value="yes"]').focus();
+      (dlg.querySelector(`button[value="${focus}"]`) || dlg.querySelector('button[value]:last-child')).focus();
     });
+  }
+
+  /* Ja/Nein-Rueckfrage; liefert true bei Bestaetigung */
+  async function confirmBox({ title, text, html, ok = 'OK', cancel = 'Abbrechen', danger = false }) {
+    const r = await choiceBox({
+      title, text, html,
+      buttons: [{ value: 'no', label: cancel }, { value: 'yes', label: ok, cls: danger ? 'btn-danger' : 'btn-dark' }],
+      focus: danger ? 'no' : 'yes'
+    });
+    return r === 'yes';
   }
 
   /* ---------- Formularfehler: am Feld und als Liste oben ---------- */
@@ -1058,15 +1086,32 @@
   }
 
   /* ---------- Liste mit Zeilen (z. B. Solisten: Name und Stimme) ----------
-     fields: [{key, label, placeholder, list}] — ein oder zwei Felder je Zeile */
-  function listEditor(host, { fields, addLabel, rowLabel, labelFirst }) {
+     fields: [{key, label, placeholder, list}] — ein bis drei Felder je Zeile.
+     Jede Zeile laesst sich mit den Pfeilen (oder Alt + Pfeil im Feld) nach
+     oben und unten schieben. blanks: true = eine ganz leere Zeile darf als
+     Abstand stehen bleiben (beim Speichern fragt checkBlankRows nach),
+     name: wie die Liste in dieser Rueckfrage heisst. */
+  const isBlankRow = (o) => Object.values(o).every((v) => !String(v || '').trim());
+
+  function listEditor(host, { fields, addLabel, rowLabel, labelFirst, blanks = false, name = '' }) {
     host.innerHTML = `<div class="adm-list"></div><button type="button" class="adm-list-add">${icon('plus')}${esc(addLabel)}</button>`;
     const listEl = host.firstElementChild;
     const addBtn = host.lastElementChild;
+    const rowValues = (row) => {
+      const o = {};
+      row.querySelectorAll('input').forEach((inp) => { o[inp.dataset.key] = inp.value.trim(); });
+      return o;
+    };
     function renumber() {
-      Array.from(listEl.children).forEach((row, i) => {
+      const rows = Array.from(listEl.children);
+      rows.forEach((row, i) => {
         row.querySelectorAll('input').forEach((inp, k) => inp.setAttribute('aria-label', `${fields[k].label} ${i + 1}`));
+        row.querySelector('[data-move="-1"]').setAttribute('aria-label', `${rowLabel} ${i + 1} nach oben`);
+        row.querySelector('[data-move="1"]').setAttribute('aria-label', `${rowLabel} ${i + 1} nach unten`);
         row.querySelector('.adm-list-del').setAttribute('aria-label', `${rowLabel} ${i + 1} entfernen`);
+        row.querySelector('[data-move="-1"]').disabled = i === 0;
+        row.querySelector('[data-move="1"]').disabled = i === rows.length - 1;
+        row.classList.toggle('is-blank', blanks && rows.length > 1 && isBlankRow(rowValues(row)));
       });
     }
     function add(values = {}, focus = false) {
@@ -1075,13 +1120,39 @@
       row.innerHTML = fields.map((f) =>
         `<input type="${f.type || 'text'}" class="adm-input" data-key="${f.key}" autocomplete="off"${f.list ? ` list="${f.list}"` : ''}` +
         ` placeholder="${esc(f.placeholder || '')}" value="${esc(values[f.key] || '')}"/>`
-      ).join('') + `<button type="button" class="adm-list-del">${icon('close')}</button>`;
+      ).join('') +
+        '<div class="adm-list-tools">' +
+          `<button type="button" class="adm-list-btn" data-move="-1" title="Nach oben">${icon('up')}</button>` +
+          `<button type="button" class="adm-list-btn" data-move="1" title="Nach unten">${icon('down')}</button>` +
+          `<button type="button" class="adm-list-btn adm-list-del" title="Entfernen">${icon('close')}</button>` +
+        '</div>';
       listEl.appendChild(row);
       renumber();
       if (focus) row.querySelector('input').focus();
       return row;
     }
+    function move(row, dir) {
+      const other = dir < 0 ? row.previousElementSibling : row.nextElementSibling;
+      if (!other) return false;
+      if (dir < 0) listEl.insertBefore(row, other);
+      else listEl.insertBefore(other, row);
+      renumber();
+      row.classList.remove('moved');
+      void row.offsetWidth;
+      row.classList.add('moved');
+      /* Aenderung melden, damit "noch nicht gespeichert" mitbekommt */
+      row.querySelector('input').dispatchEvent(new Event('input', { bubbles: true }));
+      return true;
+    }
     listEl.addEventListener('click', (e) => {
+      const mv = e.target.closest('[data-move]');
+      if (mv) {
+        const row = mv.closest('.adm-list-row');
+        move(row, Number(mv.dataset.move));
+        /* Fokus bleibt am Pfeil; am Rand auf den anderen Pfeil */
+        (mv.disabled ? row.querySelector(`[data-move="${-Number(mv.dataset.move)}"]`) : mv).focus();
+        return;
+      }
       const del = e.target.closest('.adm-list-del');
       if (!del) return;
       const row = del.closest('.adm-list-row');
@@ -1089,23 +1160,61 @@
       row.remove();
       renumber();
       (next ? next.querySelector('input') : addBtn).focus();
+      listEl.dispatchEvent(new Event('input', { bubbles: true }));
     });
+    listEl.addEventListener('keydown', (e) => {
+      if (!e.altKey || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') || e.target.tagName !== 'INPUT') return;
+      e.preventDefault();
+      move(e.target.closest('.adm-list-row'), e.key === 'ArrowUp' ? -1 : 1);
+      e.target.focus();
+    });
+    listEl.addEventListener('input', () => renumber());
     addBtn.addEventListener('click', () => add({}, true));
     return {
       el: listEl,
       add,
+      blanks,
+      name: name || addLabel,
       set(items) {
         listEl.innerHTML = '';
         items.forEach((it) => add(it));
       },
       values() {
-        return Array.from(listEl.children, (row) => {
-          const o = {};
-          row.querySelectorAll('input').forEach((inp) => { o[inp.dataset.key] = inp.value.trim(); });
-          return o;
-        });
+        return Array.from(listEl.children, rowValues);
+      },
+      /* Zahl der ganz leeren Zeilen (nur wenn es auch andere gibt) */
+      blankCount() {
+        const rows = Array.from(listEl.children, rowValues);
+        return rows.length > 1 ? rows.filter(isBlankRow).length : 0;
+      },
+      dropBlanks() {
+        for (const row of Array.from(listEl.children)) if (isBlankRow(rowValues(row))) row.remove();
+        renumber();
       }
     };
+  }
+
+  /* Vor dem Speichern: Gibt es in Listen mit blanks: true ganz leere Zeilen,
+     wird gefragt, ob sie als Abstand bleiben oder geloescht werden.
+     Liefert false, wenn weiter bearbeitet werden soll. */
+  async function checkBlankRows(editors) {
+    const hit = editors.filter((ed) => ed && ed.blanks && ed.blankCount());
+    if (!hit.length) return true;
+    const n = hit.reduce((sum, ed) => sum + ed.blankCount(), 0);
+    const where = hit.map((ed) => `<strong>${esc(ed.name)}</strong>`).join(' und ');
+    const r = await choiceBox({
+      title: n === 1 ? 'Freie Zeile gefunden' : `${n} freie Zeilen gefunden`,
+      html: `In ${where} ${n === 1 ? 'ist eine Zeile' : `sind ${n} Zeilen`} ganz leer.<br><br>` +
+        `Soll${n === 1 ? '' : 'en'} sie als <strong>Abstand</strong> stehen bleiben (auf der Website entsteht dort eine Lücke) oder gelöscht werden?`,
+      buttons: [
+        { value: 'back', label: 'Zurück' },
+        { value: 'del', label: 'Löschen' },
+        { value: 'keep', label: 'Als Abstand behalten', cls: 'btn-dark' }
+      ],
+      focus: 'keep'
+    });
+    if (r === 'del') hit.forEach((ed) => ed.dropBlanks());
+    return r === 'del' || r === 'keep';
   }
 
   /* ---------- Bilder ----------
@@ -1456,8 +1565,8 @@
     folder, readText, readJSON, markUnreadable, fetchText, saveFile, saveJSON, discardFile, hasUnsaved, imageUrl, fileName, dirName, stableFile, stableImage: stableFile, focusPos: HD.focusPos,
     credits,
     /* Oberflaeche */
-    toast, confirmBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
-    listEditor, toWebp, wireDrop, log, recentLog, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
+    toast, confirmBox, choiceBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
+    listEditor, checkBlankRows, isBlankRow, toWebp, wireDrop, log, recentLog, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
     /* Datum */
     isoToday, isoOf, fmtDate, fmtShort
   };

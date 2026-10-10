@@ -33,6 +33,22 @@
     for (const btn of qsa('.nav-btn[aria-expanded="true"]')) btn.setAttribute('aria-expanded', 'false');
   }
 
+  /* Aufklappmenue ganz im Fenster halten: ragt es rechts oder links hinaus
+     (z. B. "Augustiner" auf dem iPad quer), wird es seitlich verschoben.
+     `translate` statt `transform`, weil transform die Einblend-Animation traegt. */
+  function fitDropdown(item) {
+    const mega = qs('.mega', item);
+    if (!mega) return;
+    mega.style.translate = '';
+    const gap = 12;
+    const vw = document.documentElement.clientWidth;
+    const r = mega.getBoundingClientRect();
+    let shift = 0;
+    if (r.right > vw - gap) shift = vw - gap - r.right;
+    if (r.left + shift < gap) shift = gap - r.left;
+    if (shift) mega.style.translate = `${Math.round(shift)}px 0`;
+  }
+
   function initDropdowns() {
     const nav = qs('nav');
     if (!nav) return;
@@ -46,7 +62,13 @@
       if (!wasOpen) {
         item.classList.add('open');
         btn.setAttribute('aria-expanded', 'true');
+        fitDropdown(item);
       }
+    });
+
+    window.addEventListener('resize', () => {
+      const open = qs('.nav-item.open');
+      if (open) fitDropdown(open);
     });
 
     /* Tastatur: verlaesst der Fokus ein offenes Menue, schliesst es sich */
