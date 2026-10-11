@@ -957,6 +957,17 @@ footer{
   padding:2.6rem var(--edge);background:var(--blue-deep);color:rgba(255,255,255,.7);
 }
 .f-logo-wrap{display:flex;align-items:center;gap:.75rem}
+/* Verbotszeichen (Verhalten in der Kirche): heller Streifen oben in der Fusszeile, ueber die volle Breite.
+   Symbole aus assets/icons/verbote.svg; --verbot-bg ist die Luecke im Schraegstrich */
+.f-verbote{flex:0 0 100%;margin:-2.6rem 0 .4rem;padding:2rem 0 1.5rem;color:#a3302e;--verbot-bg:var(--bg-warm);
+  /* Hintergrund (oben die hellbraune Linie) ueber die ganze Fensterbreite: border-image malt
+     ueber den Rand hinaus, ohne dass sich die Seite seitlich verschieben laesst */
+  border-image:linear-gradient(#e3c9a3 6px,var(--bg-warm) 6px) fill 0 / 0 / 0 100vmax}
+.f-verbote ul{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem 2.4rem;max-width:var(--max);margin:0 auto;padding:0;list-style:none}
+.f-verbote li{display:block}
+.f-verbote svg{display:block;width:3.3rem;height:3.3rem}
+@media(max-width:640px){.f-verbote ul{gap:.8rem 1.1rem}.f-verbote svg{width:2.7rem;height:2.7rem}}
+@media(forced-colors:active){.f-verbote{color:CanvasText}}
 .f-logo-img{width:30px;height:30px;object-fit:contain;filter:brightness(0) saturate(100%) invert(80%) sepia(30%) saturate(600%) hue-rotate(3deg) brightness(95%)}
 .f-logo{font-family:var(--serif);font-size:1.15rem;font-weight:500;color:#fff}
 .f-logo span{color:inherit}

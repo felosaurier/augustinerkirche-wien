@@ -305,6 +305,7 @@ data/
 site.webmanifest              App-Manifest: Name, Farben, Symbole, Schnellzugriffe
 assets/
   logo.png, logo-gold.png     Logo (grün und golden), Favicons, Zierlinie
+  icons/verbote.svg           Verbotszeichen in der Fußzeile (Hunde, Handy, Eis, Essen, Rauchen, Schultern, kurze Kleidung, Musik, Hut, Luftballons)
   logo/                       Logo-Varianten für die Titelzeile: gold, gold-dunkel, weiss, schwarz, marine, gruen (je 300 × 300, durchsichtig)
   app/                        App-Symbole (192 und 512 Pixel, dazu maskierbar für Android)
   audio/cds/                  Hörproben zu den CDs (MP3, von hochamt.augustiner.at)
