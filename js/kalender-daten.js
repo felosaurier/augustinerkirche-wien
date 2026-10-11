@@ -11,6 +11,9 @@
      "ferien": [{name, von, bis, tage: ["di", "do", …]}], die Pause gilt nur an
      diesen Wochentagen) und "entfaellt": Tage, an denen ein Gottesdienst ausfällt
      (bleibt stehen, durchgestrichen und mit dem Hinweis "Entfällt")
+   - data/wochenkalender.json: der gedruckte Wochenkalender, Tag für Tag (Tagesbezeichnung,
+     Heilige und Gedenktage, Termine mit Zelebrant, Musik und Ort). Für die Tage, die dort
+     stehen, gilt er statt des allgemeinen Wochenplans
    Dazu die Darstellung eines Termins und eines Tages (gleich in Kalender und Woche).
    Benötigt js/hochaemter-data.js.
    ============================================================ */
@@ -26,6 +29,7 @@
   const GROUPS = [
     ['hochamt', 'Hochämter'],
     ['gottesdienst', 'Gottesdienste'],
+    ['tagzeit', 'Tagzeitenliturgie'],
     ['konzert', 'Konzerte'],
     ['runde', 'Runden'],
     ['veranstaltung', 'Veranstaltungen']
@@ -51,7 +55,8 @@
       return {
         date: e.date, time: e.time, group: konzert ? 'konzert' : HOCHAMT.test(e.type) ? 'hochamt' : 'gottesdienst',
         title: e.type, sub: [e.piece, e.location !== 'Augustinerkirche' ? e.location : ''].filter(Boolean).join(', '),
-        href: `${base}pages/hochamt.html?id=${encodeURIComponent(e.id)}`
+        href: `${base}pages/hochamt.html?id=${encodeURIComponent(e.id)}`, src: 'hochamt',
+        d: { name: e.type, zelebrant: e.celebrant || '', musik: e.piece || '', ort: e.location || '', hinweis: '', art: konzert ? 'veranstaltung' : HOCHAMT.test(e.type) ? 'hochamt' : 'gottesdienst' }
       };
     });
   }
@@ -69,7 +74,8 @@
           out.push({
             date, time: HD.isoTime(b.zeit), group: 'runde', title,
             sub: [title.toLowerCase() !== r.titel.toLowerCase() ? r.titel : '', b.ort].filter(Boolean).join(', '),
-            href: r.seite ? base + r.seite : ''
+            href: r.seite ? base + r.seite : '', src: 'runde',
+            d: { name: title, ort: b.ort || '', art: 'runde' }
           });
         }
       }
@@ -88,7 +94,8 @@
         date, time, ende, group: ART_GROUP[String(t.art || '').trim().toLowerCase()] || 'veranstaltung',
         art: t.art || '', title: t.titel,
         sub: [bis && bis > date ? `bis ${shortDate(bis)}` : '', t.ort].filter(Boolean).join(', '),
-        text: t.text || '', link: HD.safeUrl(t.link || '', base), bis
+        text: t.text || '', link: HD.safeUrl(t.link || '', base), bis, src: 'termin',
+        d: { name: t.titel, ort: t.ort || '', art: ART_GROUP[String(t.art || '').trim().toLowerCase()] || 'veranstaltung' }
       };
     }).filter(Boolean);
   }
@@ -102,9 +109,16 @@
     if (!von || !bis) return true;
     return von <= bis ? m >= von && m <= bis : m >= von || m <= bis;
   };
+  /* Plan-Einträge: art "" = Gottesdienst, "veranstaltung" oder "ohne" (keine Kategorie, z. B. Kanzleistunden);
+     "anschliessend" + "nach" = ohne Uhrzeit, im Anschluss an den Termin um "nach" (z. B. die Führung nach dem Hochamt) */
+  const PLACE = /^(Augustinerkirche|Loretokapelle|Pfarrsaal|Augustinussaal|Augustiner-Stüberl|Klosterkapelle)\b/i;
+  function planDetail(t) {
+    const h = String(t.hinweis || '').replace(/,?\s*September bis Juni(, nicht in den Ferien)?/i, '').replace(/^[,\s]+|[,\s]+$/g, '');
+    return PLACE.test(h) ? { ort: h, hinweis: '' } : { ort: '', hinweis: h };
+  }
   function fromWochenplan(data, existing) {
     const out = [];
-    const plan = ((data && data.termine) || []).filter((t) => t.liturgie && t.name && t.tag in DAY_IDX && HD.isoTime(t.zeit));
+    const plan = ((data && data.termine) || []).filter((t) => (t.liturgie || t.art) && t.name && t.tag in DAY_IDX && (HD.isoTime(t.zeit) || (t.anschliessend && HD.isoTime(t.nach))));
     if (!plan.length) return out;
     /* Was es schon gibt (z. B. das Hochamt am Sonntag), wird nicht doppelt gezeigt */
     const taken = new Set(existing.filter((it) => isMass(it.group)).map((it) => `${it.date} ${it.time}`));
@@ -125,12 +139,47 @@
         if (DAY_IDX[t.tag] !== d.getDay() || !inSeason(t, d.getMonth() + 1)) continue;
         if (inFerien(date, t.tag)) continue;
         const time = HD.isoTime(t.zeit);
-        if (taken.has(`${date} ${time}`)) continue;
+        if (time && !t.art && taken.has(`${date} ${time}`)) continue;
         const note = /Augustinerkirche|^September bis Juni/i.test(t.hinweis || '') ? '' : t.hinweis || '';
-        out.push({ date, time, group: /hochamt/i.test(t.name) ? 'hochamt' : 'gottesdienst', title: t.name, sub: note });
+        const group = t.art === 'ohne' ? 'ohne' : t.art === 'veranstaltung' ? 'veranstaltung' : t.art === 'tagzeit' || /^tagzeitenliturgie/i.test(t.name) ? 'tagzeit' : /hochamt/i.test(t.name) ? 'hochamt' : 'gottesdienst';
+        out.push({
+          date, time, group, title: t.name, sub: note, weekly: true, src: 'plan',
+          d: { name: t.name, art: group === 'ohne' ? 'veranstaltung' : group, ...planDetail(t) },
+          ...(!time ? { label: 'anschl.', sort: `${HD.isoTime(t.nach)}~` } : {})
+        });
       }
     }
     return out;
+  }
+  /* Wochenkalender (data/wochenkalender.json): je Tag Tagesbezeichnung, Heilige und die Angaben zu den Terminen
+     der Woche (Zelebrant, Musik, Ort). Ein Eintrag ersetzt den Termin des Kalenders um dieselbe Uhrzeit
+     (bzw. "anschliessend" an dieselbe Uhrzeit), behält dessen Link, und gibt es dort keinen, kommt er neu dazu.
+     "entfaellt": steht nicht im Wochenkalender (in der Verwaltung durchgestrichen). */
+  const ART_GROUP_WK = { hochamt: 'hochamt', gottesdienst: 'gottesdienst', tagzeit: 'tagzeit', runde: 'runde', veranstaltung: 'veranstaltung' };
+  const slotOf = (it) => `${it.date} ${it.time || it.sort || ''}`;
+  function fromWochenkalender(data) {
+    const items = [];
+    const info = new Map();
+    for (const day of (data && data.tage) || []) {
+      const date = HD.isoDate(day.datum);
+      if (!date) continue;
+      const heilige = (day.heilige || []).map((h) => String(h).trim()).filter(Boolean);
+      const tag = String(day.tag || '').trim();
+      if (tag || heilige.length) info.set(date, { tag, heilige });
+      for (const t of day.termine || []) {
+        if (!t || !t.name) continue;
+        const time = HD.isoTime(t.zeit);
+        const group = ART_GROUP_WK[t.art] || (/hochamt/i.test(t.name) ? 'hochamt' : 'veranstaltung');
+        const sub = [t.zelebrant ? `Z: ${t.zelebrant}` : '', t.musik ? `♫ ${t.musik}` : '', t.ort, t.hinweis]
+          .map((x) => String(x || '').trim()).filter(Boolean).join(' · ');
+        items.push({
+          date, time, group, title: t.zusatz ? `${t.name} (${t.zusatz})` : t.name, sub, src: 'wk', hidden: !!t.entfaellt,
+          d: { name: t.name, zusatz: t.zusatz || '', zelebrant: t.zelebrant || '', musik: t.musik || '', ort: t.ort || '', hinweis: t.hinweis || '', art: group },
+          ...(!time && t.anschliessend && HD.isoTime(t.nach) ? { label: 'anschl.', sort: `${HD.isoTime(t.nach)}~` } : {})
+        });
+      }
+    }
+    return { items, info };
   }
   /* Ausfälle: ohne Uhrzeit entfallen alle Gottesdienste des Tages */
   function applyAusfaelle(items, data) {
@@ -139,7 +188,8 @@
       if (!date) continue;
       const time = HD.isoTime(a.zeit);
       for (const it of items) {
-        if (isMass(it.group) && it.date === date && (!time || it.time === time)) {
+        /* ohne Uhrzeit entfallen die Gottesdienste des Tages; Termine aus dem Wochenplan nur mit Uhrzeit */
+        if (it.date === date && ((isMass(it.group) && (!time || it.time === time)) || (it.weekly && time && it.time === time))) {
           it.cancelled = true;
           it.why = String(a.grund || '');
         }
@@ -159,33 +209,57 @@
   /* Alle Termine, sortiert nach Tag und Uhrzeit (ohne Uhrzeit zuletzt); Monat und Woche
      auf derselben Seite laden nur einmal */
   const loaded = new Map();
-  function load(base = '') {
+  /* opts.all: auch die Termine, die im Wochenkalender entfallen (für die Verwaltung); sonst fehlen sie */
+  function load(base = '', opts = {}) {
     if (!loaded.has(base)) loaded.set(base, collect(base));
-    return loaded.get(base).then((list) => list.map((it) => ({ ...it })));
+    return loaded.get(base).then((all) => {
+      dayInfo = all.info;
+      return all.items.filter((it) => opts.all || !it.hidden).map((it) => ({ ...it }));
+    });
   }
+  /* nach einer Änderung in der Verwaltung neu einlesen */
+  const refresh = (base = '') => { loaded.delete(base); };
+  /* Tagesbezeichnung und Heilige des Wochenkalenders (nach load) */
+  let dayInfo = new Map();
   async function collect(base) {
-    const [ha, rd, tm, gd] = await Promise.all([
+    const [ha, rd, tm, gd, wk] = await Promise.all([
       HD.load(`${base}data/hochaemter.csv`).catch(() => []),
       getJSON(`${base}data/runden.json`),
       getJSON(`${base}data/termine.json`),
-      getJSON(`${base}data/gottesdienste.json`)
+      getJSON(`${base}data/gottesdienste.json`),
+      getJSON(`${base}data/wochenkalender.json`)
     ]);
     const items = [...fromHochaemter(ha, base), ...fromRunden(rd, base), ...fromTermine(tm, base)];
     items.push(...fromWochenplan(gd, items));
     applyAusfaelle(items, gd);
-    return items.sort((a, b) => (a.date + (a.time || '99')).localeCompare(b.date + (b.time || '99')));
+    /* Wochenkalender: ersetzt den Termin des Kalenders am gleichen Platz und behält dessen Link */
+    const wochen = fromWochenkalender(wk);
+    for (const w of wochen.items) {
+      const i = items.findIndex((it) => slotOf(it) === slotOf(w));
+      if (i >= 0) {
+        w.href = items[i].href || '';
+        w.from = items[i].src;
+        w.cancelled = items[i].cancelled;
+        w.why = items[i].why;
+        items.splice(i, 1);
+      }
+    }
+    items.push(...wochen.items);
+    items.sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
+    return { items, info: wochen.info };
   }
+  const sortKey = (it) => it.date + (it.sort || it.time || '99');
 
   /* ---------- Darstellung ---------- */
   function itemHTML(it, past, base = '') {
-    const time = it.time ? `${it.time}${it.ende ? `–${it.ende}` : ''}` : '';
+    const time = it.label || (it.time ? `${it.time}${it.ende ? `–${it.ende}` : ''}` : '');
     const head = `<span class="cal-time${time ? '' : ' empty'}">${esc(time) || '&nbsp;'}</span>` +
       '<span class="cal-main">' +
         `<span class="cal-title">${esc(it.title)}</span>` +
         (it.cancelled ? `<span class="cal-flag">Entfällt${it.why ? `: ${esc(it.why)}` : ''}</span>` : '') +
         (it.sub ? `<span class="cal-sub">${esc(it.sub)}</span>` : '') +
       '</span>' +
-      `<span class="cal-cat"><i class="cal-dot g-${it.group}"></i>${esc(it.art || groupName.get(it.group))}</span>`;
+      (it.group === 'ohne' ? '' : `<span class="cal-cat"><i class="cal-dot g-${it.group}"></i>${esc(it.art || groupName.get(it.group))}</span>`);
     const cls = `cal-item g-${it.group}${past ? ' past' : ''}${it.cancelled ? ' cancelled' : ''}`;
     if (it.href) return `<li class="${cls}"><a class="cal-row" href="${esc(it.href)}">${head}</a></li>`;
     if (it.text) {
@@ -203,12 +277,15 @@
   function dayHTML(iso, its, today, { base = '', empty = '', extraClass = '', id = `tag-${iso}` } = {}) {
     const dt = HD.dateFromIso(iso);
     const past = iso < today;
+    const inf = dayInfo.get(iso);
+    const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag, ...inf.heilige].filter(Boolean).map(esc).join(' · ')}</p>` : '';
     return `<section class="cal-day${past ? ' past' : ''}${iso === today ? ' today' : ''}${extraClass ? ` ${extraClass}` : ''}" id="${id}" aria-labelledby="h-${id}">` +
       `<h3 class="cal-date" id="h-${id}"><span class="cal-d">${dt.getDate()}</span>` +
       `<span class="cal-wd">${WEEKDAYS[dt.getDay()]}${iso === today ? ', heute' : ''}<span class="cal-mo">${MONTHS[dt.getMonth()]}</span></span></h3>` +
+      '<div class="cal-body">' + infoHTML +
       (its.length ? `<ul class="cal-items">${its.map((it) => itemHTML(it, past, base)).join('')}</ul>` : `<p class="cal-none">${esc(empty)}</p>`) +
-      '</section>';
+      '</div></section>';
   }
 
-  w.KalenderDaten = { GROUPS, groupName, isMass, isoOf, shortDate, load, itemHTML, dayHTML };
+  w.KalenderDaten = { GROUPS, groupName, isMass, isoOf, shortDate, load, refresh, slotOf, itemHTML, dayHTML };
 })(window);

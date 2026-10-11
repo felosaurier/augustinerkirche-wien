@@ -1,26 +1,66 @@
 {
   "termine": [
     {
-      "tag": "so",
-      "zeit": "11:00",
-      "name": "Hochamt mit Chor, Solisten & Orchester",
-      "hinweis": "Augustinerkirche",
-      "liturgie": true,
-      "hervorheben": true
-    },
-    {
-      "tag": "so",
+      "tag": "mo",
       "zeit": "18:30",
       "name": "Heilige Messe",
-      "hinweis": "Augustinerkirche",
+      "hinweis": "Loretokapelle, September bis Juni, nicht in den Ferien",
       "liturgie": true,
-      "hervorheben": false
+      "hervorheben": false,
+      "von": 9,
+      "bis": 6
+    },
+    {
+      "tag": "di",
+      "zeit": "07:15",
+      "name": "Tagzeitenliturgie",
+      "hinweis": "Loretokapelle",
+      "liturgie": true,
+      "hervorheben": false,
+      "art": "tagzeit"
+    },
+    {
+      "tag": "di",
+      "zeit": "10:00",
+      "name": "Kanzleistunden",
+      "hinweis": "bis 12:00 Uhr, Eingang: Augustinerstraße 3",
+      "liturgie": false,
+      "hervorheben": false,
+      "art": "ohne"
+    },
+    {
+      "tag": "di",
+      "zeit": "18:00",
+      "name": "Tagzeitenliturgie",
+      "hinweis": "Loretokapelle",
+      "liturgie": true,
+      "hervorheben": false,
+      "art": "tagzeit"
     },
     {
       "tag": "di",
       "zeit": "18:30",
       "name": "Heilige Messe",
       "hinweis": "Augustinerkirche, September bis Juni, nicht in den Ferien",
+      "liturgie": true,
+      "hervorheben": false,
+      "von": 9,
+      "bis": 6
+    },
+    {
+      "tag": "mi",
+      "zeit": "07:15",
+      "name": "Tagzeitenliturgie",
+      "hinweis": "Loretokapelle",
+      "liturgie": true,
+      "hervorheben": false,
+      "art": "tagzeit"
+    },
+    {
+      "tag": "mi",
+      "zeit": "18:30",
+      "name": "Heilige Messe",
+      "hinweis": "Loretokapelle, September bis Juni, nicht in den Ferien",
       "liturgie": true,
       "hervorheben": false,
       "von": 9,
@@ -36,6 +76,24 @@
     },
     {
       "tag": "do",
+      "zeit": "07:15",
+      "name": "Tagzeitenliturgie",
+      "hinweis": "Loretokapelle",
+      "liturgie": true,
+      "hervorheben": false,
+      "art": "tagzeit"
+    },
+    {
+      "tag": "do",
+      "zeit": "18:00",
+      "name": "Tagzeitenliturgie",
+      "hinweis": "Loretokapelle",
+      "liturgie": true,
+      "hervorheben": false,
+      "art": "tagzeit"
+    },
+    {
+      "tag": "do",
       "zeit": "18:30",
       "name": "Heilige Messe",
       "hinweis": "Augustinerkirche, September bis Juni, nicht in den Ferien",
@@ -43,6 +101,15 @@
       "hervorheben": false,
       "von": 9,
       "bis": 6
+    },
+    {
+      "tag": "fr",
+      "zeit": "07:15",
+      "name": "Tagzeitenliturgie",
+      "hinweis": "Loretokapelle",
+      "liturgie": true,
+      "hervorheben": false,
+      "art": "tagzeit"
     },
     {
       "tag": "fr",
@@ -55,6 +122,15 @@
       "bis": 6
     },
     {
+      "tag": "fr",
+      "zeit": "10:00",
+      "name": "Kanzleistunden",
+      "hinweis": "bis 12:00 Uhr, Eingang: Augustinerstraße 3",
+      "liturgie": false,
+      "hervorheben": false,
+      "art": "ohne"
+    },
+    {
       "tag": "sa",
       "zeit": "18:30",
       "name": "Vorabendmesse",
@@ -63,8 +139,41 @@
       "hervorheben": false,
       "von": 9,
       "bis": 6
+    },
+    {
+      "tag": "so",
+      "zeit": "11:00",
+      "name": "Hochamt mit Chor, Solisten & Orchester",
+      "hinweis": "Augustinerkirche",
+      "liturgie": true,
+      "hervorheben": true
+    },
+    {
+      "tag": "so",
+      "zeit": "",
+      "anschliessend": true,
+      "nach": "11:00",
+      "name": "Führung in der Loretokapelle",
+      "hinweis": "Loretokapelle, Herzgruft",
+      "liturgie": false,
+      "hervorheben": false,
+      "art": "veranstaltung"
+    },
+    {
+      "tag": "so",
+      "zeit": "18:30",
+      "name": "Heilige Messe",
+      "hinweis": "Augustinerkirche",
+      "liturgie": true,
+      "hervorheben": false
     }
   ],
   "ferien": [],
-  "entfaellt": []
+  "entfaellt": [
+    {
+      "datum": "2026-10-12",
+      "zeit": "",
+      "grund": ""
+    }
+  ]
 }

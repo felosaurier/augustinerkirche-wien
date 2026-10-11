@@ -43,6 +43,7 @@
     /* Tag -> Gruppe -> gibt es mindestens einen Termin, der stattfindet? */
     const byDay = new Map();
     for (const it of visible().filter(inMonth)) {
+      if (!groupName.has(it.group)) continue;
       if (!byDay.has(it.date)) byDay.set(it.date, new Map());
       const g = byDay.get(it.date);
       g.set(it.group, g.get(it.group) || !it.cancelled);
@@ -80,7 +81,7 @@
   function listHTML() {
     const today = todayIso();
     const all = visible().filter(inMonth)
-      .sort((a, b) => (a.date + (a.time || '99')).localeCompare(b.date + (b.time || '99')));
+      .sort((a, b) => (a.date + (a.sort || a.time || '99')).localeCompare(b.date + (b.sort || b.time || '99')));
     if (!all.length) {
       const any = items.filter(inMonth).length;
       return `<p class="cal-empty">${any
@@ -100,7 +101,7 @@
   function filterHTML() {
     const counts = new Map(GROUPS.map(([g]) => [g, 0]));
     const inThis = items.filter(inMonth);
-    for (const it of inThis) counts.set(it.group, counts.get(it.group) + 1);
+    for (const it of inThis) if (counts.has(it.group)) counts.set(it.group, counts.get(it.group) + 1);
     const btn = (g, label, n) =>
       `<button type="button" class="cal-filter${g ? ` g-${g}` : ''}" data-group="${g}" aria-pressed="${g ? filter.has(g) : !filter.size}">` +
         `${g ? `<i class="cal-dot g-${g}"></i>` : ''}${label}<span class="n">${n}</span></button>`;

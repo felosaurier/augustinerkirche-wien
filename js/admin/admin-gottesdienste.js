@@ -22,7 +22,11 @@
   const PATH = 'data/gottesdienste.json';
   const DAYS = { so: 'Sonntag', mo: 'Montag', di: 'Dienstag', mi: 'Mittwoch', do: 'Donnerstag', fr: 'Freitag', sa: 'Samstag' };
   const ORDER = Object.keys(DAYS);
-  const byDay = (a, b) => ORDER.indexOf(a.tag) - ORDER.indexOf(b.tag) || a.zeit.localeCompare(b.zeit);
+  const keyOf = (t) => t.zeit || `${t.nach || '99:99'}~`;
+  const timeText = (t) => t.zeit || 'anschl.';
+  /* Anzeige von Montag an (ORDER bleibt Sonntag zuerst, wie getDay()) */
+  const FROM_MONDAY = ['mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];
+  const byDay = (a, b) => FROM_MONDAY.indexOf(a.tag) - FROM_MONDAY.indexOf(b.tag) || keyOf(a).localeCompare(keyOf(b));
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const MONTHS = A.HD.MONTHS;
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
@@ -61,7 +65,7 @@
       return;
     }
     $('gd-list').innerHTML = '<ul class="adm-rows">' + termine.map((t, i) =>
-      `<li class="adm-row" data-key="${esc(`${t.tag}-${t.zeit}-${t.name}`)}">` +
+      `<li class="adm-row" data-key="${esc(`${t.tag}-${keyOf(t)}-${t.name}`)}">` +
         `<button type="button" class="adm-row-open" data-act="edit" data-i="${i}">` +
           `<span class="adm-date"><span class="adm-day">${esc(DAYS[t.tag].slice(0, 2))}</span><span class="adm-wd">${esc(DAYS[t.tag])}</span></span>` +
           '<span class="adm-row-body">' +
@@ -69,12 +73,12 @@
             (t.hinweis ? `<span class="adm-row-meta">${esc(t.hinweis)}</span>` : '') +
             (season(t) ? `<span class="adm-row-meta">Im Kalender nur ${esc(season(t))}</span>` : '') +
             (pauses(t).length ? `<span class="adm-row-meta">Pause: ${pauses(t).map((f) => esc(f.name)).join(', ')}</span>` : '') +
-            `<span class="adm-chip${t.liturgie ? '' : ' past'}">${t.liturgie ? 'Liturgie-Zeiten und Wochenüberblick' : 'Nur im Wochenüberblick'}</span>` +
+            `<span class="adm-chip${t.liturgie || t.art ? '' : ' past'}">${t.liturgie ? 'Liturgie-Zeiten und Kalender' : t.art === 'ohne' ? 'Im Kalender, ohne Kategorie' : t.art === 'tagzeit' ? 'Im Kalender als Tagzeitenliturgie' : t.art ? 'Im Kalender als Veranstaltung' : 'Nicht im Kalender'}</span>` +
           '</span>' +
-          `<span class="adm-row-time">${esc(t.zeit)}</span>` +
+          `<span class="adm-row-time">${esc(timeText(t))}</span>` +
         '</button>' +
         '<div class="adm-row-actions">' +
-          `<button type="button" class="adm-act danger" data-act="del" data-i="${i}" aria-label="Löschen: ${esc(`${DAYS[t.tag]} ${t.zeit} ${t.name}`)}">${icon('trash')}Löschen</button>` +
+          `<button type="button" class="adm-act danger" data-act="del" data-i="${i}" aria-label="Löschen: ${esc(`${DAYS[t.tag]} ${timeText(t)} ${t.name}`)}">${icon('trash')}Löschen</button>` +
         '</div></li>'
     ).join('') + '</ul>';
   }
@@ -116,7 +120,7 @@
           '<span class="adm-row-body">' +
             `<span class="adm-row-title">${esc(f.name)}</span>` +
             `<span class="adm-row-meta">${esc(range(f))} · ${esc(tageText(f))}</span>` +
-            `<span class="adm-chip${f.bis < today ? ' past' : ''}">${f.bis < today ? 'Schon vorbei' : `${f.von <= today ? 'Läuft gerade, ' : ''}${plural(termine.filter((t) => t.liturgie && tageOf(f).includes(t.tag)).length, 'Gottesdienst', 'Gottesdienste')} im Wochenplan betroffen`}</span>` +
+            `<span class="adm-chip${f.bis < today ? ' past' : ''}">${f.bis < today ? 'Schon vorbei' : `${f.von <= today ? 'Läuft gerade, ' : ''}${plural(termine.filter((t) => (t.liturgie || t.art) && tageOf(f).includes(t.tag)).length, 'Gottesdienst', 'Gottesdienste')} im Wochenplan betroffen`}</span>` +
           '</span><span></span>' +
         '</button>' +
         '<div class="adm-row-actions">' +
@@ -205,7 +209,7 @@
     }
     const what = (a) => {
       if (!a.zeit) return 'Alle Gottesdienste an diesem Tag';
-      const t = termine.find((x) => x.liturgie && x.zeit === a.zeit && x.tag === dayKey(a.datum));
+      const t = termine.find((x) => (x.liturgie || x.art) && x.zeit === a.zeit && x.tag === dayKey(a.datum));
       return `${a.zeit} Uhr${t ? ` · ${t.name}` : ''}`;
     };
     $('ax-list').innerHTML = '<ul class="adm-rows">' + ausfaelle.map((a, i) =>
@@ -228,7 +232,7 @@
   function fillWelche(datum, zeit) {
     const sel = $('ax-welche');
     const day = A.HD.isoDate(datum) ? dayKey(A.HD.isoDate(datum)) : '';
-    const plan = termine.filter((t) => t.liturgie && t.tag === day);
+    const plan = termine.filter((t) => (t.liturgie || t.art) && t.zeit && t.tag === day);
     sel.innerHTML = '<option value="">Alle Gottesdienste an diesem Tag</option>' +
       plan.map((t) => `<option value="${esc(t.zeit)}">${esc(t.zeit)} Uhr · ${esc(t.name)}</option>`).join('') +
       '<option value="andere">Andere Uhrzeit …</option>';
@@ -297,6 +301,19 @@
     }
   }
 
+  /* "Anschließend an": die Termine mit Uhrzeit am gewählten Wochentag */
+  function fillNach(tag, selected) {
+    const timed = termine.filter((x) => x.tag === tag && x.zeit);
+    $('f-nach').innerHTML = timed.length
+      ? timed.map((x) => `<option value="${esc(x.zeit)}">${esc(x.zeit)} Uhr · ${esc(x.name)}</option>`).join('')
+      : '<option value="">(an diesem Tag gibt es noch keinen Termin mit Uhrzeit)</option>';
+    const hochamt = timed.find((x) => /hochamt/i.test(x.name));
+    $('f-nach').value = selected || (hochamt || timed[0] || {}).zeit || '';
+  }
+  function syncAnschl() {
+    $('f-nach-field').hidden = !$('f-anschl').checked;
+  }
+
   function openEditor(i) {
     const t = i >= 0 ? termine[i] : null;
     editIndex = i;
@@ -305,14 +322,18 @@
     A.clearErrors(form);
     $('f-tag').value = t ? t.tag : 'so';
     $('f-zeit').value = t ? t.zeit : '18:30';
+    $('f-anschl').checked = !!(t && t.anschliessend);
+    fillNach(t ? t.tag : 'so', t && t.nach);
+    syncAnschl();
     $('f-name').value = t ? t.name : 'Heilige Messe';
     $('f-hinweis').value = t ? t.hinweis : 'Augustinerkirche';
     $('f-von').value = t && t.von ? String(t.von) : '';
     $('f-bis').value = t && t.bis ? String(t.bis) : '';
+    $('f-art').value = t && t.art === 'ohne' ? 'ohne' : '';
     $('f-liturgie').checked = t ? !!t.liturgie : true;
     $('f-hervorheben').checked = !!(t && t.hervorheben);
     $('gd-dlg-tag').textContent = t ? 'Termin bearbeiten' : 'Neuer Termin';
-    $('gd-dlg-title').textContent = t ? `${DAYS[t.tag]}, ${t.zeit} Uhr` : 'Neuer Gottesdienst';
+    $('gd-dlg-title').textContent = t ? `${DAYS[t.tag]}, ${t.zeit ? `${t.zeit} Uhr` : 'anschließend'}` : 'Neuer regelmäßiger Termin';
     $('gd-delete').hidden = !t;
     A.openDialog($('gd-dlg'), { isDirty: () => A.snapshot(form) !== snap });
     snap = A.snapshot(form);
@@ -330,16 +351,20 @@
   async function save(ev) {
     ev.preventDefault();
     const form = $('gd-form');
+    const anschl = $('f-anschl').checked;
     const t = {
-      tag: $('f-tag').value, zeit: A.HD.isoTime($('f-zeit').value), name: clean($('f-name').value),
+      tag: $('f-tag').value, zeit: anschl ? '' : A.HD.isoTime($('f-zeit').value), name: clean($('f-name').value),
       hinweis: clean($('f-hinweis').value), liturgie: $('f-liturgie').checked, hervorheben: $('f-hervorheben').checked
     };
+    if (anschl) Object.assign(t, { anschliessend: true, nach: $('f-nach').value });
+    if ($('f-art').value) t.art = $('f-art').value;
     const von = Number($('f-von').value);
     const bis = Number($('f-bis').value);
     if (von && bis) Object.assign(t, { von, bis });
     const errors = [];
     if (!von !== !bis) errors.push([$(von ? 'f-bis' : 'f-von'), 'Bitte beide Monate wählen, oder beide leer lassen (das ganze Jahr).']);
-    if (!t.zeit) errors.push([$('f-zeit'), 'Bitte die Uhrzeit eintragen.']);
+    if (!anschl && !t.zeit) errors.push([$('f-zeit'), 'Bitte die Uhrzeit eintragen oder „anschließend“ wählen.']);
+    if (anschl && !t.nach) errors.push([$('f-nach'), 'Lege zuerst den Termin mit Uhrzeit an, an den dieser anschließt.']);
     if (!t.name) errors.push([$('f-name'), 'Bitte eine Bezeichnung eintragen, z. B. Heilige Messe.']);
     if (errors.length) {
       A.showErrors(form, errors);
@@ -349,9 +374,9 @@
     if (editIndex >= 0) next[editIndex] = t;
     else next.push(t);
     try {
-      await store(next, `Gespeichert: ${DAYS[t.tag]}, ${t.zeit} · ${t.name}.`);
+      await store(next, `Gespeichert: ${DAYS[t.tag]}, ${timeText(t)} · ${t.name}.`);
       $('gd-dlg').close();
-      flash(`${t.tag}-${t.zeit}-${t.name}`);
+      flash(`${t.tag}-${keyOf(t)}-${t.name}`);
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
     }
@@ -361,12 +386,12 @@
     const t = termine[i];
     const ok = await A.confirmBox({
       title: 'Termin löschen?',
-      html: `<strong>${esc(DAYS[t.tag])}, ${esc(t.zeit)} Uhr</strong> · ${esc(t.name)}<br><br>Der Termin verschwindet aus dem Wochenplan der Website.`,
+      html: `<strong>${esc(DAYS[t.tag])}, ${esc(timeText(t))}</strong> · ${esc(t.name)}<br><br>Der Termin verschwindet aus dem Kalender und Wochenplan der Website.`,
       ok: 'Löschen', danger: true
     });
     if (!ok) return false;
     try {
-      await store(termine.filter((x) => x !== t), `Gelöscht: ${DAYS[t.tag]}, ${t.zeit} · ${t.name}.`);
+      await store(termine.filter((x) => x !== t), `Gelöscht: ${DAYS[t.tag]}, ${timeText(t)} · ${t.name}.`);
       return true;
     } catch (err) {
       A.toast(`Löschen nicht möglich: ${err.message}`, 'err');
@@ -416,6 +441,8 @@
         }
       }
     });
+    $('f-anschl').addEventListener('change', syncAnschl);
+    $('f-tag').addEventListener('change', () => fillNach($('f-tag').value));
     $('gd-new').addEventListener('click', () => openEditor(-1));
     $('gd-form').addEventListener('submit', save);
     $('gd-delete').addEventListener('click', async () => {

@@ -47,7 +47,7 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B. `http://localhost:8123/admin/`). Sie ist im Stil der Website gestaltet, nicht in der öffentlichen Navigation verlinkt und nur mit **Benutzername und Passwort** erreichbar.
 
 **Aufbau der Verwaltung** (Reiter oben, darunter die Unterpunkte; jede Person sieht nur, was sie bearbeiten darf):
-Übersicht · **Neuigkeiten** · **Termine** · **Hochämter** (häufig gebraucht) · **Inhalte** (Pfarre & Kloster: Gottesdienste, Runden, Pfarrkanzlei & Kontakt, Kirchenrundgang, Pfarrgemeinderat, Mitbrüder; Kirchenmusik: Solisten, Repertoire, Leitung & Organisten, Paten, CDs) · **Einstellungen** (Titelfotos, Hinweisbanner, Sprüche, Farben & Logo, Impressum & Datenschutz, Zugänge, Änderungen, Mitteilungen). Oben rechts: Mein Profil, Website, Abmelden.
+Übersicht · **Neuigkeiten** · **Termine** · **Hochämter** (häufig gebraucht) · **Inhalte** (Pfarre & Kloster: Regelmäßige Termine, Wochenkalender, Runden, Pfarrkanzlei & Kontakt, Kirchenrundgang, Pfarrgemeinderat, Mitbrüder; Kirchenmusik: Solisten, Repertoire, Leitung & Organisten, Paten, CDs) · **Einstellungen** (Titelfotos, Hinweisbanner, Sprüche, Farben & Logo, Impressum & Datenschutz, Zugänge, Änderungen, Mitteilungen). Oben rechts: Mein Profil, Website, Abmelden.
 
 | Bereich | Was du dort machst |
 |---|---|
@@ -55,8 +55,9 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Hochämter** | Fotos je Termin (mehrere, mit Beschreibung und Bildnachweis; erscheinen neben dem Programm, wo sonst das Plakat steht; gibt es ein Plakat, stehen sie darunter); Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
 | **Titelfotos** (Einstellungen) | Titelfotos im Vollbild-Start der vier Hauptseiten, oben das Thema wählen (Augustinerkirche = Startseite, Kirchenmusik, Augustiner, Aspersdorf; Fotos der anderen Themen lassen sich wieder verwenden): Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
-| **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
-| **Gottesdienste** | Wochenplan (Liturgie-Zeiten; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen) |
+| **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender; derselbe Termin an mehreren Tagen auf einmal (Weitere Tage) |
+| **Regelmäßige Termine** | Alles, was jede Woche gleich ist: Messen, Tagzeitenliturgie, Kanzleistunden, die Führung nach dem Hochamt (je Termin Wochentag, Uhrzeit oder „anschließend“, Kategorie im Kalender: Gottesdienst, Veranstaltung oder keine; optional „Gilt von … bis …“ Monat; Gottesdienste auch unter Liturgie-Zeiten); „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit nichts stattfindet); „Entfällt“ (fällt an einem Tag etwas aus, bleibt es im Kalender durchgestrichen mit Grund stehen) |
+| **Wochenkalender** | Vorschau des gedruckten Wochenkalenders, Woche für Woche: zeigt alles aus dem Kalender (regelmäßige Termine, Hochämter, Runden, eigene Termine). Dazu trägst du die Einzelheiten der Woche ein: je Tag Tagesbezeichnung und Heilige, je Termin Zelebrant, Musik, Ort und Hinweis, und Termine, die es sonst nicht gibt. Ein Termin, der nicht stattfindet, „entfällt“: er steht nicht im Wochenkalender und ist in der Verwaltung durchgestrichen (kein Löschen und Kopieren). Gespeichert in `data/wochenkalender.json`; ein Eintrag ersetzt den Termin des Kalenders um dieselbe Uhrzeit und behält dessen Link |
 | **Pfarrkanzlei & Kontakt** | Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
 | **Impressum & Datenschutz** (Einstellungen) | Impressum und Datenschutzerklärung Abschnitt für Abschnitt: Überschrift, Text mit Werkzeugleiste (fett, Link, Telefon, Liste, Tabelle, Zwischentitel, „fehlt noch“), Reihenfolge, Vorschau je Abschnitt und der ganzen Seite |
 | **Änderungen** (nur Entwickler, oben rechts) | Alle Änderungen von allen Personen als Tabelle: Zeitpunkt, Person, Bereich, was genau (vorher → nachher), Suche und Filter, Export als CSV. Quelle ist `admin/protokoll.json`, das bei jedem Speichern mitgeschrieben wird (mit Projektordner oder auf dem Server) |
@@ -222,6 +223,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   hochaemter.html             Hochämter pflegen
   neuigkeiten.html            Neuigkeiten und Plakate pflegen
   termine.html                Eigene Termine für den Kalender pflegen
+  wochenkalender.html         Wochenkalender (gedruckter Wochenplan) pflegen
   paten.html                  Paten der Kirchenmusik pflegen
   cds.html                    CDs mit Cover und Hörproben pflegen
   pgr.html                    Pfarrgemeinderat pflegen
@@ -295,7 +297,8 @@ data/
   pgr.json                    Pfarrgemeinderat
   bildnachweise.json          Bildnachweis je Bild, erscheint unter dem Bild
   solisten.json               Solistinnen und Solisten mit Stimmlage
-  gottesdienste.json          Wochenplan der Gottesdienste
+  gottesdienste.json          Regelmäßige Termine der Woche, Ferien, Ausfälle
+  wochenkalender.json         Wochenkalender Tag für Tag (Heilige, Zelebrant, Musik, Ort)
   runden.json                 Runden: Übersicht und Inhalt der Seiten
   rundgang.json               Bilder des Kirchenrundgangs (Chronik → Rundgang)
   startseite.json             Titelfotos der Startseite (Diashow, Wechselzeit)

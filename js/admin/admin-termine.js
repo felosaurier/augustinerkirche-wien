@@ -116,6 +116,17 @@
     $('f-link').value = t ? t.link || '' : '';
   }
 
+  /* Weitere Tage: derselbe Termin an mehreren Tagen auf einmal (je Tag ein Eintrag) */
+  function addMore(value = '') {
+    const row = document.createElement('div');
+    row.className = 'tm-more-row';
+    row.innerHTML = '<input class="adm-input" type="date" data-more aria-label="Weiterer Tag"/>' +
+      `<button type="button" class="adm-act danger" data-more-del aria-label="Diesen Tag entfernen">${icon('close')}</button>`;
+    row.querySelector('input').value = value;
+    $('f-more').append(row);
+    return row.querySelector('input');
+  }
+
   function openEditor(i, copyOf) {
     const t = i >= 0 ? termine[i] : null;
     editIndex = i;
@@ -123,6 +134,7 @@
     form.reset();
     A.clearErrors(form);
     fill(t || copyOf || null);
+    $('f-more').innerHTML = '';
     if (copyOf) {
       /* Kopie: neues Datum waehlen lassen */
       $('f-date').value = '';
@@ -173,11 +185,20 @@
     };
     const old = editIndex >= 0 ? termine[editIndex] : null;
     const btn = $('tm-save');
+    /* Weitere Tage: je Tag eine Kopie, ein Enddatum wandert mit */
+    const more = [...new Set([...document.querySelectorAll('#f-more [data-more]')].map((i) => HD.isoDate(i.value)).filter((d) => d && d !== datum))];
+    const span = termin.bis ? Math.round((HD.dateFromIso(termin.bis) - HD.dateFromIso(datum)) / 864e5) : 0;
+    const extra = more.map((d) => {
+      const bisD = span ? HD.dateFromIso(d) : null;
+      if (bisD) bisD.setDate(bisD.getDate() + span);
+      return { ...termin, datum: d, bis: bisD ? A.isoOf(bisD) : '' };
+    }).filter((t) => !termine.some((x, i) => i !== editIndex && x.datum === t.datum && (x.zeit || '') === (t.zeit || '') && x.titel === t.titel));
     btn.disabled = true;
     try {
       const next = termine.slice();
       if (old) next[editIndex] = termin;
       else next.push(termin);
+      next.push(...extra);
       const direct = await persist(next);
       $('tm-dlg').close();
       /* Liste zeigt den Zeitraum, in dem der Termin jetzt liegt */
@@ -185,7 +206,8 @@
       syncWhen();
       render();
       flash(termin);
-      A.toast(direct ? `Gespeichert: ${titel}.` : `${titel} übernommen. Bitte unten die Datei herunterladen.`);
+      const n = extra.length ? ` (und ${extra.length} weitere${extra.length === 1 ? 'r Tag' : ' Tage'})` : '';
+      A.toast(direct ? `Gespeichert: ${titel}${n}.` : `${titel}${n} übernommen. Bitte unten die Datei herunterladen.`);
       A.log(`Termin ${old ? 'geändert' : 'eingetragen'}: ${titel} (${A.fmtDate(datum)})`);
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
@@ -226,6 +248,11 @@
   A.start(async () => {
     $('tm-new').addEventListener('click', () => openEditor(-1));
     $('tm-form').addEventListener('submit', save);
+    $('f-more-add').addEventListener('click', () => addMore().focus());
+    $('f-more').addEventListener('click', (ev) => {
+      const del = ev.target.closest('[data-more-del]');
+      if (del) del.closest('.tm-more-row').remove();
+    });
     $('tm-delete').addEventListener('click', remove);
     $('tm-copy').addEventListener('click', () => {
       const t = termine[editIndex];

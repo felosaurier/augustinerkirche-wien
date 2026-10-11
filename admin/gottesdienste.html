@@ -11,7 +11,7 @@
 <link rel="icon" href="../favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
-<title>Gottesdienste — Verwaltung Augustinerkirche Wien</title>
+<title>Regelmäßige Termine — Verwaltung Augustinerkirche Wien</title>
 <link rel="stylesheet" href="../css/style.css"/>
 <link rel="stylesheet" href="../css/admin.css"/>
 <script src="../js/hochaemter-data.js"></script>
@@ -26,8 +26,8 @@
   <div class="adm-head-in">
     <div>
       <div class="ph-tag">Verwaltung</div>
-      <h1 class="ph-title">Gottesdienste <em>pflegen</em></h1>
-      <p class="ph-sub">Die regelmäßigen Gottesdienste der Woche (sie stehen auch im Kalender), Ferien und Pausen und wenn eine Messe ausfällt. Öffnungszeiten und Kontakt der Pfarrkanzlei stehen unter „Pfarrkanzlei &amp; Kontakt“.</p>
+      <h1 class="ph-title">Regelmäßige Termine <em>pflegen</em></h1>
+      <p class="ph-sub">Alles, was jede Woche gleich stattfindet: Messen, Tagzeitenliturgie, Kanzleistunden, die Führung nach dem Hochamt. Sie stehen im Kalender, dazu Ferien und Pausen und wenn etwas ausfällt. Die Einzelheiten einer bestimmten Woche (Zelebrant, Musik) trägst du unter „Wochenkalender“ ein. Öffnungszeiten und Kontakt der Pfarrkanzlei stehen unter „Pfarrkanzlei &amp; Kontakt“.</p>
     </div>
     <div class="adm-head-actions">
       <button type="button" class="btn btn-gold" id="gd-new" data-icon="plus">Neuer Termin</button>
@@ -38,7 +38,7 @@
 <main class="adm-main" id="main">
   <div data-adm-folder></div>
 
-  <h2 class="adm-group-title">Wochenplan <small>Gottesdienste → Liturgie-Zeiten und Wochenüberblick</small></h2>
+  <h2 class="adm-group-title">Jede Woche <small>stehen im Kalender, Gottesdienste auch unter Liturgie-Zeiten</small></h2>
   <div id="gd-list"><p class="adm-muted">Wird geladen …</p></div>
 
   <div class="adm-group-head" style="margin-top:2.6rem">
@@ -61,7 +61,7 @@
   <div class="adm-dlg-head">
     <div>
       <div class="adm-dlg-tag" id="gd-dlg-tag">Neuer Termin</div>
-      <h2 class="adm-dlg-title" id="gd-dlg-title">Gottesdienst</h2>
+      <h2 class="adm-dlg-title" id="gd-dlg-title">Regelmäßiger Termin</h2>
     </div>
     <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
   </div>
@@ -72,17 +72,31 @@
         <div class="adm-field">
           <label class="adm-label" for="f-tag">Wochentag<span class="adm-req">Pflichtfeld</span></label>
           <select class="adm-input" id="f-tag" required>
-            <option value="so">Sonntag</option><option value="mo">Montag</option><option value="di">Dienstag</option><option value="mi">Mittwoch</option>
-            <option value="do">Donnerstag</option><option value="fr">Freitag</option><option value="sa">Samstag</option>
+            <option value="mo">Montag</option><option value="di">Dienstag</option><option value="mi">Mittwoch</option><option value="do">Donnerstag</option>
+            <option value="fr">Freitag</option><option value="sa">Samstag</option><option value="so">Sonntag</option>
           </select>
         </div>
         <div class="adm-field">
-          <label class="adm-label" for="f-zeit">Beginn<span class="adm-req">Pflichtfeld</span></label>
-          <input class="adm-input" type="time" id="f-zeit" step="300" required/>
+          <label class="adm-label" for="f-zeit">Beginn</label>
+          <input class="adm-input" type="time" id="f-zeit" step="300"/>
+          <label class="adm-check" style="margin-top:.5rem"><input type="checkbox" id="f-anschl"/>ohne Uhrzeit, „anschließend“</label>
+        </div>
+        <div class="adm-field" id="f-nach-field" hidden>
+          <label class="adm-label" for="f-nach">Anschließend an<span class="adm-req">Pflichtfeld</span></label>
+          <select class="adm-input" id="f-nach"></select>
         </div>
         <div class="adm-field full">
           <label class="adm-label" for="f-name">Bezeichnung<span class="adm-req">Pflichtfeld</span></label>
           <input class="adm-input" type="text" id="f-name" list="dl-gd-name" required/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-art">Kategorie im Kalender</label>
+          <select class="adm-input" id="f-art">
+            <option value="">Gottesdienst (Heilige Messe)</option>
+            <option value="tagzeit">Tagzeitenliturgie (Laudes, Vesper …)</option>
+            <option value="veranstaltung">Veranstaltung (Führung, Treffen)</option>
+            <option value="ohne">Keine Kategorie (z. B. Kanzleistunden)</option>
+          </select>
         </div>
         <div class="adm-field full">
           <label class="adm-label" for="f-hinweis">Hinweis <span class="adm-opt">Ort oder Zeitraum</span></label>

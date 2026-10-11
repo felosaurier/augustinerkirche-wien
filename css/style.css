@@ -1039,7 +1039,7 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
    Links das Monatsblatt mit Punkten je Gruppe, rechts die Termine nach Tagen. */
 /* Vier klar unterscheidbare Farben (auch bei Farbschwäche) und zusätzlich vier Formen:
    Hochamt Kreuz, Gottesdienst Kreis, Konzert Raute, Runde Quadrat, Veranstaltung Dreieck */
-.cal,.wk{--g-hochamt:#c8981e;--g-gottesdienst:#9b2335;--g-konzert:#e0661a;--g-runde:#12915e;--g-veranstaltung:#1b8fc4}
+.cal,.wk{--g-hochamt:#c8981e;--g-gottesdienst:#9b2335;--g-tagzeit:#6b4fa3;--g-konzert:#e0661a;--g-runde:#12915e;--g-veranstaltung:#1b8fc4}
 .cal{display:grid;grid-template-columns:minmax(0,29rem) minmax(0,1fr);gap:clamp(2.5rem,5vw,5rem);align-items:start}
 .cal-side{position:sticky;top:calc(var(--nav-h) + 2rem)}
 .cal-head{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:1.2rem}
@@ -1065,6 +1065,7 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 .cal-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:4px}
 .cal-dot{--c:var(--g-gottesdienst);display:inline-block;width:.7rem;height:.7rem;border-radius:50%;background:var(--c);flex:none}
 .cal-dot.g-hochamt{--c:var(--g-hochamt);border-radius:0;clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)}
+.cal-dot.g-tagzeit{--c:var(--g-tagzeit);border-radius:0;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%)}
 .cal-dot.g-konzert{--c:var(--g-konzert);border-radius:1px;transform:rotate(45deg) scale(.82)}
 .cal-dot.g-runde{--c:var(--g-runde);border-radius:1px}
 .cal-dot.g-veranstaltung{--c:var(--g-veranstaltung);border-radius:0;clip-path:polygon(50% 0,100% 100%,0 100%)}
@@ -1096,6 +1097,10 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 /* Wochenueberblick (js/woche.js): Kopf mit Pfeilen und Auswahl, darunter die sieben Tage */
 .wk{max-width:62rem}
 .wk-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:1rem;margin-bottom:.4rem}
+.wk-foot{margin:1.6rem 0 .4rem}
+.wk-foot [data-wk="prev"]{grid-column:1}
+.wk-foot [data-wk="heute"]{grid-column:2;margin:0}
+.wk-foot [data-wk="next"]{grid-column:3}
 .wk-pick{display:flex;flex-direction:column;align-items:center;gap:.5rem;min-width:0}
 .wk-range{font-family:var(--serif);font-size:clamp(1.4rem,3vw,1.8rem);font-weight:500;line-height:1.15;color:var(--blue);text-align:center;text-wrap:balance}
 .wk-rel{display:block;margin-top:.3rem;font-family:var(--sans);font-size:.9rem;font-weight:500;color:var(--gold-text)}
@@ -1118,13 +1123,17 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 .cal-mo{display:block;color:var(--text-light);font-weight:400}
 .cal-day.today .cal-d,.cal-day.today .cal-wd{color:var(--gold)}
 .cal-day.past .cal-d{color:var(--text-light)}
+.cal-body{min-width:0}
+.cal-liturgy{margin:.15rem 0 .7rem;font-size:.95rem;line-height:1.5;color:var(--text-mid);font-style:italic}
 .cal-items{list-style:none;display:flex;flex-direction:column}
 .cal-item{position:relative;padding-left:1.1rem}
 .cal-item{--c:var(--g-gottesdienst)}
 .cal-item.g-hochamt{--c:var(--g-hochamt)}
+.cal-item.g-tagzeit{--c:var(--g-tagzeit)}
 .cal-item.g-konzert{--c:var(--g-konzert)}
 .cal-item.g-runde{--c:var(--g-runde)}
 .cal-item.g-veranstaltung{--c:var(--g-veranstaltung)}
+.cal-item.g-ohne{--c:var(--line)}
 .cal-item::before{content:'';position:absolute;left:0;top:.35rem;bottom:.35rem;width:4px;border-radius:2px;background:var(--c)}
 .cal-item.past::before{opacity:.45}
 /* Gottesdienst, der entfällt: durchgestrichen, Hinweis in Rot, Balken nur als Umriss */

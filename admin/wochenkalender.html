@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Wochenkalender — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/kalender-daten.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-wochenkalender.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Wochenkalender <em>pflegen</em></h1>
+      <p class="ph-sub">Vorschau des gedruckten Wochenkalenders: hier stehen schon alle Termine aus dem <a href="../pages/kalender.html" target="_blank" rel="noopener">Kalender</a> (regelmäßige Termine, Hochämter, Runden, eigene Termine). Du ergänzt, was in dieser Woche besonders ist: Tagesbezeichnung, Heilige, Zelebrant, Musik, Ort. Ein Termin, der nicht stattfindet, „entfällt“: er steht dann nicht im Wochenkalender und ist hier durchgestrichen.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-seg" role="group" aria-label="Woche wählen">
+      <button type="button" class="week-filter-btn" id="wk-prev">‹ Zurück</button>
+      <button type="button" class="week-filter-btn" id="wk-today">Diese Woche</button>
+      <button type="button" class="week-filter-btn" id="wk-next">Weiter ›</button>
+    </div>
+    <label class="adm-label" for="wk-date" style="margin:0">Woche mit dem Tag</label>
+    <input class="adm-input" type="date" id="wk-date" style="width:auto"/>
+  </div>
+  <h2 class="adm-group-title" id="wk-title" style="margin-top:1.4rem"></h2>
+  <p class="adm-count" id="wk-count" role="status"></p>
+  <div id="wk-list"><p class="adm-muted">Wird geladen …</p></div>
+
+  <div class="adm-toolbar" style="margin-top:1.6rem">
+    <div class="adm-seg" role="group" aria-label="Woche wählen (unten)">
+      <button type="button" class="week-filter-btn" id="wk-prev2">‹ Zurück</button>
+      <button type="button" class="week-filter-btn" id="wk-today2">Diese Woche</button>
+      <button type="button" class="week-filter-btn" id="wk-next2">Weiter ›</button>
+    </div>
+  </div>
+</main>
+
+<!-- Termin bearbeiten -->
+<dialog class="adm-dialog" id="te-dlg" aria-labelledby="te-dlg-title" style="width:min(640px,calc(100vw - 2rem))">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="te-dlg-tag">Neuer Termin</div>
+      <h2 class="adm-dlg-title" id="te-dlg-title">Termin</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="te-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Termin</legend>
+      <div class="adm-grid">
+        <div class="adm-field full" id="te-when-text" hidden style="font-weight:600"></div>
+        <div id="te-new" class="adm-field full" style="display:contents">
+          <div class="adm-field" id="te-zeit-field">
+            <label class="adm-label" for="te-zeit">Beginn<span class="adm-req">Pflichtfeld</span></label>
+            <input class="adm-input" type="time" id="te-zeit" step="300"/>
+          </div>
+          <div class="adm-field" id="te-nach-field" hidden>
+            <label class="adm-label" for="te-nach">Anschließend an<span class="adm-req">Pflichtfeld</span></label>
+            <select class="adm-input" id="te-nach"></select>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-check"><input type="checkbox" id="te-anschl"/>ohne Uhrzeit, „anschließend“ an einen anderen Termin</label>
+          </div>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="te-art">Art<span class="adm-req">Pflichtfeld</span></label>
+          <select class="adm-input" id="te-art">
+            <option value="gottesdienst">Heilige Messe</option>
+            <option value="hochamt">Hochamt</option>
+            <option value="tagzeit">Tagzeitenliturgie (Laudes, Vesper …)</option>
+            <option value="runde">Runden (z. B. Fensterblick, Bibelpur)</option>
+            <option value="veranstaltung">Veranstaltung (Führung, Probe, Treffen)</option>
+          </select>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="te-name">Bezeichnung<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="te-name" list="dl-te-name" required/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="te-zusatz">Zusatz <span class="adm-opt">steht in Klammern, aus der Liste wählen oder selbst eintragen, z. B. Laudes, Vesper, bis 12:00 Uhr</span></label>
+          <input class="adm-input" type="text" id="te-zusatz" list="dl-te-zusatz"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="te-zel">Zelebrant <span class="adm-opt">z. B. P. Matthias</span></label>
+          <input class="adm-input" type="text" id="te-zel" list="dl-te-zel"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="te-ort">Ort</label>
+          <input class="adm-input" type="text" id="te-ort" list="dl-te-ort"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="te-musik">Musik <span class="adm-opt">z. B. Orgelmusik oder Komponist: »Werk«</span></label>
+          <input class="adm-input" type="text" id="te-musik" list="dl-te-musik"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="te-hinweis">Hinweis <span class="adm-opt">freiwillig</span></label>
+          <input class="adm-input" type="text" id="te-hinweis" placeholder="z. B. Keine Teilnahme für Außenstehende möglich!"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-check"><input type="checkbox" id="te-off"/>Entfällt (steht nicht im Wochenkalender)</label>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="te-form" class="btn btn-dark" id="te-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Tag bearbeiten -->
+<dialog class="adm-dialog small" id="td-dlg" aria-labelledby="td-dlg-title" style="width:min(560px,calc(100vw - 2rem))">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag">Tag</div>
+      <h2 class="adm-dlg-title" id="td-dlg-title">Tag</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="td-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Im Kalender neben dem Datum</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="td-tag">Tagesbezeichnung <span class="adm-opt">z. B. 28. Sonntag im Jahreskreis, Vom Tag</span></label>
+          <input class="adm-input" type="text" id="td-tag" list="dl-td-tag"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="td-heilige">Heilige und Gedenktage <span class="adm-opt">eine Zeile je Eintrag</span></label>
+          <textarea class="adm-input" id="td-heilige" rows="4" placeholder="Hl. Gallus&#10;Hl. Hedwig von Andechs"></textarea>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l"></div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="td-form" class="btn btn-dark" id="td-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-te-name"><option value="Heilige Messe"></option><option value="Heilige Vorabendmesse"></option><option value="Hochamt"></option><option value="Tagzeitenliturgie"></option><option value="Kanzleistunden"></option><option value="Führung in der Loretokapelle"></option><option value="Chorprobe"></option><option value="Fensterblick"></option><option value="Firmvorbereitung"></option></datalist>
+<datalist id="dl-te-zusatz"><option value="Laudes"></option><option value="Lesehore &amp; Laudes"></option><option value="Vesper"></option><option value="Komplet"></option><option value="Lesehore"></option><option value="Terz"></option><option value="Sext"></option><option value="Non"></option><option value="bis 12:00 Uhr"></option><option value="Herzgruft"></option></datalist>
+<datalist id="dl-te-zel"><option value="P. Matthias"></option><option value="P. Nikolaus"></option><option value="P. Dominic"></option></datalist>
+<datalist id="dl-te-ort"><option value="Augustinerkirche"></option><option value="Loretokapelle"></option><option value="Augustinussaal"></option><option value="Pfarrsaal"></option><option value="Augustiner-Stüberl"></option><option value="Eingang: Augustinerstraße 3"></option></datalist>
+<datalist id="dl-te-musik"><option value="Orgelmusik"></option></datalist>
+<datalist id="dl-td-tag"><option value="Vom Tag"></option></datalist>
+
+</body>
+</html>

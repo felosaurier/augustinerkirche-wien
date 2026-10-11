@@ -50,9 +50,10 @@
     const to = isoOf(addDays(monday, 6));
     const rel = { 0: 'Diese Woche', 1: 'Nächste Woche', '-1': 'Letzte Woche' }[Math.round((monday - thisMonday()) / 604800000)];
     root.querySelector('.wk-range').innerHTML = `KW ${weekNo(monday)} · ${rangeText(monday)}${rel ? `<span class="wk-rel">${rel}</span>` : ''}`;
-    root.querySelector('[data-wk="heute"]').hidden = from === isoOf(thisMonday());
-    root.querySelector('[data-wk="prev"]').disabled = from <= isoOf(addDays(thisMonday(), -BACK * 7));
-    root.querySelector('[data-wk="next"]').disabled = from >= isoOf(addDays(thisMonday(), AHEAD * 7));
+    /* Wochenwahl oben und unten */
+    for (const b of root.querySelectorAll('[data-wk="heute"]')) b.hidden = from === isoOf(thisMonday());
+    for (const b of root.querySelectorAll('[data-wk="prev"]')) b.disabled = from <= isoOf(addDays(thisMonday(), -BACK * 7));
+    for (const b of root.querySelectorAll('[data-wk="next"]')) b.disabled = from >= isoOf(addDays(thisMonday(), AHEAD * 7));
 
     const inWeek = items.filter((it) => it.date >= from && it.date <= to);
     const days = DAY_KEYS.map((key, i) => ({ key, iso: isoOf(addDays(monday, i)) }))
@@ -115,8 +116,12 @@
       const nav = ev.target.closest('[data-wk]');
       if (nav) {
         const what = nav.dataset.wk;
-        if (what === 'heute') go(thisMonday(), '[data-wk="next"]');
-        else go(addDays(monday, what === 'prev' ? -7 : 7), `[data-wk="${what}"]`);
+        /* unten gedrückt: der Fokus bleibt unten, die Seite springt zum Anfang der neuen Woche */
+        const foot = nav.closest('.wk-foot');
+        const sel = (s) => `${foot ? '.wk-foot ' : ''}${s}`;
+        if (what === 'heute') go(thisMonday(), sel('[data-wk="next"]'));
+        else go(addDays(monday, what === 'prev' ? -7 : 7), sel(`[data-wk="${what}"]`));
+        if (foot) root.querySelector('.wk-head').scrollIntoView({ block: 'start' });
         return;
       }
       const f = ev.target.closest('.week-filter-btn');

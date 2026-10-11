@@ -213,6 +213,11 @@
       </div>
       <p class="wk-count" role="status"></p>
       <div class="wk-list"><p class="cal-empty">Die Termine werden geladen …</p></div>
+      <div class="wk-head wk-foot">
+        <button type="button" class="cal-nav" data-wk="prev" aria-label="Vorige Woche"><svg viewBox="0 0 10 16" aria-hidden="true" focusable="false"><path d="M8 1L2 8l6 7"/></svg></button>
+        <button type="button" class="cal-today" data-wk="heute" hidden>Zur aktuellen Woche</button>
+        <button type="button" class="cal-nav" data-wk="next" aria-label="Nächste Woche"><svg viewBox="0 0 10 16" aria-hidden="true" focusable="false"><path d="M2 1l6 7-6 7"/></svg></button>
+      </div>
       <p class="wk-more"><a class="link-arr wk-cal" href="kalender.html">Ganzer Monat im Kalender</a></p>
     </div>
     <noscript><p class="s-text">Der Kalender braucht JavaScript. Die Hochämter finden Sie auch unter <a href="musik.html#p-hochaemter">Kirchenmusik</a>.</p></noscript>
@@ -232,7 +237,8 @@
 <script src="../js/statistik.js"></script>
 <script src="../js/hochaemter-data.js"></script>
 <script src="../js/kalender-daten.js?v=20261020"></script>
-<script src="../js/kalender.js?v=20261020"></script>
+<script src="../js/kalender.js?v=20261020"></script>
+
 <script src="../js/woche.js?v=20261020"></script>
 <script src="../js/lightbox.js"></script>
 </body>

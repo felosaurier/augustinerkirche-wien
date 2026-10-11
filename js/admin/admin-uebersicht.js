@@ -18,7 +18,7 @@
 
   async function loadAll() {
     const json = (path) => A.readJSON(path);
-    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp] = await Promise.allSettled([
+    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -36,13 +36,14 @@
       json('data/hinweise.json'),
       A.isDev() ? json('admin/mitteilungen.json') : Promise.resolve(null),
       json('data/rechtliches.json'),
-      json('data/sprueche.json')
+      json('data/sprueche.json'),
+      json('data/wochenkalender.json')
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
       rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st),
-      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re), sp: val(sp)
+      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re), sp: val(sp), wk: val(wk)
     };
   }
 
@@ -55,7 +56,7 @@
   }
 
   /* Bereiche nach Themen; jede Kachel erscheint nur, wenn die Person den Bereich bearbeiten darf */
-  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp }) {
+  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
@@ -86,9 +87,14 @@
       ]],
       ['Inhalte · Pfarre & Kloster', [
         can('gottesdienste') && tile({
-          href: 'gottesdienste.html', ico: 'clock', title: 'Gottesdienste',
+          href: 'gottesdienste.html', ico: 'clock', title: 'Regelmäßige Termine',
           stat: gd ? plural(count(gd.termine), 'Termin pro Woche', 'Termine pro Woche') : none,
           addHref: 'gottesdienste.html?neu=1', addLabel: 'Neuer Termin'
+        }),
+        can('wochenkalender') && tile({
+          href: 'wochenkalender.html', ico: 'calendar', title: 'Wochenkalender',
+          stat: wk ? plural(count((wk.tage || []).filter((d) => d.datum >= A.isoToday())), 'kommender Tag', 'kommende Tage') : none,
+          addHref: 'wochenkalender.html', addLabel: 'Woche eintragen', addIcon: 'edit'
         }),
         A.canAnyRunde() && tile({
           href: 'runden.html', ico: 'users', title: A.canAllRunden() ? 'Runden' : mine.length === 1 ? 'Meine Runde' : 'Meine Runden',

@@ -1,0 +1,217 @@
+{
+  "tage": [
+    {
+      "datum": "2026-10-11",
+      "tag": "28. Sonntag im Jahreskreis",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "11:00",
+          "name": "Hochamt",
+          "zelebrant": "P. Matthias",
+          "musik": "Pietro Mascagni: »Messa di Gloria«",
+          "ort": "Augustinerkirche",
+          "art": "hochamt"
+        },
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Nikolaus",
+          "musik": "Orgelmusik",
+          "ort": "Augustinerkirche",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-12",
+      "tag": "Vom Tag",
+      "heilige": [
+        "Sel. Maria Teresa Fasce OSA",
+        "Hl. Carlo Acutis"
+      ],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Nikolaus",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-13",
+      "tag": "Vom Tag",
+      "heilige": [
+        "Gedenken an die verstorbenen Wohltäter des Ordens"
+      ],
+      "termine": [
+        {
+          "zeit": "07:15",
+          "name": "Tagzeitenliturgie",
+          "zusatz": "Lesehore & Laudes",
+          "ort": "Loretokapelle",
+          "art": "tagzeit"
+        },
+        {
+          "zeit": "18:00",
+          "name": "Tagzeitenliturgie",
+          "zusatz": "Vesper",
+          "ort": "Loretokapelle",
+          "art": "tagzeit"
+        },
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Dominic",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-14",
+      "tag": "Vom Tag",
+      "heilige": [
+        "Sel. Gundisalv von Lagos OSA",
+        "Hl. Papst Kallistus I."
+      ],
+      "termine": [
+        {
+          "zeit": "07:15",
+          "name": "Tagzeitenliturgie",
+          "zusatz": "Laudes",
+          "ort": "Loretokapelle",
+          "art": "tagzeit"
+        },
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Nikolaus",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "19:30",
+          "name": "Chorprobe",
+          "zusatz": "Chor von St. Augustin",
+          "ort": "Augustinussaal",
+          "hinweis": "Keine Teilnahme für Außenstehende möglich!",
+          "art": "veranstaltung"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-15",
+      "tag": "",
+      "heilige": [
+        "Hl. Theresia von Jesus (Ávila)"
+      ],
+      "termine": [
+        {
+          "zeit": "07:15",
+          "name": "Tagzeitenliturgie",
+          "zusatz": "Laudes",
+          "ort": "Loretokapelle",
+          "art": "tagzeit"
+        },
+        {
+          "zeit": "18:00",
+          "name": "Tagzeitenliturgie",
+          "zusatz": "Vesper",
+          "ort": "Loretokapelle",
+          "art": "tagzeit"
+        },
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "musik": "Orgelmusik",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "19:30",
+          "name": "Fensterblick",
+          "zusatz": "mit P. Nikolaus",
+          "ort": "Pfarrsaal",
+          "hinweis": "für Menschen in der Lebensmitte",
+          "art": "runde"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-16",
+      "tag": "Vom Tag",
+      "heilige": [
+        "Hl. Gallus",
+        "Hl. Hedwig von Andechs",
+        "Hl. Margareta Maria Alacoque"
+      ],
+      "termine": [
+        {
+          "zeit": "07:15",
+          "name": "Tagzeitenliturgie",
+          "zusatz": "Lesehore & Laudes",
+          "ort": "Loretokapelle",
+          "art": "tagzeit"
+        },
+        {
+          "zeit": "08:00",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Nikolaus",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-17",
+      "tag": "",
+      "heilige": [
+        "Hl. Ignatius von Antiochien"
+      ],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Vorabendmesse",
+          "zelebrant": "P. Matthias",
+          "musik": "Orgelmusik",
+          "ort": "Augustinerkirche",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-18",
+      "tag": "29. Sonntag im Jahreskreis",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "11:00",
+          "name": "Hochamt",
+          "zelebrant": "P. Dominic",
+          "musik": "Luigi Gatti: »Schöpfungsmesse«",
+          "ort": "Augustinerkirche",
+          "art": "hochamt"
+        },
+        {
+          "zeit": "16:30",
+          "name": "Firmvorbereitung",
+          "zusatz": "mit P. Nikolaus",
+          "ort": "Augustiner-Stüberl",
+          "art": "veranstaltung"
+        },
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "musik": "Orgelmusik",
+          "ort": "Augustinerkirche",
+          "art": "gottesdienst"
+        }
+      ]
+    }
+  ]
+}
