@@ -46,16 +46,19 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 
 Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B. `http://localhost:8123/admin/`). Sie ist im Stil der Website gestaltet, nicht in der öffentlichen Navigation verlinkt und nur mit **Benutzername und Passwort** erreichbar.
 
+**Aufbau der Verwaltung** (Reiter oben, darunter die Unterpunkte; jede Person sieht nur, was sie bearbeiten darf):
+Übersicht · **Neuigkeiten** · **Termine** · **Hochämter** (häufig gebraucht) · **Inhalte** (Pfarre & Kloster: Gottesdienste, Runden, Pfarrkanzlei & Kontakt, Kirchenrundgang, Pfarrgemeinderat, Mitbrüder; Kirchenmusik: Solisten, Repertoire, Leitung & Organisten, Paten, CDs) · **Einstellungen** (Titelfotos, Hinweisbanner, Sprüche, Farben & Logo, Impressum & Datenschutz, Zugänge, Änderungen, Mitteilungen). Oben rechts: Mein Profil, Website, Abmelden.
+
 | Bereich | Was du dort machst |
 |---|---|
-| **Übersicht** | Alle Bereiche als Kacheln, nach Themen geordnet (Website, Kirchenmusik, Pfarre & Kloster, Verwaltung), mit Stand und Schnellzugriff „neu anlegen“; „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel) und „Zuletzt geändert“ (auf diesem Gerät, je Eintrag aufklappbar, was sich genau geändert hat) |
+| **Übersicht** | Alle Bereiche als Kacheln, geordnet wie die Reiter (Häufig gebraucht, Inhalte · Pfarre & Kloster, Inhalte · Kirchenmusik, Einstellungen), mit Stand und Schnellzugriff „neu anlegen“; „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel) und „Zuletzt geändert“ (auf diesem Gerät, je Eintrag aufklappbar, was sich genau geändert hat) |
 | **Hochämter** | Fotos je Termin (mehrere, mit Beschreibung und Bildnachweis; erscheinen neben dem Programm, wo sonst das Plakat steht; gibt es ein Plakat, stehen sie darunter); Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
-| **Startseite** | Titelfotos im Vollbild-Start der vier Hauptseiten, oben das Thema wählen (Augustinerkirche = Startseite, Kirchenmusik, Augustiner, Aspersdorf; Fotos der anderen Themen lassen sich wieder verwenden): Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
+| **Titelfotos** (Einstellungen) | Titelfotos im Vollbild-Start der vier Hauptseiten, oben das Thema wählen (Augustinerkirche = Startseite, Kirchenmusik, Augustiner, Aspersdorf; Fotos der anderen Themen lassen sich wieder verwenden): Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
 | **Gottesdienste** | Wochenplan (Liturgie-Zeiten; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen) |
 | **Pfarrkanzlei & Kontakt** | Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
-| **Rechtliches** | Impressum und Datenschutzerklärung Abschnitt für Abschnitt: Überschrift, Text mit Werkzeugleiste (fett, Link, Telefon, Liste, Tabelle, Zwischentitel, „fehlt noch“), Reihenfolge, Vorschau je Abschnitt und der ganzen Seite |
+| **Impressum & Datenschutz** (Einstellungen) | Impressum und Datenschutzerklärung Abschnitt für Abschnitt: Überschrift, Text mit Werkzeugleiste (fett, Link, Telefon, Liste, Tabelle, Zwischentitel, „fehlt noch“), Reihenfolge, Vorschau je Abschnitt und der ganzen Seite |
 | **Änderungen** (nur Entwickler, oben rechts) | Alle Änderungen von allen Personen als Tabelle: Zeitpunkt, Person, Bereich, was genau (vorher → nachher), Suche und Filter, Export als CSV. Quelle ist `admin/protokoll.json`, das bei jedem Speichern mitgeschrieben wird (mit Projektordner oder auf dem Server) |
 | **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
 | **Pfarrgemeinderat** | Mitglieder sowie Ersatzmitglieder und weitere Verantwortliche für Pfarre → Pfarrgemeinderat: Name, Funktion, Beruf, Aufgaben, E-Mail, Telefon, Foto (mit Bildnachweis); Reihenfolge per Pfeil |
@@ -147,7 +150,7 @@ Die Seiten setzen von sich aus **keine Cookies**. Für eine Besucherstatistik is
 - Es wird nur Statistik gemessen: Werbefunktionen und Google Signals sind aus, IP-Adressen speichert Google Analytics 4 nicht, der Cookie hält sechs Monate (`COOKIE_TAGE`).
 - **Nie gemessen** wird auf `localhost` (der Hinweis erscheint dort trotzdem, zum Ansehen) und in einem Browser, in dem gerade jemand in der Verwaltung angemeldet ist. Die Verwaltung selbst lädt `statistik.js` nie.
 
-**Einstellungen in Google Analytics, damit die Datenschutzerklärung stimmt:** Datenaufbewahrung auf *2 Monate* (Verwaltung → Property → Datenerhebung und -änderung → Datenaufbewahrung), *Google Signals* aus, unter *Datenfreigabe-Einstellungen* alles ausschalten, die *Datenverarbeitungsbedingungen* akzeptieren. Danach den gelb markierten Hinweis am Ende des Abschnitts „Besucherstatistik“ löschen (Verwaltung → Rechtliches → Datenschutz).
+**Einstellungen in Google Analytics, damit die Datenschutzerklärung stimmt:** Datenaufbewahrung auf *2 Monate* (Verwaltung → Property → Datenerhebung und -änderung → Datenaufbewahrung), *Google Signals* aus, unter *Datenfreigabe-Einstellungen* alles ausschalten, die *Datenverarbeitungsbedingungen* akzeptieren. Danach den gelb markierten Hinweis am Ende des Abschnitts „Besucherstatistik“ löschen (Verwaltung → Einstellungen → Impressum & Datenschutz).
 
 **Sicherheit:** Die Content-Security-Policy der öffentlichen Seiten erlaubt dafür genau `www.googletagmanager.com/gtag/` (das Skript; der Container-Lader `gtm.js`, über den sich fremder Code einschleusen ließe, bleibt gesperrt) sowie `google-analytics.com` und `analytics.google.com` (Messdaten); die Verwaltung bleibt bei `'self'`. Ein Skript von Google läuft mit allen Rechten der Seite. Deshalb gilt: den Ordner `admin/` nicht auf denselben öffentlichen Server legen wie die Website (oder dort mit einem Passwort schützen), solange Google Analytics eingeschaltet ist. Wer gar keine Einwilligung einholen möchte, nimmt eine Statistik ohne Cookies (z. B. Matomo oder Plausible); dann entfallen Hinweis und Google-Freigabe in der Richtlinie.
 
@@ -309,7 +312,7 @@ site.webmanifest              App-Manifest: Name, Farben, Symbole, Schnellzugrif
 assets/
   logo.png, logo-gold.png     Logo (grün und golden), Favicons, Zierlinie
   icons/verbote.svg           Verbotszeichen in der Fußzeile (Hunde, Handy, Eis, Essen, Rauchen, Schultern, kurze Kleidung, Musik, Hut, Luftballons)
-  logo/                       Logo-Varianten für die Titelzeile: gold, gold-dunkel, weiss, schwarz, marine, gruen (je 300 × 300, durchsichtig)
+  logo/                       Logo-Varianten für die Titelzeile: gold, gold-dunkel, hellgold, weiss, schwarz, marine, bordeaux, tannengruen, gruen (je 300 × 300, durchsichtig)
   app/                        App-Symbole (192 und 512 Pixel, dazu maskierbar für Android)
   audio/cds/                  Hörproben zu den CDs (MP3, von hochamt.augustiner.at)
   programme/                  Kirchenmusik-Programmhefte 2008–2018 (PDF)
@@ -351,7 +354,7 @@ Marine und Gold auf Weiß — klar, ruhig und festlich, passend zu einer Hofkirc
 
 ## Vor dem Veröffentlichen
 
-Im **Impressum** und in der **Datenschutzerklärung** (Verwaltung → Rechtliches; im Text als `[[offen: …]]`) sind gelb markierte Stellen in eckigen Klammern zu ergänzen, etwa Rechtsform, Registernummer, Hosting-Anbieter und Datenschutz-Kontakt. Dazu gehören auch die Angaben zu Cookies und Google Analytics (siehe [Cookies und Besucherstatistik](#cookies-und-besucherstatistik)). Beide Texte sollten von der Pfarre bzw. dem Vikariat geprüft werden.
+Im **Impressum** und in der **Datenschutzerklärung** (Verwaltung → Einstellungen → Impressum & Datenschutz; im Text als `[[offen: …]]`) sind gelb markierte Stellen in eckigen Klammern zu ergänzen, etwa Rechtsform, Registernummer, Hosting-Anbieter und Datenschutz-Kontakt. Dazu gehören auch die Angaben zu Cookies und Google Analytics (siehe [Cookies und Besucherstatistik](#cookies-und-besucherstatistik)). Beide Texte sollten von der Pfarre bzw. dem Vikariat geprüft werden.
 
 ## Quellen
 

@@ -50,6 +50,19 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 .adm-subnav a[aria-current="page"]{color:var(--blue);font-weight:600}
 .adm-subnav a[aria-current="page"]::after{content:'';position:absolute;left:.8rem;right:.8rem;bottom:0;height:2px;background:var(--gold)}
 .adm-subnav a:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
+/* Zwischenueberschrift in der zweiten Zeile (z. B. Inhalte: Pfarre & Kloster | Kirchenmusik):
+   jede Gruppe steht in einer eigenen Zeile, damit nichts seitlich versteckt ist */
+.adm-subnav-in:has(.adm-subnav-label){flex-wrap:wrap;height:auto;overflow:visible;-webkit-mask-image:none;mask-image:none}
+.adm-subnav-in:has(.adm-subnav-label)>a,.adm-subnav-in:has(.adm-subnav-label)>.adm-subnav-label{min-height:40px}
+.adm-subnav-break{flex-basis:100%;height:0;border-top:1px solid var(--line)}
+.adm-subnav-label{display:flex;align-items:center;width:9.5rem;padding:0 .8rem 0 .8rem;font-size:.76rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-text);white-space:nowrap}
+@media(max-width:760px){.adm-subnav-label{width:100%;min-height:30px!important;padding-top:.4rem}}
+/* Handy: die Reiter in drei Spalten statt seitlich zu verschieben, damit keiner versteckt ist */
+@media(max-width:600px){
+  .adm-nav-in{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:auto;padding:0;overflow:visible;-webkit-mask-image:none;mask-image:none}
+  .adm-nav a{justify-content:center;min-height:44px;padding:0 .3rem;font-size:.92rem}
+  .adm-nav a[aria-current="page"]::after,.adm-nav a.is-open::after{left:.8rem;right:.8rem}
+}
 .adm-iconbtn[aria-current="page"]{color:var(--blue);border-color:var(--line)}
 
 .adm-user{display:flex;align-items:center;gap:.3rem;flex:none;margin-left:auto}

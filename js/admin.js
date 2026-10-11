@@ -126,13 +126,13 @@
      der Schluessel "runden" bedeutet alle Runden samt Anlegen, Loeschen und
      Reihenfolge, sonst nur die einzeln genannten Runden bearbeiten. */
   const AREAS = [
-    { key: 'startseite', label: 'Startseite (Titelfotos)', group: 'Allgemein', page: 'startseite.html' },
-    { key: 'hinweise', label: 'Hinweisbanner (oben auf der Website)', group: 'Allgemein', page: 'hinweise.html' },
-    { key: 'design', label: 'Farben & Logo der Hauptseiten', group: 'Allgemein', page: 'design.html' },
-    { key: 'sprueche', label: 'Sprüche (Zitate unten auf den Seiten)', group: 'Allgemein', page: 'sprueche.html' },
-    { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Allgemein', page: 'neuigkeiten.html' },
-    { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Allgemein', page: 'termine.html' },
-    { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Allgemein', page: 'rechtliches.html' },
+    { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Aktuelles', page: 'neuigkeiten.html' },
+    { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Aktuelles', page: 'termine.html' },
+    { key: 'startseite', label: 'Titelfotos der Hauptseiten', group: 'Einstellungen', page: 'startseite.html' },
+    { key: 'hinweise', label: 'Hinweisbanner (oben auf der Website)', group: 'Einstellungen', page: 'hinweise.html' },
+    { key: 'sprueche', label: 'Sprüche (Zitate unten auf den Seiten)', group: 'Einstellungen', page: 'sprueche.html' },
+    { key: 'design', label: 'Farben & Logo der Hauptseiten', group: 'Einstellungen', page: 'design.html' },
+    { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Einstellungen', page: 'rechtliches.html' },
     { key: 'hochaemter', label: 'Hochämter', group: 'Kirchenmusik', page: 'hochaemter.html' },
     { key: 'solisten', label: 'Solisten', group: 'Kirchenmusik', page: 'solisten.html' },
     { key: 'paten', label: 'Paten', group: 'Kirchenmusik', page: 'paten.html' },
@@ -246,6 +246,7 @@
     link: '<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4L12 5.6"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4L12 18.4"/>',
     down: '<path d="M12 5v14M6 13l6 6 6-6"/>',
     left: '<path d="M15 5l-7 7 7 7"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
     right: '<path d="M9 5l7 7-7 7"/>',
     home: '<path d="M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-6h4v6"/>',
     globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>'
@@ -1682,46 +1683,60 @@
   /* ---------- Kopfleiste ---------- */
   /* Hauptreiter; Bereiche mit mehreren Seiten zeigen darunter eine zweite
      Zeile. Zugaenge stehen (nur fuer Admins) rechts oben beim Namen. */
+  /* Was oft gebraucht wird, steht vorne als eigener Reiter; die uebrigen Inhalte und
+     alles Seltene (Gestaltung, Zugaenge …) sind unter "Inhalte" und "Einstellungen"
+     gesammelt. Eintraege mit '#' am Anfang sind Zwischenueberschriften der zweiten Zeile. */
   const NAV = [
     { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
-    { label: 'Startseite', icon: 'image', href: 'startseite.html', sub: [
+    { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
+    { label: 'Termine', icon: 'calendar', href: 'termine.html' },
+    { label: 'Hochämter', icon: 'music', href: 'hochaemter.html' },
+    { label: 'Inhalte', icon: 'book', href: 'gottesdienste.html', sub: [
+      ['#Pfarre & Kloster'],
+      ['gottesdienste.html', 'Gottesdienste'],
+      ['runden.html', 'Runden'],
+      ['kontakt.html', 'Pfarrkanzlei & Kontakt'],
+      ['rundgang.html', 'Kirchenrundgang'],
+      ['pgr.html', 'Pfarrgemeinderat'],
+      ['personen.html?bereich=kloster', 'Mitbrüder'],
+      ['#Kirchenmusik'],
+      ['solisten.html', 'Solisten'],
+      ['repertoire.html', 'Repertoire'],
+      ['personen.html?bereich=musik', 'Leitung & Organisten'],
+      ['paten.html', 'Paten'],
+      ['cds.html', 'CDs']
+    ] },
+    { label: 'Einstellungen', icon: 'settings', href: 'startseite.html', sub: [
       ['startseite.html', 'Titelfotos'],
       ['hinweise.html', 'Hinweisbanner'],
       ['sprueche.html', 'Sprüche'],
-      ['design.html', 'Farben & Logo']
-    ] },
-    { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
-    { label: 'Termine', icon: 'calendar', href: 'termine.html' },
-    { label: 'Rechtliches', icon: 'book', href: 'rechtliches.html' },
-    { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [
-      ['hochaemter.html', 'Hochämter'],
-      ['solisten.html', 'Solisten'],
-      ['paten.html', 'Paten'],
-      ['cds.html', 'CDs'],
-      ['personen.html?bereich=musik', 'Leitung & Organisten'],
-      ['repertoire.html', 'Repertoire']
-    ] },
-    { label: 'Pfarre & Kloster', icon: 'users', href: 'gottesdienste.html', sub: [
-      ['gottesdienste.html', 'Gottesdienste'],
-      ['kontakt.html', 'Pfarrkanzlei & Kontakt'],
-      ['runden.html', 'Runden'],
-      ['rundgang.html', 'Kirchenrundgang'],
-      ['pgr.html', 'Pfarrgemeinderat'],
-      ['personen.html?bereich=kloster', 'Mitbrüder']
+      ['design.html', 'Farben & Logo'],
+      ['rechtliches.html', 'Impressum & Datenschutz'],
+      ['zugaenge.html', 'Zugänge'],
+      ['aenderungen.html', 'Änderungen'],
+      ['mitteilungen.html', 'Mitteilungen']
     ] }
   ];
+  const isLabel = ([href]) => href.startsWith('#');
   /* Nur das zeigen, was die angemeldete Person bearbeiten darf; ein Reiter
      mit mehreren Seiten fuehrt zur ersten erlaubten */
   function allowedNav() {
     const ok = (href) => {
       const [page, query] = href.split('?');
       if (page === 'personen.html') return can(new URLSearchParams(query).get('bereich') === 'kloster' ? 'mitbrueder' : 'musik-personen');
+      if (page === 'zugaenge.html') return isAdmin();
+      if (page === 'aenderungen.html' || page === 'mitteilungen.html') return isDev();
       return allowed(rightOfPage(page));
     };
     return NAV.map((n) => {
       if (!n.sub) return ok(n.href) ? n : null;
-      const sub = n.sub.filter(([href]) => ok(href));
-      return sub.length ? { ...n, href: sub[0][0], sub } : null;
+      /* erlaubte Seiten; eine Zwischenueberschrift nur, wenn danach etwas Erlaubtes folgt */
+      const sub = n.sub.filter((e) => isLabel(e) || ok(e[0]))
+        .filter((e, i, all) => !isLabel(e) || (all[i + 1] && !isLabel(all[i + 1])));
+      const pages = sub.filter((e) => !isLabel(e));
+      if (!pages.length) return null;
+      /* nur eine Gruppe uebrig: ohne Zwischenueberschrift */
+      return { ...n, href: pages[0][0], sub: sub.filter(isLabel).length > 1 ? sub : pages };
     }).filter(Boolean);
   }
   /* Bereich der Personen-Seite: Mitbrueder (Kloster) oder Kirchenmusik */
@@ -1747,7 +1762,7 @@
     const s = session();
     const here = pageName();
     const nav = allowedNav();
-    const group = nav.find((n) => n.sub && n.sub.some(([href]) => isHere(href)));
+    const group = nav.find((n) => n.sub && n.sub.some((e) => !isLabel(e) && isHere(e[0])));
     el.innerHTML = '<div class="adm-bar">' +
       '<a class="nav-logo-wrap" href="uebersicht.html">' +
         '<img class="nav-logo-img" src="../assets/logo.png" alt="" width="38" height="38" decoding="async"/>' +
@@ -1757,20 +1772,19 @@
         `<a class="adm-me" href="profil.html" title="Mein Profil: Passwort ändern"${here === 'profil.html' ? ' aria-current="page"' : ''}>` +
           `<span class="adm-avatar" aria-hidden="true">${esc(initials(s.name))}</span>` +
           `<span class="adm-user-name">${esc(s.name)}</span><span class="visually-hidden"> (Mein Profil)</span></a>` +
-        (isDev() ? `<a class="adm-iconbtn" href="aenderungen.html" aria-label="Alle Änderungen"${here === 'aenderungen.html' ? ' aria-current="page"' : ''}>${icon('clock')}<span class="lbl">Änderungen</span></a>` : '') +
-        (isDev() ? `<a class="adm-iconbtn" href="mitteilungen.html" aria-label="Mitteilungen an die Verwaltung"${here === 'mitteilungen.html' ? ' aria-current="page"' : ''}>${icon('info')}<span class="lbl">Mitteilungen</span></a>` : '') +
-        (isAdmin() ? `<a class="adm-iconbtn" href="zugaenge.html" aria-label="Zugänge"${here === 'zugaenge.html' ? ' aria-current="page"' : ''}>${icon('key')}<span class="lbl">Zugänge</span></a>` : '') +
         `<a class="adm-iconbtn" href="../index.html" target="_blank" rel="noopener" aria-label="Website ansehen (neues Fenster)">${icon('external')}<span class="lbl">Website</span></a>` +
         `<button type="button" class="adm-iconbtn" id="adm-logout" aria-label="Abmelden">${icon('logout')}<span class="lbl">Abmelden</span></button>` +
       '</div></div>' +
       '<nav class="adm-nav" aria-label="Verwaltung"><div class="adm-nav-in">' +
         nav.map((n) => {
-          const on = n.sub ? n.sub.some(([href]) => isHere(href)) : isHere(n.href);
+          const on = n.sub ? n.sub.some((e) => !isLabel(e) && isHere(e[0])) : isHere(n.href);
           return `<a href="${n.href}"${on ? (n.sub ? ' class="is-open" aria-current="true"' : ' aria-current="page"') : ''}>${icon(n.icon)}${esc(n.label)}</a>`;
         }).join('') +
       '</div></nav>' +
       (group ? `<nav class="adm-subnav" aria-label="${esc(group.label)}"><div class="adm-subnav-in">` +
-        group.sub.map(([href, label]) => `<a href="${href}"${isHere(href) ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('') +
+        group.sub.map((e, i) => (isLabel(e)
+          ? `${i ? '<span class="adm-subnav-break" aria-hidden="true"></span>' : ''}<span class="adm-subnav-label">${esc(e[0].slice(1))}</span>`
+          : `<a href="${e[0]}"${isHere(e[0]) ? ' aria-current="page"' : ''}>${esc(e[1])}</a>`)).join('') +
         '</div></nav>' : '');
     $('adm-logout').addEventListener('click', () => logout('abgemeldet'));
     /* Tooltip fuer die Knoepfe oben rechts (auf kleineren Bildschirmen ohne Beschriftung) */

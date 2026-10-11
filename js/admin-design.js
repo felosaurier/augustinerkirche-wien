@@ -25,7 +25,7 @@
     ['#10192e', 'Dunkelblau'], ['#1b2a4a', 'Marine'], ['#c9a24d', 'Gold'], ['#e9d9ad', 'Hellgold'],
     ['#ffffff', 'Weiß'], ['#6e1f2b', 'Bordeaux'], ['#1f3b2d', 'Tannengrün'], ['#111111', 'Schwarz']
   ];
-  const LOGO_NAMEN = { gold: 'Gold', 'gold-dunkel': 'Dunkelgold', weiss: 'Weiß', schwarz: 'Schwarz', marine: 'Dunkelblau', gruen: 'Grün' };
+  const LOGO_NAMEN = { gold: 'Gold', 'gold-dunkel': 'Dunkelgold', hellgold: 'Hellgold', weiss: 'Weiß', schwarz: 'Schwarz', marine: 'Dunkelblau', bordeaux: 'Bordeaux', tannengruen: 'Tannengrün', gruen: 'Grün' };
 
   let data = {};
   let snap = '';

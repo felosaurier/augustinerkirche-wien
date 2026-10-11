@@ -1,7 +1,7 @@
 /* ============================================================
    Augustinerkirche Wien — thema.js
    Farben der Titelzeile und Logo je Thema (Hauptseite), gepflegt in der
-   Verwaltung unter Startseite → Farben & Logo, gespeichert in data/themen.json:
+   Verwaltung unter Einstellungen → Farben & Logo, gespeichert in data/themen.json:
    {themen: {augustinerkirche|kirchenmusik|augustiner|aspersdorf:
      {leiste: "#rrggbb", schrift: "auto"|"hell"|"dunkel", logo: "gold"|"weiss"|…,
       name: "Augustinerkirche Wien", untertitel: "Pfarre & Kloster St. Augustin"}}}
@@ -20,7 +20,7 @@
   const ROOT = script ? new URL('..', script.src).href : '/';
   const KEY = 'aug-themen';
   const THEMEN = ['augustinerkirche', 'kirchenmusik', 'augustiner', 'aspersdorf'];
-  const LOGOS = ['gold', 'gold-dunkel', 'weiss', 'schwarz', 'marine', 'gruen'];
+  const LOGOS = ['gold', 'gold-dunkel', 'hellgold', 'weiss', 'schwarz', 'marine', 'bordeaux', 'tannengruen', 'gruen'];
   const STANDARD = { leiste: '#10192e', schrift: 'auto', logo: 'gold', name: '', untertitel: '' };
   const NAME = 'Augustinerkirche Wien';
   const UNTERTITEL = 'Pfarre & Kloster St. Augustin';

@@ -18,7 +18,7 @@
 
   async function loadAll() {
     const json = (path) => A.readJSON(path);
-    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re] = await Promise.allSettled([
+    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -35,13 +35,14 @@
       json('data/pgr.json'),
       json('data/hinweise.json'),
       A.isDev() ? json('admin/mitteilungen.json') : Promise.resolve(null),
-      json('data/rechtliches.json')
+      json('data/rechtliches.json'),
+      json('data/sprueche.json')
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
       rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st),
-      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re)
+      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re), sp: val(sp)
     };
   }
 
@@ -54,7 +55,7 @@
   }
 
   /* Bereiche nach Themen; jede Kachel erscheint nur, wenn die Person den Bereich bearbeiten darf */
-  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re }) {
+  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
@@ -64,27 +65,9 @@
     const live = (list) => (list || []).filter((h) => A.noticeActive(h)).length;
     const cdN = cd ? (cd.gruppen || []).reduce((n, g) => n + count(g.cds), 0) : null;
 
+    /* Gleiche Gruppen wie die Reiter oben (js/admin.js, NAV): Häufiges zuerst, dann Inhalte, dann Einstellungen */
     const groups = [
-      ['Website', [
-        can('startseite') && tile({
-          href: 'startseite.html', ico: 'image', title: 'Startseite',
-          stat: st ? plural(count(st.bilder), 'Titelfoto', 'Titelfotos') : none,
-          addHref: 'startseite.html?neu=1', addLabel: 'Fotos hinzufügen'
-        }),
-        can('rechtliches') && tile({
-          href: 'rechtliches.html', ico: 'book', title: 'Impressum &amp; Datenschutz',
-          stat: re ? (() => {
-            const open = ['impressum', 'datenschutz'].reduce((n, k) => n + ((re[k] && re[k].abschnitte) || [])
-              .reduce((m, s) => m + (String(s.text || '').match(/\[\[offen:/g) || []).length, 0), 0);
-            return open ? `${plural(open, 'Stelle', 'Stellen')} noch offen` : 'Vollständig';
-          })() : none,
-          addHref: 'rechtliches.html', addLabel: 'Bearbeiten', addIcon: 'edit'
-        }),
-        can('hinweise') && tile({
-          href: 'hinweise.html', ico: 'alert', title: 'Hinweisbanner',
-          stat: hw ? (live(hw.hinweise) ? `${plural(live(hw.hinweise), 'Hinweis', 'Hinweise')} sichtbar` : 'Gerade kein Hinweis sichtbar') : none,
-          addHref: 'hinweise.html?neu=1', addLabel: 'Neuer Hinweis'
-        }),
+      ['Häufig gebraucht', [
         can('neuigkeiten') && tile({
           href: 'neuigkeiten.html', ico: 'news', title: 'Neuigkeiten',
           stat: news ? plural(news.length, 'Meldung', 'Meldungen') : none,
@@ -94,41 +77,14 @@
           href: 'termine.html', ico: 'calendar', title: 'Termine',
           stat: tm ? plural(count(tm.termine), 'eigener Termin', 'eigene Termine') : none,
           addHref: 'termine.html?neu=1', addLabel: 'Neuer Termin'
-        })
-      ]],
-      ['Kirchenmusik', [
+        }),
         can('hochaemter') && tile({
           href: 'hochaemter.html', ico: 'calendar', title: 'Hochämter',
           stat: ha ? plural(upcoming.length, 'kommender Termin', 'kommende Termine') : none,
           addHref: 'hochaemter.html?neu=1', addLabel: 'Neues Hochamt'
-        }),
-        can('solisten') && tile({
-          href: 'solisten.html', ico: 'music', title: 'Solisten',
-          stat: sol ? plural(sol.length, 'Solist', 'Solisten') : none,
-          addHref: 'solisten.html?neu=1', addLabel: 'Neuer Solist'
-        }),
-        can('paten') && tile({
-          href: 'paten.html', ico: 'users', title: 'Paten',
-          stat: pt ? `${plural(count(pt.paten), 'Pate', 'Paten')} · ${plural(count(pt.ehrenpaten), 'Ehrenpate', 'Ehrenpaten')}` : none,
-          addHref: 'paten.html?neu=1', addLabel: 'Neuer Pate'
-        }),
-        can('cds') && tile({
-          href: 'cds.html', ico: 'music', title: 'CDs',
-          stat: cdN !== null ? plural(cdN, 'CD', 'CDs') : none,
-          addHref: 'cds.html?neu=1', addLabel: 'Neue CD'
-        }),
-        can('musik-personen') && tile({
-          href: 'personen.html?bereich=musik', ico: 'user', title: 'Leitung & Organisten',
-          stat: ps ? plural(people(['leitung', 'gastdirigenten', 'organisten']), 'Person', 'Personen') : none,
-          addHref: 'personen.html?bereich=musik&neu=1', addLabel: 'Neue Person'
-        }),
-        can('repertoire') && tile({
-          href: 'repertoire.html', ico: 'book', title: 'Repertoire',
-          stat: rp ? plural((rp.komponisten || []).reduce((n, k) => n + count(k.werke), 0), 'Werk', 'Werke') : none,
-          addHref: 'repertoire.html?neu=1', addLabel: 'Neuer Komponist'
         })
       ]],
-      ['Pfarre & Kloster', [
+      ['Inhalte · Pfarre & Kloster', [
         can('gottesdienste') && tile({
           href: 'gottesdienste.html', ico: 'clock', title: 'Gottesdienste',
           stat: gd ? plural(count(gd.termine), 'Termin pro Woche', 'Termine pro Woche') : none,
@@ -141,6 +97,10 @@
           ...(A.canAllRunden()
             ? { addHref: 'runden.html?neu=1', addLabel: 'Neue Runde' }
             : { addHref: mine.length === 1 ? `runden.html?bearbeiten=${encodeURIComponent(mine[0].id)}` : 'runden.html', addLabel: 'Bearbeiten', addIcon: 'edit' })
+        }),
+        can('kontakt') && tile({
+          href: 'kontakt.html', ico: 'clock', title: 'Pfarrkanzlei & Kontakt',
+          stat: 'Öffnungszeiten, Telefon, E-Mail', addHref: 'kontakt.html', addLabel: 'Bearbeiten', addIcon: 'edit'
         }),
         can('rundgang') && tile({
           href: 'rundgang.html', ico: 'image', title: 'Kirchenrundgang',
@@ -156,22 +116,77 @@
           href: 'personen.html?bereich=kloster', ico: 'user', title: 'Mitbrüder',
           stat: ps ? plural(people(['mitbrueder']), 'Mitbruder', 'Mitbrüder') : none,
           addHref: 'personen.html?bereich=kloster&neu=1', addLabel: 'Neuer Mitbruder'
-        }),
-        can('kontakt') && tile({
-          href: 'kontakt.html', ico: 'clock', title: 'Pfarrkanzlei & Kontakt',
-          stat: 'Öffnungszeiten, Telefon, E-Mail', addHref: 'kontakt.html', addLabel: 'Bearbeiten', addIcon: 'edit'
         })
       ]],
-      ['Verwaltung', [
-        A.isDev() && tile({
-          href: 'mitteilungen.html', ico: 'info', title: 'Mitteilungen',
-          stat: mt ? (live(mt.mitteilungen) ? `${plural(live(mt.mitteilungen), 'Mitteilung', 'Mitteilungen')} aktiv` : 'Gerade keine aktiv') : 'Gerade keine aktiv',
-          addHref: 'mitteilungen.html?neu=1', addLabel: 'Neue Mitteilung'
+      ['Inhalte · Kirchenmusik', [
+        can('solisten') && tile({
+          href: 'solisten.html', ico: 'music', title: 'Solisten',
+          stat: sol ? plural(sol.length, 'Solist', 'Solisten') : none,
+          addHref: 'solisten.html?neu=1', addLabel: 'Neuer Solist'
+        }),
+        can('repertoire') && tile({
+          href: 'repertoire.html', ico: 'book', title: 'Repertoire',
+          stat: rp ? plural((rp.komponisten || []).reduce((n, k) => n + count(k.werke), 0), 'Werk', 'Werke') : none,
+          addHref: 'repertoire.html?neu=1', addLabel: 'Neuer Komponist'
+        }),
+        can('musik-personen') && tile({
+          href: 'personen.html?bereich=musik', ico: 'user', title: 'Leitung & Organisten',
+          stat: ps ? plural(people(['leitung', 'gastdirigenten', 'organisten']), 'Person', 'Personen') : none,
+          addHref: 'personen.html?bereich=musik&neu=1', addLabel: 'Neue Person'
+        }),
+        can('paten') && tile({
+          href: 'paten.html', ico: 'users', title: 'Paten',
+          stat: pt ? `${plural(count(pt.paten), 'Pate', 'Paten')} · ${plural(count(pt.ehrenpaten), 'Ehrenpate', 'Ehrenpaten')}` : none,
+          addHref: 'paten.html?neu=1', addLabel: 'Neuer Pate'
+        }),
+        can('cds') && tile({
+          href: 'cds.html', ico: 'music', title: 'CDs',
+          stat: cdN !== null ? plural(cdN, 'CD', 'CDs') : none,
+          addHref: 'cds.html?neu=1', addLabel: 'Neue CD'
+        })
+      ]],
+      ['Einstellungen', [
+        can('startseite') && tile({
+          href: 'startseite.html', ico: 'image', title: 'Titelfotos',
+          stat: st ? plural(count(st.bilder), 'Titelfoto', 'Titelfotos') : none,
+          addHref: 'startseite.html?neu=1', addLabel: 'Fotos hinzufügen'
+        }),
+        can('hinweise') && tile({
+          href: 'hinweise.html', ico: 'alert', title: 'Hinweisbanner',
+          stat: hw ? (live(hw.hinweise) ? `${plural(live(hw.hinweise), 'Hinweis', 'Hinweise')} sichtbar` : 'Gerade kein Hinweis sichtbar') : none,
+          addHref: 'hinweise.html?neu=1', addLabel: 'Neuer Hinweis'
+        }),
+        can('sprueche') && tile({
+          href: 'sprueche.html', ico: 'book', title: 'Sprüche',
+          stat: sp ? plural(count(sp.sprueche), 'Spruch', 'Sprüche') : none,
+          addHref: 'sprueche.html', addLabel: 'Bearbeiten', addIcon: 'edit'
+        }),
+        can('design') && tile({
+          href: 'design.html', ico: 'image', title: 'Farben &amp; Logo',
+          stat: 'Titelzeile je Hauptseite', addHref: 'design.html', addLabel: 'Bearbeiten', addIcon: 'edit'
+        }),
+        can('rechtliches') && tile({
+          href: 'rechtliches.html', ico: 'book', title: 'Impressum &amp; Datenschutz',
+          stat: re ? (() => {
+            const open = ['impressum', 'datenschutz'].reduce((n, k) => n + ((re[k] && re[k].abschnitte) || [])
+              .reduce((m, s) => m + (String(s.text || '').match(/\[\[offen:/g) || []).length, 0), 0);
+            return open ? `${plural(open, 'Stelle', 'Stellen')} noch offen` : 'Vollständig';
+          })() : none,
+          addHref: 'rechtliches.html', addLabel: 'Bearbeiten', addIcon: 'edit'
         }),
         A.isAdmin() && tile({
           href: 'zugaenge.html', ico: 'key', title: 'Zugänge',
           stat: acc ? plural(acc.length, 'Zugang', 'Zugänge') : none,
           addHref: 'zugaenge.html?neu=1', addLabel: 'Neuer Zugang'
+        }),
+        A.isDev() && tile({
+          href: 'mitteilungen.html', ico: 'info', title: 'Mitteilungen',
+          stat: mt ? (live(mt.mitteilungen) ? `${plural(live(mt.mitteilungen), 'Mitteilung', 'Mitteilungen')} aktiv` : 'Gerade keine aktiv') : 'Gerade keine aktiv',
+          addHref: 'mitteilungen.html?neu=1', addLabel: 'Neue Mitteilung'
+        }),
+        A.isDev() && tile({
+          href: 'aenderungen.html', ico: 'clock', title: 'Änderungen',
+          stat: 'Wer hat wann was geändert', addHref: 'aenderungen.html', addLabel: 'Ansehen', addIcon: 'eye'
         })
       ]]
     ];

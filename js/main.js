@@ -681,7 +681,7 @@
 
   /* ---------- Hinweisbanner (data/hinweise.json) ----------
      Wichtige Hinweise (Kirche geschlossen, Pfarrgemeinderatswahl …), in der
-     Verwaltung unter Startseite → Hinweisbanner gepflegt. Sichtbar von "von"
+     Verwaltung unter Einstellungen → Hinweisbanner gepflegt. Sichtbar von "von"
      bis einschliesslich "bis" (Datum oder Datum mit Uhrzeit), danach
      verschwindet der Banner von selbst. Wegklicken gilt bis zum Schliessen
      des Browsers (sessionStorage), ein geaenderter Text erscheint wieder. */
@@ -719,7 +719,7 @@
   }
   /* ---------- Sprüche (data/sprueche.json) ----------
      Die Zitat-Bänder unten auf den Seiten (.quote-band) zeigen die Sprüche aus der
-     Verwaltung (Startseite → Sprüche): zuerst ein zufälliger, dann wechseln sie
+     Verwaltung (Einstellungen → Sprüche): zuerst ein zufälliger, dann wechseln sie
      weich nacheinander (alle "sekunden"; nicht bei "reduzierte Bewegung", nicht
      solange das Band nicht zu sehen ist). Ohne Datei bleibt der Spruch im HTML. */
   async function initQuotes() {
