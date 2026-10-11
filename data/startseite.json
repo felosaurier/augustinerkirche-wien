@@ -1,6 +1,78 @@
 {
-  "sekunden": 6,
+  "sekunden": 4,
   "bilder": [
+    {
+      "titel": "Turm der Wiener Augustinerkirche",
+      "bild": "assets/img/startseite/turm-der-wiener-augustinerkirche.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 14%"
+    },
+    {
+      "titel": "Die Wiener Augustiner",
+      "bild": "assets/img/startseite/die-wiener-augustiner.webp",
+      "breite": 1333,
+      "hoehe": 2000,
+      "ausschnitt": "50% 96%"
+    },
+    {
+      "titel": "Blick von der Orgelempore während des Hochamts",
+      "bild": "assets/img/startseite/blick-von-der-orgelempore-waehrend-des-hochamts.webp",
+      "breite": 1126,
+      "hoehe": 2000,
+      "ausschnitt": "50% 47%"
+    },
+    {
+      "titel": "Hl. Augustinus, Ordensvater & Pfarrpatron",
+      "bild": "assets/img/startseite/hl-augustinus-ordensvater-pfarrpatron.webp",
+      "breite": 739,
+      "hoehe": 1600,
+      "ausschnitt": "50% 42%"
+    },
+    {
+      "titel": "Chor & Orchester von St. Augustin",
+      "bild": "assets/img/startseite/chor-orchester-von-st-augustin.webp",
+      "breite": 1333,
+      "hoehe": 2000,
+      "ausschnitt": "50% 80%"
+    },
+    {
+      "titel": "Augustinusfest",
+      "bild": "assets/img/startseite/augustinusfest.webp",
+      "breite": 1200,
+      "hoehe": 1600,
+      "ausschnitt": "50% 78%"
+    },
+    {
+      "titel": "Hochamt in St. Augustin",
+      "bild": "assets/img/startseite/hochamt-in-st-augustin.webp",
+      "breite": 1126,
+      "hoehe": 2000,
+      "ausschnitt": "50% 64%"
+    },
+    {
+      "titel": "Die Rieger-Orgel (1976) der Augustinerkirche",
+      "bild": "assets/img/startseite/die-rieger-orgel-1976-der-augustinerkirche.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 19%"
+    },
+    {
+      "titel": "Adventlichter in St. Augustin",
+      "bild": "assets/img/startseite/adventlichter-in-st-augustin.webp",
+      "breite": 1199,
+      "hoehe": 1599,
+      "ausschnitt": "50% 44%"
+    }
+  ],
+  "frueher": [
+    {
+      "titel": "Adventlichter in St. Augustin (zweites Foto)",
+      "bild": "assets/img/startseite/adventlichter-in-st-augustin-2.webp",
+      "breite": 1199,
+      "hoehe": 1599,
+      "ausschnitt": ""
+    },
     {
       "titel": "Der Turm der Augustinerkirche",
       "bild": "assets/img/kirche/turm.webp",

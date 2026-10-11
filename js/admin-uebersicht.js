@@ -68,7 +68,7 @@
         can('startseite') && tile({
           href: 'startseite.html', ico: 'image', title: 'Startseite',
           stat: st ? plural(count(st.bilder), 'Titelfoto', 'Titelfotos') : none,
-          addHref: 'startseite.html?neu=1', addLabel: 'Neues Foto'
+          addHref: 'startseite.html?neu=1', addLabel: 'Fotos hinzufügen'
         }),
         can('hinweise') && tile({
           href: 'hinweise.html', ico: 'alert', title: 'Hinweisbanner',
