@@ -63,6 +63,12 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 .adm-iconbtn:hover{color:var(--gold);border-color:var(--line);background:var(--bg-soft)}
 .adm-iconbtn:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 
+/* Bis zum grossen Laptop: oben rechts nur Symbole (Beschriftung als Tooltip), sonst ragt die Leiste
+   bei Entwicklern (Aenderungen, Mitteilungen, Zugaenge, Website, Abmelden) ueber den Rand */
+@media(max-width:1200px){
+  .adm-iconbtn .lbl{display:none}
+  .adm-iconbtn{padding:0 .65rem}
+}
 @media(max-width:1000px){
   /* Tablet: die sechs Reiter sollen ohne Verschieben sichtbar bleiben */
   .adm-nav a{padding:0 .65rem;gap:.4rem;font-size:.9rem}
@@ -91,6 +97,15 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 @media(max-width:480px){
   .adm-bar .nav-logo-sub{display:none}
   .adm-bar .nav-logo-text{font-size:.9rem}
+}
+/* Handy: bei vielen Knoepfen (Entwickler: Aenderungen, Mitteilungen, Zugaenge …) nur das Logo-Bild, kleinere Knoepfe */
+@media(max-width:560px){
+  .adm-bar{gap:.4rem;padding:0 .6rem 0 .8rem}
+  .adm-bar .nav-logo-wrap > div{display:none}
+  .adm-user{gap:0}
+  .adm-me{margin-right:.15rem}
+  .adm-avatar{width:2.1rem;height:2.1rem}
+  .adm-iconbtn{min-width:40px;justify-content:center;padding:0 .45rem}
 }
 
 /* ══ SEITENKOPF ══ */
@@ -737,8 +752,10 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .rt-help>summary{padding:1rem 1.2rem;font-weight:600;color:var(--blue);cursor:pointer}
 .rt-help>summary:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
 .rt-help-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(19rem,1fr));gap:.55rem 1.4rem;padding:0 1.2rem 1.2rem}
-.rt-help-grid div{display:grid;grid-template-columns:minmax(9.5rem,auto) minmax(0,1fr);gap:.7rem;align-items:baseline;font-size:.95rem;color:var(--text-mid)}
-.rt-help-grid code,.rt-help code{font-size:.88rem;padding:.05rem .35rem;background:var(--bg-warm);color:var(--text);white-space:nowrap}
+.rt-help-grid{grid-template-columns:repeat(auto-fill,minmax(min(19rem,100%),1fr))}
+.rt-help-grid div{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:.7rem;align-items:baseline;font-size:.95rem;color:var(--text-mid)}
+.rt-help-grid code,.rt-help code{font-size:.88rem;padding:.05rem .35rem;background:var(--bg-warm);color:var(--text);overflow-wrap:anywhere}
+@media(max-width:560px){.rt-help-grid div{grid-template-columns:minmax(0,1fr);gap:.15rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}}
 .rt-sec{position:relative}
 .rt-sec-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.6rem}
 .rt-sec-num{font-size:.9rem;font-weight:700;letter-spacing:.04em;color:var(--gold-text)}

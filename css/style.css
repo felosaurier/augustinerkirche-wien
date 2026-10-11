@@ -48,6 +48,9 @@ body{
   font-family:var(--sans);font-size:1rem;font-weight:400;line-height:1.65;
   color:var(--text);background:var(--bg);
   padding-top:var(--nav-h);overflow-x:hidden;
+  /* Lange Woerter und Adressen (E-Mail, Links) brechen um, statt ueber den Rand zu ragen:
+     sonst laesst sich die Seite am Handy seitlich verschieben */
+  overflow-wrap:break-word;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   font-variant-numeric:lining-nums;
   /* Bodoni Moda mit kleiner optischer Größe: gleiche Form, kräftigere Haarlinien.
@@ -243,6 +246,8 @@ nav .nav-logo-sub{color:rgba(255,255,255,.62)}
 
 /* ══ GRUNDRASTER ══ */
 .section{padding:clamp(4rem,8vw,7rem) var(--pad)}
+/* Seiten mit Untermenue: der Inhalt beginnt naeher am Seitenkopf */
+.section:has(> .inner > .with-sidebar){padding-top:clamp(2.5rem,5vw,4.5rem)}
 .inner{max-width:var(--max);margin:0 auto}
 
 .s-label{margin-bottom:.7rem;font-size:1rem;font-weight:500;color:var(--gold)}
@@ -297,8 +302,9 @@ nav .nav-logo-sub{color:rgba(255,255,255,.62)}
   font-family:var(--sans);font-size:.98rem;line-height:1.4;text-align:left;text-decoration:none;color:var(--text-mid);
   transition:color .2s,border-color .2s;
 }
-.sidebar-item:hover{color:var(--blue)}
-.sidebar-item.active{color:var(--blue);font-weight:600;border-left-color:var(--gold)}
+.sidebar-item:hover{color:var(--blue);background:var(--bg-soft)}
+/* Gewaehlter Bereich: goldene Leiste und heller Goldgrund, damit er deutlich heraussticht */
+.sidebar-item.active{color:var(--blue);font-weight:600;border-left:3px solid var(--gold);padding-left:calc(1.1rem - 1px);background:var(--gold-pale)}
 .sidebar-toggle{display:none}
 
 /* Ablauf am Ende eines Bereichs: zurück und weiter */
@@ -916,6 +922,7 @@ html.nd-lock{overflow:hidden}
 .legal-table tbody tr:nth-child(even) td{background:var(--bg-soft)}
 .legal-table td:first-child{font-weight:600;color:var(--text)}
 .legal-table a,.legal-table .nw{white-space:nowrap}
+.legal-table a.mail{white-space:normal;overflow-wrap:anywhere}
 @media(max-width:1024px){
   .legal-layout{display:block}
   .legal-toc{position:static;max-height:none;overflow:visible;margin-bottom:2.4rem;padding:1.1rem 1.2rem;background:var(--bg-soft);border:1px solid var(--line);box-shadow:none}
@@ -930,12 +937,14 @@ html.nd-lock{overflow:hidden}
   .legal-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .legal-table tr{display:block;margin-bottom:.8rem;border:1px solid var(--line);background:#fff}
   .legal-table tbody tr:nth-child(even) td{background:none}
-  .legal-table td{display:grid;grid-template-columns:minmax(6.5rem,38%) minmax(0,1fr);gap:.8rem;padding:.55rem .9rem}
+  .legal-table td{display:grid;grid-template-columns:minmax(5.5rem,34%) minmax(0,1fr);gap:.7rem;padding:.55rem .9rem}
   .legal-table td::before{content:attr(data-label);font-size:.88rem;font-weight:600;color:var(--text-light)}
   .legal-table td:first-child{background:var(--bg-warm)}
   .legal-table tbody tr:last-child td{border-bottom:1px solid var(--line)}
   .legal-table tbody tr td:last-child{border-bottom:0}
 }
+/* Sehr schmal: auch IBAN und Telefonnummern duerfen an den Leerzeichen umbrechen */
+@media(max-width:400px){.legal-table .nw,.legal-table a{white-space:normal}}
 @media print{.legal-toc,.legal-switch{display:none}.legal-layout{display:block}}
 
 
@@ -1201,18 +1210,23 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   /* Untermenü: fixierte Leiste, die den geöffneten Bereich nennt und alle
      Bereiche als Liste aufklappt */
   .with-sidebar{display:block}
+  /* Die Leiste mit dem Untermenue schliesst direkt an den Seitenkopf an */
+  .section:has(> .inner > .with-sidebar){padding-top:0}
   .sidebar{
     position:sticky;top:var(--nav-h);z-index:60;max-height:none;overflow:visible;box-shadow:none;
-    margin:0 calc(var(--pad) * -1) 2.2rem;
-    background:#fff;border-left:0;border-bottom:1px solid var(--line);
+    margin:0 calc(var(--pad) * -1) 1.8rem;
+    background:var(--blue-deep);border-left:0;border-bottom:0;
   }
+  /* Umschalter: dunkel wie der Seitenkopf, wirkt als dessen unterer Teil (bleibt beim Scrollen unter dem Menue stehen) */
   .sidebar-toggle{
     display:flex;align-items:center;gap:.8rem;width:100%;min-height:3.4rem;padding:.6rem var(--pad);
-    background:#fff;border:0;cursor:pointer;text-align:left;font:inherit;color:var(--blue);
+    background:var(--blue-deep);border:0;border-top:2px solid var(--gold-l);cursor:pointer;text-align:left;font:inherit;color:#fff;
   }
+  .sidebar-toggle:hover{background:#18233d}
+  .sidebar-toggle:focus-visible{outline:2px solid var(--gold-l);outline-offset:-3px}
   .sidebar-toggle-current{flex:1;min-width:0;font-family:var(--serif);font-size:1.2rem;font-weight:500;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .sidebar-toggle-hint{flex:none;font-size:.88rem;color:var(--text-light)}
-  .sidebar-toggle svg{width:11px;height:11px;flex:none;stroke:var(--gold);transition:transform .25s var(--ease)}
+  .sidebar-toggle-hint{flex:none;font-size:.88rem;color:rgba(255,255,255,.7)}
+  .sidebar-toggle svg{width:12px;height:12px;flex:none;stroke:var(--gold-l);transition:transform .25s var(--ease)}
   .sidebar.open .sidebar-toggle svg{transform:rotate(180deg)}
   .sidebar-list{
     display:none;position:absolute;left:0;right:0;top:100%;
@@ -1224,7 +1238,7 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .sidebar-group-label{padding:1.1rem 0 .3rem}
   .sidebar-group-label:first-child{padding-top:.6rem}
   .sidebar-item{min-height:2.8rem;padding:.55rem 0 .55rem 1rem;margin-left:0;border-left:1px solid var(--line);font-size:1rem}
-  .sidebar-item.active{border-left:2px solid var(--gold);padding-left:calc(1rem - 1px)}
+  .sidebar-item.active{border-left:3px solid var(--gold);padding-left:calc(1rem - 2px);background:var(--gold-pale)}
   .with-sidebar{scroll-margin-top:0}
   .sakr-sec{scroll-margin-top:4.5rem}
   .pane-steps{margin-top:3rem}
@@ -1348,6 +1362,12 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .pane-step-name{font-size:1.1rem}
   .nav-logo-text{font-size:1rem}
   .nav-logo-sub{font-size:.7rem}
+  .person-bio a,.person-body a{overflow-wrap:anywhere}
+}
+/* Sehr schmale Handys: das grosse Personenfoto steht ueber dem Text, damit der Text nicht in einer schmalen Spalte klebt */
+@media(max-width:400px){
+  .person-card-wide:not(.compact):not(.no-img){grid-template-columns:minmax(0,1fr);gap:1rem}
+  .person-card-wide:not(.compact) .bn-wrap{max-width:10rem}
 }
 @media(max-width:360px){
   .nav-logo-sub{display:none}

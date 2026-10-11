@@ -1766,6 +1766,8 @@
         group.sub.map(([href, label]) => `<a href="${href}"${isHere(href) ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('') +
         '</div></nav>' : '');
     $('adm-logout').addEventListener('click', () => logout('abgemeldet'));
+    /* Tooltip fuer die Knoepfe oben rechts (auf kleineren Bildschirmen ohne Beschriftung) */
+    el.querySelectorAll('.adm-iconbtn[aria-label]').forEach((b) => { if (!b.title) b.title = b.getAttribute('aria-label'); });
     /* Der Seitenkopf mit der Ueberschrift steht ausserhalb von <main>: als benannter Bereich kennzeichnen */
     const head = d.querySelector('.adm-head');
     const h1 = head && head.querySelector('h1');
