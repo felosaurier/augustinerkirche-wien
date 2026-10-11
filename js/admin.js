@@ -129,6 +129,7 @@
     { key: 'startseite', label: 'Startseite (Titelfotos)', group: 'Allgemein', page: 'startseite.html' },
     { key: 'hinweise', label: 'Hinweisbanner (oben auf der Website)', group: 'Allgemein', page: 'hinweise.html' },
     { key: 'design', label: 'Farben & Logo der Hauptseiten', group: 'Allgemein', page: 'design.html' },
+    { key: 'sprueche', label: 'Sprüche (Zitate unten auf den Seiten)', group: 'Allgemein', page: 'sprueche.html' },
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Allgemein', page: 'neuigkeiten.html' },
     { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Allgemein', page: 'termine.html' },
     { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Allgemein', page: 'rechtliches.html' },
@@ -953,6 +954,7 @@
     [/^data\/gottesdienste\.json$/, 'Gottesdienste'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
     [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'],
     [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
+    [/^data\/sprueche\.json$/, 'Sprüche'], [/^data\/themen\.json$/, 'Farben & Logo'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
     [/^admin\/zugaenge\.json$/, 'Zugänge'], [/^admin\/mitteilungen\.json$/, 'Mitteilungen'],
     [/^assets\/img\/startseite\//, 'Startseite'], [/^assets\/img\/news\//, 'Neuigkeiten'], [/^assets\//, 'Dateien']
   ];
@@ -961,7 +963,7 @@
   /* Werte fuer die Anzeige: kurz, Leerraum zusammengezogen; geheime Felder nie im Klartext */
   const SECRET = /^(hash|salt|code|codeHash|codeSalt|passwort|password)$/i;
   const SKIP = /^(salt|codeSalt|iter|__.*)$/;
-  const LABELS = { hash: 'Passwort', code: 'Entwickler-Code', codeHash: 'Entwickler-Code', bilder: 'Fotos', frueher: 'Frühere Fotos', sekunden: 'Wechselzeit (Sekunden)', ausschnitt: 'Bildausschnitt' };
+  const LABELS = { sprueche: 'Sprüche', themen: 'Themen', hash: 'Passwort', code: 'Entwickler-Code', codeHash: 'Entwickler-Code', bilder: 'Fotos', frueher: 'Frühere Fotos', sekunden: 'Wechselzeit (Sekunden)', ausschnitt: 'Bildausschnitt' };
   const MAX_DETAILS = 60;
   function fmtValue(v) {
     if (v === undefined || v === null || v === '') return '(leer)';
@@ -990,7 +992,7 @@
   const keyLabel = (k) => LABELS[k] || (/^[a-z]/.test(k) ? k[0].toUpperCase() + k.slice(1) : k);
   function nameOf(o) {
     if (o && typeof o === 'object' && !Array.isArray(o)) {
-      for (const k of ['titel', 'Titel', 'name', 'Name', 'benutzer', 'label', 'bezeichnung', 'nummer', 'tage', 'Werk', 'werk', 'datum', 'Datum', 'id', 'bild', '__id']) {
+      for (const k of ['titel', 'Titel', 'name', 'Name', 'benutzer', 'label', 'bezeichnung', 'nummer', 'tage', 'Werk', 'werk', 'text', 'datum', 'Datum', 'id', 'bild', '__id']) {
         if (o[k]) return k === 'bild' ? fileName(String(o[k])) : fmtValue(o[k]);
       }
       return '(Eintrag)';
@@ -1685,6 +1687,7 @@
     { label: 'Startseite', icon: 'image', href: 'startseite.html', sub: [
       ['startseite.html', 'Titelfotos'],
       ['hinweise.html', 'Hinweisbanner'],
+      ['sprueche.html', 'Sprüche'],
       ['design.html', 'Farben & Logo']
     ] },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },

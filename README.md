@@ -229,6 +229,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   rundgang.html               Kirchenrundgang pflegen
   startseite.html             Titelfotos der Startseite pflegen
   design.html                 Farben der Titelzeile und Logo je Hauptseite
+  sprueche.html               Sprüche (Zitate unten auf den Seiten, wechseln nacheinander)
   hinweise.html               Hinweisbanner oben auf der Website (mit Start- und Enddatum)
   rechtliches.html            Impressum und Datenschutz pflegen
   mitteilungen.html           Mitteilungen an alle in der Verwaltung (nur Entwickler)
@@ -271,6 +272,7 @@ js/
   admin-rundgang.js           Kirchenrundgang pflegen
   admin-startseite.js         Titelfotos der Startseite pflegen
   admin-design.js             Farben & Logo je Hauptseite
+  admin-sprueche.js           Sprüche pflegen
   admin-rechtliches.js        Impressum und Datenschutz pflegen
   admin-aenderungen.js        Alle Änderungen als Tabelle (Entwickler)
   admin-personen.js           Personen pflegen
@@ -294,6 +296,7 @@ data/
   runden.json                 Runden: Übersicht und Inhalt der Seiten
   rundgang.json               Bilder des Kirchenrundgangs (Chronik → Rundgang)
   startseite.json             Titelfotos der Startseite (Diashow, Wechselzeit)
+  sprueche.json               Sprüche für die Zitat-Bänder (Text, Quelle, Wechselzeit)
   themen.json                 Farbe der Titelzeile, Schrift und Logo je Hauptseite (Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf)
   startseite-kirchenmusik.json, startseite-augustiner.json, startseite-aspersdorf.json
                               Titelfotos der Hauptseiten Kirchenmusik, Augustiner, Aspersdorf (gleicher Aufbau)

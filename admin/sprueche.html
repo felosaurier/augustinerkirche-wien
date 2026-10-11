@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Sprüche — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-sprueche.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Sprüche</h1>
+      <p class="ph-sub">Die großen Zitate unten auf den Seiten Kirchenmusik, Hochamt, Gottesdienste, Chronik und Augustiner. Jede Seite beginnt mit einem zufälligen Spruch, dann wechseln sie nacheinander.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <section class="adm-panel" aria-labelledby="sp-h">
+    <h2 class="visually-hidden" id="sp-h">Sprüche</h2>
+    <form id="sp-form" novalidate autocomplete="off">
+      <fieldset class="adm-fs">
+        <legend>Sprüche</legend>
+        <p class="adm-hint sp-hint">Ohne Anführungszeichen eintragen, die setzt die Website selbst. Reihenfolge mit den Pfeilen.</p>
+        <div id="sp-list"></div>
+      </fieldset>
+      <fieldset class="adm-fs">
+        <legend>Wechsel</legend>
+        <div class="adm-field sp-secs">
+          <label class="adm-label" for="sp-secs">Neuer Spruch nach</label>
+          <select class="adm-input" id="sp-secs">
+            <option value="6">6 Sekunden</option>
+            <option value="8">8 Sekunden</option>
+            <option value="10">10 Sekunden</option>
+            <option value="15">15 Sekunden</option>
+            <option value="20">20 Sekunden</option>
+            <option value="30">30 Sekunden</option>
+          </select>
+          <span class="adm-hint">Gewechselt wird nur, solange das Zitat zu sehen ist. Wer „reduzierte Bewegung“ eingestellt hat, sieht einen Spruch ohne Wechsel.</span>
+        </div>
+      </fieldset>
+      <div class="adm-inline-foot">
+        <span class="adm-muted" id="sp-state"></span>
+        <button type="submit" class="btn btn-dark" id="sp-save" data-icon="check">Speichern</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+</body>
+</html>

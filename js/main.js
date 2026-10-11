@@ -717,6 +717,55 @@
     if (/^(pages\/|index\.html|data\/|assets\/)/.test(v)) return `${siteRoot}${v}`;
     return '';
   }
+  /* ---------- Sprüche (data/sprueche.json) ----------
+     Die Zitat-Bänder unten auf den Seiten (.quote-band) zeigen die Sprüche aus der
+     Verwaltung (Startseite → Sprüche): zuerst ein zufälliger, dann wechseln sie
+     weich nacheinander (alle "sekunden"; nicht bei "reduzierte Bewegung", nicht
+     solange das Band nicht zu sehen ist). Ohne Datei bleibt der Spruch im HTML. */
+  async function initQuotes() {
+    const bands = qsa('.quote-band');
+    if (!bands.length) return;
+    let data = null;
+    try {
+      const res = await fetch(`${siteRoot}data/sprueche.json`, { cache: 'no-cache' });
+      if (res.ok) data = await res.json();
+    } catch {
+      return;
+    }
+    const list = ((data && data.sprueche) || []).filter((s) => s && String(s.text || '').trim());
+    if (!list.length) return;
+    const secs = Math.min(60, Math.max(4, Number(data.sekunden) || 10));
+    for (const band of bands) {
+      const qt = qs('.qt', band);
+      const src = qs('.qt-src', band);
+      if (!qt) continue;
+      let i = Math.floor(Math.random() * list.length);
+      const show = (k) => {
+        qt.textContent = String(list[k].text).trim().replace(/^[„"“]+|[“"”]+$/g, '');
+        if (src) {
+          src.textContent = String(list[k].quelle || '').trim();
+          src.hidden = !src.textContent;
+        }
+      };
+      show(i);
+      if (list.length < 2) continue;
+      /* nur wechseln, wenn das Band gerade im Fenster zu sehen ist */
+      const visible = () => {
+        const r = band.getBoundingClientRect();
+        return r.bottom > 0 && r.top < window.innerHeight;
+      };
+      setInterval(() => {
+        if (reducedMotion.matches || document.hidden || !visible()) return;
+        band.classList.add('qt-out');
+        setTimeout(() => {
+          i = (i + 1) % list.length;
+          show(i);
+          band.classList.remove('qt-out');
+        }, 600);
+      }, secs * 1000);
+    }
+  }
+
   async function initBanner() {
     const host = qs('main');
     if (!host) return;
@@ -791,6 +840,7 @@
     initHeroShow();
     initCredits();
     initBanner();
+    initQuotes();
     markCurrentNav();
 
     holdHashTarget();
