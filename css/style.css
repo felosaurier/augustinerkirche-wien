@@ -602,32 +602,11 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 
 /* ══ HOCHÄMTER-KALENDER (musik.html) ══ */
 .kal-wrap{display:block}
-.kal-months{
-  --fl:0px;--fr:0px;
-  display:flex;flex-wrap:nowrap;gap:0 .2rem;margin-bottom:.5rem;
-  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
-  cursor:grab;user-select:none;border-bottom:1px solid var(--line);
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);
-  mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);
-}
-.kal-months::-webkit-scrollbar{display:none}
-.kal-months.has-left{--fl:2.4rem}
-.kal-months.has-right{--fr:2.4rem}
-.kal-months.dragging{cursor:grabbing}
-.kal-months.dragging .kal-m-btn{pointer-events:none}
-.kal-m-btn{
-  flex:none;white-space:nowrap;margin-bottom:-1px;padding:.9rem 1rem .8rem;
-  background:none;border:0;border-bottom:2px solid transparent;cursor:pointer;
-  font-family:var(--sans);font-size:.98rem;font-weight:500;color:var(--text-light);transition:color .2s,border-color .2s;
-}
-.kal-m-btn:hover{color:var(--blue)}
-.kal-m-btn.active{color:var(--blue);font-weight:600;border-bottom-color:var(--gold)}
-.kal-m-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
 
 .kal-row{display:grid;grid-template-columns:4.6rem 5.2rem minmax(0,1fr);gap:1.2rem;align-items:center;padding:1.3rem 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
 .kal-d{font-family:var(--serif);font-size:2.5rem;font-weight:500;line-height:.95;color:var(--blue)}
 .kal-wd{margin-top:.4rem;font-size:.85rem;font-weight:600;line-height:1.3;color:var(--blue)}
-.kal-yr{margin-top:0;font-weight:400;color:var(--text-light);white-space:nowrap}
+.kal-yr{margin-top:.05rem;font-size:1rem;font-weight:500;color:var(--text-mid);white-space:nowrap}
 .kal-name{font-family:var(--serif);font-size:1.4rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s}
 .kal-type{margin-top:.25rem;font-size:.92rem;font-weight:500;color:var(--gold)}
 .kal-time{font-family:var(--serif);font-size:1.5rem;text-align:left;color:var(--blue);white-space:nowrap}
@@ -1327,7 +1306,6 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .hd-row{grid-template-columns:1fr;gap:.3rem;padding:1.1rem 0}
   .hd-nav{grid-template-columns:1fr}
   .hd-next{text-align:left}
-  .kal-months{display:none}
   .kal-select-wrap{display:block}
   /* Archiv der Hochämter: Jahr als Aufklappmenü */
   #kal-archive-list .news-years{display:none}
@@ -1383,7 +1361,7 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .fact-l{font-size:.82rem}
   .timeline-item{grid-template-columns:4.8rem minmax(0,1fr);gap:1rem}
   .timeline-year{font-size:1.4rem}
-  .kal-row,a.kal-row{grid-template-columns:3.8rem minmax(0,1fr);gap:.3rem 1rem}
+  .kal-row,a.kal-row{grid-template-columns:4.8rem minmax(0,1fr);gap:.3rem 1rem}
   .kal-row>div:nth-child(3){grid-column:1/-1}
   .kal-time,.kal-loc{text-align:left}
   .kal-time{font-size:1.2rem}
@@ -1427,5 +1405,5 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
 /* Windows-Kontrastmodus: Hintergrundfarben entfallen dort, Linien-Symbole brauchen eine Systemfarbe */
 @media(forced-colors:active){
   .hamburger span,.nav-btn.current::after{background:CanvasText}
-  .kal-m-btn.active,.news-year.active,.sidebar-item.active,.week-filter-btn.active{border-color:Highlight}
+  .news-year.active,.sidebar-item.active,.week-filter-btn.active{border-color:Highlight}
 }

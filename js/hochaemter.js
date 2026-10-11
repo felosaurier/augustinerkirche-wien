@@ -3,7 +3,7 @@
    Kalender und Archiv der Hochaemter auf musik.html.
    Die Termine kommen aus data/hochaemter.csv (Excel-Tabelle,
    siehe js/hochaemter-data.js). Jede Zeile fuehrt zur Detailseite
-   hochamt.html. Kommende Termine mit Monatsfilter in #p-hochaemter,
+   hochamt.html. Alle kommenden Termine untereinander in #p-hochaemter,
    vergangene in #p-hochaemter-archiv.
    ============================================================ */
 (function () {
@@ -14,14 +14,9 @@
 
   const DATA_URL = '../data/hochaemter.csv';
   const ARCHIVE_DIR = '../data/archiv/';
-  /* Gleicher Umbruch wie in style.css: darunter ist das Seitenmenue eine Tab-Leiste */
-  const wideLayout = window.matchMedia('(min-width: 1025px)');
 
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
   const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
-
-  const monthKey = (d) => `${d.getFullYear()}-${HD.pad(d.getMonth() + 1)}`;
-  const monthLabel = (d) => `${HD.MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 
   /* Aktiven Knopf einer Gruppe markieren (Optik ueber .active, Screenreader ueber aria-pressed) */
   function setPressed(buttons, active) {
@@ -33,7 +28,7 @@
 
   function rowHTML(entry) {
     const d = entry.dateObj;
-    return `<a class="kal-row" data-m="${monthKey(d)}" href="hochamt.html?id=${encodeURIComponent(entry.id)}">` +
+    return `<a class="kal-row" href="hochamt.html?id=${encodeURIComponent(entry.id)}">` +
       `<div><div class="kal-d">${HD.pad(d.getDate())}</div><div class="kal-wd">${HD.WEEKDAYS_SHORT[d.getDay()]}</div>` +
         `<div class="kal-wd kal-yr">${HD.MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}</div></div>` +
       `<div><div class="kal-time">${HD.esc(entry.time)}</div></div>` +
@@ -50,121 +45,11 @@
       '</select>';
   }
 
-  /* Monatszeile (Querformat): eine Zeile, seitlich verschiebbar per Wischen,
-     Trackpad oder Ziehen mit der Maus. Blendkanten zeigen, dass es weitergeht. */
-  function initMonthScroller(monthsEl) {
-    function updateEdges() {
-      const max = monthsEl.scrollWidth - monthsEl.clientWidth;
-      monthsEl.classList.toggle('has-left', monthsEl.scrollLeft > 2);
-      monthsEl.classList.toggle('has-right', monthsEl.scrollLeft < max - 2);
-    }
-    monthsEl.addEventListener('scroll', updateEdges, { passive: true });
-    window.addEventListener('resize', updateEdges);
-    updateEdges();
-
-    /* Ziehen mit der Maus (Touch und Trackpad scrollen nativ) */
-    let down = false;
-    let moved = false;
-    let startX = 0;
-    let startLeft = 0;
-    monthsEl.addEventListener('pointerdown', (e) => {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      down = true;
-      moved = false;
-      startX = e.clientX;
-      startLeft = monthsEl.scrollLeft;
-    });
-    window.addEventListener('pointermove', (e) => {
-      if (!down) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 5) {
-        moved = true;
-        monthsEl.classList.add('dragging');
-      }
-      if (moved) monthsEl.scrollLeft = startLeft - dx;
-    });
-    window.addEventListener('pointerup', () => {
-      if (!down) return;
-      down = false;
-      monthsEl.classList.remove('dragging');
-    });
-    /* Nach dem Ziehen keinen Monat versehentlich anklicken (Capture-Phase faengt den Klick ab) */
-    monthsEl.addEventListener('click', (e) => {
-      if (!moved) return;
-      e.preventDefault();
-      e.stopPropagation();
-      moved = false;
-    }, true);
-
-    /* Aktiven Reiter in die Mitte der Zeile holen */
-    return function showActive() {
-      const active = qs('.kal-m-btn.active', monthsEl);
-      if (!active || monthsEl.scrollWidth <= monthsEl.clientWidth) return;
-      monthsEl.scrollTo({ left: active.offsetLeft - (monthsEl.clientWidth - active.offsetWidth) / 2, behavior: 'smooth' });
-    };
-  }
-
-  /* Wird der Bereich kuerzer, rutscht das klebende Seitenmenue (Querformat) aus dem Bild:
-     dann an den Anfang des Bereichs zurueckscrollen. */
-  function keepSidebarInView() {
-    const sidebar = qs('.sidebar');
-    if (!sidebar || !wideLayout.matches) return;
-    const navH = (qs('nav') || { offsetHeight: 72 }).offsetHeight;
-    if (sidebar.getBoundingClientRect().top < navH) {
-      const wrap = sidebar.closest('.with-sidebar') || sidebar;
-      window.scrollTo(0, wrap.getBoundingClientRect().top + window.pageYOffset - navH - 16);
-    }
-  }
-
-  function renderUpcoming(entries, monthsEl, listEl) {
-    if (!entries.length) {
-      listEl.innerHTML = '<p class="s-text">Derzeit sind keine kommenden Hochämter eingetragen.</p>';
-      return;
-    }
-
-    /* Monate in der Reihenfolge ihres ersten Termins */
-    const groups = new Map();
-    for (const { dateObj } of entries) {
-      const key = monthKey(dateObj);
-      if (!groups.has(key)) groups.set(key, monthLabel(dateObj));
-    }
-    const months = [...groups].map(([value, label]) => ({ value, label }));
-
-    monthsEl.innerHTML = months.map((g, i) =>
-      `<button type="button" class="kal-m-btn${i === 0 ? ' active' : ''}" data-filter="${g.value}" aria-pressed="${i === 0}">${g.label}</button>`
-    ).join('');
-
-    const oldSelect = qs('.kal-select-wrap', monthsEl.parentNode);
-    if (oldSelect) oldSelect.remove();
-    const selWrap = document.createElement('div');
-    selWrap.className = 'kal-select-wrap';
-    selWrap.innerHTML = selectHTML('kal-select', 'Monat wählen', months);
-    monthsEl.before(selWrap);
-    const select = qs('select', selWrap);
-
-    listEl.innerHTML = entries.map(rowHTML).join('');
-
-    const rows = qsa('.kal-row', listEl);
-    const buttons = qsa('.kal-m-btn', monthsEl);
-    const applyFilter = (key) => {
-      for (const row of rows) row.style.display = row.dataset.m === key ? '' : 'none';
-    };
-    const showActive = initMonthScroller(monthsEl);
-
-    for (const btn of buttons) {
-      btn.addEventListener('click', () => {
-        setPressed(buttons, btn);
-        select.value = btn.dataset.filter;
-        showActive();
-        applyFilter(btn.dataset.filter);
-        keepSidebarInView();
-      });
-    }
-    select.addEventListener('change', () => {
-      const btn = buttons.find((b) => b.dataset.filter === select.value);
-      if (btn) btn.click();
-    });
-    applyFilter(months[0].value);
+  /* Alle kommenden Termine untereinander, nach Datum */
+  function renderUpcoming(entries, listEl) {
+    listEl.innerHTML = entries.length
+      ? entries.map(rowHTML).join('')
+      : '<p class="s-text">Derzeit sind keine kommenden Hochämter eingetragen.</p>';
   }
 
   function renderArchive(entries, archiveYears, listEl) {
@@ -243,10 +128,9 @@
   }
 
   async function init() {
-    const monthsEl = qs('#kal-months');
     const listEl = qs('#kal-list');
     const archiveList = qs('#kal-archive-list');
-    if (!monthsEl && !listEl && !archiveList) return;
+    if (!listEl && !archiveList) return;
 
     try {
       const [data, years] = await Promise.all([
@@ -254,7 +138,7 @@
         archiveList ? HD.archiveYears(ARCHIVE_DIR) : []
       ]);
       const { upcoming, past } = HD.splitByDate(data);
-      if (monthsEl && listEl) renderUpcoming(upcoming, monthsEl, listEl);
+      if (listEl) renderUpcoming(upcoming, listEl);
       if (archiveList) renderArchive(past, years, archiveList);
     } catch {
       const message = '<p class="s-text">Der Hochamt-Kalender konnte nicht geladen werden. Bitte laden Sie die Seite später noch einmal.</p>';
