@@ -128,6 +128,7 @@
   const AREAS = [
     { key: 'startseite', label: 'Startseite (Titelfotos)', group: 'Allgemein', page: 'startseite.html' },
     { key: 'hinweise', label: 'Hinweisbanner (oben auf der Website)', group: 'Allgemein', page: 'hinweise.html' },
+    { key: 'design', label: 'Farben & Logo der Hauptseiten', group: 'Allgemein', page: 'design.html' },
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Allgemein', page: 'neuigkeiten.html' },
     { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Allgemein', page: 'termine.html' },
     { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Allgemein', page: 'rechtliches.html' },
@@ -1006,6 +1007,8 @@
   function diffValue(a, b, label, out) {
     if (out.length > MAX_DETAILS) return;
     if (JSON.stringify(a) === JSON.stringify(b)) return;
+    /* fehlt -> leer (neues, noch leeres Feld): keine Aenderung */
+    if ((a === undefined || a === '') && (b === undefined || b === '')) return;
     const where = label || 'Inhalt';
     if (Array.isArray(a) && Array.isArray(b)) {
       const k = keyOf(a, b);
@@ -1681,7 +1684,8 @@
     { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
     { label: 'Startseite', icon: 'image', href: 'startseite.html', sub: [
       ['startseite.html', 'Titelfotos'],
-      ['hinweise.html', 'Hinweisbanner']
+      ['hinweise.html', 'Hinweisbanner'],
+      ['design.html', 'Farben & Logo']
     ] },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
     { label: 'Termine', icon: 'calendar', href: 'termine.html' },

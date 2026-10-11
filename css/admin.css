@@ -748,6 +748,34 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 
 /* Impressum & Datenschutz: ein Abschnitt je Karte, Werkzeugleiste ueber dem Text */
 .rt-tabs{margin:0 0 .6rem}
+/* Farben & Logo (admin/design.html): je Thema eine Karte mit Vorschau der Titelzeile */
+.ds-card{display:flex;flex-direction:column;gap:1rem}
+.ds-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.4rem 1rem}
+.ds-head .adm-panel-title{margin:0}
+.ds-card .adm-panel-sub{margin:-.6rem 0 0}
+.ds-preview{display:flex;align-items:center;gap:1.4rem;min-height:64px;padding:0 1.2rem;background:var(--nav-bg);border-bottom:1px solid var(--nav-line);overflow:hidden}
+.ds-p-logo{display:flex;align-items:center;gap:.7rem;flex:none}
+.ds-p-logo>span{display:flex;flex-direction:column}
+.ds-p-name{font-family:var(--serif);font-size:1.08rem;font-weight:500;line-height:1.1;color:var(--nav-fg);white-space:nowrap}
+.ds-p-sub{margin-top:.15rem;font-size:.74rem;color:var(--nav-sub);white-space:nowrap}
+.ds-p-menu{display:flex;gap:1.1rem;margin-left:auto;font-size:.92rem;font-weight:500;color:var(--nav-fg-soft);white-space:nowrap}
+.ds-p-menu .cur{color:var(--nav-accent);box-shadow:inset 0 -2px var(--nav-accent);padding-bottom:.2rem}
+.ds-p-cta{flex:none;padding:.35rem .8rem;border:1px solid var(--nav-cta-line);font-size:.88rem;font-weight:500;color:var(--nav-accent);white-space:nowrap}
+@media(max-width:900px){.ds-p-menu,.ds-p-cta{display:none}}
+.ds-grid{display:flex;flex-wrap:wrap;gap:1rem 2.4rem}
+.ds-fs{border:0;margin:0;padding:0;min-width:0}
+.ds-fs>legend{float:left;width:100%;margin-bottom:.45rem}
+.ds-swatches{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;clear:both}
+.ds-swatch{width:2.4rem;height:2.4rem;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--c);cursor:pointer}
+.ds-swatch[aria-pressed="true"],.ds-custom.on{outline:3px solid var(--gold);outline-offset:2px}
+.ds-swatch:focus-visible,.ds-logo:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.ds-custom{display:inline-flex;align-items:center;gap:.4rem;min-height:2.4rem;padding:0 .7rem 0 .25rem;border:1px solid var(--line);border-radius:2rem;background:#fff;font-size:.9rem;color:var(--text-mid);cursor:pointer}
+.ds-custom input{width:1.9rem;height:1.9rem;padding:0;border:0;border-radius:50%;background:none;cursor:pointer}
+.ds-fs .adm-seg{clear:both;margin:0}
+.ds-logos{display:flex;flex-wrap:wrap;gap:.6rem;clear:both}
+.ds-logo{display:flex;flex-direction:column;align-items:center;gap:.35rem;padding:.4rem;border:1px solid var(--line);background:#fff;font:inherit;font-size:.85rem;color:var(--text-mid);cursor:pointer}
+.ds-logo-img{display:grid;place-items:center;width:4rem;height:3.4rem;border:1px solid var(--line)}
+.ds-logo[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold);color:var(--blue);font-weight:600}
 /* Titelfotos: Thema waehlen */
 .st-theme-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1.4rem;margin-bottom:.4rem}
 .st-theme-bar .adm-seg{flex-wrap:wrap;margin:0}

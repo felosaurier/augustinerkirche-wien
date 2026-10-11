@@ -1,0 +1,32 @@
+{
+  "themen": {
+    "augustinerkirche": {
+      "leiste": "#10192e",
+      "schrift": "auto",
+      "logo": "gold",
+      "name": "",
+      "untertitel": ""
+    },
+    "kirchenmusik": {
+      "leiste": "#c9a24d",
+      "schrift": "auto",
+      "logo": "marine",
+      "name": "",
+      "untertitel": ""
+    },
+    "augustiner": {
+      "leiste": "#10192e",
+      "schrift": "auto",
+      "logo": "gold",
+      "name": "",
+      "untertitel": ""
+    },
+    "aspersdorf": {
+      "leiste": "#10192e",
+      "schrift": "auto",
+      "logo": "gold",
+      "name": "",
+      "untertitel": ""
+    }
+  }
+}

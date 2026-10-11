@@ -228,6 +228,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   runden.html                 Runden pflegen
   rundgang.html               Kirchenrundgang pflegen
   startseite.html             Titelfotos der Startseite pflegen
+  design.html                 Farben der Titelzeile und Logo je Hauptseite
   hinweise.html               Hinweisbanner oben auf der Website (mit Start- und Enddatum)
   rechtliches.html            Impressum und Datenschutz pflegen
   mitteilungen.html           Mitteilungen an alle in der Verwaltung (nur Entwickler)
@@ -269,11 +270,13 @@ js/
   admin-runden.js             Runden pflegen
   admin-rundgang.js           Kirchenrundgang pflegen
   admin-startseite.js         Titelfotos der Startseite pflegen
+  admin-design.js             Farben & Logo je Hauptseite
   admin-rechtliches.js        Impressum und Datenschutz pflegen
   admin-aenderungen.js        Alle Änderungen als Tabelle (Entwickler)
   admin-personen.js           Personen pflegen
   admin-repertoire.js         Repertoire pflegen
   admin-zugaenge.js           Zugänge und Rollen verwalten
+  thema.js                    Farbe der Titelzeile und Logo je Thema (im <head>, aus data/themen.json; <html data-thema="…">)
   inhalte.js                  Zeichnet Gottesdienste, Runden, Personen, Kontakt, Repertoire, Impressum und Datenschutz aus data/
   instagram.js                Instagram-Bereich mit Fallback (derzeit nicht auf der Startseite eingebunden)
   statistik.js                Cookie-Hinweis und Google Analytics (nur mit Zustimmung; ohne Mess-ID aus)
@@ -291,6 +294,7 @@ data/
   runden.json                 Runden: Übersicht und Inhalt der Seiten
   rundgang.json               Bilder des Kirchenrundgangs (Chronik → Rundgang)
   startseite.json             Titelfotos der Startseite (Diashow, Wechselzeit)
+  themen.json                 Farbe der Titelzeile, Schrift und Logo je Hauptseite (Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf)
   startseite-kirchenmusik.json, startseite-augustiner.json, startseite-aspersdorf.json
                               Titelfotos der Hauptseiten Kirchenmusik, Augustiner, Aspersdorf (gleicher Aufbau)
   personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten
@@ -301,6 +305,7 @@ data/
 site.webmanifest              App-Manifest: Name, Farben, Symbole, Schnellzugriffe
 assets/
   logo.png, logo-gold.png     Logo (grün und golden), Favicons, Zierlinie
+  logo/                       Logo-Varianten für die Titelzeile: gold, gold-dunkel, weiss, schwarz, marine, gruen (je 300 × 300, durchsichtig)
   app/                        App-Symbole (192 und 512 Pixel, dazu maskierbar für Android)
   audio/cds/                  Hörproben zu den CDs (MP3, von hochamt.augustiner.at)
   programme/                  Kirchenmusik-Programmhefte 2008–2018 (PDF)
