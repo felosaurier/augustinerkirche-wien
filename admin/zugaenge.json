@@ -26,7 +26,18 @@
       "iter": 600000,
       "hash": "LPZwp7Ym4EQdp4tkS7MgqSlMJotUc2+83VfmumyNlTQ=",
       "rolle": "redaktion",
-      "angelegt": "2026-10-10"
+      "angelegt": "2026-10-10",
+      "rechte": {
+        "bereiche": [
+          "hochaemter",
+          "solisten",
+          "paten",
+          "cds",
+          "musik-personen",
+          "repertoire"
+        ],
+        "runden": []
+      }
     }
   ]
 }

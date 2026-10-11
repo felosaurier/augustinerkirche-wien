@@ -9,5 +9,13 @@
       "ausschnitt": "68% 50%"
     }
   ],
-  "frueher": []
+  "frueher": [
+    {
+      "titel": "Blick von der Orgelempore während des Hochamts",
+      "bild": "assets/img/startseite/blick-von-der-orgelempore-waehrend-des-hochamts.webp",
+      "breite": 1126,
+      "hoehe": 2000,
+      "ausschnitt": "50% 47%"
+    }
+  ]
 }
