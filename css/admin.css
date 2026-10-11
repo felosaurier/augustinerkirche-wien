@@ -711,6 +711,11 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .zg-rights-tools{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.9rem}
 .zg-rg{margin-bottom:1.1rem}
 .zg-rg-title{margin:0 0 .15rem;font-family:var(--sans);font-size:.92rem;font-weight:700;color:var(--gold-text)}
+/* Gruppe ganz waehlen: Kaestchen vor der Ueberschrift, Bereiche darunter eingerueckt */
+.zg-rg-all{align-items:center;min-height:40px;margin-bottom:.1rem}
+.zg-rg-all .zg-rg-title{margin:0;font-size:.98rem}
+.zg-rg-sub{margin-left:.5rem;font-size:.85rem;color:var(--text-light)}
+.zg-rg-all+.zg-rg-grid{margin-left:1.95rem}
 .zg-rg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.2rem}
 .zg-rg .adm-check{min-height:38px}
 .zg-rg-hint{margin:-.2rem 0 .5rem 1.95rem}

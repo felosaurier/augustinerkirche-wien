@@ -57,15 +57,19 @@
   }
   function rightsHTML(sel) {
     let n = 0;
-    const box = (name, value, label, checked) =>
-      `<label class="adm-check"><input type="checkbox" name="${name}" value="${esc(value)}"${n++ === 0 ? ' id="zg-recht-first"' : ''}${checked ? ' checked' : ''}/>${esc(label)}</label>`;
+    const box = (name, value, label, checked, group = '') =>
+      `<label class="adm-check"><input type="checkbox" name="${name}" value="${esc(value)}"${group ? ` data-gruppe="${esc(group)}"` : ''}${n++ === 0 ? ' id="zg-recht-first"' : ''}${checked ? ' checked' : ''}/>${esc(label)}</label>`;
     const groups = [...new Set(A.AREAS.map((a) => a.group))];
     const allRunden = sel.bereiche.has(A.RUNDEN_KEY);
-    return groups.map((g) =>
-      `<div class="zg-rg"><h3 class="zg-rg-title">${esc(g)}</h3><div class="zg-rg-grid">` +
-        A.AREAS.filter((a) => a.group === g).map((a) => box('recht', a.key, a.label, sel.bereiche.has(a.key))).join('') +
-      '</div></div>'
-    ).join('') +
+    /* Je Gruppe ein Kaestchen fuer alle Bereiche darin (Kirchenmusik ganz statt jeden einzeln) */
+    return groups.map((g) => {
+      const areas = A.AREAS.filter((a) => a.group === g);
+      const on = areas.filter((a) => sel.bereiche.has(a.key)).length;
+      return '<div class="zg-rg">' +
+        `<label class="adm-check zg-rg-all"><input type="checkbox" data-alle="${esc(g)}"${on === areas.length ? ' checked' : ''}/>` +
+          `<span class="zg-rg-title">${esc(g)}</span><span class="zg-rg-sub">ganzer Bereich</span></label>` +
+        `<div class="zg-rg-grid">${areas.map((a) => box('recht', a.key, a.label, sel.bereiche.has(a.key), g)).join('')}</div></div>`;
+    }).join('') +
       '<div class="zg-rg"><h3 class="zg-rg-title">Runden</h3>' +
         box('recht', A.RUNDEN_KEY, 'Alle Runden', allRunden) +
         '<p class="adm-hint zg-rg-hint">Auch neue Runden anlegen, löschen und die Reihenfolge ändern.</p>' +
@@ -82,6 +86,13 @@
     return { bereiche, runden: bereiche.includes(A.RUNDEN_KEY) ? [] : checked('runde') };
   }
   function syncRights() {
+    /* Gruppen-Kaestchen: an, wenn alle darin an sind; halb, wenn nur manche */
+    for (const g of document.querySelectorAll('#zg-rights input[data-alle]')) {
+      const items = [...document.querySelectorAll('#zg-rights input[name="recht"][data-gruppe]')].filter((i) => i.dataset.gruppe === g.dataset.alle);
+      const on = items.filter((i) => i.checked).length;
+      g.checked = on === items.length && on > 0;
+      g.indeterminate = on > 0 && on < items.length;
+    }
     const all = document.querySelector('#zg-rights input[value="runden"]');
     const set = document.querySelector('#zg-rights .zg-runden');
     if (all && set) set.disabled = all.checked;
@@ -349,7 +360,12 @@
     $('zg-new').addEventListener('click', () => openEditor(-1));
     $('zg-form').addEventListener('submit', save);
     $('zg-form').addEventListener('change', (ev) => {
-      if (ev.target.name === 'rolle' || ev.target.name === 'recht') syncRights();
+      if (ev.target.dataset.alle) {
+        for (const i of document.querySelectorAll('#zg-rights input[name="recht"][data-gruppe]')) {
+          if (i.dataset.gruppe === ev.target.dataset.alle) i.checked = ev.target.checked;
+        }
+      }
+      if (ev.target.name === 'rolle' || ev.target.name === 'recht' || ev.target.dataset.alle) syncRights();
       if (ev.target.name === 'rolle') onRoleChange();
     });
     $('zg-rights-all').addEventListener('click', () => setAllRights(true));
