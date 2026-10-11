@@ -50,7 +50,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 |---|---|
 | **Übersicht** | Alle Bereiche als Kacheln, nach Themen geordnet (Website, Kirchenmusik, Pfarre & Kloster, Verwaltung), mit Stand und Schnellzugriff „neu anlegen“; „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel) und „Zuletzt geändert“ (auf diesem Gerät, je Eintrag aufklappbar, was sich genau geändert hat) |
 | **Hochämter** | Fotos je Termin (mehrere, mit Beschreibung und Bildnachweis; erscheinen neben dem Programm, wo sonst das Plakat steht; gibt es ein Plakat, stehen sie darunter); Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
-| **Startseite** | Titelfotos ganz oben auf der Startseite: Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
+| **Startseite** | Titelfotos im Vollbild-Start der vier Hauptseiten, oben das Thema wählen (Augustinerkirche = Startseite, Kirchenmusik, Augustiner, Aspersdorf; Fotos der anderen Themen lassen sich wieder verwenden): Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
 | **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen) |
@@ -289,6 +289,8 @@ data/
   runden.json                 Runden: Übersicht und Inhalt der Seiten
   rundgang.json               Bilder des Kirchenrundgangs (Chronik → Rundgang)
   startseite.json             Titelfotos der Startseite (Diashow, Wechselzeit)
+  startseite-kirchenmusik.json, startseite-augustiner.json, startseite-aspersdorf.json
+                              Titelfotos der Hauptseiten Kirchenmusik, Augustiner, Aspersdorf (gleicher Aufbau)
   personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten
   hochamt-fotos.json          Fotos je Hochamt (Kennung → Bilder), Bilder in assets/img/hochaemter/<Kennung>/
   kontakt.json                Adresse, Telefon, E-Mail, Öffnungszeiten der Pfarrkanzlei

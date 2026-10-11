@@ -585,9 +585,12 @@
     }).observe(document.body, { childList: true, subtree: true });
   }
 
-  /* ---------- Titelbilder der Startseite ----------
-     data/startseite.json: {sekunden, bilder: [{titel, bild, ausschnitt}]}, gepflegt in
-     admin/startseite.html. Ein Bild steht still, mehrere wechseln weich ineinander
+  /* ---------- Titelbilder (Vollbild-Start der Hauptseiten) ----------
+     Jede Hauptseite (Startseite, Kirchenmusik, Augustiner, Aspersdorf) nennt in
+     #hero-show[data-show] ihre Datei, z. B. data/startseite.json oder
+     data/startseite-kirchenmusik.json: {sekunden, bilder: [{titel, bild, ausschnitt}]},
+     gepflegt in admin/startseite.html. Ohne Fotos: data-fallback (Bild),
+     data-fallback-titel und data-fallback-ausschnitt. Ein Bild steht still, mehrere wechseln weich ineinander
      (nicht bei "reduzierte Bewegung"). Ein Klick oder Tipp aufs Foto zeigt Pfeile
      links und rechts zum Blaettern; solange sie da sind, wechselt das Foto nicht
      von selbst. Der Bildnachweis wechselt mit. */
@@ -605,6 +608,9 @@
     }
     let items = data && Array.isArray(data.bilder)
       ? data.bilder.filter((b) => b && typeof b.bild === 'string' && !/^[a-z]+:|\.\.|^[/\\]/i.test(b.bild)) : [];
+    if (!items.length && box.dataset.fallback) {
+      items = [{ titel: box.dataset.fallbackTitel || '', bild: box.dataset.fallback, ausschnitt: box.dataset.fallbackAusschnitt || '' }];
+    }
     if (!items.length) items = HERO_FALLBACK;
     const secs = Math.min(30, Math.max(3, Number(data && data.sekunden) || 6));
     const url = (b) => encodeURI(`${siteRoot}${b.bild}`);

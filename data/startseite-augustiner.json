@@ -1,0 +1,13 @@
+{
+  "sekunden": 6,
+  "bilder": [
+    {
+      "titel": "Die Wiener Augustiner",
+      "bild": "assets/img/startseite/die-wiener-augustiner.webp",
+      "breite": 1333,
+      "hoehe": 2000,
+      "ausschnitt": "50% 96%"
+    }
+  ],
+  "frueher": []
+}

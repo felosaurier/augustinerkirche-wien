@@ -160,12 +160,19 @@
 
 <main id="main">
 
-<section class="hero">
-  <div class="hero-img" style="background-image:url('../assets/img/aspersdorf/aspersdorf-kirche.webp')"></div>
+<!-- Vollbild-Start: Fotos aus data/startseite-aspersdorf.json (Verwaltung → Startseite → Titelfotos, Thema wählen) -->
+<section class="hero hero-home">
+  <div class="hero-img hero-show" id="hero-show" data-show="data/startseite-aspersdorf.json" data-fallback="assets/img/aspersdorf/aspersdorf-kirche.webp" data-fallback-titel="Die Pfarrkirche St. Georg in Aspersdorf" data-fallback-ausschnitt="68% 50%">
+    <noscript><div class="hero-slide is-on" style="background-image:url('../assets/img/aspersdorf/aspersdorf-kirche.webp');background-position:68% 50%"></div></noscript>
+  </div>
   <div class="hero-content">
     <p class="hero-eyebrow">Weinviertel, Niederösterreich</p>
     <h1 class="hero-h1">Pfarre Aspersdorf</h1>
     <p class="hero-sub">Rund drei Kilometer nördlich von Hollabrunn betreut das Augustiner-Vikariat Wien auch die Pfarre Aspersdorf mit der Pfarrkirche St. Georg — eine zweite, eigenständige Gemeinde im Weinviertel.</p>
+    <div class="hero-actions">
+      <a class="btn btn-gold" href="#p-gottesdienste">Gottesdienste &amp; Kalender</a>
+      <a class="btn btn-outline-w" href="#p-kirche">Pfarrkirche St. Georg</a>
+    </div>
   </div>
 </section>
 

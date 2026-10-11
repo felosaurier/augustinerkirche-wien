@@ -161,12 +161,19 @@
 
 <main id="main">
 
-<section class="hero">
-  <div class="hero-img" style="background-image:url('../assets/img/kirche/interior-hero.webp')"></div>
+<!-- Vollbild-Start: Fotos aus data/startseite-kirchenmusik.json (Verwaltung → Startseite → Titelfotos, Thema wählen) -->
+<section class="hero hero-home">
+  <div class="hero-img hero-show" id="hero-show" data-show="data/startseite-kirchenmusik.json" data-fallback="assets/img/kirche/interior-hero.webp" data-fallback-titel="Der Innenraum der Augustinerkirche">
+    <noscript><div class="hero-slide is-on" style="background-image:url('../assets/img/kirche/interior-hero.webp')"></div></noscript>
+  </div>
   <div class="hero-content">
     <p class="hero-eyebrow">Augustinerkirche Wien</p>
     <h1 class="hero-h1">Kirchenmusik<br>in St. Augustin</h1>
     <p class="hero-sub">Jeden Sonntag Hochamt mit vollem Chor, Orchester und Solisten. Musik als Form des Gebets — eine Tradition, die auf die Wiener Hofkapelle der Habsburger zurückgeht.</p>
+    <div class="hero-actions">
+      <a class="btn btn-gold" href="#p-hochaemter">Hochämter</a>
+      <a class="btn btn-outline-w" href="#p-patenschaft">Patenschaft</a>
+    </div>
   </div>
 </section>
 

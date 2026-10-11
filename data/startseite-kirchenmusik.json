@@ -1,0 +1,13 @@
+{
+  "sekunden": 6,
+  "bilder": [
+    {
+      "titel": "Der Innenraum der Augustinerkirche",
+      "bild": "assets/img/kirche/interior-hero.webp",
+      "breite": 1280,
+      "hoehe": 720,
+      "ausschnitt": ""
+    }
+  ],
+  "frueher": []
+}

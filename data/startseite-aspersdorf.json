@@ -1,0 +1,13 @@
+{
+  "sekunden": 6,
+  "bilder": [
+    {
+      "titel": "Die Pfarrkirche St. Georg in Aspersdorf",
+      "bild": "assets/img/aspersdorf/aspersdorf-kirche.webp",
+      "breite": 1152,
+      "hoehe": 768,
+      "ausschnitt": "68% 50%"
+    }
+  ],
+  "frueher": []
+}

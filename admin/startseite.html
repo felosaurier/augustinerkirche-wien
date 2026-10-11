@@ -27,7 +27,7 @@
     <div>
       <div class="ph-tag">Verwaltung</div>
       <h1 class="ph-title">Startseite <em>pflegen</em></h1>
-      <p class="ph-sub">Die großen Fotos ganz oben auf der <a href="../index.html" target="_blank" rel="noopener">Startseite</a>. Bei mehreren Fotos wechseln sie nacheinander, in der Reihenfolge dieser Liste.</p>
+      <p class="ph-sub">Die großen Fotos im Vollbild-Start der Hauptseiten: Startseite (Augustinerkirche), Kirchenmusik, Augustiner und Aspersdorf. Bei mehreren Fotos wechseln sie nacheinander, in der Reihenfolge dieser Liste.</p>
     </div>
     <div class="adm-head-actions">
       <button type="button" class="btn btn-gold" id="st-new" data-icon="plus">Fotos hinzufügen</button>
@@ -38,6 +38,15 @@
 <main class="adm-main" id="main">
   <div data-adm-folder></div>
 
+  <div class="st-theme-bar">
+    <div class="adm-seg" id="st-themes" role="group" aria-label="Thema">
+      <button type="button" class="adm-seg-btn" data-thema="augustinerkirche" aria-pressed="true">Augustinerkirche</button>
+      <button type="button" class="adm-seg-btn" data-thema="kirchenmusik" aria-pressed="false">Kirchenmusik</button>
+      <button type="button" class="adm-seg-btn" data-thema="augustiner" aria-pressed="false">Augustiner</button>
+      <button type="button" class="adm-seg-btn" data-thema="aspersdorf" aria-pressed="false">Aspersdorf</button>
+    </div>
+    <a class="link-arr" id="st-open" href="../index.html" target="_blank" rel="noopener">Startseite ansehen</a>
+  </div>
   <p class="adm-count" id="st-count" role="status"></p>
   <div class="adm-panel adm-st-speed" id="st-speed" hidden>
     <div class="adm-field">

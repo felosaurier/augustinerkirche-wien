@@ -1,9 +1,11 @@
 /* ============================================================
    Augustinerkirche Wien — admin-startseite.js
-   Titelfotos der Startseite pflegen (admin/startseite.html), Quelle ist
-   data/startseite.json: {sekunden, bilder: [{titel, bild, breite, hoehe, ausschnitt ("x% y%")}],
-   frueher: [wie bilder]}. Ein Foto steht still, mehrere wechseln auf der Startseite
-   nacheinander (js/main.js). Hinzufuegen (auch mehrere Fotos auf einmal), ersetzen,
+   Titelfotos im Vollbild-Start der Hauptseiten pflegen (admin/startseite.html), je Thema
+   eine Datei (THEMES: Augustinerkirche = Startseite data/startseite.json, Kirchenmusik,
+   Augustiner, Aspersdorf = data/startseite-<thema>.json):
+   {sekunden, bilder: [{titel, bild, breite, hoehe, ausschnitt ("x% y%")}], frueher: [wie bilder]}.
+   Ein Foto steht still, mehrere wechseln nacheinander (js/main.js). Fotos der anderen
+   Themen lassen sich ebenfalls wieder verwenden. Hinzufuegen (auch mehrere Fotos auf einmal), ersetzen,
    Ausschnitt waehlen, Reihenfolge, Bildnachweis, Wechselzeit. Entfernte Fotos merkt
    sich "frueher", damit sie sich spaeter wieder verwenden lassen; mit verbundenem
    Projektordner kommen auch die uebrigen Bilder aus assets/img/startseite/ dazu.
@@ -14,7 +16,14 @@
 
   const A = window.Admin;
   const { $, esc, icon } = A;
-  const PATH = 'data/startseite.json';
+  /* Themen mit eigener Hauptseite (spaeter eigene Domains); leer: was die Seite ohne eigene Fotos zeigt */
+  const THEMES = [
+    { key: 'augustinerkirche', label: 'Augustinerkirche', path: 'data/startseite.json', seite: '../index.html', name: 'Startseite', leer: 'den Kirchturm' },
+    { key: 'kirchenmusik', label: 'Kirchenmusik', path: 'data/startseite-kirchenmusik.json', seite: '../pages/musik.html', name: 'Seite Kirchenmusik', leer: 'den Innenraum der Kirche' },
+    { key: 'augustiner', label: 'Augustiner', path: 'data/startseite-augustiner.json', seite: '../pages/augustiner.html', name: 'Seite Augustiner', leer: 'die Wiener Augustiner' },
+    { key: 'aspersdorf', label: 'Aspersdorf', path: 'data/startseite-aspersdorf.json', seite: '../pages/aspersdorf.html', name: 'Seite Aspersdorf', leer: 'die Pfarrkirche St. Georg' }
+  ];
+  let theme = THEMES.find((t) => t.key === new URLSearchParams(location.search).get('thema')) || THEMES[0];
   const IMG_DIR = 'assets/img/startseite/';
   const SECS = [4, 6, 8, 10, 15, 20];
   const KEEP = 60;        /* so viele fruehere Fotos merkt sich die Datei */
@@ -26,6 +35,7 @@
   let image = null;       /* beim Bearbeiten neu gewaehltes Foto {blob, ext, url, name, w, h} */
   let previous = [];      /* frueher verwendete Fotos (data/startseite.json, "frueher") */
   let extra = [];         /* weitere Bilder im Ordner assets/img/startseite/ (nur mit Projektordner) */
+  let pool = [];          /* Fotos der anderen Themen (aktuelle und fruehere) */
   /* Beim Hinzufuegen gewaehlte Fotos: neue Dateien {neu: true, blob, ext, url, name, w, h, titel, ausschnitt}
      oder fruehere {neu: false, bild, url, w, h, titel, ausschnitt}; dazu je ein Bildnachweis (credit) */
   let picks = [];
@@ -35,18 +45,52 @@
 
   /* ---------- Laden und Liste ---------- */
   async function load() {
+    const t = theme;
+    renderTabs();
     try {
-      const d = (await A.readJSON(PATH));
+      const d = (await A.readJSON(t.path));
       if (!d || !Array.isArray(d.bilder)) throw new Error('unerwarteter Inhalt');
       list = d.bilder;
       previous = Array.isArray(d.frueher) ? d.frueher.filter((b) => b && b.bild) : [];
       seconds = SECS.includes(Number(d.sekunden)) ? Number(d.sekunden) : 6;
     } catch (e) {
-      $('st-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Datei <code>${PATH}</code> konnte nicht geladen werden (${esc(e.message)}).</div></div>`;
-      return;
+      if (e && (e.status === 404 || e.name === 'NotFoundError')) {
+        /* Datei gibt es (auf dem Server) noch nicht: leer beginnen, beim ersten Speichern entsteht sie */
+        list = [];
+        previous = [];
+        seconds = 6;
+      } else {
+        $('st-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Datei <code>${t.path}</code> konnte nicht geladen werden (${esc(e.message)}).</div></div>`;
+        return;
+      }
     }
+    if (t !== theme) return;   /* inzwischen anderes Thema gewaehlt */
     render();
-    extra = await folderPhotos();
+    const [folder, ...rest] = await Promise.all([folderPhotos(), ...THEMES.filter((o) => o !== t).map((o) =>
+      fetchTheme(o).catch(() => null))]);
+    extra = folder;
+    pool = rest.filter(Boolean).flatMap((d) => [...(d.bilder || []), ...(d.frueher || [])]).filter((b) => b && b.bild);
+  }
+  /* Andere Themen nur lesen (ohne die Datei fuers Speichern zu sperren, falls sie fehlt) */
+  async function fetchTheme(o) {
+    const text = A.folder.state === 'ok' ? await (await A.folder.readBlob(o.path)).text() : await A.fetchText(o.path);
+    return JSON.parse(text);
+  }
+  function renderTabs() {
+    for (const b of document.querySelectorAll('#st-themes .adm-seg-btn')) b.setAttribute('aria-pressed', String(b.dataset.thema === theme.key));
+    $('st-open').href = theme.seite;
+    $('st-open').textContent = `${theme.name} ansehen`;
+  }
+  function switchTheme(key) {
+    const next = THEMES.find((t) => t.key === key);
+    if (!next || next === theme) return;
+    theme = next;
+    list = [];
+    previous = [];
+    pool = [];
+    history.replaceState(null, '', `${location.pathname}${theme === THEMES[0] ? '' : `?thema=${theme.key}`}`);
+    $('st-list').innerHTML = '<p class="adm-muted">Wird geladen …</p>';
+    load();
   }
 
   /* Bilder im Ordner assets/img/startseite/ (der Webserver zeigt keine Ordnerinhalte,
@@ -67,11 +111,18 @@
     }
   }
   const titleOf = (name) => clean(String(name).split('/').pop().replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '));
-  /* Fruehere Fotos, die gerade nicht auf der Startseite stehen: zuletzt entfernte zuerst */
+  /* Fruehere Fotos, die gerade nicht auf dieser Seite stehen: zuletzt entfernte zuerst,
+     dann die Fotos der anderen Themen, dann weitere Bilder aus dem Ordner */
   function others() {
     const used = new Set(list.map((b) => b.bild));
     const out = previous.filter((b) => !used.has(b.bild));
     const known = new Set(out.map((b) => b.bild));
+    for (const b of pool) {
+      if (!used.has(b.bild) && !known.has(b.bild)) {
+        out.push({ titel: b.titel || titleOf(b.bild), bild: b.bild, breite: b.breite || 0, hoehe: b.hoehe || 0, ausschnitt: b.ausschnitt || '' });
+        known.add(b.bild);
+      }
+    }
     for (const path of extra) {
       if (!used.has(path) && !known.has(path)) out.push({ titel: titleOf(path), bild: path, breite: 0, hoehe: 0, ausschnitt: '' });
     }
@@ -101,7 +152,7 @@
     $('st-secs').value = String(seconds);
     $('st-list').innerHTML = list.length
       ? `<ul class="adm-rows">${list.map(rowHTML).join('')}</ul>`
-      : `<div class="adm-empty"><p class="adm-empty-title">Noch kein Foto eingetragen</p><p>Ohne eigene Fotos zeigt die Startseite den Kirchturm.</p><button type="button" class="btn btn-gold" data-act="new">${icon('plus')}Fotos hinzufügen</button></div>`;
+      : `<div class="adm-empty"><p class="adm-empty-title">Noch kein Foto eingetragen</p><p>Ohne eigene Fotos zeigt die ${esc(theme.name)} ${esc(theme.leer)}.</p><button type="button" class="btn btn-gold" data-act="new">${icon('plus')}Fotos hinzufügen</button></div>`;
   }
 
   function flash(i, sel) {
@@ -116,7 +167,7 @@
   }
 
   async function persist(next, secs = seconds, prev = previous) {
-    const direct = await A.saveFile(PATH, JSON.stringify({ sekunden: secs, bilder: next, frueher: prev }, null, 2) + '\n');
+    const direct = await A.saveFile(theme.path, JSON.stringify({ sekunden: secs, bilder: next, frueher: prev }, null, 2) + '\n');
     list = next;
     seconds = secs;
     previous = prev;
@@ -177,7 +228,7 @@
     }
     const chosen = new Set(picks.filter((p) => !p.neu).map((p) => p.bild));
     box.innerHTML = '<legend>Frühere Fotos wieder verwenden</legend>' +
-      `<p class="adm-hint">Fotos, die schon einmal auf der Startseite waren. Antippen, um sie wieder hinzuzufügen, gern auch mehrere.${all.length > 1 ? ' Nach links und rechts wischen oder die Pfeile nutzen, um alle zu sehen.' : ''}</p>` +
+      `<p class="adm-hint">Fotos, die schon einmal hier waren oder auf einer anderen Hauptseite stehen. Antippen, um sie wieder hinzuzufügen, gern auch mehrere.${all.length > 1 ? ' Nach links und rechts wischen oder die Pfeile nutzen, um alle zu sehen.' : ''}</p>` +
       '<div class="adm-st-oldwrap">' +
       `<button type="button" class="adm-st-oldnav prev" data-scroll="-1" aria-label="Weiter nach links" title="Nach links" hidden>${icon('left')}</button>` +
       '<div class="adm-st-old">' + all.map((b) => {
@@ -275,7 +326,7 @@
     const f = frame(view);
     box.style.aspectRatio = String(f.ratio);
     $('st-pan-note').textContent = `Foto ziehen (oder Pfeiltasten), bis der gewünschte Ort zu sehen ist. Vorschau: ${f.note}.`;
-    for (const b of document.querySelectorAll('.adm-seg-btn')) b.setAttribute('aria-pressed', String(b.dataset.view === view));
+    for (const b of document.querySelectorAll('#st-dlg .adm-seg-btn')) b.setAttribute('aria-pressed', String(b.dataset.view === view));
     $('st-pan-field').hidden = !src;
     box.innerHTML = src ? `<img src="${esc(src)}" alt="" draggable="false"${A.focusPos($('f-focus').value) ? ` style="object-position:${A.focusPos($('f-focus').value)}"` : ''}/>` : '';
   }
@@ -322,7 +373,7 @@
       const s = panStart();
       panTo(s.x + step[0], s.y + step[1]);
     });
-    for (const b of document.querySelectorAll('.adm-seg-btn')) {
+    for (const b of document.querySelectorAll('#st-dlg .adm-seg-btn')) {
       b.addEventListener('click', () => {
         view = b.dataset.view;
         renderPan();
@@ -470,7 +521,7 @@
       for (let k = 0; k < n; k++) flash(atStart ? k : next.length - n + k);
       const what = n === 1 ? entries[0].titel : `${n} Fotos`;
       A.toast(direct ? `Hinzugefügt: ${what}.` : `${what} übernommen. Bitte unten die Dateien herunterladen.`);
-      A.log(`Startseite ergänzt: ${entries.map((e) => e.titel).join(', ')}`);
+      A.log(`Titelfotos ${theme.label} ergänzt: ${entries.map((e) => e.titel).join(', ')}`);
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
     } finally {
@@ -524,7 +575,7 @@
       render();
       flash(pos);
       A.toast(direct ? `Gespeichert: ${titel}.` : `${titel} übernommen. Bitte unten die Datei herunterladen.`);
-      A.log(`Startseite ${old ? 'geändert' : 'ergänzt'}: ${titel}`);
+      A.log(`Titelfotos ${theme.label} ${old ? 'geändert' : 'ergänzt'}: ${titel}`);
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
     } finally {
@@ -535,9 +586,9 @@
   async function remove(i) {
     const b = list[i];
     const ok = await A.confirmBox({
-      title: 'Foto von der Startseite entfernen?',
-      html: `<strong>${esc(b.titel)}</strong><br><br>Das Foto verschwindet von der Startseite. Die Bilddatei bleibt erhalten, unter „Fotos hinzufügen“ lässt es sich später wieder verwenden.` +
-        (list.length === 1 ? '<br><br>Es ist das letzte Foto. Danach zeigt die Startseite wieder den Kirchturm.' : ''),
+      title: `Foto von der ${theme.name} entfernen?`,
+      html: `<strong>${esc(b.titel)}</strong><br><br>Das Foto verschwindet von der ${esc(theme.name)}. Die Bilddatei bleibt erhalten, unter „Fotos hinzufügen“ lässt es sich später wieder verwenden.` +
+        (list.length === 1 ? `<br><br>Es ist das letzte Foto. Danach zeigt die ${esc(theme.name)} wieder ${esc(theme.leer)}.` : ''),
       ok: 'Entfernen', danger: true
     });
     if (!ok) return;
@@ -548,7 +599,7 @@
       if ($('st-dlg').open) $('st-dlg').close();
       render();
       A.toast(direct ? `Entfernt: ${b.titel}.` : 'Entfernt. Bitte unten die Datei herunterladen.');
-      A.log(`Startseite entfernt: ${b.titel}`);
+      A.log(`Titelfotos ${theme.label} entfernt: ${b.titel}`);
     } catch (err) {
       A.toast(`Entfernen nicht möglich: ${err.message}`, 'err');
     }
@@ -570,6 +621,10 @@
 
   /* ---------- Start ---------- */
   A.start(async () => {
+    $('st-themes').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-thema]');
+      if (b) switchTheme(b.dataset.thema);
+    });
     A.credits.load();
     $('f-file').addEventListener('change', async (ev) => {
       await onFiles(ev.target.files);
@@ -616,7 +671,7 @@
       try {
         const direct = await persist(list, Number(ev.target.value));
         A.toast(direct ? `Wechsel alle ${seconds} Sekunden.` : 'Gespeichert. Bitte unten die Datei herunterladen.');
-        A.log(`Startseite: Wechsel alle ${seconds} Sekunden`);
+        A.log(`Titelfotos ${theme.label}: Wechsel alle ${seconds} Sekunden`);
       } catch (err) {
         ev.target.value = String(seconds);
         A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
@@ -637,7 +692,7 @@
     await load();
     if (new URLSearchParams(location.search).has('neu')) {
       openEditor();
-      history.replaceState(null, '', location.pathname);
+      history.replaceState(null, '', `${location.pathname}${theme === THEMES[0] ? '' : `?thema=${theme.key}`}`);
     }
   });
 })();
