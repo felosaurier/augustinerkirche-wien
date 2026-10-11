@@ -168,6 +168,7 @@ python tools/paket.py                         # Test-Paket fürs Homelab   -> di
 python tools/paket.py --verwaltung            # dasselbe, mit der Verwaltung: sie speichert dann direkt auf dem Server (Server-Modus)
 python tools/paket.py --live                  # Paket für den echten Betrieb -> dist/live/ + dist/augustinerkirche-live.tar.gz
 python tools/paket.py --ohne-cookie-vorschau  # Test-Paket, aber ohne erzwungenen Cookie-Hinweis
+python tools/paket.py --verwaltung --update   # nur Programmcode, zum Aktualisieren: Inhalte auf dem Server bleiben unberührt
 ```
 
 Nur Python 3, sonst wird nichts gebraucht. Das Paket enthält `site/` (die Website), `server/nginx.conf` und `server/apache.conf` (Konfiguration) sowie eine `ANLEITUNG.md` mit den Befehlen für einen Debian- oder Ubuntu-Container (Proxmox-LXC): hochladen, entpacken, nach `/var/www/augustinerkirche` kopieren, Konfiguration aktivieren, prüfen. Die Vorlagen dafür liegen in `tools/server/`.

@@ -1,0 +1,50 @@
+# Augustinerkirche Wien: Update-Paket ({{MODUS}})
+
+Dieses Paket stammt aus `python tools/paket.py{{OPTION}}`. Es enthält **nur den Programmcode** (Seiten, Stile, Skripte, Symbole) und erneuert damit eine Website, die schon auf dem Server läuft.
+
+**Nicht enthalten** sind die Inhalte, die auf dem Server in der Verwaltung gepflegt werden: `data/` (Tabellen, Hinweisbanner, Startseite, Bildnachweise …), `assets/img/`, `assets/audio/`, `assets/programme/`, `admin/zugaenge.json` und `admin/mitteilungen.json`. Sie bleiben auf dem Server genau so, wie sie sind. Die Konfiguration des Webservers bleibt ebenfalls unverändert.
+
+{{HINWEISE}}
+
+`<IP>` ist die Adresse des Containers.
+
+## 1. Auf den Container laden
+
+Vom Windows-PC (PowerShell oder Git Bash), im Ordner `dist` des Projekts:
+
+```bash
+scp {{PAKET}} root@<IP>:/root/
+```
+
+## 2. Sicherung der Inhalte (im Container)
+
+Kostet ein paar Sekunden und rettet im Fall der Fälle alles, was in der Verwaltung gepflegt wurde:
+
+```bash
+cd /var/www/augustinerkirche && tar czf /root/inhalte-$(date +%F-%H%M).tar.gz data assets admin/*.json 2>/dev/null; ls -lh /root/inhalte-*.tar.gz | tail -1
+```
+
+Zurückholen (nur bei Bedarf): `tar xzf /root/inhalte-<Datum>.tar.gz -C /var/www/augustinerkirche`, danach `chown -R www-data:www-data /var/www/augustinerkirche/data /var/www/augustinerkirche/assets`.
+
+## 3. Programmcode erneuern (im Container)
+
+```bash
+cd /root && rm -rf {{ORDNER}} && tar xzf {{PAKET}}
+cp -a {{ORDNER}}/site/. /var/www/augustinerkirche/
+<!--[verwaltung-anfang]-->
+chown -R www-data:www-data /var/www/augustinerkirche/admin
+<!--[verwaltung-ende]-->
+```
+
+Das Kopieren ist hier ungefährlich, weil das Paket keine Inhalte enthält. Der Webserver muss nicht neu gestartet werden. Hinter Cloudflare danach einmal Caching → Purge Everything.
+
+## Neue Inhalte vom PC auf den Server
+
+Inhalte, die auf dem PC entstanden sind (zum Beispiel neue Fotos), kommen nicht mit dem Update-Paket. Am besten gleich in der Verwaltung auf dem Server eintragen. Einzelne Dateien lassen sich auch gezielt kopieren, aber nur, wenn sie auf dem Server seither niemand geändert hat (sonst geht das dort Geänderte verloren):
+
+```bash
+scp data/startseite.json root@<IP>:/var/www/augustinerkirche/data/
+scp -r assets/img/startseite root@<IP>:/var/www/augustinerkirche/assets/img/
+```
+
+Danach im Container: `chown -R www-data:www-data /var/www/augustinerkirche/data /var/www/augustinerkirche/assets`.

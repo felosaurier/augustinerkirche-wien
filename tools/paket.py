@@ -9,6 +9,12 @@ weiteren Programme.
     python tools/paket.py --verwaltung            dasselbe, mit der Verwaltung (Server-Modus, siehe unten)
     python tools/paket.py --live                  Paket für den echten Betrieb -> dist/live/
     python tools/paket.py --ohne-cookie-vorschau  Test-Paket, aber ohne erzwungenen Cookie-Hinweis
+    python tools/paket.py --verwaltung --update   nur Programmcode, zum Aktualisieren eines laufenden Servers
+
+Mit --update fehlen im Paket die Inhalte, die auf dem Server gepflegt werden (data/, assets/img/,
+assets/audio/, assets/programme/, admin/zugaenge.json, admin/mitteilungen.json). So kann das Hochladen
+die Meldungen, Tabellen und Fotos auf dem Server nicht ueberschreiben. Ordner und Archiv tragen
+"-update" im Namen; dazu gehoert eine eigene, kurze Anleitung (tools/server/UPDATE.md).
 
 Das Test-Paket unterscheidet sich vom Live-Paket nur in diesen Punkten (jeder wird beim Bauen genannt):
 robots.txt und der Kopf X-Robots-Tag sperren Suchmaschinen aus, und der Cookie-Hinweis erscheint immer
@@ -42,15 +48,20 @@ ORDNER = ['pages', 'css', 'js', 'assets', 'data']
 
 TEST_MESS_ID = 'G-VORSCHAU01'
 
+# Inhalte, die auf dem Server gepflegt werden: kommen mit --update nicht ins Paket
+INHALTE = ('data/', 'assets/img/', 'assets/audio/', 'assets/programme/', 'admin/zugaenge.json', 'admin/mitteilungen.json')
+
 
 def fehler(text):
     print('FEHLER: ' + text)
     sys.exit(1)
 
 
-def ausgeschlossen(rel, verwaltung):
+def ausgeschlossen(rel, verwaltung, update=False):
     """True für alles, was nicht auf den Webserver gehört (rel: Pfad mit / ab Projektordner)."""
     name = rel.rsplit('/', 1)[-1]
+    if update and rel.startswith(INHALTE):
+        return True  # Inhalte bleiben auf dem Server, wie sie sind
     if rel.startswith('pages/') and name.endswith('-verwaltung.html'):
         return True  # Weiterleitungen auf die Verwaltung
     if not verwaltung and rel.startswith(('css/admin', 'js/admin')):
@@ -60,7 +71,7 @@ def ausgeschlossen(rel, verwaltung):
     return name in ('Thumbs.db', 'desktop.ini')
 
 
-def sammeln(verwaltung):
+def sammeln(verwaltung, update=False):
     gefunden, ausgelassen = [], []
     for f in DATEIEN:
         if not (ROOT / f).is_file():
@@ -73,7 +84,7 @@ def sammeln(verwaltung):
             dirnames[:] = sorted(x for x in dirnames if not x.startswith('.'))
             for n in sorted(filenames):
                 rel = (Path(dirpath) / n).relative_to(ROOT).as_posix()
-                (ausgelassen if ausgeschlossen(rel, verwaltung) else gefunden).append(rel)
+                (ausgelassen if ausgeschlossen(rel, verwaltung, update) else gefunden).append(rel)
     return gefunden, ausgelassen
 
 
@@ -123,7 +134,7 @@ def bloecke(text, aktiv):
     return '\n'.join(aus)
 
 
-def hinweise(test, cookie, verwaltung):
+def hinweise(test, cookie, verwaltung, update=False):
     punkte = []
     if test:
         punkte.append('Suchmaschinen sind ausgesperrt (`robots.txt` und der Kopf `X-Robots-Tag`), falls der Container doch aus dem Internet erreichbar ist.')
@@ -132,7 +143,9 @@ def hinweise(test, cookie, verwaltung):
                           '**es wird nie etwas an Google gesendet.**')
         else:
             punkte.append('Der Cookie-Hinweis erscheint nur, wenn in `js/statistik.js` eine Mess-ID steht (hier: nicht der Fall).')
-    if verwaltung:
+    if verwaltung and update:
+        punkte.append('Die **Verwaltung ist enthalten** (Programmcode). Zugänge und Mitteilungen auf dem Server bleiben unverändert.')
+    elif verwaltung:
         punkte.append('Die **Verwaltung ist enthalten und speichert direkt auf dem Server** (siehe Abschnitt 5). Sie liegt auf einem eigenen Port und nur mit Anmeldung am Server. '
                       '`admin/zugaenge.json` mit den Prüfsummen der Passwörter liegt im Paket, bitte das Paket nicht weitergeben.')
     else:
@@ -179,7 +192,8 @@ def exakt_da(site, rel):
     return cur.is_file() or (cur.is_dir() and 'index.html' in os.listdir(cur))
 
 
-def pruefen(site):
+def pruefen(site, update=False):
+    """Mit update gelten Verweise auf Inhalte (INHALTE) als vorhanden: sie liegen schon auf dem Server."""
     probleme = []
 
     def ziel(von, ref):
@@ -191,6 +205,8 @@ def pruefen(site):
     def pruefe(von, ref, art):
         z = ziel(von, ref)
         if z is None:
+            return
+        if update and z.startswith(INHALTE):
             return
         if z.startswith('..') or not exakt_da(site, z):
             probleme.append((art, von, ref))
@@ -219,6 +235,8 @@ def pruefen(site):
             for m in re.finditer(r'(?<![A-Za-z0-9_./-])((?:assets|data)/[A-Za-z0-9_\-./%@+()]+\.(?:webp|png|jpe?g|gif|svg|ico|mp3|m4a|ogg|wav|pdf|csv|json))(?![A-Za-z0-9_])', text):
                 if re.search(r'JJJJ|YYYY|NNNN', m.group(1)):
                     continue  # Platzhalter in Kommentaren, z. B. hochaemter-JJJJ.csv
+                if update and m.group(1).startswith(INHALTE):
+                    continue
                 if not exakt_da(site, m.group(1)):
                     probleme.append(('Daten', rel, m.group(1)))
     return probleme
@@ -237,12 +255,14 @@ def main():
     ap.add_argument('--live', action='store_true', help='Paket für den echten Betrieb statt Test-Paket')
     ap.add_argument('--verwaltung', action='store_true', help='Verwaltung mitliefern (Server-Modus: sie speichert direkt auf dem Server)')
     ap.add_argument('--ohne-cookie-vorschau', action='store_true', help='Test-Paket ohne erzwungenen Cookie-Hinweis')
+    ap.add_argument('--update', action='store_true', help='nur Programmcode, ohne die Inhalte des Servers (data/, assets/img/ …)')
     a = ap.parse_args()
     test = not a.live
     cookie = test and not a.ohne_cookie_vorschau
     verwaltung = a.verwaltung
+    update = a.update
 
-    ordner = 'homelab-test' if test else 'live'
+    ordner = ('homelab-test' if test else 'live') + ('-update' if update else '')
     paket = 'augustinerkirche-' + ordner + '.tar.gz'
     out = DIST / ordner
     site = out / 'site'
@@ -252,7 +272,7 @@ def main():
         shutil.rmtree(out)
     (DIST / paket).unlink(missing_ok=True)
 
-    gefunden, ausgelassen = sammeln(verwaltung)
+    gefunden, ausgelassen = sammeln(verwaltung, update)
     for rel in gefunden:
         ziel = site / rel
         ziel.parent.mkdir(parents=True, exist_ok=True)
@@ -265,24 +285,25 @@ def main():
 
     aktiv = {'test'} if test else set()
     aktiv.add('verwaltung' if verwaltung else 'ohne-verwaltung')
-    option = (' --live' if not test else '') + (' --verwaltung' if verwaltung else '') + (' --ohne-cookie-vorschau' if test and a.ohne_cookie_vorschau else '')
+    option = (' --live' if not test else '') + (' --verwaltung' if verwaltung else '') + (' --ohne-cookie-vorschau' if test and a.ohne_cookie_vorschau else '') + (' --update' if update else '')
     ersetzt = {
         '{{MODUS}}': ('Test auf dem Homelab' if test else 'Live') + (', mit Verwaltung' if verwaltung else ''),
         '{{OPTION}}': option,
         '{{PAKET}}': paket,
         '{{ORDNER}}': ordner,
         '{{PORTS}}': ' bzw. 8443' if verwaltung else '',
-        '{{HINWEISE}}': hinweise(test, cookie, verwaltung),
+        '{{HINWEISE}}': hinweise(test, cookie, verwaltung, update),
     }
-    anleitung = bloecke(lesen(VORLAGEN / 'ANLEITUNG.md'), aktiv)
+    anleitung = bloecke(lesen(VORLAGEN / ('UPDATE.md' if update else 'ANLEITUNG.md')), aktiv)
     for k, v in ersetzt.items():
         anleitung = anleitung.replace(k, v)
     schreiben(out / 'ANLEITUNG.md', anleitung)
-    konfigs = ['nginx.conf', 'apache.conf'] + (['nginx-verwaltung.conf', 'apache-verwaltung.conf'] if verwaltung else [])
-    for name in konfigs:
-        schreiben(out / 'server' / name, bloecke(lesen(VORLAGEN / name), aktiv))
+    if not update:  # beim Aktualisieren bleibt die Konfiguration des Servers, wie sie ist
+        konfigs = ['nginx.conf', 'apache.conf'] + (['nginx-verwaltung.conf', 'apache-verwaltung.conf'] if verwaltung else [])
+        for name in konfigs:
+            schreiben(out / 'server' / name, bloecke(lesen(VORLAGEN / name), aktiv))
 
-    probleme = pruefen(site)
+    probleme = pruefen(site, update)
 
     def tar_filter(ti):
         ti.uid = ti.gid = 0
@@ -298,12 +319,16 @@ def main():
     sha = hashlib.sha256((DIST / paket).read_bytes()).hexdigest()
     ungewoehnlich = [r for r in gefunden if re.search(r'[^\x21-\x7e]', r)]
 
-    print('Paket „%s“ (%s%s)' % (ordner, 'Test' if test else 'Live', ', mit Verwaltung' if verwaltung else ''))
+    print('Paket „%s“ (%s%s%s)' % (ordner, 'Test' if test else 'Live', ', mit Verwaltung' if verwaltung else '', ', nur Programmcode zum Aktualisieren' if update else ''))
     print('  Ordner:  %s' % out.relative_to(ROOT))
     print('  Archiv:  %s  (%s, SHA-256 %s…)' % ((DIST / paket).relative_to(ROOT), megabyte((DIST / paket).stat().st_size), sha[:16]))
     print('  Inhalt:  %d Dateien, %s (Website: %d Dateien)' % (len(dateien), megabyte(gesamt), len(list(site.rglob('*.*')))))
-    if verwaltung:
+    if update:
+        print('  Nicht enthalten: Inhalte des Servers (%s), die bleiben dort unverändert' % ', '.join(INHALTE))
+    if verwaltung and not update:
         print('  Verwaltung: enthalten (Server-Modus). Achtung: admin/zugaenge.json (Prüfsummen der Passwörter) liegt im Paket, bitte nicht weitergeben.')
+    elif verwaltung:
+        print('  Verwaltung: enthalten (Programmcode, ohne Zugänge und Mitteilungen)')
     else:
         print('  Nicht enthalten: Verwaltung (admin/, css/admin*, js/admin*), Weiterleitungen auf die Verwaltung (%d Dateien)' % len(ausgelassen))
     if test:

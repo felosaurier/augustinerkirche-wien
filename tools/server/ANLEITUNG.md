@@ -149,7 +149,9 @@ Hinweis: Ohne https auf einer Adresse wie `http://192.168…` kann die Anmeldung
 Nach Änderungen im Projekt das Paket neu bauen (`python tools/paket.py{{OPTION}}`), wieder hochladen und die Schritte 1 und 2 wiederholen. Der Webserver muss dafür nicht neu gestartet werden.
 <!--[ohne-verwaltung-ende]-->
 <!--[verwaltung-anfang]-->
-Die Inhalte (Tabellen in `data/`, Fotos und Hörproben in `assets/img`, `assets/audio`, `assets/programme`, dazu `admin/zugaenge.json` und `admin/mitteilungen.json`) liegen jetzt auf dem Server und werden dort in der Verwaltung gepflegt. Beim Aktualisieren dürfen sie nicht überschrieben werden, deshalb **nicht** wieder `rm -rf` und kopieren, sondern nur den Programmcode erneuern:
+Die Inhalte (Tabellen in `data/`, Fotos und Hörproben in `assets/img`, `assets/audio`, `assets/programme`, dazu `admin/zugaenge.json` und `admin/mitteilungen.json`) liegen jetzt auf dem Server und werden dort in der Verwaltung gepflegt. Beim Aktualisieren dürfen sie nicht überschrieben werden, deshalb **nicht** wieder `rm -rf` und kopieren und **nicht** dieses ganze Paket noch einmal hochladen.
+
+**Am sichersten:** ein Update-Paket bauen, `python tools/paket.py{{OPTION}} --update`. Es enthält nur den Programmcode, die Inhalte fehlen darin ganz; seine Anleitung hat die Befehle. Oder mit diesem Paket nur den Programmcode erneuern:
 
 ```bash
 apt install -y rsync
