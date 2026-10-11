@@ -5,7 +5,8 @@
    Termine) stellt js/kalender-daten.js zusammen.
    Links ein Monatsblatt (Tage mit Terminen haben Punkte in der Farbe
    der Gruppe), rechts bzw. darunter die Termine des Monats nach Tagen.
-   Aufruf mit ?monat=JJJJ-MM öffnet einen Monat direkt.
+   Aufruf mit ?monat=JJJJ-MM öffnet einen Monat direkt, ?gruppe=hochamt,konzert
+   zeigt nur diese Gruppen (Filter, wieder abwählbar).
    Benötigt js/hochaemter-data.js und js/kalender-daten.js.
    ============================================================ */
 (function () {
@@ -116,6 +117,8 @@
     root.querySelector('[data-cal="heute"]').hidden = month.y === now.getFullYear() && month.m === now.getMonth();
     const q = new URLSearchParams(location.search);
     q.set('monat', monthKey(month));
+    if (filter.size) q.set('gruppe', [...filter].join(','));
+    else q.delete('gruppe');
     history.replaceState(null, '', `${location.pathname}?${q}${location.hash}`);
     if (focusSel) {
       const el = root.querySelector(focusSel);
@@ -152,6 +155,10 @@
     const m = q && q.match(/^(\d{4})-(\d{2})$/);
     const now = new Date();
     month = m ? { y: Number(m[1]), m: Math.min(11, Math.max(0, Number(m[2]) - 1)) } : { y: now.getFullYear(), m: now.getMonth() };
+    /* Vorauswahl der Gruppen, z. B. von der Kirchenmusik: nur Hochämter und Konzerte */
+    for (const g of (new URLSearchParams(location.search).get('gruppe') || '').split(',')) {
+      if (groupName.has(g)) filter.add(g);
+    }
 
     items = await KD.load(base);
     root.classList.add('ready');
