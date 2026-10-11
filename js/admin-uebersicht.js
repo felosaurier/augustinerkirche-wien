@@ -18,7 +18,7 @@
 
   async function loadAll() {
     const json = (path) => A.readJSON(path);
-    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt] = await Promise.allSettled([
+    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -34,13 +34,14 @@
       json('data/rundgang.json'),
       json('data/pgr.json'),
       json('data/hinweise.json'),
-      A.isDev() ? json('admin/mitteilungen.json') : Promise.resolve(null)
+      A.isDev() ? json('admin/mitteilungen.json') : Promise.resolve(null),
+      json('data/rechtliches.json')
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
       rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st),
-      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt)
+      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re)
     };
   }
 
@@ -53,7 +54,7 @@
   }
 
   /* Bereiche nach Themen; jede Kachel erscheint nur, wenn die Person den Bereich bearbeiten darf */
-  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt }) {
+  function renderTiles({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
@@ -69,6 +70,15 @@
           href: 'startseite.html', ico: 'image', title: 'Startseite',
           stat: st ? plural(count(st.bilder), 'Titelfoto', 'Titelfotos') : none,
           addHref: 'startseite.html?neu=1', addLabel: 'Fotos hinzufügen'
+        }),
+        can('rechtliches') && tile({
+          href: 'rechtliches.html', ico: 'book', title: 'Impressum &amp; Datenschutz',
+          stat: re ? (() => {
+            const open = ['impressum', 'datenschutz'].reduce((n, k) => n + ((re[k] && re[k].abschnitte) || [])
+              .reduce((m, s) => m + (String(s.text || '').match(/\[\[offen:/g) || []).length, 0), 0);
+            return open ? `${plural(open, 'Stelle', 'Stellen')} noch offen` : 'Vollständig';
+          })() : none,
+          addHref: 'rechtliches.html', addLabel: 'Bearbeiten', addIcon: 'edit'
         }),
         can('hinweise') && tile({
           href: 'hinweise.html', ico: 'alert', title: 'Hinweisbanner',
@@ -174,14 +184,20 @@
       .join('');
   }
 
-  /* Zuletzt geaendert: das Protokoll dieses Geraets (maximal 30 Eintraege, hier die letzten 8) */
+  /* Zuletzt geaendert: das Protokoll dieses Geraets (maximal 30 Eintraege, hier die letzten 8),
+     je Eintrag aufklappbar, was sich genau geaendert hat */
   function renderLog() {
     const list = A.recentLog().slice(0, 8);
     const panel = $('ov-log-h').closest('section');
     panel.hidden = !list.length;
     const when = (t) => new Date(t).toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-    $('ov-log').innerHTML = `<ul class="adm-log">${list.map((e) =>
-      `<li><time datetime="${esc(new Date(e.zeit).toISOString())}">${esc(when(e.zeit))}</time><span>${esc(e.text)}${e.wer ? `<small>${esc(e.wer)}</small>` : ''}</span></li>`).join('')}</ul>`;
+    $('ov-log').innerHTML = `<ul class="adm-log">${list.map((e) => {
+      const det = e.details || [];
+      return `<li><time datetime="${esc(new Date(e.zeit).toISOString())}">${esc(when(e.zeit))}</time><span>${esc(e.text)}${e.wer ? `<small>${esc(e.wer)}</small>` : ''}` +
+        (det.length ? `<details class="adm-log-det"><summary>${plural(det.length, 'Änderung', 'Änderungen')}</summary><ul>${det.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></details>` : '') +
+        '</span></li>';
+    }).join('')}</ul>` +
+      (A.isDev() ? '<p class="adm-log-all"><a href="aenderungen.html">Alle Änderungen von allen ansehen</a></p>' : '');
   }
 
   function renderTodo({ ha, sol, rd }) {

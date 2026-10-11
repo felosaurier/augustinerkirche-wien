@@ -48,13 +48,15 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 
 | Bereich | Was du dort machst |
 |---|---|
-| **Übersicht** | Alle Bereiche als Kacheln, nach Themen geordnet (Website, Kirchenmusik, Pfarre & Kloster, Verwaltung), mit Stand und Schnellzugriff „neu anlegen“; „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel) und „Zuletzt geändert“ (auf diesem Gerät) |
+| **Übersicht** | Alle Bereiche als Kacheln, nach Themen geordnet (Website, Kirchenmusik, Pfarre & Kloster, Verwaltung), mit Stand und Schnellzugriff „neu anlegen“; „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel) und „Zuletzt geändert“ (auf diesem Gerät, je Eintrag aufklappbar, was sich genau geändert hat) |
 | **Hochämter** | Fotos je Termin (mehrere, mit Beschreibung und Bildnachweis; erscheinen neben dem Programm, wo sonst das Plakat steht; gibt es ein Plakat, stehen sie darunter); Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
 | **Startseite** | Titelfotos ganz oben auf der Startseite: Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
 | **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen) |
 | **Pfarrkanzlei & Kontakt** | Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
+| **Rechtliches** | Impressum und Datenschutzerklärung Abschnitt für Abschnitt: Überschrift, Text mit Werkzeugleiste (fett, Link, Telefon, Liste, Tabelle, Zwischentitel, „fehlt noch“), Reihenfolge, Vorschau je Abschnitt und der ganzen Seite |
+| **Änderungen** (nur Entwickler, oben rechts) | Alle Änderungen von allen Personen als Tabelle: Zeitpunkt, Person, Bereich, was genau (vorher → nachher), Suche und Filter, Export als CSV. Quelle ist `admin/protokoll.json`, das bei jedem Speichern mitgeschrieben wird (mit Projektordner oder auf dem Server) |
 | **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
 | **Pfarrgemeinderat** | Mitglieder sowie Ersatzmitglieder und weitere Verantwortliche für Pfarre → Pfarrgemeinderat: Name, Funktion, Beruf, Aufgaben, E-Mail, Telefon, Foto (mit Bildnachweis); Reihenfolge per Pfeil |
 | **Personen** | Mitbrüder, Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto, Aufgabe und Text |
@@ -145,7 +147,7 @@ Die Seiten setzen von sich aus **keine Cookies**. Für eine Besucherstatistik is
 - Es wird nur Statistik gemessen: Werbefunktionen und Google Signals sind aus, IP-Adressen speichert Google Analytics 4 nicht, der Cookie hält sechs Monate (`COOKIE_TAGE`).
 - **Nie gemessen** wird auf `localhost` (der Hinweis erscheint dort trotzdem, zum Ansehen) und in einem Browser, in dem gerade jemand in der Verwaltung angemeldet ist. Die Verwaltung selbst lädt `statistik.js` nie.
 
-**Einstellungen in Google Analytics, damit die Datenschutzerklärung stimmt:** Datenaufbewahrung auf *2 Monate* (Verwaltung → Property → Datenerhebung und -änderung → Datenaufbewahrung), *Google Signals* aus, unter *Datenfreigabe-Einstellungen* alles ausschalten, die *Datenverarbeitungsbedingungen* akzeptieren. Danach den gelb markierten Hinweis am Ende des Abschnitts „Besucherstatistik“ in `pages/datenschutz.html` löschen.
+**Einstellungen in Google Analytics, damit die Datenschutzerklärung stimmt:** Datenaufbewahrung auf *2 Monate* (Verwaltung → Property → Datenerhebung und -änderung → Datenaufbewahrung), *Google Signals* aus, unter *Datenfreigabe-Einstellungen* alles ausschalten, die *Datenverarbeitungsbedingungen* akzeptieren. Danach den gelb markierten Hinweis am Ende des Abschnitts „Besucherstatistik“ löschen (Verwaltung → Rechtliches → Datenschutz).
 
 **Sicherheit:** Die Content-Security-Policy der öffentlichen Seiten erlaubt dafür genau `www.googletagmanager.com/gtag/` (das Skript; der Container-Lader `gtm.js`, über den sich fremder Code einschleusen ließe, bleibt gesperrt) sowie `google-analytics.com` und `analytics.google.com` (Messdaten); die Verwaltung bleibt bei `'self'`. Ein Skript von Google läuft mit allen Rechten der Seite. Deshalb gilt: den Ordner `admin/` nicht auf denselben öffentlichen Server legen wie die Website (oder dort mit einem Passwort schützen), solange Google Analytics eingeschaltet ist. Wer gar keine Einwilligung einholen möchte, nimmt eine Statistik ohne Cookies (z. B. Matomo oder Plausible); dann entfallen Hinweis und Google-Freigabe in der Richtlinie.
 
@@ -183,7 +185,7 @@ Nur Python 3, sonst wird nichts gebraucht. Das Paket enthält `site/` (die Websi
 Mit `python tools/paket.py --verwaltung` speichert die Verwaltung **direkt auf dem Webserver**, ohne Projektordner auf dem PC und ohne Hochladen: Jede Änderung ist sofort auf der Website zu sehen, oben in der Verwaltung steht „Mit dem Server verbunden“.
 
 - **So geht es:** Die Verwaltung erkennt den Server am Antwortkopf `X-Aug-Schreiben: ja` (eine `HEAD`-Anfrage an die eigene Seite). Dann liest sie Dateien per `GET`, schreibt per `PUT` und löscht Fotos per `DELETE`. Dafür gibt es in `js/admin.js` ein Objekt (`ServerDir`) mit denselben Methoden wie ein Ordner der File System Access API; der Rest der Verwaltung merkt nichts davon. Schutz vor Überschreiben, WebP-Umrechnung der Fotos und alle Prüfungen bleiben wie im Ordner-Modus. Ohne den Kopf (z. B. lokal mit `python -m http.server`) gilt weiter der Projektordner.
-- **Den Schutz übernimmt der Webserver**, nicht die Verwaltung: Sie läuft auf einem **eigenen Port** (8443, https; für den Browser also eine andere Herkunft als die öffentliche Seite) und nur nach einer **Anmeldung am Server** (Basic Auth). Schreiben erlaubt der Server nur für `data/*.csv`/`*.json`, `assets/…` (Bilder, MP3, PDF), `admin/zugaenge.json` und `admin/mitteilungen.json`; auf PUT und DELETE für `js/`, `css/` und die Seiten antwortet er mit 405 oder 404. Die öffentliche Seite (Port 80) kann nichts schreiben und liefert `admin/` nicht aus. Die **Rollen und Rechte je Person** gelten weiter nur in der Oberfläche: Wer die Anmeldung am Server kennt, kann dort in `data/` und `assets/` schreiben.
+- **Den Schutz übernimmt der Webserver**, nicht die Verwaltung: Sie läuft auf einem **eigenen Port** (8443, https; für den Browser also eine andere Herkunft als die öffentliche Seite) und nur nach einer **Anmeldung am Server** (Basic Auth). Schreiben erlaubt der Server nur für `data/*.csv`/`*.json`, `assets/…` (Bilder, MP3, PDF), `admin/zugaenge.json`, `admin/mitteilungen.json` und `admin/protokoll.json`; auf PUT und DELETE für `js/`, `css/` und die Seiten antwortet er mit 405 oder 404. Die öffentliche Seite (Port 80) kann nichts schreiben und liefert `admin/` nicht aus. Die **Rollen und Rechte je Person** gelten weiter nur in der Oberfläche: Wer die Anmeldung am Server kennt, kann dort in `data/` und `assets/` schreiben.
 - **https ist Pflicht** für die Verwaltung: Die Anmeldung rechnet PBKDF2 im Browser, und der gibt das nur über https oder `localhost` frei. Zum Testen genügt ein selbstsigniertes Zertifikat (die Anleitung im Paket zeigt den Befehl), besser ist ein Reverse-Proxy mit gültigem Zertifikat.
 - **Die Inhalte liegen dann auf dem Server.** Beim Aktualisieren des Programmcodes werden sie nicht überschrieben (`rsync` mit Ausnahmen, in der `ANLEITUNG.md` des Pakets). Wer die Website zusätzlich in Git pflegt, holt vorher die Inhalte per `scp` in den Projektordner. Die Sicherung der Inhalte ist jetzt Sache des Servers (z. B. Proxmox-Sicherung des Containers).
 - **Geprüft** mit einem echten nginx (Podman): Ersteinrichtung, Anmeldung, Speichern, Foto-Upload, Schutz vor Überschreiben, gesperrte Pfade und Dateitypen, Größenbegrenzung, Anmeldung am Server. Die Apache-Fassung (`apache-verwaltung.conf`, WebDAV) ist vorbereitet, aber noch nicht mit einem echten Apache geprüft.
@@ -227,12 +229,15 @@ admin/                        Verwaltung (nur mit Anmeldung)
   rundgang.html               Kirchenrundgang pflegen
   startseite.html             Titelfotos der Startseite pflegen
   hinweise.html               Hinweisbanner oben auf der Website (mit Start- und Enddatum)
+  rechtliches.html            Impressum und Datenschutz pflegen
   mitteilungen.html           Mitteilungen an alle in der Verwaltung (nur Entwickler)
+  aenderungen.html            Alle Änderungen als Tabelle (nur Entwickler)
   personen.html               Mitbrüder, Leitung, Gastdirigenten, Organisten pflegen
   repertoire.html             Repertoire des Chores pflegen
   zugaenge.html               Zugänge und Rollen verwalten (nur Admin; Rollen: Redaktion, Admin, Entwickler)
   zugaenge.json               Zugänge (Passwörter nur als Prüfsumme)
   mitteilungen.json           Mitteilungen an alle in der Verwaltung
+  protokoll.json              Änderungsprotokoll (entsteht beim Speichern; nicht in Git, nicht im Paket)
 css/
   style.css                   Zentrales Stylesheet
   admin.css                   Zusätze für die Verwaltung
@@ -262,10 +267,12 @@ js/
   admin-runden.js             Runden pflegen
   admin-rundgang.js           Kirchenrundgang pflegen
   admin-startseite.js         Titelfotos der Startseite pflegen
+  admin-rechtliches.js        Impressum und Datenschutz pflegen
+  admin-aenderungen.js        Alle Änderungen als Tabelle (Entwickler)
   admin-personen.js           Personen pflegen
   admin-repertoire.js         Repertoire pflegen
   admin-zugaenge.js           Zugänge und Rollen verwalten
-  inhalte.js                  Zeichnet Gottesdienste, Runden, Personen, Kontakt und Repertoire aus data/
+  inhalte.js                  Zeichnet Gottesdienste, Runden, Personen, Kontakt, Repertoire, Impressum und Datenschutz aus data/
   instagram.js                Instagram-Bereich mit Fallback (derzeit nicht auf der Startseite eingebunden)
   statistik.js                Cookie-Hinweis und Google Analytics (nur mit Zustimmung; ohne Mess-ID aus)
 data/
@@ -286,6 +293,7 @@ data/
   hochamt-fotos.json          Fotos je Hochamt (Kennung → Bilder), Bilder in assets/img/hochaemter/<Kennung>/
   kontakt.json                Adresse, Telefon, E-Mail, Öffnungszeiten der Pfarrkanzlei
   repertoire.json             Repertoire des Chores
+  rechtliches.json            Impressum und Datenschutzerklärung (Abschnitte mit Text)
 site.webmanifest              App-Manifest: Name, Farben, Symbole, Schnellzugriffe
 assets/
   logo.png, logo-gold.png     Logo (grün und golden), Favicons, Zierlinie
@@ -330,7 +338,7 @@ Marine und Gold auf Weiß — klar, ruhig und festlich, passend zu einer Hofkirc
 
 ## Vor dem Veröffentlichen
 
-Im **Impressum** und in der **Datenschutzerklärung** sind gelb markierte Stellen in eckigen Klammern zu ergänzen, etwa Rechtsform, Registernummer, Hosting-Anbieter und Datenschutz-Kontakt. Dazu gehören auch die Angaben zu Cookies und Google Analytics (siehe [Cookies und Besucherstatistik](#cookies-und-besucherstatistik)). Beide Texte sollten von der Pfarre bzw. dem Vikariat geprüft werden.
+Im **Impressum** und in der **Datenschutzerklärung** (Verwaltung → Rechtliches; im Text als `[[offen: …]]`) sind gelb markierte Stellen in eckigen Klammern zu ergänzen, etwa Rechtsform, Registernummer, Hosting-Anbieter und Datenschutz-Kontakt. Dazu gehören auch die Angaben zu Cookies und Google Analytics (siehe [Cookies und Besucherstatistik](#cookies-und-besucherstatistik)). Beide Texte sollten von der Pfarre bzw. dem Vikariat geprüft werden.
 
 ## Quellen
 

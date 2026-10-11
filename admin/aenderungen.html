@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de" data-adm-rolle="entwickler">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Änderungen — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/admin-aenderungen.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung · nur für Entwickler</div>
+      <h1 class="ph-title">Alle <em>Änderungen</em></h1>
+      <p class="ph-sub">Wer hat wann was geändert, von allen Personen und Geräten, mit jeder einzelnen Änderung (vorher → nachher). Quelle ist <code>admin/protokoll.json</code>.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-quiet" id="ae-reload" data-icon="refresh">Neu laden</button>
+      <button type="button" class="btn btn-quiet" id="ae-csv" data-icon="download">Als Tabelle (CSV)</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main adm-main-wide" id="main">
+  <div data-adm-folder></div>
+  <div id="ae-note"></div>
+
+  <div class="adm-panel ae-filter" role="search">
+    <div class="adm-field ae-q">
+      <label class="adm-label" for="ae-q">Suchen</label>
+      <input class="adm-input" type="search" id="ae-q" placeholder="z. B. Hochamt, Turm, Passwort …"/>
+    </div>
+    <div class="adm-field">
+      <label class="adm-label" for="ae-wer">Person</label>
+      <select class="adm-input" id="ae-wer"><option value="">Alle</option></select>
+    </div>
+    <div class="adm-field">
+      <label class="adm-label" for="ae-bereich">Bereich</label>
+      <select class="adm-input" id="ae-bereich"><option value="">Alle</option></select>
+    </div>
+    <div class="adm-field">
+      <label class="adm-label" for="ae-zeit">Zeitraum</label>
+      <select class="adm-input" id="ae-zeit">
+        <option value="1">Heute</option>
+        <option value="7">Letzte 7 Tage</option>
+        <option value="30" selected>Letzte 30 Tage</option>
+        <option value="365">Letztes Jahr</option>
+        <option value="">Alles</option>
+      </select>
+    </div>
+  </div>
+
+  <p class="adm-count" id="ae-count" role="status"></p>
+  <div id="ae-table"><p class="adm-muted">Wird geladen …</p></div>
+  <button type="button" class="btn btn-quiet ae-more" id="ae-more" hidden>Ältere anzeigen</button>
+</main>
+
+</body>
+</html>

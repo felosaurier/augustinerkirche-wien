@@ -130,6 +130,7 @@
     { key: 'hinweise', label: 'Hinweisbanner (oben auf der Website)', group: 'Allgemein', page: 'hinweise.html' },
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Allgemein', page: 'neuigkeiten.html' },
     { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Allgemein', page: 'termine.html' },
+    { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Allgemein', page: 'rechtliches.html' },
     { key: 'hochaemter', label: 'Hochämter', group: 'Kirchenmusik', page: 'hochaemter.html' },
     { key: 'solisten', label: 'Solisten', group: 'Kirchenmusik', page: 'solisten.html' },
     { key: 'paten', label: 'Paten', group: 'Kirchenmusik', page: 'paten.html' },
@@ -749,11 +750,14 @@
   /* Pfad -> 'ok' | 'fehlt' | 'fehler': Konnte eine Datei nicht gelesen werden (oder war sie
      kaputt), darf sie in dieser Sitzung nicht geschrieben werden, sonst waere der Rest weg. */
   const readState = new Map();
+  /* Pfad -> Text beim letzten Lesen oder Speichern: daraus ergibt sich im Protokoll, was genau geaendert wurde */
+  const lastText = new Map();
   const notFoundErr = (e) => !!e && (e.name === 'NotFoundError' || e.status === 404);
   async function readText(path) {
     try {
       const text = folder.state === 'ok' ? await folder.read(path) : await fetchText(path);
       readState.set(path, 'ok');
+      lastText.set(path, text);
       return text;
     } catch (e) {
       readState.set(path, notFoundErr(e) ? 'fehlt' : 'fehler');
@@ -808,18 +812,39 @@
       if (localImages.has(path)) URL.revokeObjectURL(localImages.get(path));
       localImages.set(path, URL.createObjectURL(blob));
     }
+    const isText = /\.(json|csv)$/.test(path);
+    const before = isText ? await previousText(path) : null;
+    const after = isText ? await blob.text() : null;
+    let direct = false;
     if (folder.state === 'ok') {
       await folder.write(path, blob);
-      return true;
+      direct = true;
+    } else {
+      pending.set(path, { path, blob, done: false });
+      renderPending();
     }
-    pending.set(path, { path, blob, done: false });
-    renderPending();
-    return false;
+    if (isText) lastText.set(path, after);
+    noteChange(path, isText ? describeChange(path, before, after) : [`Datei gespeichert: ${fileName(path)}`]);
+    return direct;
+  }
+  /* Stand vor dem Speichern: zuletzt gelesen, sonst frisch geholt (ohne den Schutz vor
+     Ueberschreiben in folder.read zu beruehren); null, wenn es die Datei noch nicht gab */
+  async function previousText(path) {
+    if (lastText.has(path)) return lastText.get(path);
+    try {
+      return folder.state === 'ok' ? await (await folder.readBlob(path)).text() : await fetchText(path);
+    } catch {
+      return null;
+    }
   }
   const saveJSON = (path, data) => saveFile(path, JSON.stringify(data, null, 2) + '\n');
   /* Eine eben erst geschriebene Datei wieder verwerfen (z. B. Foto, das doch nicht
      uebernommen wird): aus dem Ordner loeschen bzw. aus der Download-Leiste nehmen */
   async function discardFile(path) {
+    /* Eben erst gespeichert und noch nicht protokolliert: dann taucht die Datei im Protokoll gar nicht auf */
+    const queued = changeQueue.findIndex((c) => c.datei === path);
+    if (queued >= 0) changeQueue.splice(queued, 1);
+    else noteChange(path, [`Datei entfernt: ${fileName(path)}`]);
     if (pending.has(path)) {
       pending.delete(path);
       renderPending();
@@ -907,14 +932,235 @@
   }
   const hasUnsaved = () => [...pending.values()].some((p) => !p.done);
 
-  /* ---------- Aenderungsprotokoll (nur auf diesem Geraet) ---------- */
+  /* ---------- Aenderungsprotokoll ----------
+     Jedes Speichern merkt sich, was sich in der Datei genau geaendert hat (vorher -> nachher,
+     je Eintrag und Feld). log(text) fasst das mit einem Satz der Seite zu einem Eintrag
+     zusammen; ruft eine Seite log() nicht auf, entsteht der Eintrag nach kurzer Zeit von selbst.
+     Ein Eintrag landet
+     - auf diesem Geraet (die letzten 30, Uebersicht "Zuletzt geaendert") und
+     - mit Projektordner oder Server im gemeinsamen Protokoll admin/protokoll.json (alle
+       Personen und Geraete; Entwickler sehen es als Tabelle unter "Aenderungen"). */
+  const PROTOCOL = 'admin/protokoll.json';
+  const PROTOCOL_MAX = 2000;
+  const KEY_PROTOCOL_ERR = 'aug-protokoll-fehler';
+  const AREA_FILES = [
+    [/^data\/startseite\.json$/, 'Startseite'], [/^data\/hinweise\.json$/, 'Hinweisbanner'],
+    [/^data\/news\.csv$/, 'Neuigkeiten'], [/^data\/termine\.json$/, 'Termine'],
+    [/^data\/(archiv\/)?hochaemter.*\.csv$/, 'Hochämter'], [/^data\/hochamt-fotos\.json$/, 'Hochämter'],
+    [/^data\/solisten\.json$/, 'Solisten'], [/^data\/paten\.json$/, 'Paten'], [/^data\/cds\.json$/, 'CDs'],
+    [/^data\/personen\.json$/, 'Personen'], [/^data\/repertoire\.json$/, 'Repertoire'],
+    [/^data\/gottesdienste\.json$/, 'Gottesdienste'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
+    [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'],
+    [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
+    [/^admin\/zugaenge\.json$/, 'Zugänge'], [/^admin\/mitteilungen\.json$/, 'Mitteilungen'],
+    [/^assets\/img\/startseite\//, 'Startseite'], [/^assets\/img\/news\//, 'Neuigkeiten'], [/^assets\//, 'Dateien']
+  ];
+  const areaOf = (path) => (AREA_FILES.find(([re]) => re.test(path)) || [null, fileName(path)])[1];
+
+  /* Werte fuer die Anzeige: kurz, Leerraum zusammengezogen; geheime Felder nie im Klartext */
+  const SECRET = /^(hash|salt|code|codeHash|codeSalt|passwort|password)$/i;
+  const SKIP = /^(salt|codeSalt|iter|__.*)$/;
+  const LABELS = { hash: 'Passwort', code: 'Entwickler-Code', codeHash: 'Entwickler-Code', bilder: 'Fotos', frueher: 'Frühere Fotos', sekunden: 'Wechselzeit (Sekunden)', ausschnitt: 'Bildausschnitt' };
+  const MAX_DETAILS = 60;
+  function fmtValue(v) {
+    if (v === undefined || v === null || v === '') return '(leer)';
+    if (typeof v === 'boolean') return v ? 'ja' : 'nein';
+    if (typeof v === 'object') return Array.isArray(v) ? `${v.length} Einträge` : '(Angaben)';
+    const s = String(v).replace(/\s+/g, ' ').trim();
+    return s.length > 140 ? `${s.slice(0, 140)}…` : s;
+  }
+  /* Lange Texte: nur die Stelle zeigen, die sich unterscheidet (mit etwas Umgebung) */
+  function textChange(a, b) {
+    const x = String(a ?? '').replace(/\s+/g, ' ');
+    const y = String(b ?? '').replace(/\s+/g, ' ');
+    if (x.length <= 120 && y.length <= 120) return `„${fmtValue(a)}“ → „${fmtValue(b)}“`;
+    let p = 0;
+    while (p < x.length && p < y.length && x[p] === y[p]) p++;
+    let s = 0;
+    while (s < x.length - p && s < y.length - p && x[x.length - 1 - s] === y[y.length - 1 - s]) s++;
+    const cut = (t) => {
+      const from = Math.max(0, p - 30);
+      const to = Math.min(t.length, t.length - s + 30);
+      const mid = t.slice(from, to);
+      return `${from > 0 ? '…' : ''}${mid.length > 160 ? `${mid.slice(0, 160)}…` : mid}${to < t.length ? '…' : ''}`;
+    };
+    return `„${cut(x) || '(leer)'}“ → „${cut(y) || '(leer)'}“`;
+  }
+  const keyLabel = (k) => LABELS[k] || (/^[a-z]/.test(k) ? k[0].toUpperCase() + k.slice(1) : k);
+  function nameOf(o) {
+    if (o && typeof o === 'object' && !Array.isArray(o)) {
+      for (const k of ['titel', 'Titel', 'name', 'Name', 'benutzer', 'label', 'bezeichnung', 'nummer', 'tage', 'Werk', 'werk', 'datum', 'Datum', 'id', 'bild', '__id']) {
+        if (o[k]) return k === 'bild' ? fileName(String(o[k])) : fmtValue(o[k]);
+      }
+      return '(Eintrag)';
+    }
+    return fmtValue(o);
+  }
+  /* Schluessel, an dem sich die Eintraege einer Liste wiedererkennen lassen (auch nach dem Verschieben) */
+  function keyOf(a, b) {
+    const objs = (l) => l.length && l.every((o) => o && typeof o === 'object' && !Array.isArray(o));
+    if (!objs(a.concat(b))) return null;
+    return ['__id', 'id', 'benutzer', 'bild', 'anker', 'name', 'titel', 'Titel'].find((k) =>
+      [a, b].every((l) => l.every((o) => o[k] !== undefined && o[k] !== '') && new Set(l.map((o) => String(o[k]))).size === l.length)) || null;
+  }
+  function diffValue(a, b, label, out) {
+    if (out.length > MAX_DETAILS) return;
+    if (JSON.stringify(a) === JSON.stringify(b)) return;
+    const where = label || 'Inhalt';
+    if (Array.isArray(a) && Array.isArray(b)) {
+      const k = keyOf(a, b);
+      if (k) {
+        const ma = new Map(a.map((o) => [String(o[k]), o]));
+        const mb = new Map(b.map((o) => [String(o[k]), o]));
+        const added = [...mb].filter(([id]) => !ma.has(id)).map(([, o]) => o);
+        const removed = [...ma].filter(([id]) => !mb.has(id)).map(([, o]) => o);
+        /* Gleich viele weg wie neu und sonst weitgehend gleich: das ist eine Aenderung (z. B. umbenannt) */
+        const similar = (x, y) => {
+          const keys = [...new Set([...Object.keys(x), ...Object.keys(y)])].filter((key) => key !== k && !SKIP.test(key));
+          return keys.length > 0 && keys.filter((key) => JSON.stringify(x[key]) === JSON.stringify(y[key])).length >= keys.length / 2;
+        };
+        if (added.length && added.length === removed.length && added.every((o, i) => similar(removed[i], o))) {
+          added.forEach((o, i) => diffValue(removed[i], o, `${where} › ${nameOf(removed[i])}`, out));
+        } else {
+          for (const o of added) out.push(`${where}: neu „${nameOf(o)}“`);
+          for (const o of removed) out.push(`${where}: entfernt „${nameOf(o)}“`);
+        }
+        for (const [id, o] of mb) if (ma.has(id)) diffValue(ma.get(id), o, `${where} › ${nameOf(o)}`, out);
+        const order = (l, m) => l.map((o) => String(o[k])).filter((id) => m.has(id));
+        if (order(a, mb).join('\u0000') !== order(b, ma).join('\u0000')) out.push(`${where}: Reihenfolge geändert`);
+        return;
+      }
+      if (a.concat(b).every((v) => v === null || typeof v !== 'object')) {
+        const sa = a.map(String);
+        const sb = b.map(String);
+        for (const v of b) if (!sa.includes(String(v))) out.push(`${where}: neu „${fmtValue(v)}“`);
+        for (const v of a) if (!sb.includes(String(v))) out.push(`${where}: entfernt „${fmtValue(v)}“`);
+        if (sa.length === sb.length && sa.every((v) => sb.includes(v)) && sa.join('\u0000') !== sb.join('\u0000')) out.push(`${where}: Reihenfolge geändert`);
+        return;
+      }
+      for (let i = 0; i < Math.max(a.length, b.length); i++) {
+        if (i >= a.length) out.push(`${where}: neu „${nameOf(b[i])}“`);
+        else if (i >= b.length) out.push(`${where}: entfernt „${nameOf(a[i])}“`);
+        else diffValue(a[i], b[i], `${where} › ${nameOf(b[i])}`, out);
+      }
+      return;
+    }
+    const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
+    if (isObj(a) && isObj(b)) {
+      for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) {
+        if (SKIP.test(k) || JSON.stringify(a[k]) === JSON.stringify(b[k])) continue;
+        const sub = label ? `${label} › ${keyLabel(k)}` : keyLabel(k);
+        if (SECRET.test(k)) out.push(`${sub}: geändert`);
+        else diffValue(a[k], b[k], sub, out);
+      }
+      return;
+    }
+    if (isObj(b) && (a === undefined || a === null)) out.push(`${where}: neu „${nameOf(b)}“`);
+    else if (isObj(a) && (b === undefined || b === null)) out.push(`${where}: entfernt „${nameOf(a)}“`);
+    else if (a === undefined) out.push(`${where}: „${fmtValue(b)}“ (neu)`);
+    else if (b === undefined) out.push(`${where}: entfernt (war „${fmtValue(a)}“)`);
+    else out.push(`${where}: ${textChange(a, b)}`);
+  }
+  /* CSV -> Liste von Zeilen-Objekten; die ersten beiden Spalten erkennen eine Zeile wieder */
+  function csvRecords(text) {
+    const rows = HD.parseCSV(String(text).replace(/^\ufeff/, ''));
+    if (!rows.length) return [];
+    const head = rows[0].map((h, i) => String(h).trim() || `Spalte ${i + 1}`);
+    const seen = new Map();
+    return rows.slice(1).filter((r) => r.some((c) => String(c).trim())).map((r) => {
+      const o = {};
+      head.forEach((h, i) => { o[h] = String(r[i] ?? '').trim(); });
+      let id = `${o[head[0]]} ${o[head[1]] || ''}`.trim();
+      const n = (seen.get(id) || 0) + 1;
+      seen.set(id, n);
+      if (n > 1) id += ` (${n})`;
+      o.__id = id;
+      return o;
+    });
+  }
+  function describeChange(path, before, after) {
+    if (before === null || before === undefined) return ['Datei neu angelegt'];
+    if (before === after) return [];
+    const out = [];
+    try {
+      if (path.endsWith('.json')) diffValue(JSON.parse(before), JSON.parse(after), '', out);
+      else diffValue(csvRecords(before), csvRecords(after), 'Zeilen', out);
+    } catch {
+      return ['Inhalt geändert'];
+    }
+    if (!out.length) return ['Nur die Schreibweise der Datei geändert'];
+    return out.length > MAX_DETAILS ? [...out.slice(0, MAX_DETAILS), `… und weitere Änderungen`] : out;
+  }
+
+  /* Gespeichert, aber noch nicht protokolliert */
+  const changeQueue = [];
+  let changeTimer = 0;
+  function noteChange(path, details) {
+    if (path === PROTOCOL) return;
+    const same = changeQueue.find((c) => c.datei === path);
+    if (same) same.details.push(...details);
+    else changeQueue.push({ datei: path, bereich: areaOf(path), details: details.slice() });
+    clearTimeout(changeTimer);
+    /* Ohne log() der Seite: nach kurzer Zeit selbst eintragen */
+    changeTimer = setTimeout(() => {
+      if (changeQueue.length) log(`${[...new Set(changeQueue.map((c) => c.bereich))].join(', ')} geändert`);
+    }, 2500);
+  }
   function log(text) {
+    clearTimeout(changeTimer);
     const s = session();
+    const files = changeQueue.splice(0);
+    const several = files.length > 1;
+    const entry = {
+      zeit: Date.now(),
+      wer: s ? s.name : '',
+      benutzer: s ? s.benutzer : '',
+      text,
+      bereiche: [...new Set(files.map((c) => c.bereich))],
+      dateien: files.map((c) => c.datei),
+      details: files.flatMap((c) => c.details.map((dt) => (several ? `${c.bereich}: ${dt}` : dt))),
+      seite: pageName()
+    };
     const list = get(KEY_LOG) || [];
-    list.unshift({ zeit: Date.now(), wer: s ? s.name : '', text });
+    list.unshift(entry);
     put(KEY_LOG, list.slice(0, 30));
+    appendProtocol(entry);
   }
   const recentLog = () => get(KEY_LOG) || [];
+
+  /* Gemeinsames Protokoll: der Reihe nach (zwei Speichervorgaenge kurz hintereinander
+     duerfen sich nicht gegenseitig ueberschreiben), immer frisch gelesen */
+  let protocolChain = Promise.resolve();
+  function appendProtocol(entry) {
+    if (folder.state !== 'ok') return;
+    protocolChain = protocolChain.then(async () => {
+      let list = [];
+      try {
+        const data = JSON.parse(await (await folder.readBlob(PROTOCOL)).text());
+        list = Array.isArray(data.eintraege) ? data.eintraege : [];
+      } catch (e) {
+        /* Fehlt die Datei, wird sie angelegt; ist sie kaputt, bleibt sie, wie sie ist */
+        if (!notFoundErr(e)) throw e;
+      }
+      list.unshift(entry);
+      const text = `{"eintraege":[\n${list.slice(0, PROTOCOL_MAX).map((x) => JSON.stringify(x)).join(',\n')}\n]}\n`;
+      await folder.write(PROTOCOL, new Blob([text], { type: 'application/json;charset=utf-8' }));
+      try { sessionStorage.removeItem(KEY_PROTOCOL_ERR); } catch { /* egal */ }
+    }).catch((e) => {
+      try { sessionStorage.setItem(KEY_PROTOCOL_ERR, String((e && e.message) || e)); } catch { /* egal */ }
+    });
+  }
+  /* Gemeinsames Protokoll lesen (Seite "Aenderungen"): {list, error} */
+  async function readProtocol() {
+    if (folder.state !== 'ok') return { list: null, error: 'kein-ordner' };
+    try {
+      const data = JSON.parse(await (await folder.readBlob(PROTOCOL)).text());
+      return { list: Array.isArray(data.eintraege) ? data.eintraege : [], error: '' };
+    } catch (e) {
+      return { list: notFoundErr(e) ? [] : null, error: notFoundErr(e) ? '' : String((e && e.message) || e) };
+    }
+  }
+  const protocolError = () => { try { return sessionStorage.getItem(KEY_PROTOCOL_ERR) || ''; } catch { return ''; } };
 
   /* ---------- Meldungen ---------- */
   function toast(msg, kind) {
@@ -1439,6 +1685,7 @@
     ] },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
     { label: 'Termine', icon: 'calendar', href: 'termine.html' },
+    { label: 'Rechtliches', icon: 'book', href: 'rechtliches.html' },
     { label: 'Kirchenmusik', icon: 'music', href: 'hochaemter.html', sub: [
       ['hochaemter.html', 'Hochämter'],
       ['solisten.html', 'Solisten'],
@@ -1503,6 +1750,7 @@
         `<a class="adm-me" href="profil.html" title="Mein Profil: Passwort ändern"${here === 'profil.html' ? ' aria-current="page"' : ''}>` +
           `<span class="adm-avatar" aria-hidden="true">${esc(initials(s.name))}</span>` +
           `<span class="adm-user-name">${esc(s.name)}</span><span class="visually-hidden"> (Mein Profil)</span></a>` +
+        (isDev() ? `<a class="adm-iconbtn" href="aenderungen.html" aria-label="Alle Änderungen"${here === 'aenderungen.html' ? ' aria-current="page"' : ''}>${icon('clock')}<span class="lbl">Änderungen</span></a>` : '') +
         (isDev() ? `<a class="adm-iconbtn" href="mitteilungen.html" aria-label="Mitteilungen an die Verwaltung"${here === 'mitteilungen.html' ? ' aria-current="page"' : ''}>${icon('info')}<span class="lbl">Mitteilungen</span></a>` : '') +
         (isAdmin() ? `<a class="adm-iconbtn" href="zugaenge.html" aria-label="Zugänge"${here === 'zugaenge.html' ? ' aria-current="page"' : ''}>${icon('key')}<span class="lbl">Zugänge</span></a>` : '') +
         `<a class="adm-iconbtn" href="../index.html" target="_blank" rel="noopener" aria-label="Website ansehen (neues Fenster)">${icon('external')}<span class="lbl">Website</span></a>` +
@@ -1741,7 +1989,7 @@
     /* Oberflaeche */
     toast, confirmBox, choiceBox, passwordBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
     noticeHTML, noticeActive, showNotices,
-    listEditor, checkBlankRows, isBlankRow, toWebp, wireDrop, log, recentLog, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
+    listEditor, checkBlankRows, isBlankRow, toWebp, wireDrop, log, recentLog, readProtocol, protocolError, PROTOCOL, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
     /* Datum */
     isoToday, isoOf, fmtDate, fmtShort
   };

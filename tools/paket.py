@@ -12,7 +12,7 @@ weiteren Programme.
     python tools/paket.py --verwaltung --update   nur Programmcode, zum Aktualisieren eines laufenden Servers
 
 Mit --update fehlen im Paket die Inhalte, die auf dem Server gepflegt werden (data/, assets/img/,
-assets/audio/, assets/programme/, admin/zugaenge.json, admin/mitteilungen.json). So kann das Hochladen
+assets/audio/, assets/programme/, admin/zugaenge.json, admin/mitteilungen.json, admin/protokoll.json). So kann das Hochladen
 die Meldungen, Tabellen und Fotos auf dem Server nicht ueberschreiben. Ordner und Archiv tragen
 "-update" im Namen; dazu gehoert eine eigene, kurze Anleitung (tools/server/UPDATE.md).
 
@@ -49,7 +49,7 @@ ORDNER = ['pages', 'css', 'js', 'assets', 'data']
 TEST_MESS_ID = 'G-VORSCHAU01'
 
 # Inhalte, die auf dem Server gepflegt werden: kommen mit --update nicht ins Paket
-INHALTE = ('data/', 'assets/img/', 'assets/audio/', 'assets/programme/', 'admin/zugaenge.json', 'admin/mitteilungen.json')
+INHALTE = ('data/', 'assets/img/', 'assets/audio/', 'assets/programme/', 'admin/zugaenge.json', 'admin/mitteilungen.json', 'admin/protokoll.json')
 
 
 def fehler(text):
@@ -62,6 +62,8 @@ def ausgeschlossen(rel, verwaltung, update=False):
     name = rel.rsplit('/', 1)[-1]
     if update and rel.startswith(INHALTE):
         return True  # Inhalte bleiben auf dem Server, wie sie sind
+    if rel == 'admin/protokoll.json':
+        return True  # Aenderungsprotokoll des PCs: der Server fuehrt sein eigenes
     if rel.startswith('pages/') and name.endswith('-verwaltung.html'):
         return True  # Weiterleitungen auf die Verwaltung
     if not verwaltung and rel.startswith(('css/admin', 'js/admin')):
@@ -298,10 +300,10 @@ def main():
     for k, v in ersetzt.items():
         anleitung = anleitung.replace(k, v)
     schreiben(out / 'ANLEITUNG.md', anleitung)
-    if not update:  # beim Aktualisieren bleibt die Konfiguration des Servers, wie sie ist
-        konfigs = ['nginx.conf', 'apache.conf'] + (['nginx-verwaltung.conf', 'apache-verwaltung.conf'] if verwaltung else [])
-        for name in konfigs:
-            schreiben(out / 'server' / name, bloecke(lesen(VORLAGEN / name), aktiv))
+    # auch im Update-Paket: die Anleitung sagt, wann die Konfiguration erneuert werden muss
+    konfigs = ['nginx.conf', 'apache.conf'] + (['nginx-verwaltung.conf', 'apache-verwaltung.conf'] if verwaltung else [])
+    for name in konfigs:
+        schreiben(out / 'server' / name, bloecke(lesen(VORLAGEN / name), aktiv))
 
     probleme = pruefen(site, update)
 

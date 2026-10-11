@@ -9,3 +9,6 @@ Thumbs.db
 # Pakete fuer den Webserver (python tools/paket.py)
 dist/
 __pycache__/
+
+# Aenderungsprotokoll der Verwaltung (entsteht beim Speichern mit verbundenem Projektordner)
+admin/protokoll.json
