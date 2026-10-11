@@ -3,7 +3,7 @@
    Repertoire des Chores pflegen (admin/repertoire.html), Quelle ist
    data/repertoire.json: Komponisten mit Lebensdaten und Werken
    (Titel und optionaler Hinweis), dazu der Einleitungssatz.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

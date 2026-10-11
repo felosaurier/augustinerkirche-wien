@@ -7,10 +7,10 @@
      Fuer Admins und alle mit dem Recht "Hinweisbanner".
    - "verwaltung" (admin/mitteilungen.html): Mitteilungen an alle in
      der Verwaltung (Neustart des Servers, Updates …), Quelle
-     admin/mitteilungen.json, Anzeige durch js/admin.js. Nur Entwickler.
+     admin/mitteilungen.json, Anzeige durch js/admin/admin.js. Nur Entwickler.
    Jeder Eintrag gilt von "von" bis einschliesslich "bis" (Datum, auf
    Wunsch mit Uhrzeit) und verschwindet danach von selbst.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

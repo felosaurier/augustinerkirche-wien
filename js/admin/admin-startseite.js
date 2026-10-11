@@ -9,7 +9,7 @@
    Ausschnitt waehlen, Reihenfolge, Bildnachweis, Wechselzeit. Entfernte Fotos merkt
    sich "frueher", damit sie sich spaeter wieder verwenden lassen; mit verbundenem
    Projektordner kommen auch die uebrigen Bilder aus assets/img/startseite/ dazu.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

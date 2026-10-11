@@ -3,7 +3,7 @@
    Sprüche pflegen (admin/sprueche.html), Quelle ist data/sprueche.json:
    {sekunden, sprueche: [{text, quelle}]}. Die Website zeigt sie in den
    Zitat-Bändern (.quote-band, js/main.js) und wechselt sie nacheinander.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

@@ -5,7 +5,7 @@
    Titelzeile (Vorschlaege oder frei), Schrift (automatisch, hell, dunkel),
    Logo aus assets/logo/ und der Text neben dem Logo (Name, Untertitel);
    dazu eine Vorschau der Titelzeile.
-   Benoetigt js/thema.js, js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/thema.js, js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

@@ -3,7 +3,7 @@
    Mein Profil (admin/profil.html): jede angemeldete Person aendert
    ihr eigenes Passwort. Gespeichert wird in admin/zugaenge.json,
    nur die eigene Zeile aendert sich (Name, Rolle und Rechte bleiben).
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

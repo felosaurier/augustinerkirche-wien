@@ -7,7 +7,7 @@
      als Download mit Anleitung).
    - Sonst: Anmelden mit Benutzername und Passwort, danach weiter
      zur gewuenschten Seite (Standard: Uebersicht).
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

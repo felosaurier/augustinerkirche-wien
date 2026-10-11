@@ -6,7 +6,7 @@
    der Reihenfolge der Liste, die Ehrenpaten im Satz darüber.
    - Hinzufügen (am Ende oder ganz oben), Ändern, Verschieben,
      zwischen Paten und Ehrenpaten wechseln, Entfernen
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

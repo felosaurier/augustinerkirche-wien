@@ -6,7 +6,7 @@
    Der Text kennt Absaetze, **fett**, Links, Listen, Tabellen und
    Platzhalter (HochamtData.blocksHTML); die Website zeichnet ihn mit
    js/inhalte.js. Die Werkzeugleiste ueber jedem Text fuegt die Zeichen ein.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

@@ -5,7 +5,7 @@
    der Verwaltung: ?bereich=kloster (Mitbrueder, Chronik) und
    ?bereich=musik (Leitung, Gastdirigenten, Organisten). Je Person Name, Aufgabe, Foto, Fotonachweis und
    Text; Reihenfolge mit Pfeilen, Wechsel der Gruppe im Fenster.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

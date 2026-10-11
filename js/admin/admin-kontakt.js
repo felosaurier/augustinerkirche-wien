@@ -3,7 +3,7 @@
    Pfarrkanzlei und Kontakt pflegen (admin/kontakt.html), Quelle ist
    data/kontakt.json (Startseite, Impressum): Oeffnungszeiten,
    Telefon, E-Mail, Adresse.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

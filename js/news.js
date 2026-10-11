@@ -15,7 +15,7 @@
   const HD = window.HochamtData;
   if (!HD) return;
 
-  const LATEST = 4;   /* gleiche Zahl wie NEWS_HOME in js/admin.js */
+  const LATEST = 4;   /* gleiche Zahl wie NEWS_HOME in js/admin/admin.js */
   const KEYS = {
     datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
     details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',

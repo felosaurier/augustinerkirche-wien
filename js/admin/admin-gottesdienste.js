@@ -12,7 +12,7 @@
    - Ausfaelle ("entfaellt": [{datum, zeit, grund}]): faellt an einem Tag
      eine Messe aus (zeit leer = alle Gottesdienste des Tages), bleibt sie
      im Kalender stehen, durchgestrichen mit dem Hinweis "Entfällt"
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

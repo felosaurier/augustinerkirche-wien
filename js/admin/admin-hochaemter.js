@@ -20,7 +20,7 @@
      wird das Fenster ohne Speichern geschlossen oder das Foto entfernt,
      wird die Datei wieder geloescht. Aendert sich Datum oder Uhrzeit des Termins,
      ziehen die Fotos in den neuen Ordner um (mit verbundenem Projektordner).
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

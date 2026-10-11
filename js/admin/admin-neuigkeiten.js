@@ -10,7 +10,7 @@
    - Schaltflaeche im Fenster: Ziel aus Listen waehlen (Hochamt oder
      Konzert, Runde, Seite der Website, andere Website) statt Adresse;
      liegt am Enddatum ein Termin, wird er zum Verknuepfen vorgeschlagen
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

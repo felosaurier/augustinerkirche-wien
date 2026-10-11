@@ -3,9 +3,9 @@
    Zugaenge zur Verwaltung pflegen (admin/zugaenge.html), Quelle
    ist admin/zugaenge.json. Zugang anlegen, Namen oder Passwort
    aendern, Zugang entfernen. Passwoerter werden nur als PBKDF2-
-   Pruefsumme gespeichert (siehe js/admin.js). Eine Redaktion bekommt
+   Pruefsumme gespeichert (siehe js/admin/admin.js). Eine Redaktion bekommt
    Rechte: welche Bereiche und welche einzelnen Runden sie bearbeiten darf.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

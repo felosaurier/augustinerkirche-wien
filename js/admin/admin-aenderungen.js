@@ -5,7 +5,7 @@
    bei jedem Speichern fortschreibt: {eintraege: [{zeit, wer, benutzer,
    text, bereiche, dateien, details, seite}]}, neueste zuerst. Ohne
    Projektordner oder Server gibt es nur die Eintraege dieses Geraets.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

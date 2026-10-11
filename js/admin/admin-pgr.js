@@ -5,7 +5,7 @@
    {name, rolle, beruf, aufgaben: [..], email, telefon}.
    Erscheint auf pages/pfarre.html → Pfarrgemeinderat in der
    Reihenfolge der Listen.
-   Benoetigt js/hochaemter-data.js und js/admin.js.
+   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

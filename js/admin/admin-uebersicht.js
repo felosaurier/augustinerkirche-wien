@@ -65,7 +65,7 @@
     const live = (list) => (list || []).filter((h) => A.noticeActive(h)).length;
     const cdN = cd ? (cd.gruppen || []).reduce((n, g) => n + count(g.cds), 0) : null;
 
-    /* Gleiche Gruppen wie die Reiter oben (js/admin.js, NAV): Häufiges zuerst, dann Inhalte, dann Einstellungen */
+    /* Gleiche Gruppen wie die Reiter oben (js/admin/admin.js, NAV): Häufiges zuerst, dann Inhalte, dann Einstellungen */
     const groups = [
       ['Häufig gebraucht', [
         can('neuigkeiten') && tile({
