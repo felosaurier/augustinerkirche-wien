@@ -1654,7 +1654,7 @@
      Wochen ab dem Datum der Meldung); reicht das nicht fuer 3, wird mit den neuesten abgelaufenen
      aufgefuellt, die dann unten stehen. Gleiche Regel wie in js/news.js.
      Liefert ein Set. */
-  const NEWS_HOME = 3;
+  const NEWS_HOME = 4;   /* gleiche Zahl wie LATEST in js/news.js */
   function newsExpired(e, today = isoToday()) {
     const until = HD.newsUntil(HD.isoDate(e.Datum), e.Bis);
     return Boolean(until) && until < today;

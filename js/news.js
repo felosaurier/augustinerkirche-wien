@@ -1,9 +1,9 @@
 /* ============================================================
    Augustinerkirche Wien — news.js
    Neuigkeiten aus data/news.csv (Excel-Tabelle):
-   - Startseite (#news-grid): die 3 neuesten Meldungen als Karten;
+   - Startseite (#news-grid): immer die 4 neuesten Meldungen als Karten;
      Meldungen mit abgelaufenem "Bis"-Datum ruecken nach unten und
-     fuellen nur noch auf, wenn es weniger als 3 aktive gibt
+     fuellen nur noch auf, wenn es weniger als 4 aktive gibt
    - Archiv (#news-archive): alle Meldungen, auch die der Startseite, nach Jahren
    - Klick auf eine Meldung oeffnet ein Fenster mit allen Infos
    Aufruf mit ?news=ID oeffnet die Meldung direkt (teilbarer Link).
@@ -15,7 +15,7 @@
   const HD = window.HochamtData;
   if (!HD) return;
 
-  const LATEST = 3;
+  const LATEST = 4;   /* gleiche Zahl wie NEWS_HOME in js/admin.js */
   const KEYS = {
     datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
     details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',
@@ -91,7 +91,7 @@
     return `<span class="news-noimg"><img src="${esc(base)}assets/logo-gold.png" alt="" width="64" height="64" loading="lazy" decoding="async"/></span>`;
   }
 
-  /* ---------- Startseite: 3 Karten ---------- */
+  /* ---------- Startseite: 4 Karten ---------- */
   function cardHTML(e) {
     return `<a class="news-card" href="${esc(pageUrl(e.id))}" data-id="${esc(e.id)}">` +
       `<div class="news-card-img">${thumbHTML(e, 'news-thumb')}` +
