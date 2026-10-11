@@ -3,7 +3,7 @@
    Zeichnet Bereiche, die in der Verwaltung gepflegt werden, aus
    den Datendateien:
    - data/gottesdienste.json: Liturgie-Zeiten und Wochenueberblick
-     ([data-inhalt="liturgie"], [data-inhalt="woche"])
+     ([data-inhalt="liturgie"])
    - data/runden.json: Uebersicht der Runden ([data-inhalt="runden"])
      und die Seite einer Runde (<main data-runde="id">; leer = ?id=)
    - data/personen.json: Personenkarten ([data-personen="gruppe"])
@@ -55,8 +55,7 @@
   /* ---------- Gottesdienste ---------- */
   async function gottesdienste() {
     const lit = qsa('[data-inhalt="liturgie"]');
-    const week = qsa('[data-inhalt="woche"]');
-    if (!lit.length && !week.length) return;
+    if (!lit.length) return;
     const list = (await load('gottesdienste.json')).termine.slice().sort(byDay);
     for (const el of lit) {
       el.innerHTML = list.filter((t) => t.liturgie).map((t) =>
@@ -65,16 +64,6 @@
         (t.hinweis ? `<div class="gd-note">${esc(t.hinweis)}</div>` : '') + '</td></tr>'
       ).join('');
     }
-    for (const el of week) {
-      el.innerHTML = list.map((t) =>
-        `<div class="week-row" data-day="${esc(t.tag)}"><div class="week-day">${esc(DAYS[t.tag] || '')}</div>` +
-        `<div class="week-time">${esc(t.zeit)}</div>` +
-        `<div><div class="week-name">${esc(t.name)}</div>${t.hinweis ? `<div class="week-loc">${esc(t.hinweis)}</div>` : ''}</div></div>`
-      ).join('');
-    }
-    /* Gewaehlten Wochentag erneut anwenden */
-    const active = document.querySelector('.week-filter-btn.active');
-    if (active && week.length) active.click();
   }
 
   /* ---------- Runden ---------- */

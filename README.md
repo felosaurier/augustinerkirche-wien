@@ -32,8 +32,8 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 | Seite | Inhalt |
 |---|---|
 | **Startseite** | Aktuelles, Identität von Pfarre und Kloster, Herzgruft, die nächsten Hochämter |
-| **Kalender** | Alle Termine von St. Augustin: Hochämter (Kreuz, Gold) getrennt von den Gottesdiensten (Heilige Messen, Kreis, Bordeaux), Konzerte, die regelmäßigen Messen aus dem Wochenplan (ein Jahr voraus; ausgefallene bleiben durchgestrichen stehen), Termine der Runden, eigene Termine wie Ausflüge und Feste; Monatsblatt mit Punkten je Gruppe, Filter, im laufenden Monat ab heute |
-| **Gottesdienste** | Liturgiezeiten, Wochenüberblick, Runden in St. Augustin |
+| **Kalender** | Alle Termine von St. Augustin: Hochämter (Kreuz, Gold) getrennt von den Gottesdiensten (Heilige Messen, Kreis, Bordeaux), Konzerte, die regelmäßigen Messen aus dem Wochenplan (ein Jahr voraus; ausgefallene bleiben durchgestrichen stehen), Termine der Runden, eigene Termine wie Ausflüge und Feste; Monatsblatt mit Punkten je Gruppe, Filter, im laufenden Monat ab heute. Umschaltbar auf den **Wochenüberblick** (`kalender.html#woche`, im Menü unter Kalender): eine Kalenderwoche mit allen sieben Tagen, Woche per Pfeil wählen (vier Wochen zurück, ein Jahr voraus, „Zur aktuellen Woche“), Filter nach Wochentag |
+| **Gottesdienste** | Liturgiezeiten, Runden in St. Augustin |
 | **Sakramente** | Taufe, Eucharistie, Firmung, Trauung, Wiedereintritt und mehr |
 | **Kirchenmusik** | Hochämter und Archiv, Chor, Kammerchor, Repertoire des Chores (mit Suche), Orchester, Solisten, Organisten, Orgeln |
 | **Hochamt (Detail)** | Zelebrant, Dirigent, Chor, Orchester, Solisten, Organist und weitere Musik je Termin |
@@ -53,7 +53,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Startseite** | Titelfotos im Vollbild-Start der vier Hauptseiten, oben das Thema wählen (Augustinerkirche = Startseite, Kirchenmusik, Augustiner, Aspersdorf; Fotos der anderen Themen lassen sich wieder verwenden): Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender |
-| **Gottesdienste** | Wochenplan (Liturgie-Zeiten und Wochenüberblick; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen) |
+| **Gottesdienste** | Wochenplan (Liturgie-Zeiten; je Termin optional „Gilt von … bis …“ Monat, z. B. September bis Juni), „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit keine Messe stattfindet, z. B. Sommerpause Di, Do, Fr, Sa), „Entfällt“ (fällt an einem Tag eine Messe aus, bleibt sie im Kalender durchgestrichen mit Grund stehen) |
 | **Pfarrkanzlei & Kontakt** | Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
 | **Rechtliches** | Impressum und Datenschutzerklärung Abschnitt für Abschnitt: Überschrift, Text mit Werkzeugleiste (fett, Link, Telefon, Liste, Tabelle, Zwischentitel, „fehlt noch“), Reihenfolge, Vorschau je Abschnitt und der ganzen Seite |
 | **Änderungen** (nur Entwickler, oben rechts) | Alle Änderungen von allen Personen als Tabelle: Zeitpunkt, Person, Bereich, was genau (vorher → nachher), Suche und Filter, Export als CSV. Quelle ist `admin/protokoll.json`, das bei jedem Speichern mitgeschrieben wird (mit Projektordner oder auf dem Server) |
@@ -196,8 +196,8 @@ Mit `python tools/paket.py --verwaltung` speichert die Verwaltung **direkt auf d
 index.html                    Startseite
 pages/
   pfarre.html                 Pfarre, Pfarrer, Pfarrkanzlei, Pfarrgemeinderat, Seelsorger
-  kalender.html               Kalender: alle Termine von St. Augustin
-  gottesdienste.html          Liturgiezeiten, Wochenüberblick, Runden
+  kalender.html               Kalender: alle Termine von St. Augustin, als Monat oder Wochenüberblick (#woche)
+  gottesdienste.html          Liturgiezeiten, Runden
   sakramente.html             Sakramente
   musik.html                  Kirchenmusik: Hochämter, Ensembles, Orgeln
   hochamt.html                Detailseite eines Hochamts
@@ -247,7 +247,9 @@ js/
   hochaemter.js               Kalender und Archiv auf der Musik-Seite
   hochaemter-start.js         Nächste Hochämter auf der Startseite
   news.js                     Neuigkeiten: 3 Karten, Fenster mit Plakat, Jahresarchiv
-  kalender.js                 Kalender: Hochämter, Runden und eigene Termine zusammengeführt
+  kalender-daten.js           Termine für Kalender und Wochenüberblick: Hochämter, Wochenplan (mit Ferien und Ausfällen), Runden, eigene Termine
+  kalender.js                 Kalender: Monatsblatt und Termine des Monats
+  woche.js                    Wochenüberblick im Kalender: Woche wählen, alle Tage mit ihren Terminen
   lightbox.js                 Plakate vergrößern (Hintergrund unscharf)
   hochamt-detail.js           Detailseite eines Hochamts
   solisten.js                 Solistenliste

@@ -44,6 +44,7 @@
         <div class="mega-group">
           <span class="mega-group-label">Gottesdienst &amp; Leben</span>
           <a href="kalender.html">Kalender</a>
+          <a href="kalender.html#woche">Wochenüberblick</a>
           <a href="gottesdienste.html">Gottesdienste</a>
           <a href="gottesdienste.html#p-runden">Runden in St. Augustin</a>
           <a href="sakramente.html">Sakramente</a>
@@ -164,12 +165,17 @@
   <div class="inner">
     <div class="ph-tag">Pfarre St. Augustin</div>
     <h1 class="ph-title">Kalender</h1>
-    <p class="ph-sub">Gottesdienste, Hochämter, Konzerte, Runden, Ausflüge und Feste auf einen Blick. Fällt eine Messe aus, steht es hier. Den ganzen Wochenplan gibt es unter <a class="link-arr" href="gottesdienste.html">Gottesdienste</a>.</p>
+    <p class="ph-sub">Gottesdienste, Hochämter, Konzerte, Runden, Ausflüge und Feste auf einen Blick, als Monat oder Woche. Fällt eine Messe aus, steht es hier. Den regelmäßigen Wochenplan gibt es unter <a class="link-arr" href="gottesdienste.html">Gottesdienste</a>.</p>
   </div>
 </header>
 
 <section class="section">
   <div class="inner">
+    <!-- Ansicht: Monat (js/kalender.js) oder Woche (js/woche.js, Adresse #woche); gleiche Termine aus js/kalender-daten.js -->
+    <div class="cal-views" role="group" aria-label="Ansicht">
+      <a class="cal-view" href="kalender.html" data-view="monat" aria-current="page">Monat</a>
+      <a class="cal-view" href="kalender.html#woche" data-view="woche">Wochenüberblick</a>
+    </div>
     <div class="cal" id="cal" data-base="../">
       <div class="cal-side">
         <div class="cal-head">
@@ -184,6 +190,29 @@
       <div class="cal-list" aria-live="polite">
         <p class="cal-empty">Die Termine werden geladen …</p>
       </div>
+    </div>
+    <div class="wk" id="woche" data-base="../" hidden>
+      <div class="wk-head">
+        <button type="button" class="cal-nav" data-wk="prev" aria-label="Vorige Woche"><svg viewBox="0 0 10 16" aria-hidden="true" focusable="false"><path d="M8 1L2 8l6 7"/></svg></button>
+        <div class="wk-pick">
+          <h2 class="wk-range" aria-live="polite">Wochenüberblick</h2>
+        </div>
+        <button type="button" class="cal-nav" data-wk="next" aria-label="Nächste Woche"><svg viewBox="0 0 10 16" aria-hidden="true" focusable="false"><path d="M2 1l6 7-6 7"/></svg></button>
+      </div>
+      <button type="button" class="cal-today" data-wk="heute" hidden>Zur aktuellen Woche</button>
+      <div class="week-filter" role="group" aria-label="Nach Wochentag filtern">
+        <button type="button" class="week-filter-btn active" data-filter="alle" aria-pressed="true">Alle Tage</button>
+        <button type="button" class="week-filter-btn" data-filter="mo" aria-pressed="false">Mo</button>
+        <button type="button" class="week-filter-btn" data-filter="di" aria-pressed="false">Di</button>
+        <button type="button" class="week-filter-btn" data-filter="mi" aria-pressed="false">Mi</button>
+        <button type="button" class="week-filter-btn" data-filter="do" aria-pressed="false">Do</button>
+        <button type="button" class="week-filter-btn" data-filter="fr" aria-pressed="false">Fr</button>
+        <button type="button" class="week-filter-btn" data-filter="sa" aria-pressed="false">Sa</button>
+        <button type="button" class="week-filter-btn" data-filter="so" aria-pressed="false">So</button>
+      </div>
+      <p class="wk-count" role="status"></p>
+      <div class="wk-list"><p class="cal-empty">Die Termine werden geladen …</p></div>
+      <p class="wk-more"><a class="link-arr wk-cal" href="kalender.html">Ganzer Monat im Kalender</a></p>
     </div>
     <noscript><p class="s-text">Der Kalender braucht JavaScript. Die Hochämter finden Sie auch unter <a href="musik.html#p-hochaemter">Kirchenmusik</a>.</p></noscript>
   </div>
@@ -200,7 +229,9 @@
 <script src="../js/main.js"></script>
 <script src="../js/statistik.js"></script>
 <script src="../js/hochaemter-data.js"></script>
-<script src="../js/kalender.js?v=20261015"></script>
+<script src="../js/kalender-daten.js?v=20261020"></script>
+<script src="../js/kalender.js?v=20261020"></script>
+<script src="../js/woche.js?v=20261020"></script>
 <script src="../js/lightbox.js"></script>
 </body>
 </html>

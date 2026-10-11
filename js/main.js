@@ -411,27 +411,6 @@
     }
   }
 
-  /* ---------- Filter ueber data-Attribute (z. B. Wochenueberblick) ----------
-     Knoepfe tragen data-filter, Zeilen das Attribut data-<attr>; 'alle'/'all' zeigt alles. */
-  function initAttributeFilter(buttonSelector, rowSelector, attr) {
-    const buttons = qsa(buttonSelector);
-    if (!buttons.length) return;
-
-    for (const btn of buttons) {
-      btn.setAttribute('aria-pressed', String(btn.classList.contains('active')));
-      btn.addEventListener('click', () => {
-        for (const b of buttons) {
-          b.classList.toggle('active', b === btn);
-          b.setAttribute('aria-pressed', String(b === btn));
-        }
-        const value = btn.dataset.filter;
-        const showAll = value === 'alle' || value === 'all';
-        /* Zeilen erst beim Klick suchen: sie koennen nachgeladen sein (js/inhalte.js) */
-        for (const row of qsa(rowSelector)) row.style.display = showAll || row.dataset[attr] === value ? '' : 'none';
-      });
-    }
-  }
-
   /* ---------- Scroll-Reveal via IntersectionObserver ---------- */
   let revealObserver = null;
   function revealObserve() {
@@ -813,7 +792,6 @@
     initCredits();
     initBanner();
     markCurrentNav();
-    initAttributeFilter('.week-filter-btn[data-filter]', '.week-row', 'day');
 
     holdHashTarget();
     bleedBands();

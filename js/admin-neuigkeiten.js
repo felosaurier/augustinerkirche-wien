@@ -51,7 +51,7 @@
   const PAGES = [
     ['Gottesdienste', [
       ['pages/gottesdienste.html', 'Gottesdienste: Liturgie-Zeiten', 'Zu den Gottesdiensten'],
-      ['pages/gottesdienste.html#p-woche', 'Gottesdienste: Wochenüberblick', 'Zum Wochenüberblick'],
+      ['pages/kalender.html#woche', 'Kalender: Wochenüberblick', 'Zum Wochenüberblick'],
       ['pages/gottesdienste.html#p-runden', 'Runden in St. Augustin (Übersicht)', 'Zu den Runden'],
       ['pages/sakramente.html', 'Sakramente', 'Zu den Sakramenten']]],
     ['Kirchenmusik', [
