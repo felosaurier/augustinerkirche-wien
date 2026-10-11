@@ -158,56 +158,22 @@
 
 <main id="main">
 
-<section class="page-hero">
+<section class="page-hero legal-hero">
   <div class="ph-tag">Rechtliches</div>
-  <h1 class="ph-title">Impressum</h1>
-  <p class="ph-sub">Angaben gemäß § 5 E-Commerce-Gesetz und § 25 Mediengesetz.</p>
+  <h1 class="ph-title" data-rechtliches="titel">Impressum</h1>
+  <p class="ph-sub" data-rechtliches="untertitel">Angaben gemäß § 5 E-Commerce-Gesetz und § 25 Mediengesetz.</p>
+  <div class="legal-switch" role="navigation" aria-label="Rechtliches"><a href="impressum.html" aria-current="page">Impressum</a><a href="datenschutz.html">Datenschutz</a></div>
 </section>
 
-<section class="section">
-  <div class="inner">
-    <div class="legal">
-      <h2>Medieninhaber, Herausgeber und Redaktion</h2>
-      <p>Augustiner-Vikariat Wien<br>Augustinerstraße 3<br>1010 Wien, Österreich<br>Telefon <a href="tel:+4315330947">+43 (0)1 533 09 47</a>, Fax +43 (0)1 533 09 47 250</p>
-      <p>In Zusammenarbeit mit der römisch-katholischen Pfarre St. Augustin und dem Augustinerkonvent Wien, Wien I.</p>
-      <p><span class="todo">[Rechtsform und gegebenenfalls Registernummer ergänzen]</span></p>
-
-      <h2>Für den Inhalt verantwortlich</h2>
-      <p>Regionalvikar und Prior P. Mag. Dominic Sadrawetz OSA<br>P. Mag. Matthias Schlögl OSA, Pfarrer von St. Augustin<br>E-Mail: <a class="mail" data-mail="ta.renitsugua|retsambew">webmaster(at)augustiner(dot)at</a></p>
-
-      <h2>Kontakt</h2>
-      <p>Pfarre St. Augustin: Telefon <a href="tel:+4315337099">+43 (0)1 533 70 99</a>, Fax +43 (0)1 533 70 99 350, <a class="mail" data-mail="ta.ehcrikrenitsugua|errafp">pfarre(at)augustinerkirche(dot)at</a><br>Augustinerkloster Wien: Telefon <a href="tel:+4315330947">+43 (0)1 533 09 47</a>, Fax +43 (0)1 533 09 47 150, <a class="mail" data-mail="ta.renitsugua|neiw.retsolkrenitsugua">augustinerkloster(dot)wien(at)augustiner(dot)at</a></p>
-      <p data-inhalt="kanzlei">Pfarrkanzlei: Di &amp; Fr 10–12 Uhr oder nach telefonischer Vereinbarung</p>
-
-      <h2>Kirchliche Zugehörigkeit</h2>
-      <p>Die Pfarre St. Augustin gehört zur Erzdiözese Wien. Das Augustiner-Vikariat Wien untersteht unmittelbar dem Generalprior des Augustinerordens in Rom.</p>
-
-      <h2>Grundlegende Richtung (§ 25 Mediengesetz)</h2>
-      <p>Informations- und Kommunikationsorgan der Augustinerkirche Wien, der Pfarre St. Augustin und des Augustinerkonventes Wien, Wien I.</p>
-
-      <h2>Bankverbindungen</h2>
-      <dl class="organ-facts pane-facts">
-        <div><dt>Pfarre St. Augustin</dt><dd>IBAN AT47 1919 0000 0025 7675</dd></div>
-        <div><dt>Augustinerkonvent Wien</dt><dd>IBAN AT96 1919 0000 0015 5234</dd></div>
-        <div><dt>Mitteilungsblatt</dt><dd>IBAN AT18 1919 0003 0015 5231</dd></div>
-      </dl>
-      <p>Alle Konten beim Bankhaus Schelhammer &amp; Schattera, BIC BSSWATWW. Spenden für die Kirchenmusik: siehe <a href="musik.html#p-patenschaft">Patenschaft St. Augustin</a>.</p>
-
-      <h2>Konzept, Webdesign und technische Realisierung</h2>
-      <p><span class="todo">[Name ergänzen]</span></p>
-
-      <h2>Inhalt und Bildnachweis</h2>
-      <p>Die Inhalte dieser Website wurden mit Sorgfalt erstellt; für Richtigkeit, Vollständigkeit und Aktualität kann keine Gewähr übernommen werden. Fotos und Texte stammen, soweit nicht anders angegeben, von der Pfarre St. Augustin bzw. dem Augustiner-Vikariat Wien. Urheber sind bei einzelnen Bildern in der jeweiligen Bildunterschrift genannt. <span class="todo">[Bildrechte aller Fotos abschließend prüfen]</span></p>
-
-      <h2>Haftung für Links</h2>
-      <p>Diese Website enthält Links auf externe Websites Dritter (z. B. Instagram). Auf deren Inhalte haben wir keinen Einfluss und übernehmen dafür keine Verantwortung. Zum Zeitpunkt der Verlinkung waren keine Rechtsverstöße erkennbar.</p>
-
-      <h2>Urheberrecht</h2>
-      <p>Inhalte und Bilder dieser Website unterliegen dem Urheberrecht. Vervielfältigung und Weitergabe bedürfen der Zustimmung der Rechteinhaber.</p>
-
-      <h2>Cookies und Statistik</h2>
-      <p>Diese Website setzt nur mit Ihrer Zustimmung Cookies und verwendet nur dann Google Analytics. Einzelheiten und die Möglichkeit zum Widerruf stehen in der <a href="datenschutz.html#cookies">Datenschutzerklärung</a>.</p>
+<!-- Inhalt aus data/rechtliches.json (in der Verwaltung unter „Rechtliches“ gepflegt); js/inhalte.js zeichnet ihn neu,
+     der Text hier ist der Rückfall ohne JavaScript und muss nicht von Hand nachgezogen werden -->
+<section class="section legal-section">
+  <div class="inner legal-layout" data-inhalt="rechtliches" data-seite="impressum">
+    <div class="legal-toc" role="navigation" aria-labelledby="legal-toc-h">
+      <p class="legal-toc-h" id="legal-toc-h">Inhalt</p>
+      <ol><li><a href="#medieninhaber">Medieninhaber, Herausgeber und Redaktion</a></li><li><a href="#verantwortlich">Für den Inhalt verantwortlich</a></li><li><a href="#kontakt">Kontakt</a></li><li><a href="#zugehoerigkeit">Kirchliche Zugehörigkeit</a></li><li><a href="#richtung">Grundlegende Richtung (§ 25 Mediengesetz)</a></li><li><a href="#bank">Bankverbindungen</a></li><li><a href="#webdesign">Konzept, Webdesign und technische Realisierung</a></li><li><a href="#bildnachweis">Inhalt und Bildnachweis</a></li><li><a href="#links">Haftung für Links</a></li><li><a href="#urheberrecht">Urheberrecht</a></li><li><a href="#cookies">Cookies und Statistik</a></li></ol>
     </div>
+    <div class="legal"><section class="legal-sec" id="medieninhaber" aria-labelledby="medieninhaber-h"><h2 id="medieninhaber-h"><span class="legal-num" aria-hidden="true">01</span>Medieninhaber, Herausgeber und Redaktion</h2><div class="legal-body"><p>Augustiner-Vikariat Wien<br>Augustinerstraße 3<br>1010 Wien, Österreich<br>Telefon <a href="tel:+4315330947">+43 (0)1 533 09 47</a>, Fax +43 (0)1 533 09 47 250</p><p>In Zusammenarbeit mit der römisch-katholischen Pfarre St. Augustin und dem Augustinerkonvent Wien, Wien I.</p><p><span class="todo">[Rechtsform und gegebenenfalls Registernummer ergänzen]</span></p></div></section><section class="legal-sec" id="verantwortlich" aria-labelledby="verantwortlich-h"><h2 id="verantwortlich-h"><span class="legal-num" aria-hidden="true">02</span>Für den Inhalt verantwortlich</h2><div class="legal-body"><p>Regionalvikar und Prior P. Mag. Dominic Sadrawetz OSA<br>P. Mag. Matthias Schlögl OSA, Pfarrer von St. Augustin<br>E-Mail: <a class="mail" data-mail="ta.renitsugua|retsambew">webmaster(at)augustiner(dot)at</a></p></div></section><section class="legal-sec" id="kontakt" aria-labelledby="kontakt-h"><h2 id="kontakt-h"><span class="legal-num" aria-hidden="true">03</span>Kontakt</h2><div class="legal-body"><div class="legal-table-wrap"><table class="legal-table"><thead><tr><th scope="col">Stelle</th><th scope="col">Telefon</th><th scope="col">Fax</th><th scope="col">E-Mail</th></tr></thead><tbody><tr><td data-label="Stelle">Pfarre St. Augustin</td><td data-label="Telefon" class="nw"><a href="tel:+4315337099">+43 (0)1 533 70 99</a></td><td data-label="Fax" class="nw">+43 (0)1 533 70 99 350</td><td data-label="E-Mail"><a class="mail" data-mail="ta.ehcrikrenitsugua|errafp">pfarre(at)augustinerkirche(dot)at</a></td></tr><tr><td data-label="Stelle">Augustinerkloster Wien</td><td data-label="Telefon" class="nw"><a href="tel:+4315330947">+43 (0)1 533 09 47</a></td><td data-label="Fax" class="nw">+43 (0)1 533 09 47 150</td><td data-label="E-Mail"><a class="mail" data-mail="ta.renitsugua|neiw.retsolkrenitsugua">augustinerkloster(dot)wien(at)augustiner(dot)at</a></td></tr></tbody></table></div><p data-inhalt="kanzlei">Pfarrkanzlei: Öffnungszeiten siehe Kontakt</p></div></section><section class="legal-sec" id="zugehoerigkeit" aria-labelledby="zugehoerigkeit-h"><h2 id="zugehoerigkeit-h"><span class="legal-num" aria-hidden="true">04</span>Kirchliche Zugehörigkeit</h2><div class="legal-body"><p>Die Pfarre St. Augustin gehört zur Erzdiözese Wien. Das Augustiner-Vikariat Wien untersteht unmittelbar dem Generalprior des Augustinerordens in Rom.</p></div></section><section class="legal-sec" id="richtung" aria-labelledby="richtung-h"><h2 id="richtung-h"><span class="legal-num" aria-hidden="true">05</span>Grundlegende Richtung (§ 25 Mediengesetz)</h2><div class="legal-body"><p>Informations- und Kommunikationsorgan der Augustinerkirche Wien, der Pfarre St. Augustin und des Augustinerkonventes Wien, Wien I.</p></div></section><section class="legal-sec" id="bank" aria-labelledby="bank-h"><h2 id="bank-h"><span class="legal-num" aria-hidden="true">06</span>Bankverbindungen</h2><div class="legal-body"><div class="legal-table-wrap"><table class="legal-table"><thead><tr><th scope="col">Konto</th><th scope="col">IBAN</th></tr></thead><tbody><tr><td data-label="Konto">Pfarre St. Augustin</td><td data-label="IBAN" class="nw">AT47 1919 0000 0025 7675</td></tr><tr><td data-label="Konto">Augustinerkonvent Wien</td><td data-label="IBAN" class="nw">AT96 1919 0000 0015 5234</td></tr><tr><td data-label="Konto">Mitteilungsblatt</td><td data-label="IBAN" class="nw">AT18 1919 0003 0015 5231</td></tr></tbody></table></div><p>Alle Konten beim Bankhaus Schelhammer &amp; Schattera, BIC BSSWATWW. Spenden für die Kirchenmusik: siehe <a href="../pages/musik.html#p-patenschaft">Patenschaft St. Augustin</a>.</p></div></section><section class="legal-sec" id="webdesign" aria-labelledby="webdesign-h"><h2 id="webdesign-h"><span class="legal-num" aria-hidden="true">07</span>Konzept, Webdesign und technische Realisierung</h2><div class="legal-body"><p><span class="todo">[Name ergänzen]</span></p></div></section><section class="legal-sec" id="bildnachweis" aria-labelledby="bildnachweis-h"><h2 id="bildnachweis-h"><span class="legal-num" aria-hidden="true">08</span>Inhalt und Bildnachweis</h2><div class="legal-body"><p>Die Inhalte dieser Website wurden mit Sorgfalt erstellt; für Richtigkeit, Vollständigkeit und Aktualität kann keine Gewähr übernommen werden. Fotos und Texte stammen, soweit nicht anders angegeben, von der Pfarre St. Augustin bzw. dem Augustiner-Vikariat Wien. Urheber sind bei einzelnen Bildern in der jeweiligen Bildunterschrift genannt. <span class="todo">[Bildrechte aller Fotos abschließend prüfen]</span></p></div></section><section class="legal-sec" id="links" aria-labelledby="links-h"><h2 id="links-h"><span class="legal-num" aria-hidden="true">09</span>Haftung für Links</h2><div class="legal-body"><p>Diese Website enthält Links auf externe Websites Dritter (z. B. Instagram). Auf deren Inhalte haben wir keinen Einfluss und übernehmen dafür keine Verantwortung. Zum Zeitpunkt der Verlinkung waren keine Rechtsverstöße erkennbar.</p></div></section><section class="legal-sec" id="urheberrecht" aria-labelledby="urheberrecht-h"><h2 id="urheberrecht-h"><span class="legal-num" aria-hidden="true">10</span>Urheberrecht</h2><div class="legal-body"><p>Inhalte und Bilder dieser Website unterliegen dem Urheberrecht. Vervielfältigung und Weitergabe bedürfen der Zustimmung der Rechteinhaber.</p></div></section><section class="legal-sec" id="cookies" aria-labelledby="cookies-h"><h2 id="cookies-h"><span class="legal-num" aria-hidden="true">11</span>Cookies und Statistik</h2><div class="legal-body"><p>Diese Website setzt nur mit Ihrer Zustimmung Cookies und verwendet nur dann Google Analytics. Einzelheiten und die Möglichkeit zum Widerruf stehen in der <a href="../pages/datenschutz.html#cookies">Datenschutzerklärung</a>.</p></div></section></div>
   </div>
 </section>
 

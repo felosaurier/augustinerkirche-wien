@@ -17,6 +17,8 @@
      [data-inhalt="pgr-weitere"])
    - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
      ([data-inhalt="paten"], [data-inhalt="ehrenpaten"])
+   - data/rechtliches.json: Impressum und Datenschutz
+     ([data-inhalt="rechtliches"][data-seite="impressum|datenschutz"])
    Der Inhalt im HTML bleibt als Rueckfall stehen, falls eine Datei
    nicht geladen werden kann.
    Benoetigt js/hochaemter-data.js (Escaping, sichere Links, Freitext).
@@ -377,7 +379,54 @@
     render();
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  /* ---------- Impressum und Datenschutz ---------- */
+  async function rechtliches() {
+    const host = document.querySelector('[data-inhalt="rechtliches"]');
+    if (!host) return;
+    const page = (await load('rechtliches.json'))[host.dataset.seite];
+    if (!page || !Array.isArray(page.abschnitte) || !page.abschnitte.length) return;
+    const { toc, body } = HD.legalHTML(page, ROOT);
+    const list = host.querySelector('.legal-toc ol');
+    const content = host.querySelector('.legal');
+    if (!list || !content) return;
+    list.innerHTML = toc;
+    content.innerHTML = body;
+    for (const [key, el] of [['titel', qsa('[data-rechtliches="titel"]')], ['untertitel', qsa('[data-rechtliches="untertitel"]')]]) {
+      if (page[key]) el.forEach((x) => { x.textContent = page[key]; });
+    }
+    /* Knopf "Cookie-Einstellungen": nur, wenn die Statistik eingerichtet ist (dann steht er auch in der Fusszeile) */
+    if (document.querySelector('.f-links .cc-open')) host.querySelectorAll('.cc-open[hidden]').forEach((b) => { b.hidden = false; });
+    /* Sprung auf einen Abschnitt (#cookies) nach dem Neuzeichnen */
+    if (location.hash) {
+      const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (target) target.scrollIntoView();
+    }
+  }
+  /* Inhaltsverzeichnis: markiert den Abschnitt, der gerade gelesen wird */
+  function legalToc() {
+    const host = document.querySelector('.legal-layout');
+    if (!host || !('IntersectionObserver' in window)) return;
+    let obs = null;
+    const watch = () => {
+      if (obs) obs.disconnect();
+      const links = new Map(Array.from(host.querySelectorAll('.legal-toc a'), (a) => [a.hash.slice(1), a]));
+      const visible = new Set();
+      obs = new IntersectionObserver((entries) => {
+        for (const e of entries) (e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id));
+        const first = Array.from(host.querySelectorAll('.legal-sec')).find((s) => visible.has(s.id));
+        if (!first) return;
+        links.forEach((a, id) => { if (id === first.id) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+      }, { rootMargin: '-15% 0px -70% 0px' });
+      host.querySelectorAll('.legal-sec').forEach((s) => obs.observe(s));
+    };
+    watch();
+    new MutationObserver(watch).observe(host.querySelector('.legal'), { childList: true });
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    legalToc();
+    /* Impressum zuerst: es enthaelt die Oeffnungszeiten der Pfarrkanzlei, die kontakt() danach eintraegt */
+    await rechtliches().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
     for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds, rundgang]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });

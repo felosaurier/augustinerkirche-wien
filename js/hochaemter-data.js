@@ -113,6 +113,93 @@
   /* Telefonnummer -> tel:-Adresse ("+43 (0)1 533 70 99" -> "tel:+43153370099") */
   const telHref = (s) => `tel:${String(s).replace(/\(0\)/g, '').replace(/[^\d+]/g, '')}`;
 
+  /* Laengere Texte mit Absaetzen (Impressum, Datenschutz): wie richText, dazu
+       Leerzeile             neuer Absatz; ein einfacher Zeilenumbruch bleibt einer
+       ### Ueberschrift      Zwischenueberschrift
+       - Punkt               Aufzaehlung (jede Zeile ein Punkt)
+       | A | B |             Tabelle, die erste Zeile ist die Kopfzeile
+       **fett**              fett
+       [Nummer](tel)         Telefonnummer als Link
+       [[offen: …]]          gelb markiert: muss noch ergaenzt werden
+       [[cookie-einstellungen]]  Knopf, der die Cookie-Einstellungen oeffnet
+       [[kanzlei]]           Oeffnungszeiten der Pfarrkanzlei (aus data/kontakt.json) */
+  const INLINE = /\*\*([^*\n]+)\*\*|\[\[offen:\s*([^\]\n]*)\]\]|\[([^\]\n]+)\]\(tel\)/g;
+  function inlineHTML(s, base) {
+    let html = '';
+    let last = 0;
+    for (const m of String(s).matchAll(INLINE)) {
+      html += richText(s.slice(last, m.index), base);
+      if (m[1] !== undefined) html += `<strong>${richText(m[1], base)}</strong>`;
+      else if (m[2] !== undefined) html += `<span class="todo">[${esc(m[2])}]</span>`;
+      else html += `<a href="${esc(telHref(m[3]))}">${esc(m[3])}</a>`;
+      last = m.index + m[0].length;
+    }
+    return html + richText(String(s).slice(last), base);
+  }
+  const cells = (line) => line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+  function blocksHTML(text, base = '') {
+    const blocks = String(text ?? '').replace(/\r\n?/g, '\n').split(/\n[ \t]*\n+/);
+    return blocks.map((block) => {
+      const lines = block.split('\n').map((l) => l.replace(/\s+$/, '')).filter((l) => l.trim());
+      if (!lines.length) return '';
+      const one = lines.length === 1 ? lines[0].trim() : '';
+      if (one === '[[cookie-einstellungen]]') return '<p><button type="button" class="btn btn-outline cc-open" hidden>Cookie-Einstellungen öffnen</button></p>';
+      if (one === '[[kanzlei]]') return '<p data-inhalt="kanzlei">Pfarrkanzlei: Öffnungszeiten siehe Kontakt</p>';
+      if (lines.every((l) => /^\s*\|/.test(l))) {
+        const rows = lines.filter((l) => !/^\s*\|[\s:|-]*$/.test(l)).map(cells);
+        const width = Math.max(...rows.map((r) => r.length));
+        /* data-label: auf dem Handy steht jede Zeile als Karte, die Spaltenueberschrift vor dem Wert */
+        const label = (i) => esc(String(rows[0][i] || '').replace(/\*\*/g, ''));
+        /* Telefonnummern und IBAN nicht mitten in der Nummer umbrechen */
+        const plain = (c) => String(c || '').replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/\*\*/g, '').trim();
+        const number = (c) => /^[+\d(][\d\s()/.+-]{5,}$/.test(plain(c)) || /^[A-Z]{2}\d{2}(\s?[\dA-Z]{4})+/.test(plain(c));
+        const row = (r, tag) => `<tr>${Array.from({ length: width }, (_, i) =>
+          `<${tag}${tag === 'th' ? ' scope="col"' : ` data-label="${label(i)}"`}${tag === 'td' && number(r[i]) ? ' class="nw"' : ''}>${inlineHTML(r[i] || '', base)}</${tag}>`).join('')}</tr>`;
+        return '<div class="legal-table-wrap"><table class="legal-table">' +
+          `<thead>${row(rows[0], 'th')}</thead><tbody>${rows.slice(1).map((r) => row(r, 'td')).join('')}</tbody></table></div>`;
+      }
+      if (lines.every((l) => /^\s*[-•]\s+/.test(l))) {
+        return `<ul>${lines.map((l) => `<li>${inlineHTML(l.replace(/^\s*[-•]\s+/, ''), base)}</li>`).join('')}</ul>`;
+      }
+      let html = '';
+      let para = [];
+      const flush = () => {
+        if (para.length) html += `<p>${para.map((l) => inlineHTML(l, base)).join('<br>')}</p>`;
+        para = [];
+      };
+      for (const l of lines) {
+        const h = l.match(/^\s*#{2,4}\s+(.+)$/);
+        if (h) {
+          flush();
+          html += `<h3>${inlineHTML(h[1], base)}</h3>`;
+        } else {
+          para.push(l.trim());
+        }
+      }
+      flush();
+      return html;
+    }).join('');
+  }
+  /* Impressum oder Datenschutz (data/rechtliches.json, ein Eintrag) -> Inhaltsverzeichnis und Abschnitte.
+     Sprungmarke: "anker" oder aus der Ueberschrift (Links wie datenschutz.html#cookies bleiben gueltig). */
+  function legalHTML(page, base = '') {
+    const used = new Set();
+    const secs = (page && Array.isArray(page.abschnitte) ? page.abschnitte : []).filter((s) => s && String(s.titel || '').trim());
+    const items = secs.map((s, i) => {
+      let id = slug(s.anker || s.titel, 40) || `abschnitt-${i + 1}`;
+      while (used.has(id)) id += '-2';
+      used.add(id);
+      return { id, titel: String(s.titel).trim(), text: s.text || '' };
+    });
+    return {
+      toc: items.map((s) => `<li><a href="#${s.id}">${esc(s.titel)}</a></li>`).join(''),
+      body: items.map((s, i) =>
+        `<section class="legal-sec" id="${s.id}" aria-labelledby="${s.id}-h">` +
+        `<h2 id="${s.id}-h"><span class="legal-num" aria-hidden="true">${pad(i + 1)}</span>${esc(s.titel)}</h2>` +
+        `<div class="legal-body">${blocksHTML(s.text, base)}</div></section>`).join('')
+    };
+  }
+
   /* Titel -> URL-taugliche Kennung (Umlaute ausgeschrieben) */
   function slug(s, maxLength = 40) {
     return String(s).toLowerCase()
@@ -327,7 +414,7 @@
 
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
-    esc, pad, num, focusPos, safeUrl, richText, mailHTML, telHref, slug, csvText, download,
+    esc, pad, num, focusPos, safeUrl, richText, blocksHTML, legalHTML, mailHTML, telHref, slug, csvText, download,
     parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV
