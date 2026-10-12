@@ -605,14 +605,14 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 /* ══ HOCHÄMTER-KALENDER (musik.html) ══ */
 .kal-wrap{display:block}
 
-.kal-row{display:grid;grid-template-columns:4.6rem 5.2rem minmax(0,1fr);gap:1.2rem;align-items:center;padding:1.3rem 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
-.kal-d{font-family:var(--serif);font-size:2.5rem;font-weight:500;line-height:.95;color:var(--blue)}
+.kal-row{display:grid;grid-template-columns:5.2rem minmax(0,1fr);gap:1.4rem;align-items:center;padding:1.3rem 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
+.kal-date{text-align:left}
+.kal-d{font-family:var(--serif);font-size:2.6rem;font-weight:500;line-height:.95;color:var(--blue)}
 .kal-wd{margin-top:.4rem;font-size:.85rem;font-weight:600;line-height:1.3;color:var(--blue)}
-.kal-yr{margin-top:.05rem;font-size:1rem;font-weight:500;color:var(--text-mid);white-space:nowrap}
-.kal-name{font-family:var(--serif);font-size:1.4rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s}
-.kal-type{margin-top:.25rem;font-size:.92rem;font-weight:500;color:var(--gold)}
-.kal-time{font-family:var(--serif);font-size:1.5rem;text-align:left;color:var(--blue);white-space:nowrap}
-.kal-loc{margin-top:.15rem;font-size:.85rem;text-align:right;color:var(--text-light)}
+.kal-yr{margin-top:.05rem;font-weight:500;color:var(--text-mid);white-space:nowrap}
+.kal-time{margin-bottom:.15rem;font-size:.95rem;font-weight:600;letter-spacing:.02em;color:var(--gold-text);white-space:nowrap}
+.kal-name{font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s}
+.kal-type{margin-top:.3rem;font-size:.92rem;color:var(--text-light)}
 .kal-go{display:none}
 a.kal-row:hover .kal-name{color:var(--gold)}
 
@@ -1363,10 +1363,8 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .fact-l{font-size:.82rem}
   .timeline-item{grid-template-columns:4.8rem minmax(0,1fr);gap:1rem}
   .timeline-year{font-size:1.4rem}
-  .kal-row,a.kal-row{grid-template-columns:4.8rem minmax(0,1fr);gap:.3rem 1rem}
-  .kal-row>div:nth-child(3){grid-column:1/-1}
-  .kal-time,.kal-loc{text-align:left}
-  .kal-time{font-size:1.2rem}
+  .kal-row,a.kal-row{grid-template-columns:4.6rem minmax(0,1fr);gap:1rem;align-items:start}
+  .kal-name{font-size:1.2rem}
   .kal-d{font-size:2.1rem}
   .runde-fact,.kontakt-row{grid-template-columns:1fr;gap:.1rem}
   .cd{grid-template-columns:4.5rem minmax(0,1fr);gap:.9rem}

@@ -29,10 +29,11 @@
   function rowHTML(entry) {
     const d = entry.dateObj;
     return `<a class="kal-row" href="hochamt.html?id=${encodeURIComponent(entry.id)}">` +
-      `<div><div class="kal-d">${HD.pad(d.getDate())}</div><div class="kal-wd">${HD.WEEKDAYS_SHORT[d.getDay()]}</div>` +
+      `<div class="kal-date"><div class="kal-d">${HD.pad(d.getDate())}</div><div class="kal-wd">${HD.WEEKDAYS_SHORT[d.getDay()]}</div>` +
         `<div class="kal-wd kal-yr">${HD.MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}</div></div>` +
-      `<div><div class="kal-time">${HD.esc(entry.time)}</div></div>` +
-      `<div><div class="kal-name">${HD.esc(entry.piece || entry.type)}</div><div class="kal-type">${HD.esc(entry.type)}${entry.location ? `, ${HD.esc(entry.location)}` : ''}</div></div>` +
+      `<div class="kal-body"><div class="kal-time">${HD.esc(entry.time)}</div>` +
+        `<div class="kal-name">${HD.esc(entry.piece || entry.type)}</div>` +
+        `<div class="kal-type">${HD.esc(entry.type)}${entry.location ? `, ${HD.esc(entry.location)}` : ''}</div></div>` +
       '<div class="kal-go" aria-hidden="true">&rarr;</div>' +
     '</a>';
   }
