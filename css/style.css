@@ -201,7 +201,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   column-gap:clamp(2rem,5vw,5.5rem);
   padding:0 0 0 var(--edge);
   min-height:clamp(24rem,55vh,32rem);
-  background:var(--blue-deep);color:#fff;overflow:hidden;
+  background:var(--nav-bg);color:var(--nav-fg);overflow:hidden;
 }
 .hero-home{min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h))}
 .hero-img{
@@ -228,9 +228,9 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 /* Kirchturm: Spitze immer im Bild, unten darf beschnitten werden */
 .hero-img[style*="turm"]{background-position:center 20%}
 .hero-content{grid-column:1;grid-row:1;align-self:end;max-width:46rem;padding:clamp(3rem,8vh,5rem) 0 clamp(3rem,9vh,6rem);animation:fade-in 1s ease-out .3s both}
-.hero-eyebrow{margin-bottom:1.3rem;font-size:1rem;font-weight:500;color:var(--gold-l)}
-.hero-h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.5rem,4.5vw,4.5rem);line-height:1.05;letter-spacing:-.01em;color:#fff;text-wrap:balance}
-.hero-sub{max-width:34rem;margin-top:1.6rem;font-size:1.12rem;line-height:1.65;color:rgba(255,255,255,.78)}
+.hero-eyebrow{margin-bottom:1.3rem;font-size:1rem;font-weight:500;color:var(--nav-accent)}
+.hero-h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.5rem,4.5vw,4.5rem);line-height:1.05;letter-spacing:-.01em;color:var(--nav-fg);text-wrap:balance}
+.hero-sub{max-width:34rem;margin-top:1.6rem;font-size:1.12rem;line-height:1.65;color:var(--nav-fg-soft)}
 .hero-actions{display:flex;flex-wrap:wrap;gap:.8rem 1rem;margin-top:2.2rem}
 .hero:not(.hero-home) .hero-content{padding-bottom:clamp(3rem,7vh,4.5rem)}
 
@@ -239,18 +239,18 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 
 /* Kopfbereich der Unterseiten: Marine, Titel in Bodoni */
 .page-hero{
-  position:relative;background:var(--blue-deep);color:#fff;
+  position:relative;background:var(--nav-bg);color:var(--nav-fg);
   padding:clamp(3.5rem,8vw,6rem) var(--edge) clamp(3rem,6vw,4.5rem);
 }
 .page-hero .inner{max-width:none;margin:0}
 .ph-tag{margin-bottom:.9rem;font-size:1rem;font-weight:500;color:var(--gold)}
 .ph-title{font-family:var(--serif);font-weight:500;font-size:clamp(2.5rem,6vw,4.6rem);line-height:1.05;letter-spacing:-.015em;color:var(--blue);text-wrap:balance;overflow-wrap:break-word}
 .ph-sub{max-width:40rem;margin-top:1.2rem;font-size:1.12rem;line-height:1.65;color:var(--text-mid)}
-.page-hero .ph-tag{color:var(--gold-l)}
-.page-hero .ph-title{color:#fff}
-.page-hero .ph-sub{color:rgba(255,255,255,.78)}
-.page-hero .link-arr{color:#fff}
-.page-hero .link-arr:hover{color:var(--gold-l)}
+.page-hero .ph-tag{color:var(--nav-accent)}
+.page-hero .ph-title{color:var(--nav-fg)}
+.page-hero .ph-sub{color:var(--nav-fg-soft)}
+.page-hero .link-arr{color:var(--nav-fg)}
+.page-hero .link-arr:hover{color:var(--nav-accent)}
 
 
 /* ══ GRUNDRASTER ══ */
@@ -281,8 +281,10 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .btn-outline:hover{background:var(--blue);color:#fff}
 .btn-outline-w{border-color:rgba(255,255,255,.45);color:#fff;background:transparent}
 .btn-outline-w:hover{border-color:#fff;background:rgba(255,255,255,.08)}
-.hero .btn-gold{background:var(--gold-l);color:var(--blue-deep)}
-.hero .btn-gold:hover{background:#fff}
+.hero .btn-gold{background:var(--nav-accent);color:var(--nav-cta-hover-fg)}
+.hero .btn-gold:hover{background:var(--nav-fg)}
+.hero .btn-outline-w,.page-hero .btn-outline-w{border-color:var(--nav-cta-line);color:var(--nav-fg)}
+.hero .btn-outline-w:hover,.page-hero .btn-outline-w:hover{border-color:var(--nav-fg)}
 
 /* Textlink: unterstrichen in Gold, ohne Pfeil */
 .link-arr{
