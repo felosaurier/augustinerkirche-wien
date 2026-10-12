@@ -46,7 +46,7 @@
 }
 
 /* scroll-padding: Sprungziele (#kontakt usw.) landen unter der fixierten Kopfzeile */
-html{font-size:17px;scroll-behavior:smooth;scroll-padding-top:var(--nav-h);-webkit-text-size-adjust:100%}
+html{font-size:18px;scroll-behavior:smooth;scroll-padding-top:var(--nav-h);-webkit-text-size-adjust:100%}
 body{
   font-family:var(--sans);font-size:1rem;font-weight:400;line-height:1.65;
   color:var(--text);background:var(--bg);
@@ -469,7 +469,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .hs-all:hover{color:var(--gold)}
 .hs-list{border-top:1px solid var(--blue)}
 .hs-item{
-  display:grid;grid-template-columns:3.6rem 5.2rem minmax(0,1fr);gap:1.2rem;align-items:center;
+  display:grid;grid-template-columns:3.6rem minmax(0,1fr);gap:1.6rem;align-items:center;
   padding:1.5rem 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none;
 }
 .hs-when{line-height:1}
@@ -479,7 +479,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .hs-piece{font-family:var(--serif);font-size:1.55rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s}
 .hs-item:hover .hs-piece{color:var(--gold)}
 .hs-meta{margin-top:.35rem;font-size:.95rem;color:var(--text-light)}
-.hs-time{font-family:var(--serif);font-size:1.6rem;color:var(--gold);white-space:nowrap}
+.hs-time{margin-bottom:.25rem;font-size:1.1rem;font-weight:500;letter-spacing:.02em;color:var(--gold-text);white-space:nowrap}
 .hs-fallback{padding:1.5rem 0;font-size:1.02rem;color:var(--text-mid)}
 .hs-fallback a{color:var(--blue);text-decoration-color:var(--gold-l);text-underline-offset:.25em}
 
@@ -610,7 +610,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .kal-d{font-family:var(--serif);font-size:2.6rem;font-weight:500;line-height:.95;color:var(--blue)}
 .kal-wd{margin-top:.4rem;font-size:.85rem;font-weight:600;line-height:1.3;color:var(--blue)}
 .kal-yr{margin-top:.05rem;font-weight:500;color:var(--text-mid);white-space:nowrap}
-.kal-time{margin-bottom:.15rem;font-size:.95rem;font-weight:600;letter-spacing:.02em;color:var(--gold-text);white-space:nowrap}
+.kal-time{margin-bottom:.25rem;font-size:1.1rem;font-weight:500;letter-spacing:.02em;color:var(--gold-text);white-space:nowrap}
 .kal-name{font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s}
 .kal-type{margin-top:.3rem;font-size:.92rem;color:var(--text-light)}
 .kal-go{display:none}
@@ -1294,7 +1294,7 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
 
 @media(max-width:768px){
   :root{--nav-h:64px}
-  html{font-size:16.5px}
+  html{font-size:17.5px}
   nav{gap:1rem}
   .nav-logo-img{width:34px;height:34px}
   .nav-logo-text{font-size:1.08rem}
@@ -1336,10 +1336,9 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
 }
 
 @media(max-width:600px){
-  .hs-item{grid-template-columns:3.2rem auto minmax(0,1fr);gap:.9rem;padding:1.2rem 0}
-  .hs-day{font-size:2.3rem}
+  .hs-item{grid-template-columns:3.6rem minmax(0,1fr);gap:1rem;padding:1.2rem 0}
+  .hs-day{font-size:2.6rem}
   .hs-piece{font-size:1.2rem;line-height:1.25}
-  .hs-time{font-size:1.2rem}
   /* Handy: Meldungen als kompakte Liste, kleines Plakat links */
   .news-grid{grid-template-columns:1fr;gap:0;border-top:1px solid var(--line)}
   .news-card{flex-direction:row;align-items:flex-start;gap:1rem;padding:1.1rem 0;border-bottom:1px solid var(--line)}
