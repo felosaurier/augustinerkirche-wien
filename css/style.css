@@ -163,7 +163,9 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 }
 .mobile-menu.open{display:block}
 .menu-open,.menu-open body{overflow:hidden}
-.mob-quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(6.6rem,1fr));gap:.5rem;margin-bottom:1.2rem}
+/* Drei Schnellzugriffe gleich breit in einer Reihe. Unter 420px passt
+   „Gottesdienste" nicht mehr in ein Drittel, dann untereinander statt 2 + 1. */
+.mob-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.2rem}
 .mob-quick-link{
   display:flex;align-items:center;justify-content:center;min-height:3rem;padding:.5rem .4rem;
   border:1px solid rgba(216,185,110,.55);border-radius:2px;
@@ -171,6 +173,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   transition:background-color .2s,color .2s;
 }
 .mob-quick-link:hover,.mob-quick-link:active{background:var(--gold-l);color:var(--blue-deep)}
+@media(max-width:419px){.mob-quick{grid-template-columns:1fr;gap:.4rem}.mob-quick-link{min-height:2.75rem}}
 .mob-sec{border-bottom:1px solid var(--line-dark)}
 .mob-sec-btn{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;min-height:3.6rem;padding:.6rem 0;
