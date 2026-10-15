@@ -1103,7 +1103,9 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 @keyframes cal-flash{from{background:var(--gold-pale)}to{background:transparent}}
 .cal-date{display:flex;flex-direction:column;gap:.15rem}
 .cal-d{font-family:var(--serif);font-size:2.6rem;font-weight:500;line-height:.95;color:var(--blue)}
-.cal-wd{font-size:.86rem;font-weight:500;line-height:1.35;color:var(--text-mid)}
+/* Wochentag nie mitten im Wort trennen; „heute“ steht in einer eigenen Zeile darunter */
+.cal-wd{font-size:.86rem;font-weight:500;line-height:1.35;color:var(--text-mid);white-space:nowrap;hyphens:none}
+.cal-heute{display:block}
 .cal-mo{display:block;color:var(--text-light);font-weight:400}
 .cal-day.today .cal-d,.cal-day.today .cal-wd{color:var(--gold)}
 .cal-day.past .cal-d{color:var(--text-light)}
@@ -1148,11 +1150,19 @@ summary.cal-row::-webkit-details-marker{display:none}
   .cal-side{position:static;max-width:34rem;width:100%;margin:0 auto}
 }
 @media(max-width:600px){
-  .cal-day{grid-template-columns:3.6rem minmax(0,1fr);gap:.8rem}
-  .cal-d{font-size:2.1rem}
+  /* Datum kleiner, damit rechts mehr Platz bleibt; die Spalte reicht trotzdem für „Donnerstag“ und „September“ */
+  .cal-day{grid-template-columns:4.1rem minmax(0,1fr);gap:.6rem}
+  .cal-d{font-size:1.8rem}
+  .cal-wd{font-size:.78rem}
+  .cal-item{padding-left:.8rem}
   /* Uhrzeit und Gruppe in einer Zeile, darunter der Titel */
   .cal-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:.15rem .8rem}
-  .cal-time{font-size:1.05rem}
+  /* Angaben zum Termin etwas kleiner, damit die schmale Spalte nicht gedrängt wirkt */
+  .cal-time{font-size:.98rem}
+  .cal-title{font-size:1.15rem}
+  .cal-sub{font-size:.88rem}
+  .cal-cat{font-size:.85rem}
+  .cal-liturgy{font-size:.88rem}
   .cal-main{order:1;flex-basis:100%}
   .cal-time.empty{display:none}
   .cal-text{padding-left:.2rem}

@@ -164,6 +164,7 @@
     items = await KD.load(base);
     root.classList.add('ready');
     render();
+    KD.watchPast(root.querySelector('.cal-list'), () => render());
 
     root.addEventListener('click', (ev) => {
       const nav = ev.target.closest('[data-cal]');

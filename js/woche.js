@@ -111,6 +111,7 @@
     items = await KD.load(base);
     root.classList.add('ready');
     render();
+    KD.watchPast(root, () => render());
 
     root.addEventListener('click', (ev) => {
       const nav = ev.target.closest('[data-wk]');

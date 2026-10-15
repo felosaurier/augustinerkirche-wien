@@ -251,7 +251,19 @@
   const sortKey = (it) => it.date + (it.sort || it.time || '99');
 
   /* ---------- Darstellung ---------- */
-  function itemHTML(it, past, base = '') {
+  /* Ab wann ein Termin des Tages als vorbei gilt (HH:MM, '' = erst mit dem Tag): mit Ende ab dem Ende,
+     sonst ab dem Beginn; "anschl." erst, wenn der nächste Termin mit Uhrzeit danach begonnen hat */
+  function endsAt(it, its) {
+    if (it.time) return it.ende || it.time;
+    if (!it.sort) return '';
+    const after = it.sort.slice(0, 5);
+    const next = its.find((x) => x.time && x.time > after);
+    return next ? next.time : '';
+  }
+  const nowHM = (dt) => `${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+  const isPast = (iso, ends, today, now) => iso < today || (iso === today && !!ends && ends <= now);
+
+  function itemHTML(it, past, base = '', ends = '') {
     const time = it.label || (it.time ? `${it.time}${it.ende ? `–${it.ende}` : ''}` : '');
     const head = `<span class="cal-time${time ? '' : ' empty'}">${esc(time) || '&nbsp;'}</span>` +
       '<span class="cal-main">' +
@@ -260,32 +272,58 @@
         (it.sub ? `<span class="cal-sub">${esc(it.sub)}</span>` : '') +
       '</span>' +
       (it.group === 'ohne' ? '' : `<span class="cal-cat"><i class="cal-dot g-${it.group}"></i>${esc(it.art || groupName.get(it.group))}</span>`);
-    const cls = `cal-item g-${it.group}${past ? ' past' : ''}${it.cancelled ? ' cancelled' : ''}`;
-    if (it.href) return `<li class="${cls}"><a class="cal-row" href="${esc(it.href)}">${head}</a></li>`;
+    /* data-ends: damit watchPast den Termin verblassen lässt, solange die Seite offen ist */
+    const li = `<li class="cal-item g-${it.group}${past ? ' past' : ''}${it.cancelled ? ' cancelled' : ''}"${ends ? ` data-ends="${ends}"` : ''}>`;
+    if (it.href) return `${li}<a class="cal-row" href="${esc(it.href)}">${head}</a></li>`;
     if (it.text) {
-      return `<li class="${cls}"><details class="cal-more"><summary class="cal-row">${head}</summary>` +
+      return `${li}<details class="cal-more"><summary class="cal-row">${head}</summary>` +
         `<div class="cal-text"><p>${HD.richText(it.text, base)}</p>` +
         (it.link ? `<p><a class="link-arr" href="${esc(it.link)}"${/^https?:/i.test(it.link) ? ' target="_blank" rel="noopener"' : ''}>Mehr erfahren</a></p>` : '') +
         '</div></details></li>';
     }
     if (it.link) {
-      return `<li class="${cls}"><a class="cal-row" href="${esc(it.link)}"${/^https?:/i.test(it.link) ? ' target="_blank" rel="noopener"' : ''}>${head}</a></li>`;
+      return `${li}<a class="cal-row" href="${esc(it.link)}"${/^https?:/i.test(it.link) ? ' target="_blank" rel="noopener"' : ''}>${head}</a></li>`;
     }
-    return `<li class="${cls}"><div class="cal-row">${head}</div></li>`;
+    return `${li}<div class="cal-row">${head}</div></li>`;
   }
-  /* Ein Tag mit seinen Terminen; empty: Text, wenn es keine gibt (Wochenueberblick) */
+  /* Ein Tag mit seinen Terminen; empty: Text, wenn es keine gibt (Wochenueberblick).
+     Heute sind die Termine, deren Zeit vorbei ist, schon verblasst wie vergangene Tage */
   function dayHTML(iso, its, today, { base = '', empty = '', extraClass = '', id = `tag-${iso}` } = {}) {
     const dt = HD.dateFromIso(iso);
     const past = iso < today;
+    const now = nowHM(new Date());
     const inf = dayInfo.get(iso);
     const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag, ...inf.heilige].filter(Boolean).map(esc).join(' · ')}</p>` : '';
-    return `<section class="cal-day${past ? ' past' : ''}${iso === today ? ' today' : ''}${extraClass ? ` ${extraClass}` : ''}" id="${id}" aria-labelledby="h-${id}">` +
+    return `<section class="cal-day${past ? ' past' : ''}${iso === today ? ' today' : ''}${extraClass ? ` ${extraClass}` : ''}" id="${id}" data-date="${iso}" aria-labelledby="h-${id}">` +
       `<h3 class="cal-date" id="h-${id}"><span class="cal-d">${dt.getDate()}</span>` +
-      `<span class="cal-wd">${WEEKDAYS[dt.getDay()]}${iso === today ? ', heute' : ''}<span class="cal-mo">${MONTHS[dt.getMonth()]}</span></span></h3>` +
+      `<span class="cal-wd">${WEEKDAYS[dt.getDay()]}${iso === today ? '<span class="cal-heute"><span class="visually-hidden">, </span>heute</span>' : ''}<span class="cal-mo">${MONTHS[dt.getMonth()]}</span></span></h3>` +
       '<div class="cal-body">' + infoHTML +
-      (its.length ? `<ul class="cal-items">${its.map((it) => itemHTML(it, past, base)).join('')}</ul>` : `<p class="cal-none">${esc(empty)}</p>`) +
+      (its.length ? `<ul class="cal-items">${its.map((it) => {
+        const ends = endsAt(it, its);
+        return itemHTML(it, isPast(iso, ends, today, now), base, ends);
+      }).join('')}</ul>` : `<p class="cal-none">${esc(empty)}</p>`) +
       '</div></section>';
   }
+  /* Solange die Seite offen ist: jede Minute (und beim Zurückkehren in den Tab) die Termine von heute
+     verblassen lassen, deren Zeit vorbei ist; an einem neuen Tag zeichnet newDay die Liste neu */
+  function watchPast(container, newDay) {
+    let day = isoOf(new Date());
+    const check = () => {
+      const dt = new Date();
+      const today = isoOf(dt);
+      if (today !== day) {
+        day = today;
+        newDay();
+        return;
+      }
+      const now = nowHM(dt);
+      for (const li of container.querySelectorAll('.cal-day.today .cal-item[data-ends]')) {
+        li.classList.toggle('past', isPast(today, li.dataset.ends, today, now));
+      }
+    };
+    setInterval(check, 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+  }
 
-  w.KalenderDaten = { GROUPS, groupName, isMass, isoOf, shortDate, load, refresh, slotOf, itemHTML, dayHTML };
+  w.KalenderDaten = { GROUPS, groupName, isMass, isoOf, shortDate, load, refresh, slotOf, itemHTML, dayHTML, watchPast };
 })(window);
