@@ -163,17 +163,17 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 }
 .mobile-menu.open{display:block}
 .menu-open,.menu-open body{overflow:hidden}
-/* Drei Schnellzugriffe gleich breit in einer Reihe. Unter 420px passt
-   „Gottesdienste" nicht mehr in ein Drittel, dann untereinander statt 2 + 1. */
-.mob-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.2rem}
+/* Drei Schnellzugriffe immer gleich breit in einer Reihe. Die Schrift
+   wird auf schmalen Handys kleiner (3,9vw), damit „Gottesdienste" auch bei
+   320px ohne Umbruch in ein Drittel passt. */
+.mob-quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin-bottom:1.2rem}
 .mob-quick-link{
-  display:flex;align-items:center;justify-content:center;min-height:3rem;padding:.5rem .4rem;
+  display:flex;align-items:center;justify-content:center;min-height:3rem;padding:.5rem .2rem;
   border:1px solid rgba(216,185,110,.55);border-radius:2px;
-  font-size:.95rem;font-weight:500;color:var(--gold-l);text-align:center;text-decoration:none;
+  font-size:min(.95rem,3.9vw);white-space:nowrap;font-weight:500;color:var(--gold-l);text-align:center;text-decoration:none;
   transition:background-color .2s,color .2s;
 }
 .mob-quick-link:hover,.mob-quick-link:active{background:var(--gold-l);color:var(--blue-deep)}
-@media(max-width:419px){.mob-quick{grid-template-columns:1fr;gap:.4rem}.mob-quick-link{min-height:2.75rem}}
 .mob-sec{border-bottom:1px solid var(--line-dark)}
 .mob-sec-btn{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;min-height:3.6rem;padding:.6rem 0;
