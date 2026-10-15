@@ -48,6 +48,8 @@
   async function load() {
     try {
       runden = (await A.readJSON(PATH)).runden || [];
+      /* Termine auf gueltige ISO-Daten beschraenken (ungueltige Eintraege fallen weg) */
+      for (const r of runden) for (const b of r.termine || []) b.daten = (b.daten || []).map((d) => HD.isoDate(d)).filter(Boolean);
     } catch (e) {
       $('rd-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Runden konnten nicht geladen werden (${esc(e.message)}).</div></div>`;
       return;
@@ -167,7 +169,7 @@
         `<div class="adm-dates" role="list" aria-label="Termine der Reihe ${i + 1}">` +
           (b.daten.length ? b.daten.slice().sort().map((d) =>
             `<span class="adm-date-chip${d < today ? ' past' : ''}" role="listitem">${esc(dateLabel(d))}` +
-            `<button type="button" data-del-date="${i}" data-date="${d}" aria-label="Termin ${esc(dateLabel(d))} entfernen">${icon('close')}</button></span>`
+            `<button type="button" data-del-date="${i}" data-date="${esc(d)}" aria-label="Termin ${esc(dateLabel(d))} entfernen">${icon('close')}</button></span>`
           ).join('') : '<span class="adm-muted">Noch keine Termine in dieser Reihe.</span>') +
         '</div>' +
         '<div class="adm-date-add">' +

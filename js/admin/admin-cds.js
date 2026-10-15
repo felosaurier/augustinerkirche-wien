@@ -151,6 +151,10 @@
       } catch {
         continue;
       }
+      if (!(await A.magicOk(file, 'mp3'))) {
+        A.toast(`${file.name}: Das ist keine gültige MP3-Datei (Dateiinhalt und Endung passen nicht zusammen).`, 'err');
+        continue;
+      }
       const base = HD.slug(file.name.replace(/\.[^.]+$/, ''), 60) || 'hoerprobe';
       let path = `${AUDIO_DIR}${base}.mp3`;
       for (let n = 2; audio.has(path); n++) path = `${AUDIO_DIR}${base}-${n}.mp3`;

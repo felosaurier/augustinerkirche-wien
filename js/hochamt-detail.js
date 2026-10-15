@@ -16,6 +16,8 @@
   const qs = (sel) => document.querySelector(sel);
   const FALLBACK = '<p class="s-text">Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.</p>';
 
+  /* Adresse ohne Fehler dekodieren (kaputte %-Folgen bleiben unveraendert) */
+  const safeDecode = (s) => { try { return decodeURIComponent(s); } catch { return s; } };
   const shortDate = (d) => `${d.getDate()}. ${HD.MONTHS[d.getMonth()]} ${d.getFullYear()}`;
   const longDate = (e) => `${HD.WEEKDAYS[e.dateObj.getDay()]}, ${shortDate(e.dateObj)}, ${e.time} Uhr`;
 
@@ -151,7 +153,7 @@
       return false;
     }
     const target = `pages/hochamt.html?id=${id}`;
-    const n = rows.find((r) => (r.poster || r.thumb) && decodeURIComponent(String(r.link || '').trim()) === target);
+    const n = rows.find((r) => (r.poster || r.thumb) && safeDecode(String(r.link || '').trim()) === target);
     const src = n && HD.safeUrl(n.poster || n.thumb, '../');
     if (!src) return false;
     const newsId = `${HD.isoDate(n.date)}-${HD.slug(n.title)}`;

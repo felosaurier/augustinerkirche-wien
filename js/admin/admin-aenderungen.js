@@ -19,7 +19,10 @@
   let source = 'gemeinsam';
 
   const when = (t) => new Date(t).toLocaleString('de-AT', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  const areasOf = (e) => (e.bereiche && e.bereiche.length ? e.bereiche : ['–']);
+  /* Zeitstempel fuer datetime=""; '' bei ungueltigem Datum (toISOString wuerde werfen) */
+  const isoOrEmpty = (t) => { const d = new Date(t); return Number.isNaN(d.getTime()) ? '' : d.toISOString(); };
+  const arr = (v) => (Array.isArray(v) ? v : []);
+  const areasOf = (e) => (arr(e.bereiche).length ? e.bereiche : ['–']);
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
   async function load() {
@@ -63,16 +66,16 @@
       if (bereich && !areasOf(e).includes(bereich)) return false;
       if (since && e.zeit < since) return false;
       if (!words.length) return true;
-      const hay = [e.wer, e.benutzer, e.text, ...(e.bereiche || []), ...(e.dateien || []), ...(e.details || [])].join(' ').toLowerCase();
+      const hay = [e.wer, e.benutzer, e.text, ...arr(e.bereiche), ...arr(e.dateien), ...arr(e.details)].join(' ').toLowerCase();
       return words.every((w) => hay.includes(w));
     });
   }
 
   function rowHTML(e, i) {
-    const det = e.details || [];
+    const det = arr(e.details);
     const id = `ae-d-${i}`;
     return '<tr>' +
-      `<td class="ae-when"><time datetime="${esc(new Date(e.zeit).toISOString())}">${esc(when(e.zeit))}</time></td>` +
+      `<td class="ae-when"><time datetime="${esc(isoOrEmpty(e.zeit))}">${esc(when(e.zeit))}</time></td>` +
       `<td class="ae-who">${esc(e.wer || '–')}${e.benutzer ? `<small>${esc(e.benutzer)}</small>` : ''}</td>` +
       `<td class="ae-area">${areasOf(e).map((b) => `<span class="ae-tag">${esc(b)}</span>`).join(' ')}</td>` +
       `<td class="ae-what"><span class="ae-text">${esc(e.text || '')}</span>` +
@@ -101,7 +104,7 @@
     const rows = [['Zeitpunkt', 'Person', 'Benutzername', 'Bereich', 'Änderung', 'Einzelheiten', 'Dateien']];
     for (const e of filtered()) {
       rows.push([new Date(e.zeit).toLocaleString('de-AT'), e.wer || '', e.benutzer || '', areasOf(e).join(', '), e.text || '',
-        (e.details || []).join('\n'), (e.dateien || []).join(', ')]);
+        arr(e.details).join('\n'), arr(e.dateien).join(', ')]);
     }
     HD.download(new Blob([HD.csvText(rows)], { type: 'text/csv;charset=utf-8' }), `aenderungen-${A.isoToday()}.csv`);
   }

@@ -13,7 +13,13 @@ Dieses Paket stammt aus `python tools/paket.py{{OPTION}}`. Es enthält **nur den
 Vom Windows-PC (PowerShell oder Git Bash), im Ordner `dist` des Projekts:
 
 ```bash
-scp {{PAKET}} root@<IP>:/root/
+scp {{PAKET}} {{PAKET}}.sha256 root@<IP>:/root/
+```
+
+Danach die Prüfsumme kontrollieren (die Datei `{{PAKET}}.sha256` hat `python tools/paket.py` neben das Archiv geschrieben; sie muss `OK` melden):
+
+```bash
+cd /root && sha256sum -c {{PAKET}}.sha256
 ```
 
 ## 2. Sicherung der Inhalte (im Container)

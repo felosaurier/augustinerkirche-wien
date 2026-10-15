@@ -339,10 +339,13 @@
   }
 
   /* ---------- URL-Hash-Routing ---------- */
+  /* Adresse ohne Fehler dekodieren (kaputte %-Folgen bleiben unveraendert) */
+  const safeDecode = (s) => { try { return decodeURIComponent(s); } catch { return s; } };
+
   /* Sprungziel der Adresse: ein Reiter (Bereich wird geoeffnet, Ziel ist der
      Anfang des Bereichs) oder ein beliebiges Element mit dieser id */
   function hashTarget() {
-    const id = decodeURIComponent(location.hash.slice(1));
+    const id = safeDecode(location.hash.slice(1));
     const el = id && document.getElementById(id);
     if (!el) return null;
     if (!el.classList.contains('tab-pane')) return el;

@@ -24,7 +24,13 @@ Die Beispiele gelten für einen Debian- oder Ubuntu-Container (Proxmox-LXC). `<I
 Vom Windows-PC (PowerShell oder Git Bash), im Ordner `dist` des Projekts:
 
 ```bash
-scp {{PAKET}} root@<IP>:/root/
+scp {{PAKET}} {{PAKET}}.sha256 root@<IP>:/root/
+```
+
+Danach im Container die Prüfsumme kontrollieren (die Datei `{{PAKET}}.sha256` hat `python tools/paket.py` neben das Archiv geschrieben; sie muss `OK` melden, sonst ist beim Hochladen etwas beschädigt worden oder das Archiv wurde verändert):
+
+```bash
+cd /root && sha256sum -c {{PAKET}}.sha256
 ```
 
 Ohne SSH-Zugang geht es auch über die Proxmox-Konsole des Hosts (`pct push <Container-Nr.> {{PAKET}} /root/{{PAKET}}`) oder mit WinSCP: Hauptsache, die Datei liegt danach im Container in `/root/`.

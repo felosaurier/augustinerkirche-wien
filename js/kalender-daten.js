@@ -74,7 +74,7 @@
           out.push({
             date, time: HD.isoTime(b.zeit), group: 'runde', title,
             sub: [title.toLowerCase() !== r.titel.toLowerCase() ? r.titel : '', b.ort].filter(Boolean).join(', '),
-            href: r.seite ? base + r.seite : '', src: 'runde',
+            href: HD.safeUrl(r.seite, base), src: 'runde',
             d: { name: title, ort: b.ort || '', art: 'runde' }
           });
         }

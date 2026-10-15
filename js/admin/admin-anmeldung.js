@@ -102,6 +102,11 @@
           pw.focus();
           return;
         }
+        if (e.code === 'server') {
+          message($('login-msg'), 'err', `Dieser Zugang passt nicht zur Anmeldung am Server (angemeldet als „${esc(e.serverUser)}“). Bitte mit dem Zugang „${esc(e.serverUser)}“ anmelden.`);
+          pw.value = '';
+          return;
+        }
         if (e.code === 'insecure') {
           message($('login-msg'), 'err', 'Die Anmeldung braucht eine sichere Verbindung: die Seite über <code>https://</code> oder <code>http://localhost</code> öffnen.');
           return;

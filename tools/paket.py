@@ -319,11 +319,15 @@ def main():
     dateien = [p for p in out.rglob('*') if p.is_file()]
     gesamt = sum(p.stat().st_size for p in dateien)
     sha = hashlib.sha256((DIST / paket).read_bytes()).hexdigest()
+    # Prüfsumme neben das Archiv (Format von sha256sum -c), damit der Upload geprüft werden kann
+    (DIST / (paket + '.sha256')).write_bytes(('%s  %s' % (sha, paket) + '\n').encode('utf-8'))
     ungewoehnlich = [r for r in gefunden if re.search(r'[^\x21-\x7e]', r)]
 
     print('Paket „%s“ (%s%s%s)' % (ordner, 'Test' if test else 'Live', ', mit Verwaltung' if verwaltung else '', ', nur Programmcode zum Aktualisieren' if update else ''))
     print('  Ordner:  %s' % out.relative_to(ROOT))
-    print('  Archiv:  %s  (%s, SHA-256 %s…)' % ((DIST / paket).relative_to(ROOT), megabyte((DIST / paket).stat().st_size), sha[:16]))
+    print('  Archiv:  %s  (%s)' % ((DIST / paket).relative_to(ROOT), megabyte((DIST / paket).stat().st_size)))
+    print('  SHA-256: %s' % sha)
+    print('  Datei:   %s  (zum Prüfen nach dem Hochladen: sha256sum -c %s.sha256)' % ((DIST / (paket + '.sha256')).relative_to(ROOT), paket))
     print('  Inhalt:  %d Dateien, %s (Website: %d Dateien)' % (len(dateien), megabyte(gesamt), len(list(site.rglob('*.*')))))
     if update:
         print('  Nicht enthalten: Inhalte des Servers (%s), die bleiben dort unverändert' % ', '.join(INHALTE))

@@ -26,12 +26,27 @@
   const UNTERTITEL = 'Pfarre & Kloster St. Augustin';
   const text = (s) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 60);
 
-  /* Helle Leiste (z. B. Gold, Weiss): dunkle Schrift, sonst helle */
-  function isLight(hex) {
+  /* Relative Helligkeit (WCAG) und Kontrastverhaeltnis zweier Farben */
+  function lum(hex) {
     const n = parseInt(hex.slice(1), 16);
     const lin = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
-    const L = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
-    return L > 0.25;
+    return 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+  }
+  function ratio(a, b) {
+    const x = lum(a);
+    const y = lum(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  }
+  /* Helle Leiste (z. B. Gold, Weiss): dunkle Schrift, sonst helle. Entscheidend ist,
+     mit welcher Schrift (#10192e oder Weiss) der Kontrast groesser ist. */
+  function isLight(hex) {
+    return ratio(hex, '#10192e') >= ratio(hex, '#ffffff');
+  }
+  /* Kontrast der Schrift (nach Einstellung) zur Leistenfarbe */
+  function contrast(t) {
+    const c = clean(t);
+    const dark = c.schrift === 'dunkel' || (c.schrift === 'auto' && isLight(c.leiste));
+    return ratio(c.leiste, dark ? '#10192e' : '#ffffff');
   }
   function clean(t) {
     const x = t && typeof t === 'object' ? t : {};
@@ -85,7 +100,7 @@
   }
 
   const thema = THEMEN.includes(html.dataset.thema) ? html.dataset.thema : 'augustinerkirche';
-  w.AugThema = { THEMEN, LOGOS, STANDARD, NAME, UNTERTITEL, clean, vars, logoUrl, isLight, thema };
+  w.AugThema = { THEMEN, LOGOS, STANDARD, NAME, UNTERTITEL, clean, vars, logoUrl, isLight, contrast, thema };
   /* Die Verwaltung braucht nur die Hilfen oben */
   if (html.dataset.thema === 'keins') return;
 
