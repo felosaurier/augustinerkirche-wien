@@ -28,24 +28,27 @@
       <h1 class="ph-title" id="ov-greet">Grüß Gott</h1>
       <p class="ph-sub" id="ov-today"></p>
     </div>
+    <div class="adm-head-actions" id="ov-quick" hidden></div>
   </div>
 </div>
 
 <main class="adm-main" id="main">
   <div data-adm-folder></div>
 
-  <h2 class="visually-hidden">Bereiche</h2>
-  <div id="ov-tiles"></div>
-
   <section class="adm-panel" aria-labelledby="ov-todo-h">
-    <h2 class="adm-panel-title" id="ov-todo-h">Noch offen</h2>
+    <h2 class="adm-panel-title" id="ov-todo-h">Noch offen <span class="ov-count" id="ov-todo-n"></span></h2>
     <p class="adm-panel-sub">Was bei den nächsten Terminen noch fehlt.</p>
     <div id="ov-todo"><p class="adm-muted">Wird geladen …</p></div>
   </section>
 
-  <section class="adm-panel" aria-labelledby="ov-log-h" hidden>
+  <section class="ov-areas" aria-labelledby="ov-areas-h">
+    <h2 class="adm-panel-title" id="ov-areas-h">Alle Bereiche</h2>
+    <div class="adm-areagroups" id="ov-areas"><p class="adm-muted">Wird geladen …</p></div>
+  </section>
+
+  <section class="adm-panel ov-log" aria-labelledby="ov-log-h" hidden>
     <h2 class="adm-panel-title" id="ov-log-h">Zuletzt geändert</h2>
-    <p class="adm-panel-sub">Deine letzten Änderungen auf diesem Gerät. Ein Klick auf „Änderungen“ zeigt, was genau sich geändert hat.</p>
+    <p class="adm-panel-sub" id="ov-log-sub">Deine letzten Änderungen.</p>
     <div id="ov-log"></div>
   </section>
 </main>

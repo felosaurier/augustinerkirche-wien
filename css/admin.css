@@ -19,116 +19,157 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 .adm code{background:var(--bg-warm);padding:.05rem .35rem;font-size:.9em}
 .adm svg.i{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
-/* ══ KOPFLEISTE: oben Logo und Benutzer, darunter die Reiter ══ */
-/* Die Logozeile (64 px) scrollt weg, die Reiter bleiben oben stehen */
-.adm-top{position:sticky;top:-64px;z-index:200;background:var(--white);border-bottom:1px solid var(--line)}
-.adm-top::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-l),transparent);opacity:.7}
-.adm-bar{max-width:var(--adm-max);margin:0 auto;height:64px;display:flex;align-items:center;gap:1.5rem;padding:0 2rem}
-.adm-bar .nav-logo-wrap{flex:none;min-width:0}
-.adm-bar .nav-logo-sub,.login-brand .nav-logo-sub{font-size:.9rem}
-/* style.css gestaltet jedes <nav> als feste Kopfleiste: hier zuruecksetzen */
-.adm-nav{position:static;z-index:auto;height:auto;padding:0;background:none;border:none;box-shadow:none;display:block;border-top:1px solid var(--line)}
-.adm-nav::after{content:none}
-.adm-nav-in{max-width:var(--adm-max);margin:0 auto;padding:0 1.1rem;height:50px;display:flex;align-items:stretch;gap:.1rem;overflow-x:auto;scrollbar-width:none}
-.adm-nav-in::-webkit-scrollbar{display:none}
-.adm-nav a{position:relative;display:flex;align-items:center;gap:.5rem;padding:0 1rem;white-space:nowrap;
-  font-size:.94rem;font-weight:600;color:var(--text-mid);text-decoration:none;transition:color .2s}
-.adm-nav a svg.i{width:1.05rem;height:1.05rem;color:var(--gold);opacity:.8}
-.adm-nav a:hover{color:var(--gold)}
-.adm-nav a[aria-current="page"]{color:var(--blue)}
-.adm-nav a[aria-current="page"]::after{content:'';position:absolute;left:1rem;right:1rem;bottom:0;height:2px;background:var(--gold)}
-.adm-nav a:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
-.adm-nav a.is-open{color:var(--blue)}
-.adm-nav a.is-open::after{content:'';position:absolute;left:1rem;right:1rem;bottom:0;height:2px;background:var(--gold)}
+/* ══ SEITENLEISTE: alle Bereiche links, im Stil der Kopfleiste der Website (Marine und Gold) ══ */
+:root{--adm-side:17.75rem;--adm-side-slim:4.6rem}
+body.adm.has-side{padding-left:var(--adm-side)}
+/* Kopf-Element enthaelt nur die feste Leiste (und am Handy die schmale Leiste oben) */
+.adm-top{position:relative;z-index:250}
+.adm-side{position:fixed;top:0;bottom:0;left:0;z-index:300;width:var(--adm-side);display:flex;flex-direction:column;
+  background:var(--blue-deep);color:#fff;border-right:1px solid rgba(216,185,110,.2)}
+.adm-side-head{display:flex;align-items:center;gap:.5rem;padding:1.1rem 1rem .9rem 1.15rem}
+.adm-top .nav-logo-img{width:36px;height:36px;filter:brightness(0) saturate(100%) invert(80%) sepia(30%) saturate(600%) hue-rotate(3deg) brightness(95%)}
+.adm-top .nav-logo-text{font-size:1.2rem;color:#fff}
+.adm-top .nav-logo-sub{font-size:.9rem;color:rgba(255,255,255,.62)}
+.adm-brand{min-width:0;flex:1;border-radius:2px}
+.adm-brand:focus-visible,.adm-side a:focus-visible,.adm-side button:focus-visible,.adm-mbar a:focus-visible,.adm-mbar button:focus-visible{outline:2px solid var(--gold-l);outline-offset:2px}
+.adm-side-close{display:none}
+/* Einklappen: runder Knopf auf der rechten Kante der Leiste, nimmt dem Logo keinen Platz */
+.adm-side-toggle{position:absolute;top:1.55rem;right:-15px;z-index:2;display:grid;place-items:center;width:30px;height:30px;padding:0;
+  background:var(--blue-deep);border:1px solid rgba(216,185,110,.55);border-radius:50%;color:var(--gold-l);cursor:pointer;
+  box-shadow:0 2px 8px rgba(16,25,46,.25);transition:background .15s,color .15s}
+.adm-side-toggle:hover{background:var(--gold-l);color:var(--blue-deep)}
+.adm-side-toggle svg.i{width:1rem;height:1rem}
+.adm-side-qbtn{display:none}
 
-/* Zweite Zeile: Seiten eines Bereichs */
-.adm-subnav{position:static;z-index:auto;height:auto;padding:0;box-shadow:none;display:block;background:var(--bg-soft);border:none;border-top:1px solid var(--line)}
-.adm-subnav::after{content:none}
-.adm-subnav-in{max-width:var(--adm-max);margin:0 auto;padding:0 1.25rem;height:44px;display:flex;align-items:stretch;gap:.2rem;overflow-x:auto;scrollbar-width:none}
-.adm-subnav-in::-webkit-scrollbar{display:none}
-.adm-subnav a{position:relative;display:flex;align-items:center;padding:0 .8rem;white-space:nowrap;font-size:.98rem;color:var(--text-mid);text-decoration:none;transition:color .2s}
-.adm-subnav a:hover{color:var(--gold)}
-.adm-subnav a[aria-current="page"]{color:var(--blue);font-weight:600}
-.adm-subnav a[aria-current="page"]::after{content:'';position:absolute;left:.8rem;right:.8rem;bottom:0;height:2px;background:var(--gold)}
-.adm-subnav a:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
-/* Zwischenueberschrift in der zweiten Zeile (z. B. Inhalte: Pfarre & Kloster | Kirchenmusik):
-   jede Gruppe steht in einer eigenen Zeile, damit nichts seitlich versteckt ist */
-.adm-subnav-in:has(.adm-subnav-label){flex-wrap:wrap;height:auto;overflow:visible;-webkit-mask-image:none;mask-image:none}
-.adm-subnav-in:has(.adm-subnav-label)>a,.adm-subnav-in:has(.adm-subnav-label)>.adm-subnav-label{min-height:40px}
-.adm-subnav-break{flex-basis:100%;height:0;border-top:1px solid var(--line)}
-.adm-subnav-label{display:flex;align-items:center;width:9.5rem;padding:0 .8rem 0 .8rem;font-size:.76rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-text);white-space:nowrap}
-@media(max-width:760px){.adm-subnav-label{width:100%;min-height:30px!important;padding-top:.4rem}}
-/* Handy: die Reiter in drei Spalten statt seitlich zu verschieben, damit keiner versteckt ist */
-@media(max-width:600px){
-  .adm-nav-in{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:auto;padding:0;overflow:visible;-webkit-mask-image:none;mask-image:none}
-  .adm-nav a{justify-content:center;min-height:44px;padding:0 .3rem;font-size:.92rem}
-  .adm-nav a[aria-current="page"]::after,.adm-nav a.is-open::after{left:.8rem;right:.8rem}
-}
-.adm-iconbtn[aria-current="page"]{color:var(--blue);border-color:var(--line)}
+/* Suche */
+.adm-side-search{position:relative;margin:0 .9rem .5rem}
+.adm-side-search>svg.i{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;color:rgba(255,255,255,.6);pointer-events:none}
+.adm-side-search input{width:100%;height:42px;padding:0 3.8rem 0 2.4rem;font:inherit;font-size:1.02rem;color:#fff;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:0;transition:border-color .2s,background .2s}
+.adm-side-search input::placeholder{color:rgba(255,255,255,.6)}
+.adm-side-search input:hover{border-color:rgba(255,255,255,.3)}
+.adm-side-search input:focus{outline:2px solid var(--gold-l);outline-offset:1px;border-color:var(--gold-l);background:rgba(255,255,255,.1)}
+.adm-side-search input::-webkit-search-cancel-button{filter:invert(1)}
+.adm-side-search kbd{position:absolute;right:.55rem;top:50%;transform:translateY(-50%);padding:.05rem .4rem;font:inherit;font-size:.74rem;
+  color:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.2);pointer-events:none}
+.adm-side-search input:focus~kbd,.adm-side-search input:not(:placeholder-shown)~kbd{display:none}
 
-.adm-user{display:flex;align-items:center;gap:.3rem;flex:none;margin-left:auto}
+/* Liste der Bereiche (style.css gestaltet jedes <nav> als feste Kopfleiste: hier zuruecksetzen) */
+.adm-side-nav{position:static;z-index:auto;height:auto;display:block;flex:1;min-height:0;overflow-y:auto;padding:.2rem .65rem 1rem;
+  background:none;border:none;box-shadow:none;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
+.adm-side-nav::after{content:none}
+.adm-side-nav ul{list-style:none}
+.adm-side-h{margin:1.05rem .6rem .3rem;font-family:var(--sans);font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-l)}
+.adm-side-nav a{position:relative;display:flex;align-items:center;gap:.75rem;min-height:42px;padding:.4rem .65rem;
+  font-size:1.08rem;line-height:1.25;color:rgba(255,255,255,.84);text-decoration:none;transition:background .15s,color .15s}
+.adm-side-nav a svg.i{width:1.15rem;height:1.15rem;color:var(--gold-l);opacity:.75}
+.adm-side-nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+.adm-side-nav a:hover svg.i{opacity:1}
+.adm-side-nav a[aria-current="page"]{background:rgba(216,185,110,.16);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 var(--gold-l)}
+.adm-side-nav a[aria-current="page"] svg.i{opacity:1}
+.adm-side-nav a:focus-visible{outline-offset:-2px}
+.adm-side-none{margin:.8rem .6rem;font-size:1rem;color:rgba(255,255,255,.7)}
+
+/* Unten: Projektordner und angemeldete Person */
+.adm-side-foot{border-top:1px solid rgba(255,255,255,.12);padding:.7rem .75rem .8rem}
+.adm-side-folder{display:flex;align-items:center;gap:.5rem;min-height:32px;padding:0 .35rem .55rem;font-size:.95rem;color:rgba(255,255,255,.78)}
+.adm-side-folder:empty{display:none}
+.adm-side-folder svg.i{width:1rem;height:1rem;color:var(--gold-l)}
+.adm-side-folder.is-ok svg.i{color:#9fd3a8}
+.adm-side-folder>span{flex:1;min-width:0}
+.adm-side-folder-btn{flex:none;min-height:30px;padding:0 .6rem;background:none;border:1px solid rgba(216,185,110,.5);font:inherit;font-size:.84rem;
+  color:var(--gold-l);cursor:pointer;transition:background .2s,color .2s}
+.adm-side-folder-btn:hover{background:var(--gold-l);color:var(--blue-deep)}
+.adm-side-folder.is-ok .adm-side-folder-btn{border-color:transparent;color:rgba(255,255,255,.6);text-decoration:underline;text-underline-offset:.2em}
+.adm-side-folder.is-ok .adm-side-folder-btn:hover{background:none;color:#fff}
+.adm-user{display:flex;align-items:center;gap:.35rem}
 .adm-avatar{width:2.3rem;height:2.3rem;border-radius:50%;background:var(--blue);color:var(--gold-l);display:grid;place-items:center;
   font-family:var(--serif);font-size:1.05rem;font-weight:600;letter-spacing:.02em;flex:none}
-.adm-me{display:flex;align-items:center;color:inherit;text-decoration:none;border-radius:2rem}
-.adm-me:hover .adm-user-name,.adm-me[aria-current] .adm-user-name{text-decoration:underline;text-decoration-color:var(--gold-l);text-underline-offset:.25em}
-.adm-user-name{font-size:.98rem;color:var(--text);margin:0 .7rem 0 .45rem;white-space:nowrap}
-.adm-iconbtn{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:0 .8rem;background:none;border:1px solid transparent;cursor:pointer;
-  font:inherit;font-size:.9rem;font-weight:600;color:var(--text-mid);text-decoration:none;transition:color .2s,border-color .2s,background .2s}
-.adm-iconbtn:hover{color:var(--gold);border-color:var(--line);background:var(--bg-soft)}
-.adm-iconbtn:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.adm-top .adm-avatar{background:rgba(216,185,110,.18);border:1px solid rgba(216,185,110,.4)}
+.adm-me{flex:1;min-width:0;display:flex;align-items:center;gap:.6rem;padding:.3rem .35rem;color:#fff;text-decoration:none;transition:background .15s}
+.adm-me:hover,.adm-me[aria-current]{background:rgba(255,255,255,.07)}
+.adm-user-txt{min-width:0;display:flex;flex-direction:column}
+.adm-user-name{font-size:1.02rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm-user-sub{font-size:.86rem;color:rgba(255,255,255,.6)}
+/* Website ansehen und Abmelden: eigene Zeile unter dem Namen, zwei gleich breite Symbol-Knoepfe
+   (Beschriftung als Tooltip und fuer Vorlesen), damit der Name ganz Platz hat */
+.adm-side-links{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.45rem}
+.adm-side-link{display:grid;place-items:center;width:100%;height:38px;padding:0;background:none;border:1px solid rgba(255,255,255,.18);
+  color:var(--gold-l);text-decoration:none;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.adm-side-link:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4);color:#fff}
+.adm-side-link svg.i{width:1.15rem;height:1.15rem}
 
-/* Bis zum grossen Laptop: oben rechts nur Symbole (Beschriftung als Tooltip), sonst ragt die Leiste
-   bei Entwicklern (Aenderungen, Mitteilungen, Zugaenge, Website, Abmelden) ueber den Rand */
-@media(max-width:1200px){
-  .adm-iconbtn .lbl{display:none}
-  .adm-iconbtn{padding:0 .65rem}
+/* Schmale Leiste oben: nur wenn die Seitenleiste eine Schublade ist */
+.adm-mbar{display:none}
+.adm-side-scrim{position:fixed;inset:0;z-index:290;background:rgba(16,25,46,.55)}
+
+/* Eingeklappt (nur am Computer): schmale Leiste mit Symbolen, Namen als Tooltip und fuer Vorlesen */
+@media(min-width:961px){
+  body.side-anim .adm-side{transition:width .2s var(--ease)}
+  body.side-anim.has-side{transition:padding-left .2s var(--ease)}
+  body.adm.has-side.side-slim{padding-left:var(--adm-side-slim)}
+  .side-slim .adm-side{width:var(--adm-side-slim)}
+  .side-slim .adm-side-head{flex-direction:column;gap:.6rem;padding:1rem .5rem .7rem}
+  .side-slim .adm-brand{flex:none}
+  .side-slim .adm-brand>div,.side-slim .adm-side-search input,.side-slim .adm-side-search>svg.i,.side-slim .adm-side-search kbd,
+  .side-slim .adm-side-h,.side-slim .adm-side-none,.side-slim .adm-side-folder>span,.side-slim .adm-side-folder-btn{display:none}
+  .side-slim .adm-side-search{margin:0 .5rem .4rem}
+  .side-slim .adm-side-qbtn{display:grid;place-items:center;width:100%;height:42px;padding:0;background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.8);cursor:pointer}
+  .side-slim .adm-side-qbtn:hover{border-color:rgba(255,255,255,.35);color:#fff}
+  .side-slim .adm-side-qbtn svg.i{width:1.15rem;height:1.15rem}
+  .side-slim .adm-side-nav{padding:.2rem .5rem 1rem}
+  .side-slim .adm-side-group+.adm-side-group{margin-top:.5rem;padding-top:.5rem;border-top:1px solid rgba(255,255,255,.12)}
+  .side-slim .adm-side-nav a{justify-content:center;padding:.4rem 0}
+  .side-slim .adm-side-nav a span,.side-slim .adm-user-txt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .side-slim .adm-side-foot{padding:.6rem .5rem .7rem}
+  .side-slim .adm-side-folder{justify-content:center;padding:0 0 .5rem}
+  .side-slim .adm-user{justify-content:center}
+  .side-slim .adm-side-links{grid-template-columns:1fr}
+  .side-slim .adm-me{flex:none;padding:.25rem}
 }
-@media(max-width:1000px){
-  /* Tablet: die sechs Reiter sollen ohne Verschieben sichtbar bleiben */
-  .adm-nav a{padding:0 .65rem;gap:.4rem;font-size:.9rem}
-  .adm-nav a[aria-current="page"]::after,.adm-nav a.is-open::after{left:.65rem;right:.65rem}
-  /* iPad hoch: Name ausblenden (das Kürzel bleibt), sonst ragt "Abmelden" hinaus */
-  .adm-bar{padding:0 1.2rem;gap:1rem}
-  .adm-user-name{display:none}
-  .adm-me{margin-right:.3rem}
+
+/* Tablet und Handy: Leiste als Schublade von links, oben eine schmale Leiste mit "Menü" */
+@media(max-width:960px){
+  body.adm.has-side{padding-left:0}
+  .adm-top{position:sticky;top:0}
+  .adm-mbar{display:flex;align-items:center;gap:.6rem;height:56px;padding:0 .7rem 0 .5rem;background:var(--blue-deep);border-bottom:1px solid rgba(216,185,110,.25)}
+  .adm-mbar .adm-brand{justify-content:center}
+  .adm-mbar .nav-logo-img{width:30px;height:30px}
+  .adm-mbar .nav-logo-text{font-size:1rem}
+  .adm-mbar .nav-logo-sub{display:none}
+  .adm-menu-btn{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:0 .7rem;background:none;border:1px solid rgba(255,255,255,.2);
+    font:inherit;font-size:.95rem;font-weight:600;color:#fff;cursor:pointer}
+  .adm-menu-btn svg.i{width:1.2rem;height:1.2rem;color:var(--gold-l)}
+  .adm-mbar-me{display:grid;place-items:center;width:44px;height:44px;text-decoration:none}
+  .adm-mbar .adm-avatar{width:2.1rem;height:2.1rem;font-size:.95rem}
+  .adm-side{width:min(19rem,86vw);transform:translateX(-102%);visibility:hidden;transition:transform .25s var(--ease),visibility 0s linear .25s}
+  body.side-open .adm-side{transform:none;visibility:visible;transition:transform .25s var(--ease);box-shadow:12px 0 40px rgba(16,25,46,.35)}
+  body.side-open{overflow:hidden}
+  .adm-side-toggle{display:none}
+  .adm-side-close{display:grid;place-items:center;flex:none;width:44px;height:44px;background:none;border:none;color:#fff;cursor:pointer}
+  .adm-side-close svg.i{width:1.3rem;height:1.3rem}
+  .adm-side-search kbd{display:none}
+  .adm-side-search input{padding-right:.8rem}
+  .adm-side-nav a{min-height:44px}
 }
-@media(max-width:760px){
-  /* Handy: die Kopfleiste (drei Zeilen hoch) scrollt mit, sonst bleibt zu wenig Platz fuer den Inhalt */
-  .adm-top{position:relative;top:auto}
-  .adm-bar{padding:0 .9rem 0 1rem;gap:.6rem;height:60px}
-  .adm-nav-in{padding:0 .2rem}
-  .adm-nav a{padding:0 .8rem}
-  .adm-nav a svg.i{display:none}
-  .adm-nav a[aria-current="page"]::after,.adm-nav a.is-open::after{left:.75rem;right:.75rem}
-  .adm-subnav-in{padding:0 .2rem}
-  .adm-user-name,.adm-iconbtn .lbl{display:none}
-  .adm-iconbtn{padding:0 .6rem}
+@media(max-width:420px){
+  .adm-mbar .adm-brand>div{display:none}
 }
-@media(max-width:760px){
-  /* Reiter seitlich verschiebbar: Blende rechts zeigt, dass es weitergeht */
-  .adm-nav-in{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 2rem),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 2rem),transparent)}
-}
-@media(max-width:480px){
-  .adm-bar .nav-logo-sub{display:none}
-  .adm-bar .nav-logo-text{font-size:.9rem}
-}
-/* Handy: bei vielen Knoepfen (Entwickler: Aenderungen, Mitteilungen, Zugaenge …) nur das Logo-Bild, kleinere Knoepfe */
-@media(max-width:560px){
-  .adm-bar{gap:.4rem;padding:0 .6rem 0 .8rem}
-  .adm-bar .nav-logo-wrap > div{display:none}
-  .adm-user{gap:0}
-  .adm-me{margin-right:.15rem}
-  .adm-avatar{width:2.1rem;height:2.1rem}
-  .adm-iconbtn{min-width:40px;justify-content:center;padding:0 .45rem}
+@media(prefers-reduced-motion:reduce){
+  .adm-side,body.side-open .adm-side,body.side-anim .adm-side,body.side-anim.has-side{transition:none}
 }
 
 /* ══ SEITENKOPF ══ */
 .adm-head{position:relative;background:linear-gradient(180deg,var(--bg-warm),var(--bg-soft));border-bottom:1px solid var(--line)}
 .adm-head::after{content:'';position:absolute;left:max(2rem,calc((100% - var(--adm-max)) / 2 + 2rem));bottom:-1px;width:6rem;height:2px;background:var(--gold)}
-.adm-head-in{max-width:var(--adm-max);margin:0 auto;padding:1.8rem 2rem 1.5rem;display:flex;align-items:flex-end;justify-content:space-between;gap:1.4rem 2rem;flex-wrap:wrap}
-.adm-head .ph-title{font-size:clamp(2.2rem,4.2vw,3.2rem)}
-.adm-head .ph-sub{max-width:40rem;margin-top:.5rem}
-.adm-head-actions{display:flex;gap:.8rem;flex-wrap:wrap}
+.adm-head-in{max-width:var(--adm-max);margin:0 auto;padding:1.1rem 2rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem 2rem;flex-wrap:wrap}
+/* Kompakter Kopf: "Verwaltung" steht schon in der Kopfleiste, der Titel ist ein Werkzeugtitel, keine Schlagzeile */
+.adm-head .ph-tag{display:none}
+.adm-head .ph-title{font-size:clamp(1.75rem,2.6vw,2.15rem)}
+.adm-head .ph-sub{max-width:46rem;margin-top:.25rem;font-size:1rem;line-height:1.5}
+.adm-head-in>div:first-child{flex:1 1 24rem;min-width:0}
+.adm-head-actions{display:flex;gap:.8rem;flex-wrap:wrap;flex:none}
 
 /* ══ INHALT ══ */
 .adm-main{flex:1;width:100%;max-width:var(--adm-max);margin:0 auto;padding:2rem 2rem 5rem}
@@ -155,22 +196,16 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 .adm-act:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 
 /* ══ PROJEKTORDNER ══ */
-.adm-folder{display:flex;align-items:center;gap:1rem 1.4rem;flex-wrap:wrap;padding:1rem 1.3rem;margin-bottom:1.6rem;background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold)}
-.adm-folder-ico{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold);flex:none}
-.adm-folder-ico svg.i{width:1.25rem;height:1.25rem}
-.adm-folder-txt{flex:1;min-width:16rem;font-size:1rem;line-height:1.55;color:var(--text-mid)}
-.adm-folder-txt strong{display:block;color:var(--text);font-size:1rem}
-.adm-folder-sub{display:block}
-.adm-folder.is-ok{border-left-color:var(--ok)}
-/* Verbunden: nur eine schmale Zeile, die Seite soll nicht jedes Mal Platz dafuer hergeben */
-.adm-folder.is-ok{padding:.45rem 1rem;margin-bottom:1.1rem;gap:.6rem 1rem}
-.adm-folder.is-ok .adm-folder-ico{width:2rem;height:2rem}
-.adm-folder.is-ok .adm-folder-ico svg.i{width:1.05rem;height:1.05rem}
-.adm-folder.is-ok .adm-folder-txt{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .7rem;min-width:0;font-size:.95rem;line-height:1.4}
-.adm-folder.is-ok .adm-folder-txt strong{display:inline;font-size:.98rem}
-.adm-folder.is-ok .adm-folder-sub{display:inline}
-.adm-folder.is-ok .adm-folder-ico{background:var(--ok-pale);color:var(--ok)}
-.adm-folder.is-ok .adm-folder-txt strong{color:var(--ok)}
+/* Immer nur eine schmale Zeile: die Seite soll nicht jedes Mal Platz dafuer hergeben */
+.adm-folder{display:flex;align-items:center;gap:.5rem 1rem;flex-wrap:wrap;padding:.4rem .5rem .4rem .9rem;margin-bottom:1.2rem;background:var(--white);border:1px solid var(--line);border-left:3px solid var(--gold)}
+.adm-folder-ico{display:grid;place-items:center;color:var(--gold);flex:none}
+.adm-folder-ico svg.i{width:1.1rem;height:1.1rem}
+.adm-folder-txt{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .7rem;font-size:.95rem;line-height:1.4;color:var(--text-mid)}
+.adm-folder-txt strong{color:var(--text);font-size:.98rem}
+.adm-folder .btn{min-height:38px!important;padding:.4rem 1rem!important;font-size:.92rem!important}
+.adm-folder.is-ok{border-left-color:var(--ok);padding-top:.5rem;padding-bottom:.5rem}
+.adm-folder.is-ok:has(.btn){padding-top:.4rem;padding-bottom:.4rem}
+.adm-folder.is-ok .adm-folder-ico,.adm-folder.is-ok .adm-folder-txt strong{color:var(--ok)}
 
 /* ══ WERKZEUGLEISTE: Suche und Filter ══ */
 .adm-toolbar{display:flex;flex-wrap:wrap;gap:.8rem 1.2rem;align-items:center;justify-content:space-between;margin-bottom:1.4rem}
@@ -196,7 +231,7 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 .tm-more-row{display:flex;gap:.5rem;align-items:center}
 .tm-more-row .adm-input{width:auto;flex:0 1 14rem}
 .adm-rows{list-style:none;background:var(--white);border:1px solid var(--line)}
-.adm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-bottom:1px solid var(--line);transition:background .25s;scroll-margin:9rem 0 12rem}
+.adm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-bottom:1px solid var(--line);transition:background .25s;scroll-margin:5rem 0 12rem}
 .adm-row:last-child{border-bottom:none}
 .adm-row:hover{background:#fffdf8}
 .adm-row-open{display:grid;grid-template-columns:4.4rem minmax(0,1fr) auto;gap:1.4rem;align-items:center;width:100%;min-height:76px;padding:1rem 1.2rem;
@@ -522,24 +557,6 @@ select.adm-input{-webkit-appearance:none;appearance:none;padding-right:2.6rem;cu
 body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 
 /* ══ ÜBERSICHT ══ */
-.adm-tilegroup{margin-bottom:1.6rem}
-.adm-tilegroup-h{margin:0 0 .6rem;font-family:var(--sans);font-size:.95rem;font-weight:700;letter-spacing:.02em;color:var(--gold-text)}
-.adm-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr));gap:.8rem}
-.adm-tile{position:relative;display:flex;align-items:center;gap:.9rem;padding:.9rem 1rem;background:var(--white);border:1px solid var(--line);transition:border-color .25s var(--ease),box-shadow .25s var(--ease)}
-.adm-tile:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(16,25,46,.07)}
-.adm-tile-ico{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold);flex:none}
-.adm-tile-ico svg.i{width:1.2rem;height:1.2rem}
-.adm-tile-body{flex:1;min-width:0}
-.adm-tile-title{font-family:var(--serif);font-size:1.3rem;font-weight:500;line-height:1.15;color:var(--black)}
-.adm-tile-title a{color:inherit;text-decoration:none}
-.adm-tile-title a::after{content:'';position:absolute;inset:0;z-index:1}
-.adm-tile-title a:focus-visible{outline:none}
-.adm-tile:has(.adm-tile-title a:focus-visible){outline:2px solid var(--gold);outline-offset:2px}
-.adm-tile-stat{font-size:.95rem;color:var(--text-mid);margin-top:.15rem}
-.adm-tile-add{position:relative;z-index:2;flex:none;width:2.75rem;height:2.75rem;border-radius:50%;display:grid;place-items:center;color:var(--gold);border:1px solid var(--line);text-decoration:none;transition:background .2s,color .2s,border-color .2s}
-.adm-tile-add:hover,.adm-tile-add:focus-visible{background:var(--blue);border-color:var(--blue);color:#fff;outline:none}
-.adm-tile-add:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.adm-tile-add svg.i{width:1.1rem;height:1.1rem}
 .adm-two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1.4rem;align-items:start}
 .adm-todo{list-style:none;border-top:1px solid var(--line)}
 .adm-todo li{border-bottom:1px solid var(--line)}
@@ -552,7 +569,7 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-todo-go{font-size:.94rem;font-weight:600;color:var(--gold-text);white-space:nowrap}
 .adm-allgood{display:flex;gap:.8rem;align-items:center;padding:1rem 0;color:var(--ok);font-weight:600}
 .adm-log{list-style:none;border-top:1px solid var(--line)}
-.adm-log li{display:grid;grid-template-columns:6.6rem minmax(0,1fr);gap:.8rem;padding:.6rem 0;border-bottom:1px solid var(--line);font-size:.97rem;line-height:1.5}
+.adm-log li{display:grid;grid-template-columns:3.6rem minmax(0,1fr);gap:.8rem;padding:.6rem 0;border-bottom:1px solid var(--line);font-size:.97rem;line-height:1.5}
 .adm-log time{font-size:.88rem;color:var(--text-light);font-variant-numeric:tabular-nums}
 .adm-log span small{display:block;color:var(--text-light);font-size:.88rem}
 .adm-log-det{margin-top:.3rem}
@@ -561,6 +578,10 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-log-det ul{margin:.35rem 0 .2rem;padding-left:1.1rem;font-size:.9rem;line-height:1.45;color:var(--text-mid)}
 .adm-log-det li{display:list-item;padding:.1rem 0;border:0;font-size:inherit;overflow-wrap:anywhere}
 .adm-log-all{margin-top:.8rem;font-size:.95rem}
+/* Uebersicht: "Zuletzt geaendert" ganz unten, nach Tagen gruppiert */
+.ov-log{margin-top:2rem}
+.adm-log-day{margin:1rem 0 .3rem;font-family:var(--sans);font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-text)}
+.adm-log-day:first-child{margin-top:.2rem}
 
 /* Alle Aenderungen (Entwickler): Filter und Tabelle */
 .adm-main-wide{max-width:min(1500px,100%)}
@@ -593,15 +614,11 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
   .adm-two{grid-template-columns:1fr}
 }
 @media(max-width:640px){
-  .adm-folder-ico{display:none}
-  /* Handy: nur die Ueberschrift und der Knopf, die lange Erklaerung steht auf jeder Seite sonst im Weg */
-  .adm-folder.is-none .adm-folder-sub,.adm-folder.is-ok .adm-folder-sub{display:none}
-  .adm-folder{padding:.8rem 1rem;margin-bottom:1.1rem;gap:.7rem}
-  .adm-folder-txt{min-width:0}
-  .adm-folder .btn{width:100%}
+  /* Handy: nur die Ueberschrift und der Knopf, die Erklaerung steht auf jeder Seite sonst im Weg */
+  .adm-folder-sub{display:none}
   .adm-banner .btn{width:100%}
   .adm-main{padding:1.4rem 1rem 4rem}
-  .adm-head-in{padding:2rem 1rem 1.8rem}
+  .adm-head-in{padding:.9rem 1rem .85rem}
   .adm-head::after{left:1rem}
   .adm-panel{padding:1.3rem 1.1rem}
     .adm-head-actions,.adm-head-actions .btn{width:100%}
@@ -684,11 +701,12 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 /* ══ BEWEGUNG UND KONTRAST ══ */
 @media(prefers-reduced-motion:reduce){
   .adm-dialog[open],.adm-dialog::backdrop,.adm-toast,.adm-list-row.moved,.adm-row.flash,.adm-person.flash{animation:none}
-  .adm-tile,.adm-person{transition:none}
+  .adm-person{transition:none}
   .login-busy{animation-duration:2s}
 }
 @media(forced-colors:active){
-  .adm-nav a[aria-current="page"]::after,.adm-head::after{background:CanvasText}
+  .adm-head::after{background:CanvasText}
+  .adm-side,.adm-side-nav a[aria-current="page"]{border:1px solid CanvasText}
   .adm-strength span{border:1px solid CanvasText}
 }
 .adm-blk-cal{margin-bottom:.8rem}
@@ -978,16 +996,90 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-fold.sub>summary::before{border-color:var(--gold-l)}
 
 /* Sprungleiste oben auf einer Seite */
-.adm-jump{display:flex;flex-wrap:wrap;gap:.4rem .6rem;align-items:center;margin:0 0 1.4rem;font-size:.95rem}
+/* Sprungleiste auf der Seite: style.css macht jedes <nav> zur festen dunklen Kopfleiste, hier zuruecksetzen */
+.adm-jump{position:static;z-index:auto;height:auto;padding:0;background:none;border:none;box-shadow:none;
+  display:flex;flex-wrap:wrap;gap:.4rem .6rem;align-items:center;margin:0 0 1.4rem;font-size:.95rem}
+.adm-jump::after{content:none}
 .adm-jump-l{margin-right:.2rem;color:var(--text-light);font-weight:600}
 .adm-jump a{display:inline-flex;align-items:center;min-height:38px;padding:0 .9rem;border:1px solid var(--line);background:var(--white);color:var(--text-mid);text-decoration:none;font-weight:600}
 .adm-jump a:hover{border-color:var(--gold);color:var(--gold)}
 .adm-jump a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-html{scroll-padding-top:9rem}
+html{scroll-padding-top:1.5rem}
+@media(max-width:960px){html{scroll-padding-top:5rem}}
 /* Aufklappbarer Rest der Seitenbeschreibung im Seitenkopf */
 .adm-head .adm-more{margin-top:.3rem;padding-top:0;border-top:0;max-width:40rem}
 .adm-head .adm-more summary{min-height:40px}
 .adm-head .adm-more>.adm-hint{margin-top:.2rem;font-size:1rem;color:var(--text-mid)}
 #rd-page>.adm-fs:first-child{border-top:1px solid var(--line)}
-/* Inhalte-Seite: Hinweis an der Kachel (z. B. "2 ohne Foto") und Abstand der Kopfleiste */
-.adm-tile-flag{display:inline-block;margin-top:.35rem;padding:.12rem .55rem;background:var(--gold-pale);border:1px solid #ead9ad;font-size:.85rem;line-height:1.4;color:#6b5019}
+.ov-count{display:inline-grid;place-items:center;min-width:1.7rem;height:1.7rem;margin-left:.4rem;padding:0 .45rem;vertical-align:.2em;
+  border-radius:1rem;background:var(--gold-pale);border:1px solid #ead9ad;font-family:var(--sans);font-size:.9rem;font-weight:700;color:#6b5019}
+.ov-count:empty{display:none}
+.ov-areas{margin-top:.6rem}
+.ov-areas>.adm-panel-title{margin-bottom:.9rem}
+
+/* ══ ALLE BEREICHE: eine Zeile je Bereich, Gruppen wie die Seitenleiste ══ */
+.adm-areagroups{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,26rem),1fr));gap:1.4rem 1.6rem;align-items:start}
+.adm-areagroup-h{margin:0 0 .5rem;font-family:var(--sans);font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-text)}
+.adm-areas{list-style:none;background:var(--white);border:1px solid var(--line)}
+.adm-area{position:relative;display:grid;grid-template-columns:2.4rem minmax(0,1fr) auto;align-items:center;gap:.9rem;padding:.7rem .75rem .7rem .9rem;border-top:1px solid var(--line);transition:background .2s}
+.adm-area:first-child{border-top:0}
+.adm-area:hover{background:var(--bg-soft)}
+.adm-area:has(.adm-area-title:focus-visible){outline:2px solid var(--gold);outline-offset:-2px}
+.adm-area-ico{width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold)}
+.adm-area-ico svg.i{width:1.15rem;height:1.15rem}
+.adm-area-body{min-width:0;display:flex;flex-direction:column}
+.adm-area-title{font-family:var(--serif);font-size:1.2rem;font-weight:500;line-height:1.2;color:var(--black);text-decoration:none}
+.adm-area-title::after{content:'';position:absolute;inset:0;z-index:1}
+.adm-area-title:focus-visible{outline:none}
+.adm-area:hover .adm-area-title{color:var(--gold)}
+.adm-area-stat{font-size:.93rem;color:var(--text-mid)}
+.adm-area-flag{display:flex;align-items:flex-start;gap:.35rem;margin-top:.15rem;font-size:.9rem;font-weight:600;color:#6b5019}
+.adm-area-flag svg.i{width:.95rem;height:.95rem;margin-top:.15rem;color:var(--gold)}
+.adm-area.has-flag .adm-area-ico{background:#f3e3bd}
+.adm-area-add{position:relative;z-index:2;display:inline-flex;align-items:center;gap:.45rem;min-height:40px;padding:0 .8rem;border:1px solid var(--line);background:var(--white);
+  font-size:.9rem;color:var(--text-mid);text-decoration:none;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.adm-area-add:hover,.adm-area-add:focus-visible{background:var(--blue);border-color:var(--blue);color:#fff}
+.adm-area-add:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.adm-area-add svg.i{width:1rem;height:1rem}
+@media(max-width:640px){
+  /* Handy: Schnellzugriff nur als Symbol (Beschriftung als Tooltip und fuer Vorlesen) */
+  .adm-area{grid-template-columns:2.2rem minmax(0,1fr) auto;gap:.75rem;padding:.65rem .6rem .65rem .75rem}
+  .adm-area-ico{width:2.2rem;height:2.2rem}
+  .adm-area-add{width:44px;min-height:44px;padding:0;justify-content:center}
+  .adm-area-add span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media(prefers-reduced-motion:reduce){.adm-area{transition:none}}
+
+/* ══ WOCHENKALENDER: Wochenwahl ══ */
+/* Oben: beide Pfeile zusammen vorne (stehen so immer an derselben Stelle, egal wie lang die Woche geschrieben ist),
+   dann die Woche als Ueberschrift, rechts "Diese Woche" und Datum; unten dieselbe Wahl in kurz */
+.wk-nav{display:flex;align-items:center;gap:.6rem 1rem;flex-wrap:wrap;margin:0 0 .4rem;padding:.6rem .7rem;background:var(--white);border:1px solid var(--line)}
+.wk-arrows{flex:none;display:flex;gap:.4rem}
+.wk-arrow{flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;background:none;border:1px solid var(--line);border-radius:50%;
+  color:var(--gold);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.wk-arrow:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.wk-arrow svg.i{width:1.2rem;height:1.2rem}
+.wk-nav-title{flex:0 1 auto;min-width:0;margin:0 0 0 .3rem;font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.2;color:var(--black)}
+.wk-nav-side{display:flex;align-items:center;gap:.6rem;margin-left:auto}
+.wk-nav-today{min-height:40px;padding:0 .9rem;background:none;border:1px solid var(--line);font:inherit;font-size:.95rem;font-weight:600;color:var(--gold-text);cursor:pointer;transition:border-color .2s,color .2s}
+.wk-nav-today:hover{border-color:var(--gold);color:var(--gold)}
+.wk-nav-date{width:auto;min-height:40px;padding:.3rem .6rem;font-size:.95rem}
+.wk-nav-bottom{justify-content:space-between;margin-top:1.6rem}
+.wk-step{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:0 1rem;background:none;border:1px solid var(--line);font:inherit;font-size:.98rem;
+  color:var(--text-mid);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.wk-step:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.wk-step svg.i{width:1.05rem;height:1.05rem}
+.wk-arrow:focus-visible,.wk-step:focus-visible,.wk-nav-today:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:640px){
+  .wk-nav{gap:.6rem}
+  .wk-nav-title{flex:1;font-size:1.3rem}
+  .wk-nav-side{width:100%;margin-left:0;justify-content:space-between}
+  /* Unten: Vorige und Naechste nebeneinander, "Diese Woche" darunter ueber die ganze Breite */
+  .wk-nav-bottom{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+  .wk-nav-bottom .wk-step{justify-content:center;padding:0 .5rem;font-size:.95rem}
+  .wk-nav-bottom .wk-step-next{order:2}
+  .wk-nav-bottom .wk-nav-today{order:3;grid-column:1/-1}
+}
+
+/* Mein Profil: Benutzername nur zum Lesen */
+.pf-user{margin:0;padding:.55rem .8rem;background:var(--bg-warm);border:1px solid var(--line);font-size:1rem;color:var(--text-mid)}

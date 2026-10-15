@@ -1,8 +1,9 @@
 /* ============================================================
    Augustinerkirche Wien — admin-profil.js
    Mein Profil (admin/profil.html): jede angemeldete Person aendert
-   ihr eigenes Passwort. Gespeichert wird in admin/zugaenge.json,
-   nur die eigene Zeile aendert sich (Name, Rolle und Rechte bleiben).
+   ihren eigenen Namen (der Benutzername zum Anmelden bleibt) und ihr
+   Passwort. Gespeichert wird in admin/zugaenge.json, nur die eigene
+   Zeile aendert sich (Rolle und Rechte bleiben).
    Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
@@ -66,9 +67,51 @@
     }
   }
 
+  /* Name aendern: nur das Feld "name" der eigenen Zeile; Passwort, Rolle und Rechte bleiben */
+  async function saveName(ev) {
+    ev.preventDefault();
+    const form = $('pf-name-form');
+    const me = A.session().benutzer;
+    const name = $('pf-name').value.replace(/\s+/g, ' ').trim();
+    if (!name) return A.showErrors(form, [[$('pf-name'), 'Bitte deinen Namen eintragen.']]);
+    if (name.length > 60) return A.showErrors(form, [[$('pf-name'), 'Der Name darf höchstens 60 Zeichen haben.']]);
+    A.clearErrors(form);
+    const btn = $('pf-name-save');
+    btn.disabled = true;
+    try {
+      /* immer den frischen Stand lesen: andere Zugaenge duerfen nicht verloren gehen */
+      const list = A.parseAccounts(await A.readText(A.ACCOUNTS));
+      const i = list.findIndex((a) => a.benutzer === me);
+      if (i < 0) throw new Error('Dein Zugang steht nicht mehr in der Liste. Bitte neu anmelden.');
+      if (list[i].name === name) {
+        A.toast('Der Name ist unverändert.');
+        return;
+      }
+      const old = list[i].name;
+      const next = list.slice();
+      next[i] = { ...list[i], name };
+      const direct = await A.saveFile(A.ACCOUNTS, A.accountsJSON(next));
+      if (direct) {
+        A.startSession(next[i]);
+        /* Name und Kuerzel in der Seitenleiste gleich mitziehen */
+        document.querySelectorAll('.adm-top .adm-user-name').forEach((el) => { el.textContent = name; });
+        document.querySelectorAll('.adm-top .adm-avatar').forEach((el) => { el.textContent = A.initials(name); });
+      }
+      $('pf-name').value = name;
+      A.log(`Eigenen Namen geändert: ${old} → ${name}`);
+      A.toast(direct ? 'Dein Name ist geändert.' : 'Name geändert. Bitte unten die Datei herunterladen.');
+    } catch (e) {
+      A.toast(`Speichern nicht möglich: ${e.message}`, 'err');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
   A.start(() => {
     const s = A.session();
-    $('pf-who').textContent = `Angemeldet als ${s.name} (${s.benutzer}).`;
+    $('pf-name').value = s.name || '';
+    $('pf-user').textContent = s.benutzer;
+    $('pf-name-form').addEventListener('submit', saveName);
     $('pf-neu').addEventListener('input', meter);
     document.querySelector('#pf-form .adm-pw-toggle').addEventListener('click', () => showPw($('pf-neu').type === 'password'));
     $('pf-suggest').addEventListener('click', () => {

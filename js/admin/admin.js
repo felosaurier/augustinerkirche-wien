@@ -250,6 +250,16 @@
     settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
     right: '<path d="M9 5l7 7-7 7"/>',
     home: '<path d="M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-6h4v6"/>',
+    phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/>',
+    disc: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/>',
+    menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+    calendarWeek: '<rect x="3" y="5" width="18" height="16" rx="1.5"/><path d="M3 10h18M8 3v4M16 3v4M7 14.5h10"/>',
+    heart: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
+    quote: '<path d="M10 7H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v1.5A2.5 2.5 0 0 1 6.5 18M20 7h-4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v1.5a2.5 2.5 0 0 1-2.5 2.5"/>',
+    palette: '<path d="M12 3a9 9 0 0 0 0 18c1.1 0 1.8-.9 1.5-1.9-.3-1 .4-2.1 1.5-2.1H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
+    shield: '<path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M9 12l2 2 4-4"/>',
+    history: '<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6M3 4v4h4"/><path d="M12 8v4.5l3 2"/>',
     globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>'
   };
   const icon = (name) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name] || ''}</svg>`;
@@ -735,28 +745,41 @@
       case 'ok':
         if (folder.server) {
           return `<span class="adm-folder-ico">${icon('checkCircle')}</span>` +
-            `<div class="adm-folder-txt"><strong>Mit dem Server verbunden</strong><span class="adm-folder-sub">Änderungen werden direkt auf dem Server (${esc(folder.handle.name)}) gespeichert und sind sofort auf der Website zu sehen.</span></div>`;
+            `<div class="adm-folder-txt"><strong>Mit dem Server verbunden</strong><span class="adm-folder-sub">Änderungen sind sofort auf der Website zu sehen.</span></div>`;
         }
         return `<span class="adm-folder-ico">${icon('checkCircle')}</span>` +
-          `<div class="adm-folder-txt"><strong>Projektordner verbunden</strong><span class="adm-folder-sub">Änderungen werden direkt im Ordner „${esc(folder.handle.name)}“ gespeichert.</span></div>` +
-          '<button type="button" class="btn btn-quiet btn-sm" data-folder="disconnect">Trennen</button>';
+          `<div class="adm-folder-txt"><strong>Projektordner verbunden</strong><span class="adm-folder-sub">Gespeichert wird in „${esc(folder.handle.name)}“.</span></div>` +
+          '<button type="button" class="btn btn-quiet" data-folder="disconnect">Trennen</button>';
       case 'prompt':
         return `<span class="adm-folder-ico">${icon('folder')}</span>` +
-          `<div class="adm-folder-txt"><strong>Zugriff auf den Projektordner erlauben</strong>Der Ordner „${esc(folder.handle.name)}“ ist bekannt. Der Browser fragt nach jedem Neustart einmal nach, ob die Verwaltung dort speichern darf.</div>` +
-          `<button type="button" class="btn btn-dark" data-folder="allow">${icon('check')}Zugriff erlauben</button>`;
+          `<div class="adm-folder-txt"><strong>Zugriff auf „${esc(folder.handle.name)}“ erlauben</strong><span class="adm-folder-sub">Der Browser fragt nach jedem Neustart einmal nach.</span></div>` +
+          `<button type="button" class="btn btn-dark" data-folder="allow">${icon('check')}Erlauben</button>`;
       case 'unsupported':
         return `<span class="adm-folder-ico">${icon('download')}</span>` +
-          '<div class="adm-folder-txt"><strong>Speichern per Download</strong>Dieser Browser kann nicht direkt in einen Ordner speichern. Du bekommst geänderte Dateien zum Herunterladen, mit Angabe, wohin sie gehören. Am bequemsten geht es mit Chrome oder Edge am Computer.</div>';
+          '<div class="adm-folder-txt"><strong>Speichern per Download</strong><span class="adm-folder-sub" title="Dieser Browser kann nicht direkt in einen Ordner speichern. Du bekommst geänderte Dateien zum Herunterladen, mit Angabe, wohin sie gehören.">Direkt speichern geht mit Chrome oder Edge am Computer.</span></div>';
       default:
         return `<span class="adm-folder-ico">${icon('folder')}</span>` +
-          '<div class="adm-folder-txt"><strong>Projektordner noch nicht verbunden</strong><span class="adm-folder-sub">Einmal verbinden, dann speichert die Verwaltung alles direkt an der richtigen Stelle. Ohne Verbindung bekommst du die Dateien zum Herunterladen.</span></div>' +
-          `<button type="button" class="btn btn-dark" data-folder="connect">${icon('folder')}Projektordner verbinden</button>`;
+          '<div class="adm-folder-txt"><strong>Projektordner nicht verbunden</strong><span class="adm-folder-sub">Bis dahin gibt es Änderungen als Download.</span></div>' +
+          `<button type="button" class="btn btn-dark" data-folder="connect">${icon('folder')}Verbinden</button>`;
     }
+  }
+  /* Unten in der Seitenleiste nur, wenn alles verbunden ist; sonst sagt es der Streifen auf der Seite */
+  function folderSideHTML() {
+    if (folder.state !== 'ok') return '';
+    return folder.server
+      ? `${icon('checkCircle')}<span>Mit dem Server verbunden</span>`
+      : `${icon('checkCircle')}<span title="Gespeichert wird in „${esc(folder.handle.name)}“">Ordner verbunden</span>` +
+        '<button type="button" class="adm-side-folder-btn" data-folder="disconnect">Trennen</button>';
   }
   function renderFolderStrips() {
     d.querySelectorAll('[data-adm-folder]').forEach((el) => {
       el.className = `adm-folder is-${folder.state}`;
+      el.hidden = folder.state === 'ok';
       el.innerHTML = folderStripHTML();
+    });
+    d.querySelectorAll('[data-adm-folder-side]').forEach((el) => {
+      el.className = `adm-side-folder is-${folder.state}`;
+      el.innerHTML = folderSideHTML();
     });
   }
 
@@ -1830,49 +1853,49 @@
     return keys.filter(([k]) => !String(e[k] || '').trim()).map(([, label]) => label);
   }
 
-  /* ---------- Kopfleiste ---------- */
-  /* Hauptreiter; Bereiche mit mehreren Seiten zeigen darunter eine zweite
-     Zeile. Zugaenge stehen (nur fuer Admins) rechts oben beim Namen. */
-  /* Was oft gebraucht wird, steht vorne als eigener Reiter; die uebrigen Inhalte und
-     alles Seltene (Gestaltung, Zugaenge …) sind unter "Inhalte" und "Einstellungen"
-     gesammelt. Eintraege mit '#' am Anfang sind Zwischenueberschriften der zweiten Zeile.
-     hub: Uebersichtsseite eines Reiters (inhalte.html, fuer alle offen); der Reiter fuehrt dorthin,
-     auf den Seiten darunter zeigt die zweite Zeile die einzelnen Seiten. */
+  /* ---------- Seitenleiste ---------- */
+  /* Alle Bereiche links in einer festen Leiste, nach Themen gruppiert (dieselben
+     Gruppen wie die Liste auf der Uebersicht). Gezeigt wird nur, was die angemeldete
+     Person bearbeiten darf; leere Gruppen fallen weg. Am Handy klappt die Leiste
+     ueber den Knopf "Menue" von links herein.
+     Eintrag: [Adresse, Name, Symbol, weitere Suchwoerter] */
   const NAV = [
-    { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
-    { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
-    { label: 'Termine', icon: 'calendar', href: 'termine.html' },
-    { label: 'Hochämter', icon: 'music', href: 'hochaemter.html' },
-    { label: 'Inhalte', icon: 'book', href: 'inhalte.html', hub: 'inhalte.html', sub: [
-      ['#Pfarre & Kloster'],
-      ['gottesdienste.html', 'Regelmäßige Termine'],
-      ['wochenkalender.html', 'Wochenkalender'],
-      ['runden.html', 'Runden'],
-      ['kontakt.html', 'Pfarrkanzlei & Kontakt'],
-      ['rundgang.html', 'Kirchenrundgang'],
-      ['pgr.html', 'Pfarrgemeinderat'],
-      ['personen.html?bereich=kloster', 'Mitbrüder'],
-      ['#Kirchenmusik'],
-      ['solisten.html', 'Solisten'],
-      ['repertoire.html', 'Repertoire'],
-      ['personen.html?bereich=musik', 'Leitung & Organisten'],
-      ['paten.html', 'Paten'],
-      ['cds.html', 'CDs']
+    { items: [['uebersicht.html', 'Übersicht', 'home', 'Start Noch offen Zuletzt geändert']] },
+    { label: 'Aktuelles', items: [
+      ['neuigkeiten.html', 'Neuigkeiten', 'news', 'Meldungen Plakat News'],
+      ['termine.html', 'Termine', 'calendar', 'Ausflüge Feste Veranstaltungen'],
+      ['hochaemter.html', 'Hochämter', 'music', 'Messen Werke Dirigent Organist Zelebrant']
     ] },
-    { label: 'Einstellungen', icon: 'settings', href: 'startseite.html', sub: [
-      ['startseite.html', 'Titelfotos'],
-      ['hinweise.html', 'Hinweisbanner'],
-      ['sprueche.html', 'Sprüche'],
-      ['design.html', 'Farben & Logo'],
-      ['rechtliches.html', 'Impressum & Datenschutz'],
-      ['zugaenge.html', 'Zugänge'],
-      ['aenderungen.html', 'Änderungen'],
-      ['mitteilungen.html', 'Mitteilungen']
+    { label: 'Pfarre & Kloster', items: [
+      ['gottesdienste.html', 'Regelmäßige Termine', 'clock', 'Gottesdienste Messen Wochenplan Ferien Pausen Vesper Laudes'],
+      ['wochenkalender.html', 'Wochenkalender', 'calendarWeek', 'Woche Zelebrant Heilige Druck'],
+      ['runden.html', 'Runden', 'users', 'Gruppen Angebote Kreise Bibelrunde'],
+      ['kontakt.html', 'Pfarrkanzlei & Kontakt', 'phone', 'Öffnungszeiten Telefon E-Mail Adresse Straße Kanzlei'],
+      ['rundgang.html', 'Kirchenrundgang', 'image', 'Chronik Bilder Fotos Führung Geschichte'],
+      ['pgr.html', 'Pfarrgemeinderat', 'users', 'PGR Mitglieder'],
+      ['personen.html?bereich=kloster', 'Mitbrüder', 'user', 'Patres Brüder Kloster Konvent']
+    ] },
+    { label: 'Kirchenmusik', items: [
+      ['solisten.html', 'Solisten', 'mic', 'Sänger Sopran Alt Tenor Bass Foto'],
+      ['repertoire.html', 'Repertoire', 'book', 'Komponisten Werke Messen Chor'],
+      ['personen.html?bereich=musik', 'Leitung & Organisten', 'user', 'Dirigent Chorleiter Organist Orgel Gastdirigenten'],
+      ['paten.html', 'Paten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender'],
+      ['cds.html', 'CDs', 'disc', 'Aufnahmen Hörproben Cover']
+    ] },
+    { label: 'Website', items: [
+      ['startseite.html', 'Titelfotos', 'image', 'Startseite Fotos Vollbild Einstellungen'],
+      ['hinweise.html', 'Hinweisbanner', 'alert', 'Banner Hinweis Einstellungen'],
+      ['sprueche.html', 'Sprüche', 'quote', 'Zitate Einstellungen'],
+      ['design.html', 'Farben & Logo', 'palette', 'Design Thema Titelzeile Einstellungen'],
+      ['rechtliches.html', 'Impressum & Datenschutz', 'shield', 'Rechtliches Einstellungen']
+    ] },
+    { label: 'Verwaltung', items: [
+      ['zugaenge.html', 'Zugänge', 'key', 'Benutzer Passwort Rollen Rechte'],
+      ['aenderungen.html', 'Änderungen', 'history', 'Protokoll Wer wann was'],
+      ['mitteilungen.html', 'Mitteilungen', 'info', 'Wartung Hinweis an alle']
     ] }
   ];
-  const isLabel = ([href]) => href.startsWith('#');
-  /* Nur das zeigen, was die angemeldete Person bearbeiten darf; ein Reiter
-     mit mehreren Seiten fuehrt zur ersten erlaubten */
+  /* Nur das zeigen, was die angemeldete Person bearbeiten darf */
   function allowedNav() {
     const ok = (href) => {
       const [page, query] = href.split('?');
@@ -1881,16 +1904,7 @@
       if (page === 'aenderungen.html' || page === 'mitteilungen.html') return isDev();
       return allowed(rightOfPage(page));
     };
-    return NAV.map((n) => {
-      if (!n.sub) return ok(n.href) ? n : null;
-      /* erlaubte Seiten; eine Zwischenueberschrift nur, wenn danach etwas Erlaubtes folgt */
-      const sub = n.sub.filter((e) => isLabel(e) || ok(e[0]))
-        .filter((e, i, all) => !isLabel(e) || (all[i + 1] && !isLabel(all[i + 1])));
-      const pages = sub.filter((e) => !isLabel(e));
-      if (!pages.length) return null;
-      /* nur eine Gruppe uebrig: ohne Zwischenueberschrift; ohne Uebersichtsseite fuehrt der Reiter zur ersten erlaubten Seite */
-      return { ...n, href: n.hub || pages[0][0], sub: sub.filter(isLabel).length > 1 ? sub : pages };
-    }).filter(Boolean);
+    return NAV.map((g) => ({ ...g, items: g.items.filter(([href]) => ok(href)) })).filter((g) => g.items.length);
   }
   /* Bereich der Personen-Seite: Mitbrueder (Kloster) oder Kirchenmusik */
   function personenBereich() {
@@ -1909,42 +1923,62 @@
     const parts = String(name || '?').trim().split(/\s+/);
     return ((parts[0] || '?')[0] + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
   }
+  /* Suche in der Leiste: ohne Akzente und Gross-/Kleinschreibung, "ss" findet auch "ß" */
+  const normSearch = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss');
+  /* Bis zu dieser Breite ist die Leiste eine Schublade (gleicher Wert wie in admin.css) */
+  const DRAWER = w.matchMedia('(max-width: 960px)');
+  const KEY_SIDE_SCROLL = 'aug-admin-leiste';
+  /* Eingeklappte Leiste (nur Symbole) merkt sich der Browser dauerhaft */
+  const KEY_SIDE_SLIM = 'aug-admin-leiste-schmal';
   function mountTop() {
     const el = $('adm-top');
     if (!el) return;
     const s = session();
     const here = pageName();
     const nav = allowedNav();
-    const group = nav.find((n) => n.sub && n.sub.some((e) => !isLabel(e) && isHere(e[0])));
-    /* Auf der Uebersichtsseite eines Reiters (hub) ist der Reiter die aktuelle Seite; die Kacheln ersetzen die zweite Zeile */
-    const hubHere = (n) => !!n.hub && isHere(n.hub);
-    el.innerHTML = '<div class="adm-bar">' +
-      '<a class="nav-logo-wrap" href="uebersicht.html">' +
+    const brand = '<a class="nav-logo-wrap adm-brand" href="uebersicht.html">' +
         '<img class="nav-logo-img" src="../assets/logo.png" alt="" width="38" height="38" decoding="async"/>' +
         '<div><div class="nav-logo-text">Augustiner<span>kirche</span> Wien</div><span class="nav-logo-sub">Verwaltung</span></div>' +
-      '</a>' +
-      '<div class="adm-user">' +
-        `<a class="adm-me" href="profil.html" title="Mein Profil: Passwort ändern"${here === 'profil.html' ? ' aria-current="page"' : ''}>` +
-          `<span class="adm-avatar" aria-hidden="true">${esc(initials(s.name))}</span>` +
-          `<span class="adm-user-name">${esc(s.name)}</span><span class="visually-hidden"> (Mein Profil)</span></a>` +
-        `<a class="adm-iconbtn" href="../index.html" target="_blank" rel="noopener" aria-label="Website ansehen (neues Fenster)">${icon('external')}<span class="lbl">Website</span></a>` +
-        `<button type="button" class="adm-iconbtn" id="adm-logout" aria-label="Abmelden">${icon('logout')}<span class="lbl">Abmelden</span></button>` +
-      '</div></div>' +
-      '<nav class="adm-nav" aria-label="Verwaltung"><div class="adm-nav-in">' +
-        nav.map((n) => {
-          const on = n.sub ? n.sub.some((e) => !isLabel(e) && isHere(e[0])) : isHere(n.href);
-          const cur = hubHere(n) ? ' aria-current="page"' : on ? (n.sub ? ' class="is-open" aria-current="true"' : ' aria-current="page"') : '';
-          return `<a href="${n.href}"${cur}>${icon(n.icon)}${esc(n.label)}</a>`;
-        }).join('') +
-      '</div></nav>' +
-      (group ? `<nav class="adm-subnav" aria-label="${esc(group.label)}"><div class="adm-subnav-in">` +
-        group.sub.map((e, i) => (isLabel(e)
-          ? `${i ? '<span class="adm-subnav-break" aria-hidden="true"></span>' : ''}<span class="adm-subnav-label">${esc(e[0].slice(1))}</span>`
-          : `<a href="${e[0]}"${isHere(e[0]) ? ' aria-current="page"' : ''}>${esc(e[1])}</a>`)).join('') +
-        '</div></nav>' : '');
+      '</a>';
+    el.innerHTML =
+      /* Handy und Tablet: schmale Leiste oben mit Menue-Knopf */
+      '<div class="adm-mbar">' +
+        `<button type="button" class="adm-menu-btn" id="adm-menu-btn" aria-expanded="false" aria-controls="adm-side">${icon('menu')}<span>Menü</span></button>` +
+        brand +
+        `<a class="adm-mbar-me" href="profil.html" aria-label="Mein Profil"><span class="adm-avatar" aria-hidden="true">${esc(initials(s.name))}</span></a>` +
+      '</div>' +
+      '<div class="adm-side" id="adm-side">' +
+        `<div class="adm-side-head">${brand}` +
+          `<button type="button" class="adm-side-toggle" id="adm-side-toggle" aria-controls="adm-side">${icon('left')}</button>` +
+          `<button type="button" class="adm-side-close" id="adm-side-close" aria-label="Menü schließen">${icon('close')}</button></div>` +
+        '<div class="adm-side-search">' +
+          `<button type="button" class="adm-side-qbtn" id="adm-side-qbtn" aria-label="Bereich suchen (Strg+K)" title="Bereich suchen (Strg+K)">${icon('search')}</button>` +
+          `${icon('search')}<input type="search" id="adm-side-q" placeholder="Bereich suchen" aria-label="Bereich suchen (Strg+K)" autocomplete="off" spellcheck="false"/>` +
+          '<kbd aria-hidden="true">Strg K</kbd>' +
+        '</div>' +
+        '<nav class="adm-side-nav" aria-label="Verwaltung">' +
+          nav.map((g) => `<div class="adm-side-group">${g.label ? `<h2 class="adm-side-h">${esc(g.label)}</h2>` : ''}<ul>` +
+            g.items.map(([href, label, ico, keys]) =>
+              `<li><a href="${href}" data-keys="${esc(keys || '')}"${isHere(href) ? ' aria-current="page"' : ''}>${icon(ico)}<span>${esc(label)}</span></a></li>`).join('') +
+            '</ul></div>').join('') +
+          '<p class="adm-side-none" id="adm-side-none" hidden>Kein Bereich gefunden.</p>' +
+        '</nav>' +
+        '<div class="adm-side-foot">' +
+          '<div class="adm-side-folder" data-adm-folder-side></div>' +
+          '<div class="adm-user">' +
+            `<a class="adm-me" href="profil.html" title="Mein Profil: Passwort ändern"${here === 'profil.html' ? ' aria-current="page"' : ''}>` +
+              `<span class="adm-avatar" aria-hidden="true">${esc(initials(s.name))}</span>` +
+              `<span class="adm-user-txt"><span class="adm-user-name">${esc(s.name)}</span><span class="adm-user-sub">Mein Profil</span></span></a>` +
+          '</div>' +
+          '<div class="adm-side-links">' +
+            `<a class="adm-side-link" href="../index.html" target="_blank" rel="noopener" aria-label="Website ansehen (neues Fenster)" title="Website ansehen">${icon('globe')}</a>` +
+            `<button type="button" class="adm-side-link" id="adm-logout" aria-label="Abmelden" title="Abmelden">${icon('logout')}</button>` +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="adm-side-scrim" id="adm-side-scrim" hidden></div>';
+    d.body.classList.add('has-side');
     $('adm-logout').addEventListener('click', () => logout('abgemeldet'));
-    /* Tooltip fuer die Knoepfe oben rechts (auf kleineren Bildschirmen ohne Beschriftung) */
-    el.querySelectorAll('.adm-iconbtn[aria-label]').forEach((b) => { if (!b.title) b.title = b.getAttribute('aria-label'); });
     /* Der Seitenkopf mit der Ueberschrift steht ausserhalb von <main>: als benannter Bereich kennzeichnen */
     const head = d.querySelector('.adm-head');
     const h1 = head && head.querySelector('h1');
@@ -1952,9 +1986,151 @@
       head.setAttribute('role', 'region');
       head.setAttribute('aria-label', h1.textContent.trim());
     }
-    /* Aktiven Reiter auf schmalen Bildschirmen sichtbar machen */
-    el.querySelectorAll('.adm-nav [aria-current], .adm-subnav [aria-current]')
-      .forEach((cur) => cur.scrollIntoView({ block: 'nearest', inline: 'center' }));
+    wireSide();
+  }
+
+  function wireSide() {
+    const side = $('adm-side');
+    const btn = $('adm-menu-btn');
+    const scrim = $('adm-side-scrim');
+    const q = $('adm-side-q');
+    const links = [...side.querySelectorAll('.adm-side-nav a')];
+    const isOpen = () => d.body.classList.contains('side-open');
+
+    /* Einklappen (am Computer): nur noch die Symbole, Namen als Tooltip; als Schublade gilt es nicht */
+    const toggle = $('adm-side-toggle');
+    const isSlim = () => d.body.classList.contains('side-slim');
+    const setSlim = (slim, save) => {
+      d.body.classList.toggle('side-slim', slim);
+      const label = slim ? 'Menü ausklappen' : 'Menü einklappen';
+      toggle.setAttribute('aria-expanded', String(!slim));
+      toggle.setAttribute('aria-label', label);
+      toggle.title = label;
+      toggle.innerHTML = icon(slim ? 'right' : 'left');
+      links.forEach((a) => { if (slim) a.title = a.textContent.trim(); else a.removeAttribute('title'); });
+      if (save) put(KEY_SIDE_SLIM, slim);
+    };
+    setSlim(get(KEY_SIDE_SLIM) === true, false);
+    /* Erst nach dem ersten Zeichnen animieren, sonst klappt die Leiste beim Laden jeder Seite sichtbar zu */
+    w.requestAnimationFrame(() => w.requestAnimationFrame(() => d.body.classList.add('side-anim')));
+    toggle.addEventListener('click', () => setSlim(!isSlim(), true));
+    const expandForSearch = () => {
+      if (isSlim() && !DRAWER.matches) setSlim(false, true);
+      q.focus();
+      q.select();
+    };
+    $('adm-side-qbtn').addEventListener('click', expandForSearch);
+    /* Die Leiste bleibt beim Seitenwechsel an derselben Stelle stehen (sonst springt sie
+       nach jedem Klick nach oben); ohne gemerkte Stelle den aktuellen Eintrag sichtbar machen */
+    const navEl = side.querySelector('.adm-side-nav');
+    const cur = navEl.querySelector('[aria-current]');
+    let kept = NaN;
+    try { kept = parseFloat(sessionStorage.getItem(KEY_SIDE_SCROLL)); } catch { /* egal */ }
+    if (!Number.isNaN(kept)) navEl.scrollTop = kept;
+    if (cur) {
+      const r = cur.getBoundingClientRect();
+      const box = navEl.getBoundingClientRect();
+      if (r.top < box.top || r.bottom > box.bottom) cur.scrollIntoView({ block: 'nearest' });
+    }
+    const keepScroll = () => { try { sessionStorage.setItem(KEY_SIDE_SCROLL, String(navEl.scrollTop)); } catch { /* egal */ } };
+    navEl.addEventListener('click', keepScroll);
+    w.addEventListener('pagehide', keepScroll);
+
+    /* Als Schublade liegt die Leiste ausserhalb des Bildschirms: dann fuer Tastatur und Vorlesen verbergen */
+    const sync = () => {
+      if (!DRAWER.matches && isOpen()) d.body.classList.remove('side-open');
+      side.inert = DRAWER.matches && !isOpen();
+      scrim.hidden = !isOpen();
+      btn.setAttribute('aria-expanded', String(isOpen()));
+      if (DRAWER.matches && isOpen()) {
+        side.setAttribute('role', 'dialog');
+        side.setAttribute('aria-modal', 'true');
+        side.setAttribute('aria-label', 'Menü');
+      } else {
+        ['role', 'aria-modal', 'aria-label'].forEach((a) => side.removeAttribute(a));
+      }
+    };
+    const open = () => {
+      d.body.classList.add('side-open');
+      sync();
+      (side.querySelector('.adm-side-nav [aria-current]') || q).focus();
+    };
+    const close = () => {
+      d.body.classList.remove('side-open');
+      sync();
+      btn.focus();
+    };
+    btn.addEventListener('click', open);
+    $('adm-side-close').addEventListener('click', close);
+    scrim.addEventListener('click', close);
+    side.addEventListener('keydown', (e) => {
+      if (!isOpen()) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      }
+      /* Fokus in der offenen Schublade halten */
+      if (e.key === 'Tab') {
+        const f = [...side.querySelectorAll('a[href],button,input')].filter((x) => x.offsetParent !== null);
+        if (!f.length) return;
+        if (e.shiftKey && d.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+        else if (!e.shiftKey && d.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+      }
+    });
+    DRAWER.addEventListener('change', sync);
+    sync();
+
+    /* Suche: blendet nicht passende Eintraege aus; Enter oeffnet den ersten Treffer */
+    const visible = () => links.filter((a) => !a.closest('li').hidden);
+    const filter = () => {
+      const words = normSearch(q.value).split(/\s+/).filter(Boolean);
+      let any = 0;
+      side.querySelectorAll('.adm-side-group').forEach((g) => {
+        const h = g.querySelector('.adm-side-h');
+        let n = 0;
+        g.querySelectorAll('li').forEach((li) => {
+          const a = li.querySelector('a');
+          const hay = normSearch(`${a.textContent} ${a.dataset.keys} ${h ? h.textContent : ''}`);
+          li.hidden = !words.every((x) => hay.includes(x));
+          if (!li.hidden) n++;
+        });
+        g.hidden = !n;
+        any += n;
+      });
+      $('adm-side-none').hidden = any > 0;
+    };
+    q.addEventListener('input', filter);
+    q.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const first = visible()[0];
+        if (first) location.href = first.href;
+      } else if (e.key === 'Escape' && q.value) {
+        e.stopPropagation();
+        q.value = '';
+        filter();
+      } else if (e.key === 'ArrowDown') {
+        const first = visible()[0];
+        if (first) { e.preventDefault(); first.focus(); }
+      }
+    });
+    /* In der Liste mit den Pfeiltasten weiter */
+    side.querySelector('.adm-side-nav').addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      const list = visible();
+      const i = list.indexOf(d.activeElement);
+      if (i < 0) return;
+      e.preventDefault();
+      if (e.key === 'ArrowUp' && i === 0) q.focus();
+      else (list[e.key === 'ArrowDown' ? Math.min(i + 1, list.length - 1) : i - 1]).focus();
+    });
+    /* Strg+K (Mac: Cmd+K) springt in die Suche; als Schublade oeffnet es dafuer die Leiste */
+    d.addEventListener('keydown', (e) => {
+      if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey || e.key.toLowerCase() !== 'k') return;
+      if (d.querySelector('dialog[open]')) return;
+      e.preventDefault();
+      if (DRAWER.matches && !isOpen()) open();
+      expandForSearch();
+    });
   }
 
   /* ---------- Mitteilungen an alle in der Verwaltung (admin/mitteilungen.json) ----------
@@ -2170,6 +2346,6 @@
     noticeHTML, noticeActive, showNotices,
     listEditor, checkBlankRows, isBlankRow, toWebp, magicOk, wireDrop, log, recentLog, readProtocol, protocolError, PROTOCOL, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
     /* Datum */
-    isoToday, isoOf, fmtDate, fmtShort
+    isoToday, isoOf, fmtDate, fmtShort, initials
   };
 })(window, document);

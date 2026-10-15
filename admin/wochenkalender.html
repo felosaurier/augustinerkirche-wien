@@ -36,25 +36,25 @@
 <main class="adm-main" id="main">
   <div data-adm-folder></div>
 
-  <div class="adm-toolbar">
-    <div class="adm-seg" role="group" aria-label="Woche wählen">
-      <button type="button" class="week-filter-btn" id="wk-prev">‹ Zurück</button>
-      <button type="button" class="week-filter-btn" id="wk-today">Diese Woche</button>
-      <button type="button" class="week-filter-btn" id="wk-next">Weiter ›</button>
+  <div class="wk-nav" role="group" aria-label="Woche wählen">
+    <div class="wk-arrows">
+      <button type="button" class="wk-arrow" id="wk-prev" aria-label="Vorige Woche" title="Vorige Woche" data-icon="left"></button>
+      <button type="button" class="wk-arrow" id="wk-next" aria-label="Nächste Woche" title="Nächste Woche" data-icon="right"></button>
     </div>
-    <label class="adm-label adm-m-0" for="wk-date">Woche mit dem Tag</label>
-    <input class="adm-input auto" type="date" id="wk-date"/>
+    <h2 class="wk-nav-title" id="wk-title" aria-live="polite"></h2>
+    <div class="wk-nav-side">
+      <button type="button" class="wk-nav-today" id="wk-today">Diese Woche</button>
+      <label class="visually-hidden" for="wk-date">Woche mit dem Tag</label>
+      <input class="adm-input wk-nav-date" type="date" id="wk-date" title="Woche mit diesem Tag zeigen"/>
+    </div>
   </div>
-  <h2 class="adm-group-title adm-mt-14" id="wk-title"></h2>
   <p class="adm-count" id="wk-count" role="status"></p>
   <div id="wk-list"><p class="adm-muted">Wird geladen …</p></div>
 
-  <div class="adm-toolbar adm-mt-16">
-    <div class="adm-seg" role="group" aria-label="Woche wählen (unten)">
-      <button type="button" class="week-filter-btn" id="wk-prev2">‹ Zurück</button>
-      <button type="button" class="week-filter-btn" id="wk-today2">Diese Woche</button>
-      <button type="button" class="week-filter-btn" id="wk-next2">Weiter ›</button>
-    </div>
+  <div class="wk-nav wk-nav-bottom" role="group" aria-label="Woche wählen (unten)">
+    <button type="button" class="wk-step" id="wk-prev2" data-icon="left">Vorige Woche</button>
+    <button type="button" class="wk-nav-today" id="wk-today2">Diese Woche</button>
+    <button type="button" class="wk-step wk-step-next" id="wk-next2">Nächste Woche<svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg></button>
   </div>
 </main>
 

@@ -27,7 +27,7 @@
     <div>
       <div class="ph-tag">Verwaltung</div>
       <h1 class="ph-title">Mein <em>Profil</em></h1>
-      <p class="ph-sub">Hier änderst du dein Passwort. Name und Rechte ändert bei Bedarf ein Admin unter „Zugänge“.</p>
+      <p class="ph-sub">Hier änderst du deinen Namen und dein Passwort. Den Benutzernamen und die Rechte ändert bei Bedarf ein Admin unter „Zugänge“.</p>
     </div>
   </div>
 </div>
@@ -35,9 +35,27 @@
 <main class="adm-main" id="main">
   <div data-adm-folder></div>
 
+  <section class="adm-panel" aria-labelledby="pf-name-h">
+    <h2 class="adm-group-title" id="pf-name-h">Name</h2>
+    <form id="pf-name-form" novalidate autocomplete="off">
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="pf-name">Dein Name<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="pf-name" maxlength="60" autocomplete="name" aria-describedby="pf-name-hint" required/>
+          <span class="adm-hint" id="pf-name-hint">So erscheinst du in der Verwaltung und bei deinen Änderungen, z. B. „Pater Matthias Schlögl“.</span>
+        </div>
+        <div class="adm-field full">
+          <span class="adm-label">Benutzername</span>
+          <p class="pf-user" id="pf-user"></p>
+          <span class="adm-hint">Damit meldest du dich an. Er bleibt immer gleich.</span>
+        </div>
+      </div>
+      <div class="adm-dlg-foot-r adm-mt-10"><button type="submit" class="btn btn-dark" id="pf-name-save">Namen speichern</button></div>
+    </form>
+  </section>
+
   <section class="adm-panel" aria-labelledby="pf-h">
     <h2 class="adm-group-title" id="pf-h">Passwort ändern</h2>
-    <p class="adm-hint" id="pf-who"></p>
     <form id="pf-form" novalidate autocomplete="off">
       <div class="adm-grid">
         <div class="adm-field full">
