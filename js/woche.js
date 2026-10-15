@@ -61,7 +61,8 @@
     root.querySelector('.wk-list').innerHTML = days.map(({ key, iso }) =>
       KD.dayHTML(iso, inWeek.filter((it) => it.date === iso), today, { base, empty: 'Keine Termine', extraClass: `wk-day d-${key}`, id: `woche-${iso}` })).join('');
     const n = inWeek.length;
-    root.querySelector('.wk-count').textContent = `${n === 1 ? 'Ein Termin' : `${n || 'Keine'} Termine`} in dieser Woche` +
+    /* „in dieser Woche“ fällt am Handy weg (.wk-count-lang), damit die Zeile nicht umbricht */
+    root.querySelector('.wk-count').innerHTML = `${n === 1 ? 'Ein Termin' : `${n || 'Keine'} Termine`}<span class="wk-count-lang"> in dieser Woche</span>` +
       (inWeek.some((it) => it.cancelled) ? ', durchgestrichene entfallen' : '');
     root.querySelector('.wk-cal').href = `${base}pages/kalender.html?monat=${from.slice(0, 7)}`;
     for (const b of root.querySelectorAll('.week-filter-btn')) {
