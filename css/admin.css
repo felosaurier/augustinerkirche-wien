@@ -133,14 +133,15 @@ body.adm.has-side{padding-left:var(--adm-side)}
 @media(max-width:960px){
   body.adm.has-side{padding-left:0}
   .adm-top{position:sticky;top:0}
-  .adm-mbar{display:flex;align-items:center;gap:.6rem;height:56px;padding:0 .7rem 0 .5rem;background:var(--blue-deep);border-bottom:1px solid rgba(216,185,110,.25)}
-  .adm-mbar .adm-brand{justify-content:center}
-  .adm-mbar .nav-logo-img{width:30px;height:30px}
-  .adm-mbar .nav-logo-text{font-size:1rem}
-  .adm-mbar .nav-logo-sub{display:none}
-  .adm-menu-btn{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:0 .7rem;background:none;border:1px solid rgba(255,255,255,.2);
-    font:inherit;font-size:.95rem;font-weight:600;color:#fff;cursor:pointer}
-  .adm-menu-btn svg.i{width:1.2rem;height:1.2rem;color:var(--gold-l)}
+  /* Wie eine App-Leiste: Menue-Symbol, daneben Logo und Name, rechts das Kuerzel */
+  .adm-mbar{display:flex;align-items:center;gap:.35rem;height:60px;padding:0 .6rem 0 .3rem;background:var(--blue-deep);border-bottom:1px solid rgba(216,185,110,.25)}
+  .adm-mbar .adm-brand{gap:.65rem}
+  .adm-mbar .nav-logo-img{width:32px;height:32px}
+  .adm-mbar .nav-logo-text{font-size:1.05rem}
+  .adm-mbar .nav-logo-sub{margin-top:.12rem;font-size:.8rem}
+  .adm-menu-btn{flex:none;display:grid;place-items:center;width:46px;height:46px;padding:0;background:none;border:none;border-radius:50%;color:var(--gold-l);cursor:pointer;transition:background .15s}
+  .adm-menu-btn:hover,.adm-menu-btn[aria-expanded="true"]{background:rgba(255,255,255,.08)}
+  .adm-menu-btn svg.i{width:1.45rem;height:1.45rem}
   .adm-mbar-me{display:grid;place-items:center;width:44px;height:44px;text-decoration:none}
   .adm-mbar .adm-avatar{width:2.1rem;height:2.1rem;font-size:.95rem}
   .adm-side{width:min(19rem,86vw);transform:translateX(-102%);visibility:hidden;transition:transform .25s var(--ease),visibility 0s linear .25s}
@@ -153,8 +154,10 @@ body.adm.has-side{padding-left:var(--adm-side)}
   .adm-side-search input{padding-right:.8rem}
   .adm-side-nav a{min-height:44px}
 }
-@media(max-width:420px){
-  .adm-mbar .adm-brand>div{display:none}
+@media(max-width:360px){
+  /* Sehr schmale Handys: Untertitel weg, damit der Name in eine Zeile passt */
+  .adm-mbar .nav-logo-sub{display:none}
+  .adm-mbar .nav-logo-text{font-size:.98rem}
 }
 @media(prefers-reduced-motion:reduce){
   .adm-side,body.side-open .adm-side,body.side-anim .adm-side,body.side-anim.has-side{transition:none}
@@ -1083,3 +1086,10 @@ html{scroll-padding-top:1.5rem}
 
 /* Mein Profil: Benutzername nur zum Lesen */
 .pf-user{margin:0;padding:.55rem .8rem;background:var(--bg-warm);border:1px solid var(--line);font-size:1rem;color:var(--text-mid)}
+/* Schmale Bildschirme: Ordner-Hinweis in einer Zeile, der Knopf darunter ueber die ganze Breite (sonst wird der Text daneben zerdrueckt) */
+@media(max-width:560px){
+  .adm-folder{padding:.6rem .7rem .7rem .9rem}
+  .adm-folder-ico{display:none}
+  .adm-folder-txt{flex:1 1 100%}
+  .adm-folder .btn{flex:1 1 100%;width:100%}
+}

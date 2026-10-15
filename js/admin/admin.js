@@ -1943,7 +1943,7 @@
     el.innerHTML =
       /* Handy und Tablet: schmale Leiste oben mit Menue-Knopf */
       '<div class="adm-mbar">' +
-        `<button type="button" class="adm-menu-btn" id="adm-menu-btn" aria-expanded="false" aria-controls="adm-side">${icon('menu')}<span>Menü</span></button>` +
+        `<button type="button" class="adm-menu-btn" id="adm-menu-btn" aria-expanded="false" aria-controls="adm-side" aria-label="Menü" title="Menü">${icon('menu')}</button>` +
         brand +
         `<a class="adm-mbar-me" href="profil.html" aria-label="Mein Profil"><span class="adm-avatar" aria-hidden="true">${esc(initials(s.name))}</span></a>` +
       '</div>' +
