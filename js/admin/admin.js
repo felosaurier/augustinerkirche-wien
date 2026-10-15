@@ -51,7 +51,7 @@
   const KEY_LOG = 'aug-admin-protokoll';
   const IDLE_MS = 4 * 60 * 60 * 1000;
   const ITER = 600000;
-  const MIN_PW = 8;
+  const MIN_PW = 12;
 
   const { esc, pad } = HD;
   const $ = (id) => d.getElementById(id);
@@ -374,6 +374,12 @@
       registerFail();
       throw Object.assign(new Error('falsch'), { code: lockLeft() ? 'locked' : 'wrong' });
     }
+    /* Sendet der Webserver den angemeldeten Benutzer, muss der Zugang dazu passen
+       (sonst koennte sich jemand mit fremder Rolle anmelden); ohne Header wie bisher */
+    await serverMode();
+    if (serverUser && acc.benutzer !== serverUser) {
+      throw Object.assign(new Error('Server-Benutzer'), { code: 'server', serverUser });
+    }
     drop(KEY_FAILS);
     startSession(acc);
     return acc;
@@ -393,6 +399,8 @@
   async function verifySession() {
     const s = session();
     if (!s) return;
+    await serverMode();
+    if (serverUser && s.benutzer !== serverUser) return logout('ungueltig');
     const sources = [() => fetchText(ACCOUNTS)];
     if (folder.state === 'ok') sources.push(() => folder.read(ACCOUNTS));
     let readable = false;
@@ -552,11 +560,14 @@
     }
   }
   let serverFlag;
+  /* Am Server angemeldeter Benutzer (Header X-Aug-Benutzer, nur wenn der Webserver ihn sendet), sonst '' */
+  let serverUser = '';
   async function serverMode() {
     if (serverFlag === undefined) {
       try {
         const res = await fetch(w.location.href, { method: 'HEAD', cache: 'no-store' });
         serverFlag = res.headers.get('X-Aug-Schreiben') === 'ja';
+        serverUser = normUser(res.headers.get('X-Aug-Benutzer'));
       } catch {
         serverFlag = false;
       }
@@ -1194,6 +1205,94 @@
   function unlockIfLast() {
     if (!d.querySelector('dialog[open]')) ROOT.classList.remove('adm-lock');
   }
+  /* Einklappbare Abschnitte in Fenstern: <details class="adm-fold" data-fold="auto"> mit
+     <summary>Titel <span class="adm-fold-meta"></span></summary><div class="adm-fold-body">.
+     Beim Oeffnen des Fensters ist ein Abschnitt aufgeklappt, wenn etwas darin ausgefuellt
+     ist; die Angabe daneben zeigt "n ausgefuellt" oder "leer" und folgt den Eingaben. */
+  function foldCount(det) {
+    let n = 0;
+    det.querySelectorAll('input, select, textarea').forEach((el) => {
+      const hid = el.closest('[hidden]');
+      /* Vorbelegungen zaehlen nicht: data-fold-skip und die Bezeichnung in Zeilen mit Bezeichnung vorn */
+      if (el.hasAttribute('data-fold-skip') || (el.dataset.key === 'label' && el.closest('.label-first'))) return;
+      if ((hid && det.contains(hid)) || el.disabled || ['hidden', 'file', 'button', 'submit', 'range', 'color'].includes(el.type)) return;
+      if (el.type === 'checkbox' || el.type === 'radio') {
+        if (el.checked && !el.defaultChecked) n++;
+      } else if (el.tagName === 'SELECT') {
+        if (el.selectedIndex > 0 && el.value !== '') n++;
+      } else if (String(el.value).trim() !== '') {
+        n++;
+      }
+    });
+    /* Eintraege ohne Eingabefeld: Termine, Fotos, Bilder */
+    det.querySelectorAll('.adm-date-chip, .adm-ph, .adm-image-prev img').forEach((el) => {
+      const hid = el.closest('[hidden]');
+      if (!(hid && det.contains(hid))) n++;
+    });
+    return n;
+  }
+  function foldMeta(det) {
+    const meta = det.querySelector(':scope > summary .adm-fold-meta');
+    const n = foldCount(det);
+    if (meta) meta.textContent = n ? `${n} ausgefüllt` : 'leer';
+    return n;
+  }
+  function foldSections(root) {
+    const folds = root.querySelectorAll('details.adm-fold[data-fold="auto"]');
+    folds.forEach((det) => { det.open = foldMeta(det) > 0; });
+    if (root._foldWired) return;
+    root._foldWired = true;
+    const upd = (e) => {
+      const det = e.target.closest && e.target.closest('details.adm-fold[data-fold="auto"]');
+      if (det) setTimeout(() => foldMeta(det), 0);
+    };
+    root.addEventListener('input', upd);
+    root.addEventListener('change', upd);
+    root.addEventListener('click', upd);
+  }
+
+  /* Sichtbarer Stand "Ungespeicherte Aenderungen" im Fussbereich jedes Fensters: ein Text
+     (aria-live) vor den Knoepfen und die Klasse is-dirty am Fenster. Der Stand folgt den
+     Eingaben (input/change/click/drop, nach dem Ereignis per requestAnimationFrame) und
+     zusaetzlich einer kurzen Abfrage, solange das Fenster offen ist (z. B. wenn ein Bild
+     erst spaeter fertig geladen ist). dlg._isDirty ist eine Funktion ohne Argumente. */
+  function syncDirtyState(dlg, reset) {
+    let dirty = false;
+    try {
+      dirty = !reset && dlg.open && !!dlg._isDirty && !!dlg._isDirty();
+    } catch {
+      /* Zustand gerade nicht lesbar: als unveraendert zeigen */
+    }
+    if (dlg._dirtyShown === dirty && !reset) return;
+    dlg._dirtyShown = dirty;
+    dlg.classList.toggle('is-dirty', dirty);
+    if (dlg._stateEl) dlg._stateEl.textContent = dirty ? 'Ungespeicherte Änderungen' : '';
+  }
+  function wireDirtyState(dlg) {
+    const host = dlg.querySelector('.adm-dlg-foot-r') || dlg.querySelector('.adm-dlg-foot');
+    if (host) {
+      const st = d.createElement('span');
+      st.className = 'adm-dlg-state';
+      st.setAttribute('role', 'status');
+      st.setAttribute('aria-live', 'polite');
+      host.prepend(st);
+      dlg._stateEl = st;
+    }
+    const save = dlg.querySelector('.adm-dlg-foot button[type="submit"]');
+    if (save && !save.title) save.title = `Speichern (${/Mac|iP(hone|ad)/.test(w.navigator.platform || '') ? 'Cmd' : 'Strg'} + S)`;
+    let raf = 0;
+    const sync = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => syncDirtyState(dlg));
+    };
+    ['input', 'change', 'click', 'drop'].forEach((ev) => dlg.addEventListener(ev, sync));
+    dlg.addEventListener('close', () => {
+      clearInterval(dlg._dirtyTimer);
+      cancelAnimationFrame(raf);
+      syncDirtyState(dlg, true);
+    });
+  }
+
   /* Oeffnet ein <dialog>. isDirty(): ungespeicherte Eingaben? Dann wird
      beim Schliessen (Escape, X, Abbrechen) erst nachgefragt. */
   function openDialog(dlg, opts = {}) {
@@ -1208,9 +1307,15 @@
         if (e.target.closest('[data-close]')) requestClose(dlg);
       });
       dlg.addEventListener('close', unlockIfLast);
+      wireDirtyState(dlg);
     }
+    foldSections(dlg);
     dlg.showModal();
     ROOT.classList.add('adm-lock');
+    /* erst im naechsten Takt: die Aufrufer setzen ihren Ausgangsstand (snap) erst nach openDialog */
+    requestAnimationFrame(() => syncDirtyState(dlg));
+    clearInterval(dlg._dirtyTimer);
+    dlg._dirtyTimer = setInterval(() => syncDirtyState(dlg), 1500);
     const body = dlg.querySelector('.adm-dlg-body');
     if (body) body.scrollTop = 0;
     const first = dlg.querySelector('[data-autofocus]') ||
@@ -1228,6 +1333,24 @@
     }
     dlg.close();
   }
+
+  /* Strg/Cmd + S speichert: im obersten offenen Fenster (Speichern-Knopf im Fussbereich),
+     sonst im Formular direkt auf der Seite (genau ein Speichern-Knopf in .adm-inline-foot).
+     Ruecksicht auf Rueckfragen: ohne Speichern-Knopf im Fenster passiert nichts. */
+  d.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() !== 's' || !(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey || e.isComposing) return;
+    const open = Array.from(d.querySelectorAll('dialog[open]')).pop();
+    let btn = null;
+    if (open) {
+      btn = open.querySelector('.adm-dlg-foot button[type="submit"]');
+    } else {
+      const subs = d.querySelectorAll('.adm-inline-foot button[type="submit"]');
+      if (subs.length === 1) btn = subs[0];
+      else if (!subs.length) return;
+    }
+    e.preventDefault();
+    if (btn && !btn.disabled) btn.click();
+  });
 
   /* Sichtbare Hoehe beobachten. Auf iPad/iPhone verdeckt die
      Bildschirmtastatur den unteren Teil, ohne dass sich 100vh/100dvh oder
@@ -1388,6 +1511,8 @@
     el.innerHTML = `${icon('alert')}<span>${esc(msg)}</span>`;
     input.setAttribute('aria-invalid', 'true');
     describe(input, id, true);
+    /* Liegt das Feld in einem eingeklappten Abschnitt, aufklappen, damit der Fehler zu sehen ist */
+    for (let det = input.closest('details'); det; det = det.parentElement && det.parentElement.closest('details')) det.open = true;
   }
   function clearErrors(root) {
     root.querySelectorAll('[aria-invalid="true"]').forEach((i) => setError(i, ''));
@@ -1592,6 +1717,23 @@
     throw lastError;
   }
 
+  /* Dateikopf pruefen (Magic Bytes), damit Endung und Inhalt zusammenpassen:
+     kind = 'png' | 'jpg' | 'webp' | 'mp3' */
+  async function magicOk(file, kind) {
+    let b;
+    try {
+      b = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    } catch {
+      return false;
+    }
+    const at = (i, str) => [...str].every((c, k) => b[i + k] === c.charCodeAt(0));
+    if (kind === 'png') return b.length >= 8 && b[0] === 0x89 && at(1, 'PNG') && b[4] === 0x0d && b[5] === 0x0a && b[6] === 0x1a && b[7] === 0x0a;
+    if (kind === 'jpg') return b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
+    if (kind === 'webp') return b.length >= 12 && at(0, 'RIFF') && at(8, 'WEBP');
+    if (kind === 'mp3') return b.length >= 3 && (at(0, 'ID3') || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0));
+    return false;
+  }
+
   async function toWebp(file, opts = {}) {
     file = await stableFile(file);
     const ext = (file.name.split('.').pop() || '').toLowerCase();
@@ -1626,7 +1768,14 @@
       /* Browser kann das Bild nicht umwandeln: unten entscheiden */
     }
     /* Ein Browser ohne WebP-Ausgabe: JPG, PNG und WebP bleiben, wie sie sind (das Web zeigt sie an) */
-    if (isWebp || ['jpg', 'jpeg', 'png'].includes(ext)) return { blob: file, ext: isWebp ? 'webp' : ext === 'jpeg' ? 'jpg' : ext };
+    if (isWebp || ['jpg', 'jpeg', 'png'].includes(ext)) {
+      const kind = isWebp ? 'webp' : ext === 'png' ? 'png' : 'jpg';
+      if (!(await magicOk(file, kind))) {
+        toast(`„${file.name}“ ist keine gültige ${kind === 'jpg' ? 'JPG' : kind.toUpperCase()}-Bilddatei (Dateiinhalt und Endung passen nicht zusammen). Bitte das Bild neu als JPG, PNG oder WebP speichern.`, 'err');
+        throw new Error('Dateiinhalt passt nicht zur Endung');
+      }
+      return { blob: file, ext: kind };
+    }
     toast('Dieses Bildformat kann der Browser nicht umwandeln. Bitte als JPG, PNG oder WebP speichern und noch einmal wählen.', 'err');
     throw new Error('Bildformat nicht unterstützt');
   }
@@ -1686,13 +1835,15 @@
      Zeile. Zugaenge stehen (nur fuer Admins) rechts oben beim Namen. */
   /* Was oft gebraucht wird, steht vorne als eigener Reiter; die uebrigen Inhalte und
      alles Seltene (Gestaltung, Zugaenge …) sind unter "Inhalte" und "Einstellungen"
-     gesammelt. Eintraege mit '#' am Anfang sind Zwischenueberschriften der zweiten Zeile. */
+     gesammelt. Eintraege mit '#' am Anfang sind Zwischenueberschriften der zweiten Zeile.
+     hub: Uebersichtsseite eines Reiters (inhalte.html, fuer alle offen); der Reiter fuehrt dorthin,
+     auf den Seiten darunter zeigt die zweite Zeile die einzelnen Seiten. */
   const NAV = [
     { label: 'Übersicht', icon: 'home', href: 'uebersicht.html' },
     { label: 'Neuigkeiten', icon: 'news', href: 'neuigkeiten.html' },
     { label: 'Termine', icon: 'calendar', href: 'termine.html' },
     { label: 'Hochämter', icon: 'music', href: 'hochaemter.html' },
-    { label: 'Inhalte', icon: 'book', href: 'gottesdienste.html', sub: [
+    { label: 'Inhalte', icon: 'book', href: 'inhalte.html', hub: 'inhalte.html', sub: [
       ['#Pfarre & Kloster'],
       ['gottesdienste.html', 'Regelmäßige Termine'],
       ['wochenkalender.html', 'Wochenkalender'],
@@ -1737,8 +1888,8 @@
         .filter((e, i, all) => !isLabel(e) || (all[i + 1] && !isLabel(all[i + 1])));
       const pages = sub.filter((e) => !isLabel(e));
       if (!pages.length) return null;
-      /* nur eine Gruppe uebrig: ohne Zwischenueberschrift */
-      return { ...n, href: pages[0][0], sub: sub.filter(isLabel).length > 1 ? sub : pages };
+      /* nur eine Gruppe uebrig: ohne Zwischenueberschrift; ohne Uebersichtsseite fuehrt der Reiter zur ersten erlaubten Seite */
+      return { ...n, href: n.hub || pages[0][0], sub: sub.filter(isLabel).length > 1 ? sub : pages };
     }).filter(Boolean);
   }
   /* Bereich der Personen-Seite: Mitbrueder (Kloster) oder Kirchenmusik */
@@ -1765,6 +1916,8 @@
     const here = pageName();
     const nav = allowedNav();
     const group = nav.find((n) => n.sub && n.sub.some((e) => !isLabel(e) && isHere(e[0])));
+    /* Auf der Uebersichtsseite eines Reiters (hub) ist der Reiter die aktuelle Seite; die Kacheln ersetzen die zweite Zeile */
+    const hubHere = (n) => !!n.hub && isHere(n.hub);
     el.innerHTML = '<div class="adm-bar">' +
       '<a class="nav-logo-wrap" href="uebersicht.html">' +
         '<img class="nav-logo-img" src="../assets/logo.png" alt="" width="38" height="38" decoding="async"/>' +
@@ -1780,7 +1933,8 @@
       '<nav class="adm-nav" aria-label="Verwaltung"><div class="adm-nav-in">' +
         nav.map((n) => {
           const on = n.sub ? n.sub.some((e) => !isLabel(e) && isHere(e[0])) : isHere(n.href);
-          return `<a href="${n.href}"${on ? (n.sub ? ' class="is-open" aria-current="true"' : ' aria-current="page"') : ''}>${icon(n.icon)}${esc(n.label)}</a>`;
+          const cur = hubHere(n) ? ' aria-current="page"' : on ? (n.sub ? ' class="is-open" aria-current="true"' : ' aria-current="page"') : '';
+          return `<a href="${n.href}"${cur}>${icon(n.icon)}${esc(n.label)}</a>`;
         }).join('') +
       '</div></nav>' +
       (group ? `<nav class="adm-subnav" aria-label="${esc(group.label)}"><div class="adm-subnav-in">` +
@@ -2014,7 +2168,7 @@
     /* Oberflaeche */
     toast, confirmBox, choiceBox, passwordBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
     noticeHTML, noticeActive, showNotices,
-    listEditor, checkBlankRows, isBlankRow, toWebp, wireDrop, log, recentLog, readProtocol, protocolError, PROTOCOL, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
+    listEditor, checkBlankRows, isBlankRow, toWebp, magicOk, wireDrop, log, recentLog, readProtocol, protocolError, PROTOCOL, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
     /* Datum */
     isoToday, isoOf, fmtDate, fmtShort
   };

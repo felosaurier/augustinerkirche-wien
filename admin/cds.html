@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -108,9 +108,9 @@
 
     <fieldset class="adm-fs">
       <legend>Hörproben</legend>
-      <p class="adm-hint" style="margin-bottom:.8rem">Titel und MP3-Datei je Hörprobe. Neue Dateien unten hineinziehen oder auswählen; sie werden beim Speichern nach <code>assets/audio/cds/</code> gelegt.</p>
+      <p class="adm-hint adm-fs-lead">Titel und MP3-Datei je Hörprobe. Neue Dateien unten hineinziehen oder auswählen; sie werden beim Speichern nach <code>assets/audio/cds/</code> gelegt.</p>
       <div id="cd-samples"></div>
-      <label class="adm-drop adm-drop-audio" id="cd-audio-drop" style="margin-top:.8rem">
+      <label class="adm-drop adm-drop-audio adm-mt-8" id="cd-audio-drop">
         <span data-icon="upload"></span>
         <span class="adm-drop-main">MP3-Dateien hierher ziehen oder <u>auswählen</u></span>
         <span class="adm-hint">Auch mehrere auf einmal. Der Dateiname wird als Titel vorgeschlagen.</span>

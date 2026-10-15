@@ -20,7 +20,8 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 .adm svg.i{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 
 /* ══ KOPFLEISTE: oben Logo und Benutzer, darunter die Reiter ══ */
-.adm-top{position:sticky;top:0;z-index:200;background:var(--white);border-bottom:1px solid var(--line)}
+/* Die Logozeile (64 px) scrollt weg, die Reiter bleiben oben stehen */
+.adm-top{position:sticky;top:-64px;z-index:200;background:var(--white);border-bottom:1px solid var(--line)}
 .adm-top::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-l),transparent);opacity:.7}
 .adm-bar{max-width:var(--adm-max);margin:0 auto;height:64px;display:flex;align-items:center;gap:1.5rem;padding:0 2rem}
 .adm-bar .nav-logo-wrap{flex:none;min-width:0}
@@ -93,7 +94,7 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 }
 @media(max-width:760px){
   /* Handy: die Kopfleiste (drei Zeilen hoch) scrollt mit, sonst bleibt zu wenig Platz fuer den Inhalt */
-  .adm-top{position:relative}
+  .adm-top{position:relative;top:auto}
   .adm-bar{padding:0 .9rem 0 1rem;gap:.6rem;height:60px}
   .adm-nav-in{padding:0 .2rem}
   .adm-nav a{padding:0 .8rem}
@@ -149,6 +150,7 @@ body.adm{padding-top:0;background:var(--bg-soft);min-height:100vh;min-height:100
 .adm-act{display:inline-flex;align-items:center;gap:.4rem;min-height:40px;padding:0 .75rem;background:none;border:1px solid transparent;cursor:pointer;
   font:inherit;font-size:.94rem;color:var(--text-mid);text-decoration:none;transition:color .2s,border-color .2s,background .2s;white-space:nowrap}
 .adm-act:hover{color:var(--gold);border-color:var(--line);background:var(--bg-soft)}
+.adm-act.danger{color:var(--err)}
 .adm-act.danger:hover{color:var(--err);border-color:#e3c4c1;background:var(--err-pale)}
 .adm-act:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 
@@ -284,6 +286,12 @@ html.adm-lock{overflow:hidden}
 .adm-dlg-foot{display:flex;align-items:center;justify-content:space-between;gap:.7rem 1rem;flex-wrap:wrap;padding:1rem 1.8rem;border-top:1px solid var(--line);background:var(--bg-soft)}
 .adm-dlg-foot-l,.adm-dlg-foot-r{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .adm-dlg-foot-r{margin-left:auto}
+/* Stand "Ungespeicherte Aenderungen" (admin.js, openDialog) */
+.adm-dlg-state{display:inline-flex;align-items:center;gap:.5rem;margin-right:.5rem;font-size:.95rem;font-weight:600;color:#8a5a00}
+.adm-dlg-state:empty{display:none}
+.adm-dlg-state::before{content:'';flex:none;width:.55rem;height:.55rem;border-radius:50%;background:var(--gold)}
+.adm-dialog.is-dirty .adm-dlg-foot{box-shadow:inset 3px 0 0 var(--gold)}
+#kt-state.is-dirty,#sp-state.is-dirty,#ds-state.is-dirty{color:#8a5a00;font-weight:600}
 .adm-dlg-text{padding:1.4rem 1.8rem .4rem;font-size:1rem;line-height:1.7;color:var(--text-mid)}
 .adm-dlg-text strong{color:var(--text)}
 
@@ -305,7 +313,9 @@ html.adm-lock{overflow:hidden}
   .adm-dlg-foot{padding:.8rem 1.1rem}
   .adm-dlg-foot{gap:.4rem .6rem}
   .adm-dlg-foot-r{width:100%;flex-wrap:nowrap}
+  .adm-dlg-foot-r:has(.adm-dlg-state:not(:empty)){flex-wrap:wrap}
   .adm-dlg-foot-r .btn{flex:1 1 0;padding:.8rem .7rem}
+  .adm-dlg-state{flex:1 0 100%;order:-1;margin:0 0 .1rem}
   .adm-dlg-text{padding:1.2rem 1.1rem .2rem}
 }
 
@@ -646,7 +656,7 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
    Kopfleiste der Verwaltung scrollt mit, Fenster werden kompakter, und
    ganz niedrig scrollt das ganze Fenster (Kopf weg), nur die Knoepfe
    unten bleiben stehen. */
-.adm-low .adm-top{position:relative}
+.adm-low .adm-top{position:relative;top:auto}
 .adm-low .adm-dialog{max-height:calc(var(--adm-vh,100dvh) - 1rem)}
 .adm-low .adm-dlg-head{padding:.9rem 1.5rem .8rem}
 .adm-low .adm-dlg-title{font-size:1.45rem}
@@ -659,6 +669,7 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-short .adm-dialog[open]:not(.small){display:block;overflow-y:auto;overscroll-behavior:contain}
 .adm-short .adm-dialog:not(.small) .adm-dlg-body{overflow:visible}
 .adm-short .adm-dialog:not(.small) .adm-dlg-foot{position:sticky;bottom:0;z-index:2;box-shadow:0 -6px 18px rgba(16,25,46,.08)}
+.adm-short .adm-dialog.is-dirty:not(.small) .adm-dlg-foot{box-shadow:inset 3px 0 0 var(--gold),0 -6px 18px rgba(16,25,46,.08)}
 .adm-short .adm-dlg-head{padding:.6rem 1.3rem .55rem}
 .adm-short .adm-dlg-tag{display:none}
 .adm-short .adm-dlg-title{font-size:1.25rem}
@@ -758,7 +769,8 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-row-open.adm-st{grid-template-columns:8rem minmax(0,1fr);gap:1.1rem;min-height:96px}
 .adm-st .adm-thumb{width:8rem;aspect-ratio:4/5}
 .adm-st .adm-thumb img{width:100%;height:100%;object-fit:cover}
-.adm-seg{display:inline-flex;margin:.3rem 0 .7rem;border:1px solid var(--line);background:var(--white)}
+/* Schalter mit .adm-seg-btn (Farben & Logo, Titelfotos); die Filter mit .week-filter-btn behalten die Regel oben */
+.adm-seg:has(.adm-seg-btn){display:inline-flex;margin:.3rem 0 .7rem;border:1px solid var(--line);background:var(--white)}
 .adm-seg-btn{min-height:38px;padding:0 1.1rem;border:none;background:none;font:inherit;font-size:.96rem;font-weight:600;color:var(--text-mid);cursor:pointer}
 .adm-seg-btn+.adm-seg-btn{border-left:1px solid var(--line)}
 .adm-seg-btn[aria-pressed="true"]{background:var(--blue-deep);color:var(--gold-l)}
@@ -782,6 +794,7 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .ds-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.4rem 1rem}
 .ds-head .adm-panel-title{margin:0}
 .ds-card .adm-panel-sub{margin:-.6rem 0 0}
+.ds-kontrast[hidden]{display:none}
 .ds-preview{display:flex;align-items:center;gap:1.4rem;min-height:64px;padding:0 1.2rem;background:var(--nav-bg);border-bottom:1px solid var(--nav-line);overflow:hidden}
 .ds-p-logo{display:flex;align-items:center;gap:.7rem;flex:none}
 .ds-p-logo>span{display:flex;flex-direction:column}
@@ -905,3 +918,76 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-code{font-size:1.4rem;letter-spacing:.35em;font-variant-numeric:tabular-nums}
 .adm-pwbox-err:not(:empty){margin-top:.7rem}
 .adm-dlg-tag svg.i{width:.95rem;height:.95rem;vertical-align:-.12em}
+
+/* ══ HILFSKLASSEN (ersetzen Inline-Styles in den Seiten) ══ */
+/* Fensterbreiten */
+.adm-dialog.w560{width:min(560px,calc(100vw - 2rem))}
+.adm-dialog.w600{width:min(600px,calc(100vw - 2rem))}
+.adm-dialog.w640{width:min(640px,calc(100vw - 2rem))}
+.adm-dialog.w760{width:min(760px,calc(100vw - 2rem))}
+/* Abstaende (Zahl = Zehntel rem) */
+.adm .adm-mt-4{margin-top:.4rem}
+.adm .adm-mt-5{margin-top:.5rem}
+.adm .adm-mt-6{margin-top:.6rem}
+.adm .adm-mt-8{margin-top:.8rem}
+.adm .adm-mt-9{margin-top:.9rem}
+.adm .adm-mt-10{margin-top:1rem}
+.adm .adm-mt-11{margin-top:1.1rem}
+.adm .adm-mt-14{margin-top:1.4rem}
+.adm .adm-mt-115{margin-top:1.15rem}
+.adm .adm-mt-16{margin-top:1.6rem}
+.adm .adm-mt-24{margin-top:2.4rem}
+.adm .adm-mb-9{margin-bottom:.9rem}
+.adm .adm-mb-10{margin-bottom:1rem}
+.adm .adm-m-0{margin:0}
+/* Abschnitt auf der Seite mit Knopf neben der Ueberschrift */
+.adm .adm-section{margin-top:2.6rem}
+.adm-group-head .adm-group-title{margin:0}
+/* Einleitender Hinweis am Anfang eines Abschnitts im Fenster */
+.adm .adm-fs-lead{margin-bottom:.8rem}
+.adm .adm-fs-lead.l{margin-bottom:.9rem}
+.adm .adm-hint.lead{margin:.4rem 0 .9rem}
+.adm .adm-hint.full{grid-column:1/-1}
+.adm .adm-hint.block{display:block;margin-bottom:.4rem}
+.adm .adm-input.auto{width:auto}
+.adm .adm-strong{font-weight:600}
+.adm .adm-contents{display:contents}
+
+/* ══ EINKLAPPBARE ABSCHNITTE IM FENSTER ══
+   <fieldset class="adm-fs adm-fold-fs"><legend class="visually-hidden">…</legend>
+   <details class="adm-fold" data-fold="auto"><summary>Titel <span class="adm-fold-meta"></span></summary>
+   <div class="adm-fold-body">…</div></details></fieldset> (admin.js, foldSections) */
+.adm-fold-fs{padding-top:.3rem;padding-bottom:.2rem}
+.adm-fold-fs>legend{float:none;position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.adm-fold-fs>legend::before{content:none}
+.adm-fold-fs>legend+*{clear:none}
+.adm-fold>summary{display:flex;align-items:center;gap:.7rem;min-height:48px;cursor:pointer;list-style:none;
+  font-size:.95rem;color:var(--gold-text);font-weight:700}
+.adm-fold>summary::-webkit-details-marker{display:none}
+.adm-fold>summary::before{content:'';flex:none;width:7px;height:7px;margin:0 .35rem 0 .15rem;border-right:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);transform:rotate(-45deg);transition:transform .2s}
+.adm-fold[open]>summary::before{transform:rotate(45deg)}
+.adm-fold>summary:hover{color:var(--gold)}
+.adm-fold>summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.adm-fold-meta{margin-left:auto;font-size:.9rem;font-weight:400;color:var(--text-light)}
+.adm-fold-body{padding:.3rem 0 .8rem}
+@media(prefers-reduced-motion:reduce){.adm-fold>summary::before{transition:none}}
+
+/* Teilabschnitt in einem Abschnitt (z. B. Schaltflaeche und Zweite Schaltflaeche) */
+.adm-fold.sub{margin-top:.6rem;border-top:1px dashed var(--line)}
+.adm-fold.sub>summary{font-size:.93rem;color:var(--text-mid)}
+.adm-fold.sub>summary::before{border-color:var(--gold-l)}
+
+/* Sprungleiste oben auf einer Seite */
+.adm-jump{display:flex;flex-wrap:wrap;gap:.4rem .6rem;align-items:center;margin:0 0 1.4rem;font-size:.95rem}
+.adm-jump-l{margin-right:.2rem;color:var(--text-light);font-weight:600}
+.adm-jump a{display:inline-flex;align-items:center;min-height:38px;padding:0 .9rem;border:1px solid var(--line);background:var(--white);color:var(--text-mid);text-decoration:none;font-weight:600}
+.adm-jump a:hover{border-color:var(--gold);color:var(--gold)}
+.adm-jump a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+html{scroll-padding-top:9rem}
+/* Aufklappbarer Rest der Seitenbeschreibung im Seitenkopf */
+.adm-head .adm-more{margin-top:.3rem;padding-top:0;border-top:0;max-width:40rem}
+.adm-head .adm-more summary{min-height:40px}
+.adm-head .adm-more>.adm-hint{margin-top:.2rem;font-size:1rem;color:var(--text-mid)}
+#rd-page>.adm-fs:first-child{border-top:1px solid var(--line)}
+/* Inhalte-Seite: Hinweis an der Kachel (z. B. "2 ohne Foto") und Abstand der Kopfleiste */
+.adm-tile-flag{display:inline-block;margin-top:.35rem;padding:.12rem .55rem;background:var(--gold-pale);border:1px solid #ead9ad;font-size:.85rem;line-height:1.4;color:#6b5019}

@@ -56,6 +56,7 @@
       `<a class="link-arr" href="${info.href}" target="_blank" rel="noopener">Seite ansehen</a></div>` +
       `<p class="adm-panel-sub">${esc(info.seiten)}</p>` +
       '<div class="ds-preview" aria-hidden="true"></div>' +
+      '<div class="adm-alert ds-kontrast" role="status" hidden></div>' +
       '<div class="adm-grid ds-text">' +
         `<div class="adm-field"><label class="adm-label" for="ds-${k}-name">Name neben dem Logo</label>` +
         `<input class="adm-input" type="text" id="ds-${k}-name" data-f="name" maxlength="60" value="${esc(t.name)}" placeholder="${esc(T.NAME)}"/></div>` +
@@ -88,6 +89,11 @@
       `<span><span class="ds-p-name">${esc(t.name || T.NAME)}</span><span class="ds-p-sub">${esc(t.untertitel || T.UNTERTITEL)}</span></span></span>` +
       '<span class="ds-p-menu"><span>Augustinerkirche</span><span class="cur">Kirchenmusik</span><span>Augustiner</span></span>' +
       '<span class="ds-p-cta">Gottesdienste</span>';
+    /* Warnhinweis, wenn die Schrift auf der Leiste schwer lesbar waere (WCAG: mind. 4,5 : 1) */
+    const kontrast = T.contrast(t);
+    const warn = card.querySelector('.ds-kontrast');
+    warn.hidden = kontrast >= 4.5;
+    warn.innerHTML = warn.hidden ? '' : `${icon('alert')}<div>Die Schrift ist auf dieser Farbe schwer lesbar (Kontrast ${kontrast.toFixed(1).replace('.', ',')} : 1, empfohlen sind mindestens 4,5 : 1). Wählen Sie eine hellere oder dunklere Farbe oder stellen Sie die Schrift um.</div>`;
     for (const b of card.querySelectorAll('[data-farbe]')) b.setAttribute('aria-pressed', String(b.dataset.farbe === t.leiste));
     card.querySelector('.ds-custom').classList.toggle('on', !FARBEN.some(([hex]) => hex === t.leiste));
     card.querySelector('input[type="color"]').value = t.leiste;
@@ -103,6 +109,7 @@
   }
   function state() {
     $('ds-state').textContent = JSON.stringify(data) !== snap ? 'Noch nicht gespeichert' : '';
+    $('ds-state').classList.toggle('is-dirty', $('ds-state').textContent === 'Noch nicht gespeichert');
   }
 
   async function save(ev) {

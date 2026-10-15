@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -41,7 +41,7 @@
     <div class="adm-seg" role="group" aria-label="Gruppe wählen" id="ps-groups"></div>
     <a class="adm-act" id="ps-view" href="../pages/chronik.html#p-wien" target="_blank" rel="noopener" data-icon="external">Auf der Website ansehen</a>
   </div>
-  <p class="adm-count" id="ps-count" role="status" style="margin-bottom:1rem"></p>
+  <p class="adm-count adm-mb-10" id="ps-count" role="status"></p>
   <div id="ps-list"><p class="adm-muted">Wird geladen …</p></div>
 </main>
 
@@ -97,7 +97,7 @@
           <div><button type="button" class="adm-act danger" id="ps-img-remove" data-icon="close" hidden>Foto entfernen</button></div>
         </div>
       </div>
-      <div class="adm-field" style="margin-top:1rem">
+      <div class="adm-field adm-mt-10">
         <label class="adm-label" for="f-bildtext">Bildbeschreibung und Fotonachweis</label>
         <input class="adm-input" type="text" id="f-bildtext" placeholder="z. B. Peter Tiefengraber | © Franz Josef Rupprecht"/>
       </div>

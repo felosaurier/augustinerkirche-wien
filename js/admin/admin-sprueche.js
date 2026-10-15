@@ -33,6 +33,7 @@
     $('sp-secs').value = String(SECS.includes(Number(d && d.sekunden)) ? Number(d.sekunden) : 10);
     snap = A.snapshot($('sp-form'));
     $('sp-state').textContent = '';
+    $('sp-state').classList.toggle('is-dirty', $('sp-state').textContent === 'Noch nicht gespeichert');
   }
 
   async function save(ev) {
@@ -61,6 +62,7 @@
       list.set(next.sprueche.length ? next.sprueche : [{}]);
       snap = A.snapshot(form);
       $('sp-state').textContent = direct ? 'Gespeichert.' : 'Übernommen, bitte unten herunterladen.';
+      $('sp-state').classList.toggle('is-dirty', $('sp-state').textContent === 'Noch nicht gespeichert');
       A.toast(direct ? `${next.sprueche.length === 1 ? 'Ein Spruch' : `${next.sprueche.length} Sprüche`} gespeichert.` : 'Übernommen. Bitte unten die Datei herunterladen.');
       A.log('Sprüche geändert');
     } catch (err) {
@@ -81,9 +83,11 @@
     $('sp-form').addEventListener('submit', save);
     $('sp-form').addEventListener('input', () => {
       $('sp-state').textContent = A.snapshot($('sp-form')) !== snap ? 'Noch nicht gespeichert' : '';
+      $('sp-state').classList.toggle('is-dirty', $('sp-state').textContent === 'Noch nicht gespeichert');
     });
     $('sp-form').addEventListener('change', () => {
       $('sp-state').textContent = A.snapshot($('sp-form')) !== snap ? 'Noch nicht gespeichert' : '';
+      $('sp-state').classList.toggle('is-dirty', $('sp-state').textContent === 'Noch nicht gespeichert');
     });
     A.guard(() => A.snapshot($('sp-form')) !== snap);
     A.folder.on((state) => { if (state === 'ok' && A.snapshot($('sp-form')) === snap) load(); });

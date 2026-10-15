@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -119,7 +119,7 @@
               <div><button type="button" class="adm-act danger" id="nv-img-remove" data-icon="close" hidden>Bild entfernen</button></div>
             </div>
           </div>
-          <div class="adm-grid" style="margin-top:1.1rem">
+          <div class="adm-grid adm-mt-11">
             <div class="adm-field full" role="radiogroup" aria-labelledby="f-kind-l">
               <span class="adm-label" id="f-kind-l">Art des Bildes</span>
               <div class="adm-choice">
@@ -147,42 +147,50 @@
               <textarea class="adm-input" id="f-details" rows="5" aria-describedby="f-details-hint"></textarea>
               <span class="adm-hint" id="f-details-hint">Ein Absatz pro Zeile.</span>
             </div>
-            <div class="adm-field full">
-              <label class="adm-label" for="f-ziel">Wohin führt die Schaltfläche im Fenster?</label>
-              <select class="adm-input" id="f-ziel">
-                <option value="">Keine Schaltfläche</option>
-                <option value="hochamt">Zu einem Hochamt oder Konzert</option>
-                <option value="runde">Zu einer Runde</option>
-                <option value="seite">Zu einer Seite der Website</option>
-                <option value="extern">Zu einer anderen Website</option>
-              </select>
-            </div>
-            <div class="adm-field full" data-ziel="hochamt" hidden>
-              <label class="adm-label" for="f-ziel-hochamt">Welcher Termin?</label>
-              <select class="adm-input" id="f-ziel-hochamt" aria-describedby="f-ziel-hochamt-hint"></select>
-              <span class="adm-hint" id="f-ziel-hochamt-hint">Das Plakat erscheint dann auch auf der Seite dieses Termins.</span>
-              <div><button type="button" class="adm-act danger" data-unlink data-icon="close">Verknüpfung aufheben</button></div>
-            </div>
-            <div class="adm-field full" data-ziel="runde" hidden>
-              <label class="adm-label" for="f-ziel-runde">Welche Runde?</label>
-              <select class="adm-input" id="f-ziel-runde"></select>
-            </div>
-            <div class="adm-field full" data-ziel="seite" hidden>
-              <label class="adm-label" for="f-ziel-seite">Welche Seite?</label>
-              <select class="adm-input" id="f-ziel-seite"></select>
-            </div>
-            <div class="adm-field full" data-ziel="extern" hidden>
-              <label class="adm-label" for="f-ziel-extern">Adresse der Website</label>
-              <input class="adm-input" type="text" id="f-ziel-extern" inputmode="url" placeholder="z. B. www.musikverein.at" aria-describedby="f-ziel-extern-hint"/>
-              <span class="adm-hint" id="f-ziel-extern-hint">Am besten aus dem Browser kopieren und hier einfügen.</span>
-            </div>
-            <div class="adm-field full" id="nv-linktext-field" hidden>
-              <label class="adm-label" for="f-linktext">Text der Schaltfläche</label>
-              <input class="adm-input" type="text" id="f-linktext" aria-describedby="f-linktext-hint"/>
-              <span class="adm-hint" id="f-linktext-hint">Wird passend vorgeschlagen, lässt sich aber ändern.</span>
-            </div>
-            <div class="adm-field full" role="group" aria-labelledby="f-link2-l">
-              <span class="adm-label" id="f-link2-l">Zweite Schaltfläche <span class="adm-opt">optional, z. B. Kartenverkauf oder Anmeldung</span></span>
+            <details class="adm-fold sub adm-field full" data-fold="auto">
+              <summary>Schaltfläche <span class="adm-fold-meta"></span></summary>
+              <div class="adm-fold-body">
+                <div class="adm-grid">
+                  <div class="adm-field full">
+                    <label class="adm-label" for="f-ziel">Wohin führt die Schaltfläche im Fenster?</label>
+                    <select class="adm-input" id="f-ziel">
+                      <option value="">Keine Schaltfläche</option>
+                      <option value="hochamt">Zu einem Hochamt oder Konzert</option>
+                      <option value="runde">Zu einer Runde</option>
+                      <option value="seite">Zu einer Seite der Website</option>
+                      <option value="extern">Zu einer anderen Website</option>
+                    </select>
+                  </div>
+                  <div class="adm-field full" data-ziel="hochamt" hidden>
+                    <label class="adm-label" for="f-ziel-hochamt">Welcher Termin?</label>
+                    <select class="adm-input" id="f-ziel-hochamt" aria-describedby="f-ziel-hochamt-hint"></select>
+                    <span class="adm-hint" id="f-ziel-hochamt-hint">Das Plakat erscheint dann auch auf der Seite dieses Termins.</span>
+                    <div><button type="button" class="adm-act danger" data-unlink data-icon="close">Verknüpfung aufheben</button></div>
+                  </div>
+                  <div class="adm-field full" data-ziel="runde" hidden>
+                    <label class="adm-label" for="f-ziel-runde">Welche Runde?</label>
+                    <select class="adm-input" id="f-ziel-runde"></select>
+                  </div>
+                  <div class="adm-field full" data-ziel="seite" hidden>
+                    <label class="adm-label" for="f-ziel-seite">Welche Seite?</label>
+                    <select class="adm-input" id="f-ziel-seite"></select>
+                  </div>
+                  <div class="adm-field full" data-ziel="extern" hidden>
+                    <label class="adm-label" for="f-ziel-extern">Adresse der Website</label>
+                    <input class="adm-input" type="text" id="f-ziel-extern" inputmode="url" placeholder="z. B. www.musikverein.at" aria-describedby="f-ziel-extern-hint"/>
+                    <span class="adm-hint" id="f-ziel-extern-hint">Am besten aus dem Browser kopieren und hier einfügen.</span>
+                  </div>
+                  <div class="adm-field full" id="nv-linktext-field" hidden>
+                    <label class="adm-label" for="f-linktext">Text der Schaltfläche</label>
+                    <input class="adm-input" type="text" id="f-linktext" aria-describedby="f-linktext-hint"/>
+                    <span class="adm-hint" id="f-linktext-hint">Wird passend vorgeschlagen, lässt sich aber ändern.</span>
+                  </div>
+                </div>
+              </div>
+            </details>
+            <details class="adm-fold sub adm-field full" data-fold="auto">
+              <summary>Zweite Schaltfläche <span class="adm-opt">optional, z. B. Kartenverkauf oder Anmeldung</span> <span class="adm-fold-meta"></span></summary>
+              <div class="adm-fold-body">
               <div class="adm-grid">
                 <div class="adm-field">
                   <label class="adm-label" for="f-linktext2">Text</label>
@@ -194,7 +202,8 @@
                   <span class="adm-hint" id="f-link2-hint">Am besten aus dem Browser kopieren und hier einfügen.</span>
                 </div>
               </div>
-            </div>
+              </div>
+            </details>
           </div>
         </fieldset>
       </form>
@@ -206,7 +215,7 @@
           <span class="adm-hint">Bild in der Karte ziehen (oder mit den Pfeiltasten verschieben), bis der Ausschnitt passt.</span>
           <button type="button" class="adm-act" id="nv-pan-reset">Ausschnitt zurücksetzen</button>
         </div>
-        <p class="adm-hint" id="nv-where" style="margin-top:.9rem"></p>
+        <p class="adm-hint adm-mt-9" id="nv-where"></p>
       </aside>
     </div>
   </div>

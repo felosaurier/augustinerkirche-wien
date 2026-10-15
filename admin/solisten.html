@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -98,7 +98,7 @@
             <input class="adm-input" type="text" id="f-credit" placeholder="z. B. © Augustiner Wien, Foto: Max Muster" aria-describedby="f-credit-hint"/>
             <span class="adm-hint" id="f-credit-hint">Steht auf der Website klein unter dem Bild.</span>
           </div>
-          <div class="adm-field" id="so-crop" hidden style="margin-top:.6rem">
+          <div class="adm-field adm-mt-6" id="so-crop" hidden>
             <label class="adm-label" for="f-crop" id="f-crop-l">Ausschnitt verschieben</label>
             <input class="adm-range" type="range" id="f-crop" min="0" max="100" value="25"/>
           </div>

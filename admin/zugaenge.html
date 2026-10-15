@@ -2,7 +2,7 @@
 <html lang="de" data-adm-rolle="admin">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -40,7 +40,7 @@
 
   <div id="zg-list"><p class="adm-muted">Wird geladen …</p></div>
 
-  <div class="adm-alert info" style="margin-top:1.6rem">
+  <div class="adm-alert info adm-mt-16">
     <span data-icon="info"></span>
     <div>
       <b>Gut zu wissen</b>
@@ -57,7 +57,7 @@
 </main>
 
 <!-- Zugang anlegen oder bearbeiten -->
-<dialog class="adm-dialog small" id="zg-dlg" aria-labelledby="zg-dlg-title" style="width:min(600px,calc(100vw - 2rem))">
+<dialog class="adm-dialog small w600" id="zg-dlg" aria-labelledby="zg-dlg-title">
   <div class="adm-dlg-head">
     <div>
       <div class="adm-dlg-tag" id="zg-dlg-tag">Neuer Zugang</div>
@@ -87,11 +87,11 @@
         <label><input type="radio" name="rolle" value="admin"/><span><b>Admin</b><span>Darf alles bearbeiten und zusätzlich Zugänge anlegen, ändern und entfernen.</span></span></label>
         <label id="zg-role-dev"><input type="radio" name="rolle" value="entwickler"/><span><b>Entwickler</b><span>Wie Admin, dazu Mitteilungen an alle in der Verwaltung. Nur mit dem Entwickler-Code.</span></span></label>
       </div>
-      <p class="adm-hint" id="zg-role-hint" style="margin-top:.6rem"></p>
+      <p class="adm-hint adm-mt-6" id="zg-role-hint"></p>
     </fieldset>
     <fieldset class="adm-fs" id="zg-rights-fs">
       <legend>Was darf bearbeitet werden?</legend>
-      <p class="adm-hint" style="margin-bottom:.8rem">In der Verwaltung sieht diese Person nur die angehakten Bereiche, alles andere ist ausgeblendet und gesperrt.</p>
+      <p class="adm-hint adm-fs-lead">In der Verwaltung sieht diese Person nur die angehakten Bereiche, alles andere ist ausgeblendet und gesperrt.</p>
       <div class="zg-rights-tools">
         <button type="button" class="adm-list-add" id="zg-rights-all">Alles auswählen</button>
         <button type="button" class="adm-list-add" id="zg-rights-none">Nichts auswählen</button>
@@ -108,7 +108,7 @@
             <button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false" data-icon="eye"></button>
           </div>
           <div class="adm-strength" id="f-pw-meter" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-          <span class="adm-hint" id="f-pw-hint">Mindestens 8 Zeichen, länger ist besser.</span>
+          <span class="adm-hint" id="f-pw-hint">Mindestens 12 Zeichen, länger ist besser.</span>
           <div><button type="button" class="adm-list-add" id="zg-suggest" data-icon="dice">Sicheres Passwort vorschlagen</button></div>
         </div>
         <div class="adm-field full">

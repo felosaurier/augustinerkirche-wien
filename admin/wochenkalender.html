@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -42,14 +42,14 @@
       <button type="button" class="week-filter-btn" id="wk-today">Diese Woche</button>
       <button type="button" class="week-filter-btn" id="wk-next">Weiter ›</button>
     </div>
-    <label class="adm-label" for="wk-date" style="margin:0">Woche mit dem Tag</label>
-    <input class="adm-input" type="date" id="wk-date" style="width:auto"/>
+    <label class="adm-label adm-m-0" for="wk-date">Woche mit dem Tag</label>
+    <input class="adm-input auto" type="date" id="wk-date"/>
   </div>
-  <h2 class="adm-group-title" id="wk-title" style="margin-top:1.4rem"></h2>
+  <h2 class="adm-group-title adm-mt-14" id="wk-title"></h2>
   <p class="adm-count" id="wk-count" role="status"></p>
   <div id="wk-list"><p class="adm-muted">Wird geladen …</p></div>
 
-  <div class="adm-toolbar" style="margin-top:1.6rem">
+  <div class="adm-toolbar adm-mt-16">
     <div class="adm-seg" role="group" aria-label="Woche wählen (unten)">
       <button type="button" class="week-filter-btn" id="wk-prev2">‹ Zurück</button>
       <button type="button" class="week-filter-btn" id="wk-today2">Diese Woche</button>
@@ -59,7 +59,7 @@
 </main>
 
 <!-- Termin bearbeiten -->
-<dialog class="adm-dialog" id="te-dlg" aria-labelledby="te-dlg-title" style="width:min(640px,calc(100vw - 2rem))">
+<dialog class="adm-dialog w640" id="te-dlg" aria-labelledby="te-dlg-title">
   <div class="adm-dlg-head">
     <div>
       <div class="adm-dlg-tag" id="te-dlg-tag">Neuer Termin</div>
@@ -71,8 +71,8 @@
     <fieldset class="adm-fs">
       <legend>Termin</legend>
       <div class="adm-grid">
-        <div class="adm-field full" id="te-when-text" hidden style="font-weight:600"></div>
-        <div id="te-new" class="adm-field full" style="display:contents">
+        <div class="adm-field full adm-strong" id="te-when-text" hidden></div>
+        <div id="te-new" class="adm-field full adm-contents">
           <div class="adm-field" id="te-zeit-field">
             <label class="adm-label" for="te-zeit">Beginn<span class="adm-req">Pflichtfeld</span></label>
             <input class="adm-input" type="time" id="te-zeit" step="300"/>
@@ -99,6 +99,11 @@
           <label class="adm-label" for="te-name">Bezeichnung<span class="adm-req">Pflichtfeld</span></label>
           <input class="adm-input" type="text" id="te-name" list="dl-te-name" required/>
         </div>
+      </div>
+    </fieldset>
+    <fieldset class="adm-fs">
+      <legend>Für diese Woche</legend>
+      <div class="adm-grid">
         <div class="adm-field full">
           <label class="adm-label" for="te-zusatz">Zusatz <span class="adm-opt">steht in Klammern, aus der Liste wählen oder selbst eintragen, z. B. Laudes, Vesper, bis 12:00 Uhr</span></label>
           <input class="adm-input" type="text" id="te-zusatz" list="dl-te-zusatz"/>
@@ -136,7 +141,7 @@
 </dialog>
 
 <!-- Tag bearbeiten -->
-<dialog class="adm-dialog small" id="td-dlg" aria-labelledby="td-dlg-title" style="width:min(560px,calc(100vw - 2rem))">
+<dialog class="adm-dialog small w560" id="td-dlg" aria-labelledby="td-dlg-title">
   <div class="adm-dlg-head">
     <div>
       <div class="adm-dlg-tag">Tag</div>

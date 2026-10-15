@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -150,36 +150,46 @@
       </div>
     </fieldset>
 
-    <fieldset class="adm-fs">
-      <legend>Programm und Hinweis</legend>
-      <div class="adm-grid">
-        <div class="adm-field full">
-          <label class="adm-label" for="f-extra">Weitere Musik</label>
-          <textarea class="adm-input" id="f-extra" rows="4" aria-describedby="f-extra-hint"></textarea>
-          <span class="adm-hint" id="f-extra-hint">Ein Stück pro Zeile, z. B. „J. S. Bach: Toccata d-Moll, BWV 565“.</span>
+    <fieldset class="adm-fs adm-fold-fs">
+      <legend class="visually-hidden">Programm und Hinweis</legend>
+      <details class="adm-fold" data-fold="auto">
+        <summary>Programm und Hinweis <span class="adm-fold-meta"></span></summary>
+        <div class="adm-fold-body">
+          <div class="adm-grid">
+            <div class="adm-field full">
+              <label class="adm-label" for="f-extra">Weitere Musik</label>
+              <textarea class="adm-input" id="f-extra" rows="4" aria-describedby="f-extra-hint"></textarea>
+              <span class="adm-hint" id="f-extra-hint">Ein Stück pro Zeile, z. B. „J. S. Bach: Toccata d-Moll, BWV 565“.</span>
+            </div>
+            <div class="adm-field full">
+              <label class="adm-label" for="f-note">Hinweis</label>
+              <textarea class="adm-input" id="f-note" rows="3" aria-describedby="f-note-hint"></textarea>
+              <span class="adm-hint" id="f-note-hint">Zum Beispiel Festtag, geänderte Beginnzeit oder Ende ca. 12:30 Uhr.</span>
+            </div>
+          </div>
         </div>
-        <div class="adm-field full">
-          <label class="adm-label" for="f-note">Hinweis</label>
-          <textarea class="adm-input" id="f-note" rows="3" aria-describedby="f-note-hint"></textarea>
-          <span class="adm-hint" id="f-note-hint">Zum Beispiel Festtag, geänderte Beginnzeit oder Ende ca. 12:30 Uhr.</span>
-        </div>
-      </div>
+      </details>
     </fieldset>
 
-    <fieldset class="adm-fs">
-      <legend>Fotos</legend>
-      <p class="adm-hint" style="margin-bottom:.8rem">Fotos von diesem Hochamt, zum Beispiel von Chor und Orchester. Sie erscheinen neben dem Programm auf der Seite des Termins und lassen sich dort vergrößern, Ohne Plakat stehen sie neben dem Programm, mit Plakat darunter. Das Plakat kommt wie bisher über eine Meldung unter „Neuigkeiten“.</p>
-      <div class="adm-alert info" id="ha-photo-note" style="margin-bottom:.9rem" hidden>
-        <span data-icon="info"></span>
-        <div><b>Zu diesem Termin gibt es ein Plakat.</b> Es steht neben dem Programm, deshalb erscheinen die Fotos unter dem Programm.</div>
-      </div>
-      <div class="adm-ph-list" id="ha-photos"></div>
-      <label class="adm-drop" id="ha-drop">
-        <span data-icon="image"></span>
-        <span class="adm-drop-main">Fotos hierher ziehen oder <u>auswählen</u></span>
-        <span class="adm-hint">Auch mehrere auf einmal. Sie werden als WebP gespeichert und auf höchstens 2000 Pixel verkleinert.</span>
-        <input type="file" id="ha-photo-file" accept="image/*" multiple/>
-      </label>
+    <fieldset class="adm-fs adm-fold-fs">
+      <legend class="visually-hidden">Fotos</legend>
+      <details class="adm-fold" data-fold="auto">
+        <summary>Fotos <span class="adm-fold-meta"></span></summary>
+        <div class="adm-fold-body">
+          <p class="adm-hint adm-fs-lead">Fotos von diesem Hochamt, zum Beispiel von Chor und Orchester. Sie erscheinen neben dem Programm auf der Seite des Termins und lassen sich dort vergrößern. Ohne Plakat stehen sie neben dem Programm, mit Plakat darunter. Das Plakat kommt wie bisher über eine Meldung unter „Neuigkeiten“.</p>
+          <div class="adm-alert info adm-mb-9" id="ha-photo-note" hidden>
+            <span data-icon="info"></span>
+            <div><b>Zu diesem Termin gibt es ein Plakat.</b> Es steht neben dem Programm, deshalb erscheinen die Fotos unter dem Programm.</div>
+          </div>
+          <div class="adm-ph-list" id="ha-photos"></div>
+          <label class="adm-drop" id="ha-drop">
+            <span data-icon="image"></span>
+            <span class="adm-drop-main">Fotos hierher ziehen oder <u>auswählen</u></span>
+            <span class="adm-hint">Auch mehrere auf einmal. Sie werden als WebP gespeichert und auf höchstens 2000 Pixel verkleinert.</span>
+            <input type="file" id="ha-photo-file" accept="image/*" multiple/>
+          </label>
+        </div>
+      </details>
     </fieldset>
   </form>
   <div class="adm-dlg-foot">

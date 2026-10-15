@@ -27,6 +27,7 @@
     $('kt-eingang').value = kontakt.eingang || '';
     kSnap = A.snapshot($('kt-form'));
     $('kt-state').textContent = '';
+    $('kt-state').classList.toggle('is-dirty', $('kt-state').textContent === 'Noch nicht gespeichert');
   }
   async function loadKontakt() {
     try {
@@ -58,6 +59,7 @@
       kontakt = next;
       fillKontakt();
       $('kt-state').textContent = direct ? 'Gespeichert.' : 'Übernommen, bitte unten herunterladen.';
+      $('kt-state').classList.toggle('is-dirty', $('kt-state').textContent === 'Noch nicht gespeichert');
       A.toast(direct ? 'Kontakt und Öffnungszeiten gespeichert.' : 'Übernommen. Bitte unten die Datei herunterladen.');
       A.log('Kontakt und Öffnungszeiten der Pfarrkanzlei geändert');
     } catch (err) {
@@ -86,6 +88,7 @@
     $('kt-form').addEventListener('submit', saveKontakt);
     $('kt-form').addEventListener('input', () => {
       $('kt-state').textContent = A.snapshot($('kt-form')) !== kSnap ? 'Noch nicht gespeichert' : '';
+      $('kt-state').classList.toggle('is-dirty', $('kt-state').textContent === 'Noch nicht gespeichert');
     });
     A.guard(() => A.snapshot($('kt-form')) !== kSnap);
     A.folder.on((state) => { if (state === 'ok') loadKontakt(); });

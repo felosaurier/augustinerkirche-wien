@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -37,7 +37,7 @@
 
 <main class="adm-main" id="main">
   <div data-adm-folder></div>
-  <p class="adm-count" id="rd-count" role="status" style="margin-bottom:1rem"></p>
+  <p class="adm-count adm-mb-10" id="rd-count" role="status"></p>
   <div id="rd-list"><p class="adm-muted">Wird geladen …</p></div>
 </main>
 
@@ -82,123 +82,149 @@
 
     <div id="rd-page">
       <fieldset class="adm-fs">
-        <legend>Kopf der Seite</legend>
-        <div class="adm-grid">
-          <div class="adm-field">
-            <label class="adm-label" for="f-zeile">Zeile über dem Titel</label>
-            <input class="adm-input" type="text" id="f-zeile" placeholder="z. B. Die Bibelrunde"/>
-          </div>
-          <div class="adm-field">
-            <label class="adm-label" for="f-betonung">Betonung im Titel</label>
-            <input class="adm-input" type="text" id="f-betonung" aria-describedby="f-betonung-hint"/>
-            <span class="adm-hint" id="f-betonung-hint">Teil des Namens in Gold-kursiv, z. B. „pur“.</span>
-          </div>
-          <div class="adm-field full">
-            <label class="adm-label" for="f-untertitel">Untertitel</label>
-            <textarea class="adm-input" id="f-untertitel" rows="2"></textarea>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset class="adm-fs">
-        <legend>Texte</legend>
-        <p class="adm-hint" style="margin-bottom:.9rem">Ein Absatz pro Zeile. Links: <code>[Text](pages/sakramente.html)</code> oder einfach die Adresse; <code>*Wort*</code> wird kursiv.</p>
-        <div class="adm-grid">
-          <div class="adm-field full">
-            <label class="adm-label" for="f-einleitung">Einleitung</label>
-            <textarea class="adm-input" id="f-einleitung" rows="4"></textarea>
-          </div>
-          <div class="adm-field">
-            <label class="adm-label" for="f-sp-label">Hervorgehobener Kasten: Überschrift klein</label>
-            <input class="adm-input" type="text" id="f-sp-label" placeholder="z. B. Thema 2026/27"/>
-          </div>
-          <div class="adm-field">
-            <label class="adm-label" for="f-sp-titel">Titel im Kasten</label>
-            <input class="adm-input" type="text" id="f-sp-titel"/>
-          </div>
-          <div class="adm-field full">
-            <label class="adm-label" for="f-sp-text">Text im Kasten</label>
-            <textarea class="adm-input" id="f-sp-text" rows="3"></textarea>
-          </div>
-          <div class="adm-field full">
-            <label class="adm-label" for="f-text">Weiterer Text</label>
-            <textarea class="adm-input" id="f-text" rows="3"></textarea>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset class="adm-fs">
         <legend>Termine</legend>
-        <p class="adm-hint" style="margin-bottom:.9rem">Der Wochentag erscheint automatisch. Vergangene Termine werden auf der Seite blass gezeigt.</p>
+        <p class="adm-hint adm-fs-lead l">Der Wochentag erscheint automatisch. Vergangene Termine werden auf der Seite blass gezeigt.</p>
         <div class="adm-blocks" id="rd-blocks"></div>
-        <button type="button" class="adm-list-add" id="rd-add-block" data-icon="plus" style="margin-top:.8rem">Terminreihe hinzufügen</button>
+        <button type="button" class="adm-list-add adm-mt-8" id="rd-add-block" data-icon="plus">Terminreihe hinzufügen</button>
       </fieldset>
 
-      <fieldset class="adm-fs">
-        <legend>Auf einen Blick</legend>
-        <p class="adm-hint" style="margin-bottom:.9rem">Zum Beispiel Zeit, Ort, Leitung. Die dritte Spalte erscheint klein darunter.</p>
-        <div id="rd-fakten"></div>
-      </fieldset>
-
-      <fieldset class="adm-fs">
-        <legend>Kontakt</legend>
-        <div class="adm-grid">
-          <div class="adm-field">
-            <label class="adm-label" for="f-k-titel">Überschrift</label>
-            <input class="adm-input" type="text" id="f-k-titel" placeholder="Kontakt"/>
-          </div>
-          <div class="adm-field">
-            <label class="adm-label" for="f-k-text">Wer</label>
-            <input class="adm-input" type="text" id="f-k-text" placeholder="z. B. Pfarre St. Augustin"/>
-          </div>
-          <div class="adm-field">
-            <label class="adm-label" for="f-k-email">E-Mail</label>
-            <input class="adm-input" type="email" id="f-k-email"/>
-          </div>
-          <div class="adm-field">
-            <label class="adm-label" for="f-k-telefon">Telefon</label>
-            <input class="adm-input" type="text" id="f-k-telefon"/>
-          </div>
-          <div class="adm-field full">
-            <label class="adm-label" for="f-k-anschrift">Anschrift</label>
-            <input class="adm-input" type="text" id="f-k-anschrift"/>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset class="adm-fs">
-        <legend>Bild</legend>
-        <div class="adm-image">
-          <div class="adm-image-prev" id="rd-prev"></div>
-          <div class="adm-field">
-            <label class="adm-drop" id="rd-drop">
-              <span data-icon="image"></span>
-              <span class="adm-drop-main">Plakat oder Foto hierher ziehen oder <u>auswählen</u></span>
-              <span class="adm-hint">WebP, JPG oder PNG</span>
-              <input type="file" id="f-file" accept="image/*" aria-describedby="rd-imginfo"/>
-            </label>
-            <span class="adm-hint" id="rd-imginfo"></span>
-            <div class="adm-field adm-credit">
-              <label class="adm-label" for="f-credit">Bildnachweis</label>
-              <input class="adm-input" type="text" id="f-credit" placeholder="z. B. © Augustiner Wien, Foto: Max Muster" aria-describedby="f-credit-hint"/>
-              <span class="adm-hint" id="f-credit-hint">Steht auf der Website klein unter dem Bild.</span>
-            </div>
-            <div><button type="button" class="adm-act danger" id="rd-img-remove" data-icon="close" hidden>Bild entfernen</button></div>
-          </div>
-        </div>
-        <div class="adm-grid" style="margin-top:1rem">
-          <div class="adm-field full" role="radiogroup" aria-labelledby="f-bildart-l">
-            <span class="adm-label" id="f-bildart-l">Art des Bildes</span>
-            <div class="adm-choice">
-              <label><input type="radio" name="bildart" value="plakat" checked/><span><b>Plakat</b><span>Lässt sich auf der Seite vergrößern.</span></span></label>
-              <label><input type="radio" name="bildart" value="foto"/><span><b>Foto</b><span>Wird nur angezeigt.</span></span></label>
+      <fieldset class="adm-fs adm-fold-fs">
+        <legend class="visually-hidden">Kopf der Seite</legend>
+        <details class="adm-fold" data-fold="auto">
+          <summary>Kopf der Seite <span class="adm-fold-meta"></span></summary>
+          <div class="adm-fold-body">
+            <div class="adm-grid">
+              <div class="adm-field">
+                <label class="adm-label" for="f-zeile">Zeile über dem Titel</label>
+                <input class="adm-input" type="text" id="f-zeile" placeholder="z. B. Die Bibelrunde"/>
+              </div>
+              <div class="adm-field">
+                <label class="adm-label" for="f-betonung">Betonung im Titel</label>
+                <input class="adm-input" type="text" id="f-betonung" aria-describedby="f-betonung-hint"/>
+                <span class="adm-hint" id="f-betonung-hint">Teil des Namens in Gold-kursiv, z. B. „pur“.</span>
+              </div>
+              <div class="adm-field full">
+                <label class="adm-label" for="f-untertitel">Untertitel</label>
+                <textarea class="adm-input" id="f-untertitel" rows="2"></textarea>
+              </div>
             </div>
           </div>
-          <div class="adm-field full">
-            <label class="adm-label" for="f-alt">Bildbeschreibung <span class="adm-opt">für Menschen, die das Bild nicht sehen</span></label>
-            <input class="adm-input" type="text" id="f-alt" placeholder="z. B. Plakat BIBELpur 2026/27"/>
+        </details>
+      </fieldset>
+
+      <fieldset class="adm-fs adm-fold-fs">
+        <legend class="visually-hidden">Texte</legend>
+        <details class="adm-fold" data-fold="auto">
+          <summary>Texte <span class="adm-fold-meta"></span></summary>
+          <div class="adm-fold-body">
+            <p class="adm-hint adm-fs-lead l">Ein Absatz pro Zeile. Links: <code>[Text](pages/sakramente.html)</code> oder einfach die Adresse; <code>*Wort*</code> wird kursiv.</p>
+            <div class="adm-grid">
+              <div class="adm-field full">
+                <label class="adm-label" for="f-einleitung">Einleitung</label>
+                <textarea class="adm-input" id="f-einleitung" rows="4"></textarea>
+              </div>
+              <div class="adm-field">
+                <label class="adm-label" for="f-sp-label">Hervorgehobener Kasten: Überschrift klein</label>
+                <input class="adm-input" type="text" id="f-sp-label" placeholder="z. B. Thema 2026/27"/>
+              </div>
+              <div class="adm-field">
+                <label class="adm-label" for="f-sp-titel">Titel im Kasten</label>
+                <input class="adm-input" type="text" id="f-sp-titel"/>
+              </div>
+              <div class="adm-field full">
+                <label class="adm-label" for="f-sp-text">Text im Kasten</label>
+                <textarea class="adm-input" id="f-sp-text" rows="3"></textarea>
+              </div>
+              <div class="adm-field full">
+                <label class="adm-label" for="f-text">Weiterer Text</label>
+                <textarea class="adm-input" id="f-text" rows="3"></textarea>
+              </div>
+            </div>
           </div>
-        </div>
+        </details>
+      </fieldset>
+
+
+      <fieldset class="adm-fs adm-fold-fs">
+        <legend class="visually-hidden">Auf einen Blick</legend>
+        <details class="adm-fold" data-fold="auto">
+          <summary>Auf einen Blick <span class="adm-fold-meta"></span></summary>
+          <div class="adm-fold-body">
+            <p class="adm-hint adm-fs-lead l">Zum Beispiel Zeit, Ort, Leitung. Die dritte Spalte erscheint klein darunter.</p>
+            <div id="rd-fakten"></div>
+          </div>
+        </details>
+      </fieldset>
+
+      <fieldset class="adm-fs adm-fold-fs">
+        <legend class="visually-hidden">Kontakt</legend>
+        <details class="adm-fold" data-fold="auto">
+          <summary>Kontakt <span class="adm-fold-meta"></span></summary>
+          <div class="adm-fold-body">
+            <div class="adm-grid">
+              <div class="adm-field">
+                <label class="adm-label" for="f-k-titel">Überschrift</label>
+                <input class="adm-input" type="text" id="f-k-titel" placeholder="Kontakt" data-fold-skip/>
+              </div>
+              <div class="adm-field">
+                <label class="adm-label" for="f-k-text">Wer</label>
+                <input class="adm-input" type="text" id="f-k-text" placeholder="z. B. Pfarre St. Augustin"/>
+              </div>
+              <div class="adm-field">
+                <label class="adm-label" for="f-k-email">E-Mail</label>
+                <input class="adm-input" type="email" id="f-k-email"/>
+              </div>
+              <div class="adm-field">
+                <label class="adm-label" for="f-k-telefon">Telefon</label>
+                <input class="adm-input" type="text" id="f-k-telefon"/>
+              </div>
+              <div class="adm-field full">
+                <label class="adm-label" for="f-k-anschrift">Anschrift</label>
+                <input class="adm-input" type="text" id="f-k-anschrift"/>
+              </div>
+            </div>
+          </div>
+        </details>
+      </fieldset>
+
+      <fieldset class="adm-fs adm-fold-fs">
+        <legend class="visually-hidden">Bild</legend>
+        <details class="adm-fold" data-fold="auto">
+          <summary>Bild <span class="adm-fold-meta"></span></summary>
+          <div class="adm-fold-body">
+            <div class="adm-image">
+              <div class="adm-image-prev" id="rd-prev"></div>
+              <div class="adm-field">
+                <label class="adm-drop" id="rd-drop">
+                  <span data-icon="image"></span>
+                  <span class="adm-drop-main">Plakat oder Foto hierher ziehen oder <u>auswählen</u></span>
+                  <span class="adm-hint">WebP, JPG oder PNG</span>
+                  <input type="file" id="f-file" accept="image/*" aria-describedby="rd-imginfo"/>
+                </label>
+                <span class="adm-hint" id="rd-imginfo"></span>
+                <div class="adm-field adm-credit">
+                  <label class="adm-label" for="f-credit">Bildnachweis</label>
+                  <input class="adm-input" type="text" id="f-credit" placeholder="z. B. © Augustiner Wien, Foto: Max Muster" aria-describedby="f-credit-hint"/>
+                  <span class="adm-hint" id="f-credit-hint">Steht auf der Website klein unter dem Bild.</span>
+                </div>
+                <div><button type="button" class="adm-act danger" id="rd-img-remove" data-icon="close" hidden>Bild entfernen</button></div>
+              </div>
+            </div>
+            <div class="adm-grid adm-mt-10">
+              <div class="adm-field full" role="radiogroup" aria-labelledby="f-bildart-l">
+                <span class="adm-label" id="f-bildart-l">Art des Bildes</span>
+                <div class="adm-choice">
+                  <label><input type="radio" name="bildart" value="plakat" checked/><span><b>Plakat</b><span>Lässt sich auf der Seite vergrößern.</span></span></label>
+                  <label><input type="radio" name="bildart" value="foto"/><span><b>Foto</b><span>Wird nur angezeigt.</span></span></label>
+                </div>
+              </div>
+              <div class="adm-field full">
+                <label class="adm-label" for="f-alt">Bildbeschreibung <span class="adm-opt">für Menschen, die das Bild nicht sehen</span></label>
+                <input class="adm-input" type="text" id="f-alt" placeholder="z. B. Plakat BIBELpur 2026/27"/>
+              </div>
+            </div>
+          </div>
+        </details>
       </fieldset>
     </div>
   </form>

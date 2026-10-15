@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -43,10 +43,10 @@
     </div>
     <a class="adm-act" href="../pages/musik.html#p-repertoire" target="_blank" rel="noopener" data-icon="external">Auf der Website ansehen</a>
   </div>
-  <p class="adm-count" id="rp-count" role="status" style="margin-bottom:1rem"></p>
+  <p class="adm-count adm-mb-10" id="rp-count" role="status"></p>
   <div id="rp-list"><p class="adm-muted">Wird geladen …</p></div>
 
-  <section class="adm-panel" style="margin-top:2.4rem" aria-labelledby="rp-intro-h">
+  <section class="adm-panel adm-mt-24" aria-labelledby="rp-intro-h">
     <h2 class="adm-panel-title" id="rp-intro-h">Einleitung</h2>
     <form id="rp-intro-form" novalidate>
       <div class="adm-field">
@@ -88,7 +88,7 @@
     </fieldset>
     <fieldset class="adm-fs">
       <legend>Werke</legend>
-      <p class="adm-hint" style="margin-bottom:.9rem">Je Zeile ein Werk. Die zweite Spalte ist ein Hinweis, etwa eine Uraufführung in der Augustinerkirche.</p>
+      <p class="adm-hint adm-fs-lead l">Je Zeile ein Werk. Die zweite Spalte ist ein Hinweis, etwa eine Uraufführung in der Augustinerkirche.</p>
       <div id="rp-works"></div>
     </fieldset>
   </form>

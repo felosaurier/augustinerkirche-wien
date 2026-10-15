@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -51,7 +51,7 @@
             <button type="button" class="adm-pw-toggle" aria-label="Passwort anzeigen" aria-pressed="false" data-icon="eye"></button>
           </div>
           <div class="adm-strength" id="pf-meter" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-          <span class="adm-hint" id="pf-hint">Mindestens 8 Zeichen, länger ist besser.</span>
+          <span class="adm-hint" id="pf-hint">Mindestens 12 Zeichen, länger ist besser.</span>
           <div><button type="button" class="adm-list-add" id="pf-suggest" data-icon="dice">Sicheres Passwort vorschlagen</button></div>
         </div>
         <div class="adm-field full">
@@ -59,7 +59,7 @@
           <input class="adm-input" type="password" id="pf-neu2" autocomplete="new-password"/>
         </div>
       </div>
-      <div class="adm-dlg-foot-r" style="margin-top:1rem"><button type="submit" class="btn btn-dark" id="pf-save">Passwort ändern</button></div>
+      <div class="adm-dlg-foot-r adm-mt-10"><button type="submit" class="btn btn-dark" id="pf-save">Passwort ändern</button></div>
     </form>
   </section>
 </main>

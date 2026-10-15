@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Inhalte — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-uebersicht.js" defer></script>
+</head>
+<body class="adm" data-ov-mode="inhalte">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Inhalte</h1>
+      <p class="ph-sub">Alle Texte, Termine und Bilder der Website: Pfarre &amp; Kloster und Kirchenmusik.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-search" data-icon="search">
+      <input type="search" id="ov-search" placeholder="Suchen: Bereich, Stichwort …" aria-label="Bereiche durchsuchen" autocomplete="off"/>
+    </div>
+    <div class="adm-seg" role="group" aria-label="Welche Bereiche anzeigen">
+      <button type="button" class="week-filter-btn active" data-ov-filter="all" aria-pressed="true">Alle</button>
+      <button type="button" class="week-filter-btn" data-ov-filter="pfarre" aria-pressed="false">Pfarre &amp; Kloster</button>
+      <button type="button" class="week-filter-btn" data-ov-filter="musik" aria-pressed="false">Kirchenmusik</button>
+    </div>
+  </div>
+  <p class="adm-count" id="ov-count" role="status"></p>
+
+  <h2 class="visually-hidden">Bereiche</h2>
+  <div id="ov-tiles"><p class="adm-muted">Wird geladen …</p></div>
+
+  <div class="adm-empty" id="ov-empty" hidden>
+    <div class="adm-empty-title">Nichts gefunden</div>
+    <p>Zu dieser Suche gibt es keinen Bereich. Versuche ein anderes Wort oder zeige alle Bereiche.</p>
+    <button type="button" class="btn btn-quiet" id="ov-reset">Alle zeigen</button>
+  </div>
+</main>
+
+</body>
+</html>
