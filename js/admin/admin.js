@@ -384,10 +384,12 @@
       registerFail();
       throw Object.assign(new Error('falsch'), { code: lockLeft() ? 'locked' : 'wrong' });
     }
-    /* Sendet der Webserver den angemeldeten Benutzer, muss der Zugang dazu passen
-       (sonst koennte sich jemand mit fremder Rolle anmelden); ohne Header wie bisher */
+    /* Sendet der Webserver den angemeldeten Benutzer und heisst er wie ein persoenlicher Zugang,
+       muss die Anmeldung dazu passen (sonst koennte sich jemand mit fremder Rolle anmelden).
+       Ein gemeinsamer Server-Zugang (z. B. "admin", den es hier nicht gibt) ist nur die Haustuer:
+       dann entscheidet die Anmeldung hier. Ohne Header wie bisher. */
     await serverMode();
-    if (serverUser && acc.benutzer !== serverUser) {
+    if (serverBinds(accounts) && acc.benutzer !== serverUser) {
       throw Object.assign(new Error('Server-Benutzer'), { code: 'server', serverUser });
     }
     drop(KEY_FAILS);
@@ -410,7 +412,6 @@
     const s = session();
     if (!s) return;
     await serverMode();
-    if (serverUser && s.benutzer !== serverUser) return logout('ungueltig');
     const sources = [() => fetchText(ACCOUNTS)];
     if (folder.state === 'ok') sources.push(() => folder.read(ACCOUNTS));
     let readable = false;
@@ -418,6 +419,7 @@
       try {
         const list = parseAccounts(await src());
         readable = true;
+        if (serverBinds(list) && s.benutzer !== serverUser) return logout('ungueltig');
         const acc = list.find((a) => a.benutzer === s.benutzer);
         if (acc && stampOf(acc) === s.stamp) {
           /* Name, Rolle oder Rechte koennen sich inzwischen geaendert haben */
@@ -572,6 +574,9 @@
   let serverFlag;
   /* Am Server angemeldeter Benutzer (Header X-Aug-Benutzer, nur wenn der Webserver ihn sendet), sonst '' */
   let serverUser = '';
+  /* Ist der Server-Benutzer ein persoenlicher Zugang (gleicher Benutzername)? Dann ist die
+     Anmeldung an ihn gebunden; sonst (gemeinsamer Server-Zugang) gilt er nur als Haustuer */
+  const serverBinds = (list) => !!serverUser && list.some((a) => a.benutzer === serverUser);
   async function serverMode() {
     if (serverFlag === undefined) {
       try {

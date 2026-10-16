@@ -95,6 +95,8 @@ Mit der Verwaltung auf dem Server gibt es **keinen Projektordner** mehr: Sie lie
 
 **a) Benutzer für die Anmeldung am Server** (einer genügt; die Rechte je Person regelt weiter die Verwaltung):
 
+Ein gemeinsamer Server-Zugang (z. B. `admin`) ist nur die „Haustür“: Danach meldet sich jede Person in der Verwaltung mit ihrem eigenen Zugang an. Heißt ein Server-Benutzer dagegen genau wie ein Zugang der Verwaltung (z. B. `patermatthias`), ist die Anmeldung daran gebunden: Wer so am Server angemeldet ist, kommt in der Verwaltung nur mit diesem Zugang hinein.
+
 ```bash
 apt install -y apache2-utils
 htpasswd -B -c /etc/nginx/augustinerkirche.htpasswd redaktion
