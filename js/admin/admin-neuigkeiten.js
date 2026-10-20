@@ -40,10 +40,6 @@
   /* Neueste zuerst; am selben Tag bleibt die bisherige Reihenfolge */
   const sortEntries = (list) => list.sort((a, b) => HD.isoDate(b.Datum).localeCompare(HD.isoDate(a.Datum)));
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-  function longDate(iso) {
-    const dt = HD.dateFromIso(iso);
-    return `${dt.getDate()}. ${HD.MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
-  }
 
   /* ---------- Ziel der Schaltflaeche ---------- */
   const HA_PREFIX = 'pages/hochamt.html?id=';
@@ -392,7 +388,6 @@
           : '<span class="news-noimg"><img src="../assets/logo-gold.png" alt="" width="64" height="64"/></span>') +
         (cat ? `<span class="news-card-cat">${esc(cat)}</span>` : '') +
       '</div><div class="news-card-body">' +
-        `<div class="news-card-date">${HD.isoDate(iso) ? esc(longDate(iso)) : '&nbsp;'}</div>` +
         `<h3 class="news-card-title">${esc($('f-title').value.trim() || 'Titel der Meldung')}</h3>` +
         `<p class="news-card-text">${esc($('f-teaser').value.trim() || 'Hier erscheint der Kurztext.')}</p>` +
         '<span class="link-arr">Mehr erfahren</span>' +

@@ -77,8 +77,7 @@
     return [...live, ...past].slice(0, LATEST);
   }
 
-  const longDate = (e) => `${e.dateObj.getDate()}. ${HD.MONTHS[e.dateObj.getMonth()]} ${e.dateObj.getFullYear()}`;
-  const shortDate = (e) => `${e.dateObj.getDate()}. ${HD.MONTHS[e.dateObj.getMonth()]}`;
+  /* Das Datum einer Meldung wird nirgends angezeigt; es bestimmt nur Reihenfolge, Jahr im Archiv und wie lange sie oben bleibt */
   const pageUrl = (id) => `${location.pathname}?news=${encodeURIComponent(id)}`;
 
   /* Vorschaubild: eigenes Bild, sonst das Plakat (oberer Ausschnitt), sonst das goldene Logo */
@@ -98,7 +97,6 @@
         (e.cat ? `<span class="news-card-cat">${esc(e.cat)}</span>` : '') +
       '</div>' +
       '<div class="news-card-body">' +
-        `<div class="news-card-date">${esc(longDate(e))}</div>` +
         `<h3 class="news-card-title">${esc(e.title)}</h3>` +
         `<p class="news-card-text">${esc(e.teaser)}</p>` +
         '<span class="link-arr">Mehr erfahren</span>' +
@@ -116,7 +114,7 @@
     return `<a class="news-row" href="${esc(pageUrl(e.id))}" data-id="${esc(e.id)}">` +
       `<div class="news-row-img">${thumbHTML(e, 'news-thumb')}</div>` +
       '<div class="news-row-main">' +
-        `<div class="news-row-meta"><span>${esc(shortDate(e))}</span>${e.cat ? `<span class="news-row-cat">${esc(e.cat)}</span>` : ''}</div>` +
+        (e.cat ? `<div class="news-row-meta"><span class="news-row-cat">${esc(e.cat)}</span></div>` : '') +
         `<h3 class="news-row-title">${esc(e.title)}</h3>` +
         `<p class="news-row-text">${esc(e.teaser)}</p>` +
       '</div>' +
@@ -239,7 +237,7 @@
     media.innerHTML = mediaHTML(e);
 
     content.innerHTML =
-      `<div class="nd-meta">${e.cat ? `<span class="nd-cat">${esc(e.cat)}</span>` : ''}<span class="nd-date">${esc(longDate(e))}</span></div>` +
+      (e.cat ? `<div class="nd-meta"><span class="nd-cat">${esc(e.cat)}</span></div>` : '') +
       `<h2 class="nd-title" id="nd-title">${esc(e.title)}</h2>` +
       `<p class="nd-teaser">${esc(e.teaser)}</p>` +
       (e.infos.length ? '<div class="nd-infos">' + e.infos.map((r) =>

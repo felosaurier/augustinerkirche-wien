@@ -499,6 +499,8 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 /* Abschnittskopf: Überschrift links, Verweis rechts */
 .sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.6rem 2rem;margin-bottom:2.2rem}
 .sec-head .s-title{margin-bottom:0}
+/* Kleinere zweite Zeile unter einem Abschnittstitel (Startseite: "Aktuelles / aus der Pfarre …") */
+.s-title-sub{display:block;margin-top:.45rem;font-size:clamp(1.15rem,1.6vw,1.4rem);line-height:1.3;letter-spacing:0;color:var(--text-mid)}
 /* Pfarre & Kloster: zwei Spalten, die Titel tragen den Abschnitt */
 .cards-intro .card-title{margin-bottom:.7rem;font-size:clamp(1.8rem,2.6vw,2.3rem);line-height:1.12}
 /* Startseite Kloster und Pfarre: Knoepfe stehen in beiden Spalten ganz unten auf gleicher Hoehe */
@@ -533,7 +535,6 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .news-noimg{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:var(--blue-deep)}
 .news-noimg img{width:56px;height:56px;opacity:.9}
 .news-card-body{display:flex;flex-direction:column;flex:1;padding-top:1.1rem}
-.news-card-date{margin-bottom:.35rem;font-size:.92rem;font-weight:500;color:var(--gold)}
 .news-card-title{margin-bottom:.5rem;font-family:var(--serif);font-size:1.35rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s;hyphens:auto}
 .news-card:hover .news-card-title{color:var(--gold)}
 .news-card-text{font-size:.98rem;line-height:1.6;color:var(--text-mid);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -759,7 +760,6 @@ html.nd-lock{overflow:hidden}
 .nd-content{padding:3rem 2.6rem 2.4rem;overflow:auto}
 .nd-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;margin-bottom:.8rem}
 .nd-cat{padding:.25rem .65rem;background:var(--blue-deep);color:#fff;font-size:.82rem;font-weight:500}
-.nd-date{font-size:.95rem;font-weight:500;color:var(--gold)}
 .nd-title{margin-bottom:1.2rem;font-family:var(--serif);font-size:clamp(1.9rem,3.2vw,2.5rem);font-weight:500;line-height:1.1;color:var(--blue)}
 .nd-teaser{margin-bottom:1.4rem;font-size:1.06rem;line-height:1.75;color:var(--text-mid)}
 .nd-infos{margin-bottom:1.4rem;border-top:1px solid var(--blue)}
@@ -1377,7 +1377,6 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .news-card-img{flex:none;width:6.5rem}
   .news-card-cat{display:none}
   .news-card-body{padding-top:0;min-width:0}
-  .news-card-date{margin-bottom:.2rem;font-size:.86rem}
   .news-card-title{margin-bottom:.3rem;font-size:1.18rem}
   .news-card-text{font-size:.92rem;line-height:1.5;-webkit-line-clamp:2}
   .news-more{margin-top:1.6rem}
