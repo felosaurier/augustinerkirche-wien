@@ -37,7 +37,7 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 | **Gottesdienste** | Liturgiezeiten, Runden in St. Augustin |
 | **Sakramente** | Taufe, Eucharistie, Firmung, Trauung, Wiedereintritt und mehr |
 | **Kirchenmusik** | Hochämter und Archiv, Chor, Kammerchor, Repertoire des Chores (mit Suche), Orchester, Solisten, Organisten, Orgeln |
-| **Hochamt (Detail)** | Zelebrant, Dirigent, Chor, Orchester, Solisten, Organist und weitere Musik je Termin |
+| **Hochamt (Detail)** | Je Termin in dieser Reihenfolge: Datum und Uhrzeit (mit Ende, wenn im Hinweis „Ende ca. 12:45 Uhr“ steht), Werk, Anlass mit Zelebrant, Musik im Gottesdienst (Spalte Weitere Musik), Ausführende (Chor & Orchester, Solisten „Name \| Stimme“, Orgel, Dirigent), Ort mit Adresse, Bitte um Spende |
 | **Chronik** | Geschichte, Zeitstrahl, Herzgruft, Führungen, Augustinerorden, Mitbrüder |
 | **Aspersdorf** | Pfarre, Pfarrkirche St. Georg, Sakramente, Pfarrfriedhof |
 | **Runden** | Eigene Seiten für Bibelpur, Fensterblick, Fußwallfahrt, Ministranten und weitere Gruppen |

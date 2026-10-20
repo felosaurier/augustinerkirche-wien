@@ -1,8 +1,11 @@
 /* ============================================================
    Augustinerkirche Wien — hochamt-detail.js
    Detailseite eines Hochamts (pages/hochamt.html?id=JJJJ-MM-TT-HHMM).
-   Zeigt Zelebrant, Dirigent, Chor, Orchester, Solisten, Organist
-   und weitere Musik aus data/hochaemter.csv bzw. dem Jahresarchiv.
+   Aus data/hochaemter.csv bzw. dem Jahresarchiv, in dieser Reihenfolge:
+   Datum, liturgischer Tag und Uhrzeit (beides aus dem Hinweis: "Hochfest …",
+   "Ende ca. …"), Werk, Anlass mit
+   Zelebrant, Musik im Gottesdienst (Weitere Musik), Ausfuehrende (Chor und
+   Orchester, Solisten, Organist, Dirigent), Ort, Hinweis, Bitte um Spende.
    Ist eine Meldung (data/news.csv) mit diesem Termin verknuepft
    (Link pages/hochamt.html?id=…), erscheint ihr Plakat daneben.
    Fotos des Termins (data/hochamt-fotos.json, gepflegt in der Verwaltung)
@@ -19,15 +22,71 @@
   /* Adresse ohne Fehler dekodieren (kaputte %-Folgen bleiben unveraendert) */
   const safeDecode = (s) => { try { return decodeURIComponent(s); } catch { return s; } };
   const shortDate = (d) => `${d.getDate()}. ${HD.MONTHS[d.getMonth()]} ${d.getFullYear()}`;
-  const longDate = (e) => `${HD.WEEKDAYS[e.dateObj.getDay()]}, ${shortDate(e.dateObj)}, ${e.time} Uhr`;
 
-  /* Eine Zeile der Besetzung; leere Felder erscheinen gar nicht */
-  function row(label, value) {
-    if (!value || (Array.isArray(value) && !value.length)) return '';
-    const html = Array.isArray(value)
-      ? `<ul>${value.map((v) => `<li>${HD.esc(v)}</li>`).join('')}</ul>`
-      : `<p>${HD.esc(value)}</p>`;
-    return `<div class="hd-row"><div class="hd-label">${label}</div><div class="hd-value">${html}</div></div>`;
+  /* Der Hinweis wird aufgeteilt: "Ende ca. 12:45 Uhr." wird zur Uhrzeit oben, der liturgische
+     Tag ("Hochfest Allerheiligen.", "2. Sonntag nach Weihnachten.") steht oben beim Datum,
+     alles andere (Karten, Eintritt …) bleibt Hinweis unter dem Programm */
+  const END = /Ende\s+(ca\.\s*)?(\d{1,2})[:.](\d{2})\s*(Uhr)?\.?/i;
+  const DAY = /^(Hochfest|Fest|Gedenktag|Christmette|Allerseelen|Allerheiligen|Gründonnerstag|Karfreitag|Osternacht|Pfingst|Palmsonntag|\d+\.\s+\S*sonntag|[A-ZÄÖÜ][a-zäöü]*sonntag)/;
+  function splitNote(note) {
+    const m = END.exec(note);
+    const end = m ? `${m[1] ? 'ca. ' : ''}${m[2].padStart(2, '0')}:${m[3]}` : '';
+    const rest = (m ? note.replace(m[0], '') : note).trim();
+    const days = [];
+    const other = [];
+    for (const s of rest.split(/(?<=\.)\s+/).map((x) => x.trim()).filter(Boolean)) {
+      if (DAY.test(s) && s.length <= 70) days.push(s.replace(/\.$/, ''));
+      else other.push(s);
+    }
+    return { end, day: days.join(' · '), note: other.join(' ') };
+  }
+  /* Sonntag, 1. November 2026 · Hochfest Allerheiligen · 11:00 – ca. 12:45 Uhr
+     (jeder Teil bricht nur als Ganzes um) */
+  const whenHTML = (e, day, end) => [
+    `${HD.WEEKDAYS[e.dateObj.getDay()]}, ${shortDate(e.dateObj)}`,
+    day,
+    `${e.time}${end ? ` – ${end}` : ''} Uhr`
+  ].filter(Boolean).map((p) => `<span class="hd-when-part">${HD.esc(p)}</span>`).join(' · ');
+
+  /* "Miriam Kutrowatz (Sopran)" -> {name, role: "Sopran"}; ohne Klammer die uebergebene Aufgabe */
+  function performer(s, role = '') {
+    const m = /^(.*?)\s*\(([^)]+)\)$/.exec(s);
+    return m ? { name: m[1], role: m[2] } : { name: s, role };
+  }
+  /* "Kammerchor von St. Augustin" + "Orchester von St. Augustin" -> "Kammerchor & Orchester von St. Augustin" */
+  function ensembles(choir, orchestra) {
+    const a = /^(.+?)\s+(von .+)$/.exec(choir);
+    const b = /^(.+?)\s+(von .+)$/.exec(orchestra);
+    if (a && b && a[2] === b[2]) return [`${a[1]} & ${b[1]} ${a[2]}`];
+    return [choir, orchestra].filter(Boolean);
+  }
+  /* "Joseph Haydn (1732-1809): „Harmoniemesse“, …" -> Komponist, Lebensdaten, Werk */
+  function piece(s) {
+    const m = /^([^:(„"]+?)\s*(?:\(([^)]*)\))?\s*:\s*(.+)$/.exec(s);
+    if (!m) return { composer: '', years: '', work: s };
+    return { composer: m[1], years: (m[2] || '').replace(/(\d)-(\d)/g, '$1–$2'), work: m[3] };
+  }
+  /* Augustinerkirche mit Adresse, andere Orte wie eingetragen */
+  const place = (loc) => (/^augustinerkirche$/i.test(loc.trim())
+    ? { name: 'Augustinerkirche', addr: '1010 Wien, Hofburg – Josefsplatz' } : { name: loc, addr: '' });
+  const PIN = '<svg class="hd-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+
+  function musicHTML(lines) {
+    if (!lines.length) return '';
+    return '<section class="hd-sec" aria-labelledby="hd-music-h"><h2 class="hd-sec-title" id="hd-music-h">Musik im Gottesdienst</h2><ul class="hd-music">' +
+      lines.map((l) => {
+        const p = piece(l);
+        return '<li>' + (p.composer
+          ? `<span class="hd-composer">${HD.esc(p.composer)}${p.years ? ` <span class="hd-years">${HD.esc(p.years)}</span>` : ''}</span>` : '') +
+          `<span class="hd-work">${HD.esc(p.work)}</span></li>`;
+      }).join('') + '</ul></section>';
+  }
+  function castHTML(groups, people) {
+    if (!groups.length && !people.length) return '';
+    return '<section class="hd-sec" aria-labelledby="hd-cast-h"><h2 class="hd-sec-title" id="hd-cast-h">Ausführende</h2><ul class="hd-cast">' +
+      groups.map((g) => `<li class="hd-cast-group">${HD.esc(g)}</li>`).join('') +
+      people.map((p) => `<li${p.gap ? ' class="hd-cast-gap"' : ''}><span class="hd-name">${HD.esc(p.name)}</span>${p.role ? `<span class="hd-role">${HD.esc(p.role)}</span>` : ''}</li>`).join('') +
+      '</ul></section>';
   }
 
   function navLink(e, dir) {
@@ -55,27 +114,33 @@
     const upcoming = HD.isUpcoming(e);
     const listHref = `musik.html#${upcoming ? 'p-hochaemter' : 'p-hochaemter-archiv'}`;
 
+    /* Reihenfolge: Datum und Zeit, Werk, Anlass mit Zelebrant (Kopf), dann
+       Musik im Gottesdienst, Ausfuehrende, Ort, Hinweis, Bitte um Spende */
+    const { end, day, note } = splitNote(e.note);
     document.title = `${e.piece || e.type} — ${e.type} — Augustinerkirche Wien`;
-    qs('#hd-type').textContent = e.type;
+    qs('#hd-type').innerHTML = whenHTML(e, day, end);
     qs('#hd-title').textContent = e.piece || e.type;
-    qs('#hd-when').textContent = `${longDate(e)}, ${e.location}`;
+    qs('#hd-when').textContent = e.celebrant ? `${e.type} mit ${e.celebrant}` : e.type;
 
-    const rows =
-      row('Zelebrant', e.celebrant) +
-      row('Dirigent', e.conductor) +
-      row('Chor', e.choir) +
-      row('Orchester', e.orchestra) +
-      row('Solisten', e.soloists) +
-      row('Organist', e.organist) +
-      row('Programm', e.extra) +
-      row('Hinweis', e.note);
+    const music = e.extra.length ? e.extra : (e.piece ? [e.piece] : []);
+    const soloists = e.soloists.map((s) => performer(s));
+    const others = [
+      ...e.organist.map((s) => performer(s, 'Orgel')),
+      ...(e.conductor ? [performer(e.conductor, 'Dirigent')] : [])
+    ];
+    /* Abstand zwischen den Solisten und Orgel/Dirigent */
+    if (soloists.length && others.length) others[0].gap = true;
+    const people = [...soloists, ...others];
+    const program = musicHTML(music) + castHTML(ensembles(e.choir, e.orchestra), people);
+    const where = place(e.location);
 
     body.innerHTML =
-      '<h2 class="s-title">Musikalische Gestaltung</h2>' +
-      (rows
-        ? `<div class="hd-grid">${rows}</div>`
-        : '<p class="s-text">Die Mitwirkenden und das genaue Programm werden noch bekannt gegeben.</p>') +
-      `<p style="margin-top:2rem"><a class="link-arr" href="${listHref}">${upcoming ? 'Alle Hochämter' : 'Zum Archiv'}</a></p>`;
+      (program || '<p class="s-text">Die Mitwirkenden und das genaue Programm werden noch bekannt gegeben.</p>') +
+      `<p class="hd-place">${PIN}<span><strong>${HD.esc(where.name)}</strong>${where.addr ? `<span class="hd-addr">${HD.esc(where.addr)}</span>` : ''}</span></p>` +
+      (note ? `<p class="hd-note"><span class="hd-note-label">Hinweis</span>${HD.esc(note)}</p>` : '') +
+      '<div class="hd-thanks"><p>Dankbar sind wir für Ihre Spende zur Erhaltung der Kirchenmusik!</p>' +
+        '<a class="btn btn-gold hd-thanks-btn" href="musik.html#p-patenschaft">Kirchenmusik unterstützen</a></div>' +
+      `<p class="hd-list-link"><a class="link-arr" href="${listHref}">${upcoming ? 'Alle Hochämter' : 'Zum Archiv'}</a></p>`;
 
     qs('#hd-nav').innerHTML = navLink(entries[idx - 1], 'prev') + navLink(entries[idx + 1], 'next');
 

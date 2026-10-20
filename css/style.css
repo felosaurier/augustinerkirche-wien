@@ -833,16 +833,48 @@ html.nd-lock{overflow:hidden}
 /* ══ HOCHAMT-DETAILSEITE ══ */
 .hd-back{
   display:inline-flex;align-items:center;gap:.55rem;margin-bottom:1.6rem;min-height:2.6rem;padding:.4rem 1rem .4rem .8rem;
-  border:1px solid rgba(255,255,255,.3);border-radius:2px;color:#fff;font-size:.95rem;font-weight:500;text-decoration:none;
+  border:1px solid var(--nav-cta-line);border-radius:2px;color:var(--nav-fg);font-size:.95rem;font-weight:500;text-decoration:none;
   transition:border-color .2s,color .2s;
 }
-.hd-back:hover{border-color:var(--gold-l);color:var(--gold-l)}
+.hd-back:hover{border-color:var(--nav-fg);color:var(--nav-accent)}
 .hd-wrap{max-width:46rem}
-.hd-grid{margin-top:.5rem;border-top:1px solid var(--blue)}
-.hd-row{display:grid;grid-template-columns:10rem minmax(0,1fr);gap:2rem;padding:1.2rem 0;border-bottom:1px solid var(--line)}
-.hd-label{padding-top:.3rem;font-size:.92rem;font-weight:600;color:var(--text-light)}
-.hd-value p,.hd-value li{font-family:var(--serif);font-size:1.3rem;line-height:1.45;color:var(--blue)}
-.hd-value ul{list-style:none}
+/* Programm eines Hochamts: Musik im Gottesdienst (Komponist ueber dem Werk), Ausfuehrende
+   (Namen in einer Spalte, Stimme gleich daneben), Ort mit Symbol, Bitte um Spende als Kasten */
+.hd-sec{margin-bottom:1.8rem}
+.hd-sec-title{display:flex;align-items:center;gap:1rem;margin-bottom:.6rem;font-family:var(--sans);font-size:.95rem;font-weight:600;letter-spacing:.04em;color:var(--gold-text)}
+.hd-sec-title::after{content:'';flex:1;height:1px;background:var(--line)}
+.hd-music{list-style:none}
+.hd-music li{padding:.45rem 0}
+.hd-composer{display:block;font-size:.92rem;font-weight:600;color:var(--gold-text)}
+.hd-years{font-weight:400;color:var(--text-light)}
+.hd-work{display:block;font-family:var(--serif);font-size:1.15rem;line-height:1.4;color:var(--blue)}
+.hd-cast{display:grid;grid-template-columns:fit-content(65%) 1fr;gap:.35rem 2.5rem;list-style:none}
+.hd-cast li{display:contents}
+.hd-cast li.hd-cast-group{display:block;grid-column:1 / -1}
+.hd-cast-group,.hd-name{font-size:1.1rem;line-height:1.45;color:var(--blue)}
+.hd-cast-group+li:not(.hd-cast-group)>span{margin-top:.9rem}
+.hd-cast-group{font-family:var(--serif);font-size:1.15rem}
+.hd-role{align-self:baseline;font-size:1rem;color:var(--text-light)}
+.hd-cast-gap>span{margin-top:.9rem}
+.hd-place{display:flex;align-items:flex-start;gap:.7rem;padding-top:1.2rem;border-top:1px solid var(--line);font-size:1.02rem;line-height:1.5;color:var(--text-mid)}
+.hd-place strong{display:block;font-weight:600;color:var(--blue)}
+.hd-addr{display:block}
+.hd-pin{flex:none;width:1.3rem;height:1.3rem;margin-top:.1rem;fill:none;stroke:var(--gold);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.hd-note{margin-top:1rem;padding:.8rem 1rem;border:1px solid var(--line);font-size:1rem;line-height:1.55;color:var(--text-mid)}
+.hd-note-label{display:block;margin-bottom:.15rem;font-size:.85rem;font-weight:600;letter-spacing:.04em;color:var(--gold-text)}
+.hd-thanks{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem 2rem;margin-top:1.6rem;padding:1.2rem 1.5rem;border-left:3px solid var(--gold);background:var(--bg-warm)}
+.hd-thanks p{flex:1 1 16rem;font-family:var(--serif);font-size:1.22rem;line-height:1.35;color:var(--blue)}
+.hd-thanks-btn::after{content:'\2192';margin-left:.6em;transition:transform .2s var(--ease)}
+.hd-thanks-btn:hover::after{transform:translateX(3px)}
+.hd-list-link{margin-top:1.4rem}
+/* Kopf der Hochamt-Seite: Datum und Uhrzeit etwas groesser als die uebliche Ueberzeile */
+#hd-type{font-size:clamp(1.15rem,1.7vw,1.5rem);line-height:1.4}
+/* Hochamt-Seite: Kopf und Programm enger als die uebrigen Seiten */
+.hd-page .page-hero{padding-top:clamp(1.6rem,3.5vw,2.6rem);padding-bottom:clamp(1.8rem,3.5vw,2.6rem)}
+.hd-page .page-hero .ph-sub{margin-top:.7rem}
+.hd-page .section{padding-top:clamp(2rem,4vw,3rem);padding-bottom:clamp(2rem,4vw,3rem)}
+.hd-page .hd-nav{margin-top:2.5rem}
+.hd-when-part{white-space:nowrap}
 .hd-nav{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--line)}
 .hd-nav-link{display:flex;flex-direction:column;gap:.2rem;padding:1.1rem 1.3rem;border:1px solid var(--line);text-decoration:none;transition:border-color .2s}
 .hd-nav-link:hover{border-color:var(--blue)}
@@ -1337,7 +1369,6 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .g-item img,.g-item a{height:auto}
   .g-item.g-breit,.g-item.g-hoch{grid-column:auto;grid-row:auto}
   /* Handy: Wochentag und Uhrzeit in einer Zeile, darunter die Bezeichnung */
-  .hd-row{grid-template-columns:1fr;gap:.3rem;padding:1.1rem 0}
   .hd-nav{grid-template-columns:1fr}
   .hd-next{text-align:left}
   .kal-select-wrap{display:block}
