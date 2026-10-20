@@ -6,17 +6,17 @@
       {
         "titel": "Medieninhaber, Herausgeber und Redaktion",
         "anker": "medieninhaber",
-        "text": "Augustiner-Vikariat Wien\nAugustinerstraße 3\n1010 Wien, Österreich\nTelefon [+43 (0)1 533 09 47](tel), Fax +43 (0)1 533 09 47 250\n\nIn Zusammenarbeit mit der römisch-katholischen Pfarre St. Augustin und dem Augustinerkonvent Wien, Wien I.\n\n[[offen: Rechtsform und gegebenenfalls Registernummer ergänzen]]"
+        "text": "Augustiner-Vikariat Wien\nAugustinerstraße 3\n1010 Wien, Österreich\nT: [+43 (0)1 533 09 47](tel)\nE: vikariat.wien@augustiner.at\n\nIn Zusammenarbeit mit der röm.-kath. Pfarre St. Augustin und dem Augustinerkloster Wien."
       },
       {
         "titel": "Für den Inhalt verantwortlich",
         "anker": "verantwortlich",
-        "text": "Regionalvikar und Prior P. Mag. Dominic Sadrawetz OSA\nP. Mag. Matthias Schlögl OSA, Pfarrer von St. Augustin\nE-Mail: webmaster@augustiner.at"
+        "text": "P. Mag. Dominic Sadrawetz OSA, Regionalvikar & Prior\nP. Mag. Matthias Schlögl OSA, Pfarrer von St. Augustin\nE: vikariat.wien@augustiner.at"
       },
       {
         "titel": "Kontakt",
         "anker": "kontakt",
-        "text": "| Stelle | Telefon | Fax | E-Mail |\n| Pfarre St. Augustin | [+43 (0)1 533 70 99](tel) | +43 (0)1 533 70 99 350 | pfarre@augustinerkirche.at |\n| Augustinerkloster Wien | [+43 (0)1 533 09 47](tel) | +43 (0)1 533 09 47 150 | augustinerkloster.wien@augustiner.at |\n\n[[kanzlei]]"
+        "text": "| Stelle | Telefon | E-Mail |\n| Pfarre St. Augustin | [+43 (0)1 533 70 99](tel) | pfarre@augustinerkirche.at |\n| Augustinerkloster | [+43 (0)1 533 09 47](tel) | info@augustiner.at |"
       },
       {
         "titel": "Kirchliche Zugehörigkeit",
@@ -31,12 +31,12 @@
       {
         "titel": "Bankverbindungen",
         "anker": "bank",
-        "text": "| Konto | IBAN |\n| Pfarre St. Augustin | AT47 1919 0000 0025 7675 |\n| Augustinerkonvent Wien | AT96 1919 0000 0015 5234 |\n| Mitteilungsblatt | AT18 1919 0003 0015 5231 |\n\nAlle Konten beim Bankhaus Schelhammer & Schattera, BIC BSSWATWW. Spenden für die Kirchenmusik: siehe [Patenschaft St. Augustin](pages/musik.html#p-patenschaft)."
+        "text": "| Konto | IBAN | lautend auf |\n| Pfarre St. Augustin | AT26 3200 0000 1528 9531 | Pfarre St. Augustin |\n| Augustinerkloster | AT34 3200 0000 1525 3594 | Augustinerkonvent Wien |\n| Kirchenmusik | AT85 3200 0000 1525 3743 | Patenschaft St. Augustin |\n| Mitteilungsblatt | AT03 3200 0000 1525 3958 | Kirche am Ort |\n\nAlle Konten bei **Raiffeisenlandesbank NÖ-Wien AG**, BIC **RLNWATWW**."
       },
       {
         "titel": "Konzept, Webdesign und technische Realisierung",
         "anker": "webdesign",
-        "text": "[[offen: Name ergänzen]]"
+        "text": "Felix Horngacher, im Auftrag der Pfarre St. Augustin und des Augustiner-Vikariates Wien\nE: me@horngacher.dev"
       },
       {
         "titel": "Inhalt und Bildnachweis",
