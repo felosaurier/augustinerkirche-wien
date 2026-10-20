@@ -239,8 +239,8 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .hero-sub{max-width:34rem;margin-top:1.6rem;font-size:1.12rem;line-height:1.65;color:var(--nav-fg-soft)}
 .hero-actions{display:flex;flex-wrap:wrap;gap:.8rem 1rem;margin-top:2.2rem}
 /* Pfeil in den Knoepfen unter der Begruessung, rueckt beim Darueberfahren ein Stueck nach rechts */
-.hero-actions .btn::after,.card-actions .btn::after{content:'\2192';margin-left:.6em;transition:transform .2s var(--ease)}
-.hero-actions .btn:hover::after,.card-actions .btn:hover::after{transform:translateX(3px)}
+.hero-actions .btn::after,.card-actions .btn::after,.hs-btn::after{content:'\2192';margin-left:.6em;transition:transform .2s var(--ease)}
+.hero-actions .btn:hover::after,.card-actions .btn:hover::after,.hs-btn:hover::after{transform:translateX(3px)}
 .hero:not(.hero-home) .hero-content{padding-bottom:clamp(3rem,7vh,4.5rem)}
 
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
@@ -476,8 +476,6 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .hs-head{display:flex;flex-direction:column;align-items:flex-start;gap:1rem}
 .hs-tag{font-family:var(--serif);font-weight:500;font-size:clamp(2.1rem,3.6vw,2.9rem);line-height:1.1;letter-spacing:-.01em;color:var(--blue)}
 .hs-note{max-width:20rem;font-size:1.02rem;line-height:1.6;color:var(--text-mid)}
-.hs-all{font-weight:500;color:var(--blue);text-decoration:underline;text-decoration-color:var(--gold-l);text-underline-offset:.3em;transition:color .2s}
-.hs-all:hover{color:var(--gold)}
 .hs-list{border-top:1px solid var(--blue)}
 .hs-item{
   display:grid;grid-template-columns:3.6rem minmax(0,1fr);gap:1.6rem;align-items:center;
@@ -496,6 +494,8 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 
 /* Abschnitt mit Linie nach oben (Aktuelles, Pfarre & Kloster) */
 .section-ruled{border-top:1px solid var(--line)}
+/* Startseite: weniger Abstand zwischen den Abschnitten */
+.home .section,.home .hochamt-strip,.home .herzgruft,.home .contact-strip{padding-top:clamp(2.5rem,4.5vw,4rem);padding-bottom:clamp(2.5rem,4.5vw,4rem)}
 /* Abschnittskopf: Überschrift links, Verweis rechts */
 .sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.6rem 2rem;margin-bottom:2.2rem}
 .sec-head .s-title{margin-bottom:0}
@@ -1227,8 +1227,8 @@ summary.cal-row::-webkit-details-marker{display:none}
 /* ══ BARRIEREFREIHEIT ══ */
 /* Touch: kleine, alleinstehende Links bekommen eine unsichtbar größere Tippfläche */
 @media(pointer:coarse){
-  .link-arr,.hs-all{position:relative}
-  .link-arr::after,.hs-all::after{content:'';position:absolute;inset:-.6rem -.4rem}
+  .link-arr{position:relative}
+  .link-arr::after{content:'';position:absolute;inset:-.6rem -.4rem}
   .f-links{gap:.2rem 1.5rem}
   .f-links a,.f-links .cc-open{display:inline-flex;align-items:center;min-height:2.75rem}
   .cs-val{line-height:2.2}
