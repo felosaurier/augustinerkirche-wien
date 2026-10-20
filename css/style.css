@@ -101,10 +101,12 @@ html[data-thema="kirchenmusik"] nav .nav-logo-img:not(.v){filter:brightness(0)}
 nav .nav-logo-text{color:var(--nav-fg)}
 nav .nav-logo-sub{color:var(--nav-sub)}
 
-.nav-center{display:flex;align-items:stretch;height:100%;margin-left:auto}
-.nav-item{position:relative;display:flex;align-items:center}
+/* Die Aufklappmenues haengen an .nav-center, nicht am einzelnen Titel: so
+   stehen alle an derselben Stelle und sind gleich gross (Hoehe: js/main.js) */
+.nav-center{position:relative;display:flex;align-items:stretch;height:100%;margin-left:auto}
+.nav-item{display:flex;align-items:center}
 .nav-btn{
-  display:flex;align-items:center;gap:.45rem;height:100%;
+  position:relative;display:flex;align-items:center;gap:.45rem;height:100%;
   padding:0 1.05rem;background:none;border:0;cursor:pointer;
   font-family:var(--sans);font-size:1rem;font-weight:500;line-height:1;
   color:var(--nav-fg-soft);white-space:nowrap;transition:color .2s;
@@ -117,8 +119,8 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 
 /* Aufklappmenü: weiße Tafel unter dem Menüpunkt */
 .mega{
-  position:absolute;top:100%;left:0;z-index:400;
-  min-width:15rem;width:max-content;max-width:calc(100vw - 1.5rem);
+  position:absolute;top:100%;right:0;z-index:400;
+  width:36rem;max-width:calc(100vw - 1.5rem);
   /* niedrige Fenster (iPad quer mit Tastatur, kleine Laptops): Menü scrollt
      statt unten abgeschnitten zu werden */
   max-height:calc(100vh - var(--nav-h) - .75rem);max-height:calc(100svh - var(--nav-h) - .75rem);
@@ -132,8 +134,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   transition:opacity .18s,transform .18s var(--ease),visibility 0s linear .18s;
 }
 .nav-item.open .mega{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition-delay:0s}
-#ni-musik .mega,.nav-item:last-child .mega{left:auto;right:0}
-#ni-kirche-menu,#ni-musik-menu,#ni-aug-menu{column-count:2;column-gap:0;min-width:30rem}
+.mega{column-count:2;column-gap:0}
 .mega-group{padding:.35rem 0;break-inside:avoid}
 .mega-group-label{display:block;padding:.3rem 1.5rem .25rem;font-size:.82rem;font-weight:600;color:var(--gold)}
 .mega a{display:block;padding:.38rem 1.5rem;font-size:.98rem;line-height:1.35;color:var(--blue);text-decoration:none;transition:color .15s,background-color .15s}
@@ -211,12 +212,14 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   grid-column:2;grid-row:1;align-self:stretch;
   min-height:100%;
   background-color:var(--blue);background-size:cover;background-position:center;
-  animation:photo-rise 1.4s var(--ease) both;
+  animation:fade-in 1s ease-out both;
 }
 /* Startseite: Foto groesser (Text bleibt links) und mehrere Fotos als Diashow (js/main.js, data/startseite.json) */
 .hero-home{grid-template-columns:minmax(0,1fr) minmax(0,52%)}
-.hero-show{overflow:hidden}
-.hero-slide{position:absolute;inset:0;background-color:var(--blue);background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s ease}
+/* Diashow: keine eigene Flaeche und keine Einblendung, das Foto selbst blendet
+   ein, sobald es geladen ist (sonst erscheint erst eine leere Tafel, dann das Bild) */
+.hero-show{overflow:hidden;background-color:transparent;animation:none}
+.hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s ease}
 .hero-slide.is-on{opacity:1}
 .hero-multi{cursor:pointer}
 .hero-arrow{position:absolute;top:50%;z-index:3;display:grid;place-items:center;width:3rem;height:3rem;margin-top:-1.5rem;padding:0;border:none;border-radius:50%;
@@ -232,12 +235,11 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .hero-img[style*="turm"]{background-position:center 20%}
 .hero-content{grid-column:1;grid-row:1;align-self:end;max-width:46rem;padding:clamp(3rem,8vh,5rem) 0 clamp(3rem,9vh,6rem);animation:fade-in 1s ease-out .3s both}
 .hero-eyebrow{margin-bottom:1.3rem;font-size:1rem;font-weight:500;color:var(--nav-accent)}
-.hero-h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.5rem,4.5vw,4.5rem);line-height:1.05;letter-spacing:-.01em;color:var(--nav-fg);text-wrap:balance}
+.hero-h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.3rem,3.4vw,4.2rem);line-height:1.05;letter-spacing:-.01em;color:var(--nav-fg);text-wrap:balance}
 .hero-sub{max-width:34rem;margin-top:1.6rem;font-size:1.12rem;line-height:1.65;color:var(--nav-fg-soft)}
 .hero-actions{display:flex;flex-wrap:wrap;gap:.8rem 1rem;margin-top:2.2rem}
 .hero:not(.hero-home) .hero-content{padding-bottom:clamp(3rem,7vh,4.5rem)}
 
-@keyframes photo-rise{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0)}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
 
 /* Kopfbereich der Unterseiten: Marine, Titel in Bodoni */
@@ -345,6 +347,9 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 
 /* ══ TEXTBLÖCKE (früher Karten): Linie oben statt Kasten ══ */
 .cards-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2.5rem 3rem}
+/* Seite Augustinerkirche: drei Bereiche nebeneinander, je mit ihren Unterseiten */
+.cards-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));gap:2.5rem 3rem}
+.card-links{display:flex;flex-direction:column;gap:.55rem;margin-top:1.1rem;list-style:none}
 .cards-stack{display:flex;flex-direction:column;max-width:46rem}
 .card{display:block;padding:1.4rem 0 1.6rem;border-top:1px solid var(--blue);color:inherit;text-decoration:none}
 .cards-stack .card{border-top-color:var(--line)}

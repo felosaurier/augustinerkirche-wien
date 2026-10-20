@@ -1,0 +1,13 @@
+{
+  "sekunden": 6,
+  "bilder": [
+    {
+      "titel": "Turm der Wiener Augustinerkirche",
+      "bild": "assets/img/startseite/turm-der-wiener-augustinerkirche.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 14%"
+    }
+  ],
+  "frueher": []
+}

@@ -49,24 +49,77 @@
     if (shift) mega.style.translate = `${Math.round(shift)}px 0`;
   }
 
+  /* ---------- Titel fuehren zu ihrer Titelseite ----------
+     Ein Klick auf Augustinerkirche, Kirchenmusik oder Augustiner oeffnet zuerst
+     die Titelseite (data-href) und dort das Menue dieses Titels. Auf der
+     Titelseite selbst klappt der Titel nur sein Menue auf und zu. */
+  const MENU_KEY = 'menue-nach-titel';
+  const pagePath = (p) => p.replace(/\/index\.html$/, '/');
+
+  function isTitlePage(btn) {
+    const href = btn.dataset.href;
+    return !href || pagePath(new URL(href, location.href).pathname) === pagePath(location.pathname);
+  }
+
+  /* true, wenn zur Titelseite gewechselt wird */
+  function goToTitlePage(btn, itemId) {
+    if (isTitlePage(btn)) return false;
+    try { sessionStorage.setItem(MENU_KEY, itemId); } catch { /* ohne Speicher nur wechseln */ }
+    location.href = btn.dataset.href;
+    return true;
+  }
+
+  function openDropdown(item) {
+    const btn = qs('.nav-btn', item);
+    item.classList.add('open');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+    fitDropdown(item);
+  }
+
+  let openMobileSection = null;
+
+  function openMenuAfterTitle() {
+    let id = null;
+    try {
+      id = sessionStorage.getItem(MENU_KEY);
+      sessionStorage.removeItem(MENU_KEY);
+    } catch { return; }
+    const item = id && document.getElementById(id);
+    if (!item || !item.classList.contains('nav-item')) return;
+    if (mobileNavQuery.matches) {
+      if (openMobileSection) openMobileSection(id);
+    } else {
+      openDropdown(item);
+    }
+  }
+
+  /* Alle Aufklappmenues so hoch wie das laengste, damit sie beim
+     Durchklicken dieselbe Form haben (Breite und Lage: style.css) */
+  function equalizeDropdowns() {
+    const megas = qsa('.nav-center .mega');
+    for (const m of megas) m.style.minHeight = '';
+    const h = Math.max(0, ...megas.map((m) => m.offsetHeight));
+    for (const m of megas) m.style.minHeight = `${h}px`;
+  }
+
   function initDropdowns() {
     const nav = qs('nav');
     if (!nav) return;
+    equalizeDropdowns();
+    if (document.fonts) document.fonts.ready.then(equalizeDropdowns);
 
     nav.addEventListener('click', (e) => {
       const btn = e.target.closest('.nav-btn');
       const item = btn && btn.closest('.nav-item');
       if (!item) return;
+      if (goToTitlePage(btn, item.id)) return;
       const wasOpen = item.classList.contains('open');
       closeAllDropdowns();
-      if (!wasOpen) {
-        item.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-        fitDropdown(item);
-      }
+      if (!wasOpen) openDropdown(item);
     });
 
     window.addEventListener('resize', () => {
+      equalizeDropdowns();
       const open = qs('.nav-item.open');
       if (open) fitDropdown(open);
     });
@@ -114,7 +167,7 @@
       const btn = qs('.nav-btn', item);
       const id = `mob-${item.id}`;
       html += `<div class="mob-sec" data-item="${escHTML(item.id)}">` +
-        `<button type="button" class="mob-sec-btn" aria-expanded="false" aria-controls="${id}">` +
+        `<button type="button" class="mob-sec-btn"${btn.dataset.href ? ` data-href="${escHTML(btn.dataset.href)}"` : ''} aria-expanded="false" aria-controls="${id}">` +
         `${escHTML(btn.textContent.trim())}${CHEVRON}</button><div class="mob-sec-panel" id="${id}" hidden>`;
       for (const group of qsa('.mega-group', item)) {
         const label = qs('.mega-group-label', group);
@@ -146,10 +199,11 @@
       if (!open) return;
       /* Der Bereich der aktuellen Seite ist beim Oeffnen schon aufgeklappt */
       if (!qs('.mob-sec-btn[aria-expanded="true"]', menu)) {
-        const sec = qsa('.mob-sec', menu).find((el) => {
+        const secs = qsa('.mob-sec', menu);
+        const sec = secs.find((el) => {
           const item = document.getElementById(el.dataset.item);
-          return qs('.mob-sub.current', el) || (item && qs('.nav-btn.current', item));
-        });
+          return item && qs('.nav-btn.current', item);
+        }) || secs.find((el) => qs('.mob-sub.current', el));
         if (sec) setSection(qs('.mob-sec-btn', sec), true);
       }
       menu.scrollTop = 0;
@@ -158,9 +212,18 @@
     setOpen(false);
     burger.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
 
+    /* Nach dem Wechsel auf eine Titelseite: Menue offen, nur dieser Titel aufgeklappt */
+    openMobileSection = (itemId) => {
+      for (const b of qsa('.mob-sec-btn', menu)) {
+        setSection(b, b.closest('.mob-sec').dataset.item === itemId);
+      }
+      setOpen(true);
+    };
+
     menu.addEventListener('click', (e) => {
       const secBtn = e.target.closest('.mob-sec-btn');
       if (secBtn) {
+        if (goToTitlePage(secBtn, secBtn.closest('.mob-sec').dataset.item)) return;
         setSection(secBtn, secBtn.getAttribute('aria-expanded') !== 'true');
         return;
       }
@@ -400,6 +463,10 @@
     const activePane = qs('.tab-pane.active');
     /* Startseite: Sprungmarken wie index.html#pfarre machen keinen Bereich zum aktuellen */
     if (current === 'index.html') return;
+    /* Auf einer Titelseite gilt nur ihr Titel als aktuell, auch wenn ein anderes
+       Menue (z. B. Hochaemter unter Augustinerkirche) auf diese Seite zeigt */
+    const titleBtn = qsa('.nav-btn[data-href]').find(isTitlePage);
+    if (titleBtn) titleBtn.classList.add('current');
     for (const a of qsa('.mega a, .mob-sub')) {
       const [href, hash] = (a.getAttribute('href') || '').split('#');
       const page = href.split('/').pop();
@@ -410,7 +477,7 @@
       else a.removeAttribute('aria-current');
       const navItem = a.closest('.nav-item');
       const btn = navItem && qs('.nav-btn', navItem);
-      if (btn && onPage) btn.classList.add('current');
+      if (btn && onPage && !titleBtn) btn.classList.add('current');
     }
   }
 
@@ -845,6 +912,7 @@
     initBanner();
     initQuotes();
     markCurrentNav();
+    openMenuAfterTitle();
 
     holdHashTarget();
     bleedBands();

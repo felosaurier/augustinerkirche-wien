@@ -2,12 +2,13 @@
    Augustinerkirche Wien — thema.js
    Farben der Titelzeile und Logo je Thema (Hauptseite), gepflegt in der
    Verwaltung unter Einstellungen → Farben & Logo, gespeichert in data/themen.json:
-   {themen: {augustinerkirche|kirchenmusik|augustiner|aspersdorf:
+   {themen: {startseite|augustinerkirche|kirchenmusik|augustiner|aspersdorf:
      {leiste: "#rrggbb", schrift: "auto"|"hell"|"dunkel", logo: "gold"|"weiss"|…,
       name: "Augustinerkirche Wien", untertitel: "Pfarre & Kloster St. Augustin"}}}
    (name und untertitel leer: es bleibt der Text der Seite)
    Welches Thema eine Seite hat, steht in <html data-thema="…"> (ohne Angabe:
-   augustinerkirche). Wird im <head> geladen: zuerst gilt der zuletzt gesehene
+   augustinerkirche; die Startseite hat data-thema="startseite" und nimmt ohne eigenen
+   Eintrag den der Augustinerkirche). Wird im <head> geladen: zuerst gilt der zuletzt gesehene
    Stand (Browser-Speicher), dann der aus der Datei; so flackert die Leiste nicht.
    Logos: assets/logo/logo-<variante>.png.
    Stellt window.AugThema bereit (auch fuer die Vorschau in der Verwaltung).
@@ -19,7 +20,7 @@
   const script = d.currentScript;
   const ROOT = script ? new URL('..', script.src).href : '/';
   const KEY = 'aug-themen';
-  const THEMEN = ['augustinerkirche', 'kirchenmusik', 'augustiner', 'aspersdorf'];
+  const THEMEN = ['startseite', 'augustinerkirche', 'kirchenmusik', 'augustiner', 'aspersdorf'];
   const LOGOS = ['gold', 'gold-dunkel', 'hellgold', 'weiss', 'schwarz', 'marine', 'bordeaux', 'tannengruen', 'gruen'];
   const STANDARD = { leiste: '#10192e', schrift: 'auto', logo: 'gold', name: '', untertitel: '' };
   const NAME = 'Augustinerkirche Wien';
@@ -100,13 +101,15 @@
   }
 
   const thema = THEMEN.includes(html.dataset.thema) ? html.dataset.thema : 'augustinerkirche';
-  w.AugThema = { THEMEN, LOGOS, STANDARD, NAME, UNTERTITEL, clean, vars, logoUrl, isLight, contrast, thema };
+  /* Eintrag eines Themas; die Startseite hatte frueher keinen eigenen */
+  const pick = (all, k) => all[k] || (k === 'startseite' ? all.augustinerkirche : null);
+  w.AugThema = { THEMEN, LOGOS, STANDARD, NAME, UNTERTITEL, clean, vars, logoUrl, isLight, contrast, thema, pick };
   /* Die Verwaltung braucht nur die Hilfen oben */
   if (html.dataset.thema === 'keins') return;
 
   try {
     const cached = JSON.parse(w.localStorage.getItem(KEY) || 'null');
-    if (cached && cached[thema]) apply(cached[thema]);
+    if (cached && pick(cached, thema)) apply(pick(cached, thema));
   } catch { /* kein Speicher: dann erst mit der Datei */ }
   d.addEventListener('DOMContentLoaded', setLogo);
 
@@ -116,7 +119,7 @@
       const all = data && data.themen;
       if (!all || typeof all !== 'object') return;
       try { w.localStorage.setItem(KEY, JSON.stringify(all)); } catch { /* egal */ }
-      apply(all[thema] || STANDARD);
+      apply(pick(all, thema) || STANDARD);
     })
     .catch(() => { /* ohne Datei bleibt die Titelzeile, wie sie ist */ });
 })(window, document);

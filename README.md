@@ -32,6 +32,7 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 | Seite | Inhalt |
 |---|---|
 | **Startseite** | Aktuelles, Identität von Pfarre und Kloster, Herzgruft, die nächsten Hochämter |
+| **Augustinerkirche** | Titelseite des Menüpunkts Augustinerkirche (`pages/augustinerkirche.html`): Begrüßung, die drei Bereiche Kloster & Pfarre, Gottesdienste & Gemeindeleben und Die Augustinerkirche mit ihren Unterseiten, Herzgruft, Kontakt |
 | **Kalender** | Alle Termine von St. Augustin: Hochämter (Kreuz, Gold) getrennt von den Gottesdiensten (Heilige Messen, Kreis, Bordeaux), Konzerte, die regelmäßigen Messen aus dem Wochenplan (ein Jahr voraus; ausgefallene bleiben durchgestrichen stehen), Termine der Runden, eigene Termine wie Ausflüge und Feste; Monatsblatt mit Punkten je Gruppe, Filter, im laufenden Monat ab heute. Umschaltbar auf den **Wochenüberblick** (`kalender.html#woche`, im Menü unter Kalender): eine Kalenderwoche mit allen sieben Tagen, Woche per Pfeil wählen (vier Wochen zurück, ein Jahr voraus, „Zur aktuellen Woche“), Filter nach Wochentag |
 | **Gottesdienste** | Liturgiezeiten, Runden in St. Augustin |
 | **Sakramente** | Taufe, Eucharistie, Firmung, Trauung, Wiedereintritt und mehr |
@@ -53,7 +54,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 |---|---|
 | **Übersicht** | Begrüßung mit Schnellzugriff (Neue Meldung, Neues Hochamt, Neuer Termin); „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel, Runden ohne Termine, Wochenkalender nicht für die nächste Woche eingetragen) darunter **alle Bereiche** als kompakte Liste in den Gruppen der Seitenleiste, eine Zeile je Bereich mit Stand, Hinweis (z. B. „14 ohne Foto“, „Nur bis … eingetragen“, „3 Stellen noch offen“) und Schnellzugriff. Ganz unten „Zuletzt geändert“: nur die eigenen Änderungen, nach Tagen gruppiert (Heute, Gestern …), je Eintrag aufklappbar, was sich genau geändert hat; mit Projektordner oder Server von allen Geräten (aus `admin/protokoll.json`), sonst von diesem Gerät. Die frühere Seite `inhalte.html` leitet hierher weiter |
 | **Hochämter** | Fotos je Termin (mehrere, mit Beschreibung und Bildnachweis; erscheinen neben dem Programm, wo sonst das Plakat steht; gibt es ein Plakat, stehen sie darunter); Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
-| **Titelfotos** (Einstellungen) | Titelfotos im Vollbild-Start der vier Hauptseiten, oben das Thema wählen (Augustinerkirche = Startseite, Kirchenmusik, Augustiner, Aspersdorf; Fotos der anderen Themen lassen sich wieder verwenden): Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
+| **Titelfotos** (Einstellungen) | Titelfotos im Vollbild-Start der Hauptseiten, oben das Thema wählen (Startseite, Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf; Fotos der anderen Themen lassen sich wieder verwenden): Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender; derselbe Termin an mehreren Tagen auf einmal (Weitere Tage) |
 | **Regelmäßige Termine** | Alles, was jede Woche gleich ist: Messen, Tagzeitenliturgie, Kanzleistunden, die Führung nach dem Hochamt (je Termin Wochentag, Uhrzeit oder „anschließend“, Kategorie im Kalender: Gottesdienst, Veranstaltung oder keine; optional „Gilt von … bis …“ Monat; Gottesdienste auch unter Liturgie-Zeiten); „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit nichts stattfindet); „Entfällt“ (fällt an einem Tag etwas aus, bleibt es im Kalender durchgestrichen mit Grund stehen) |
@@ -304,9 +305,9 @@ data/
   rundgang.json               Bilder des Kirchenrundgangs (Chronik → Rundgang)
   startseite.json             Titelfotos der Startseite (Diashow, Wechselzeit)
   sprueche.json               Sprüche für die Zitat-Bänder (Text, Quelle, Wechselzeit)
-  themen.json                 Farbe der Titelzeile, Schrift und Logo je Hauptseite (Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf)
-  startseite-kirchenmusik.json, startseite-augustiner.json, startseite-aspersdorf.json
-                              Titelfotos der Hauptseiten Kirchenmusik, Augustiner, Aspersdorf (gleicher Aufbau)
+  themen.json                 Farbe der Titelzeile, Schrift und Logo je Hauptseite (Startseite, Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf)
+  startseite-augustinerkirche.json, startseite-kirchenmusik.json, startseite-augustiner.json, startseite-aspersdorf.json
+                              Titelfotos der Hauptseiten Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf (gleicher Aufbau)
   personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten
   hochamt-fotos.json          Fotos je Hochamt (Kennung → Bilder), Bilder in assets/img/hochaemter/<Kennung>/
   kontakt.json                Adresse, Telefon, E-Mail, Öffnungszeiten der Pfarrkanzlei

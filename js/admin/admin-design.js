@@ -16,7 +16,8 @@
   const PATH = 'data/themen.json';
 
   const INFO = {
-    augustinerkirche: { label: 'Augustinerkirche', seiten: 'Startseite und alle übrigen Seiten (Pfarre, Gottesdienste, Kalender …)', href: '../index.html' },
+    startseite: { label: 'Startseite', seiten: 'Startseite', href: '../index.html' },
+    augustinerkirche: { label: 'Augustinerkirche', seiten: 'Seite Augustinerkirche und alle übrigen Seiten (Pfarre, Gottesdienste, Kalender …)', href: '../pages/augustinerkirche.html' },
     kirchenmusik: { label: 'Kirchenmusik', seiten: 'Seite Kirchenmusik und die Seiten der einzelnen Hochämter', href: '../pages/musik.html' },
     augustiner: { label: 'Augustiner', seiten: 'Seite Augustiner', href: '../pages/augustiner.html' },
     aspersdorf: { label: 'Aspersdorf', seiten: 'Seite Aspersdorf', href: '../pages/aspersdorf.html' }
@@ -41,7 +42,7 @@
         return;
       }
     }
-    data = Object.fromEntries(T.THEMEN.map((k) => [k, T.clean(all[k] || T.STANDARD)]));
+    data = Object.fromEntries(T.THEMEN.map((k) => [k, T.clean(T.pick(all, k) || T.STANDARD)]));
     render();
     snap = JSON.stringify(data);
     state();

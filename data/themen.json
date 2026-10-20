@@ -1,5 +1,12 @@
 {
   "themen": {
+    "startseite": {
+      "leiste": "#10192e",
+      "schrift": "auto",
+      "logo": "gold",
+      "name": "",
+      "untertitel": ""
+    },
     "augustinerkirche": {
       "leiste": "#10192e",
       "schrift": "auto",
@@ -8,24 +15,24 @@
       "untertitel": ""
     },
     "kirchenmusik": {
-      "leiste": "#c9a24d",
+      "leiste": "#e9d9ad",
       "schrift": "auto",
-      "logo": "marine",
+      "logo": "gold-dunkel",
       "name": "Kirchenmusik von St.Augustin",
       "untertitel": ""
     },
     "augustiner": {
-      "leiste": "#10192e",
+      "leiste": "#6e1f2b",
       "schrift": "auto",
       "logo": "gold",
       "name": "",
       "untertitel": ""
     },
     "aspersdorf": {
-      "leiste": "#10192e",
+      "leiste": "#400080",
       "schrift": "auto",
-      "logo": "gold",
-      "name": "",
+      "logo": "weiss",
+      "name": "Pfarre Aspersdorf",
       "untertitel": ""
     }
   }

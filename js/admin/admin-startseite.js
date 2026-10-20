@@ -1,7 +1,7 @@
 /* ============================================================
    Augustinerkirche Wien — admin-startseite.js
    Titelfotos im Vollbild-Start der Hauptseiten pflegen (admin/startseite.html), je Thema
-   eine Datei (THEMES: Augustinerkirche = Startseite data/startseite.json, Kirchenmusik,
+   eine Datei (THEMES: Startseite = data/startseite.json, Augustinerkirche, Kirchenmusik,
    Augustiner, Aspersdorf = data/startseite-<thema>.json):
    {sekunden, bilder: [{titel, bild, breite, hoehe, ausschnitt ("x% y%")}], frueher: [wie bilder]}.
    Ein Foto steht still, mehrere wechseln nacheinander (js/main.js). Fotos der anderen
@@ -18,7 +18,8 @@
   const { $, esc, icon } = A;
   /* Themen mit eigener Hauptseite (spaeter eigene Domains); leer: was die Seite ohne eigene Fotos zeigt */
   const THEMES = [
-    { key: 'augustinerkirche', label: 'Augustinerkirche', path: 'data/startseite.json', seite: '../index.html', name: 'Startseite', leer: 'den Kirchturm' },
+    { key: 'startseite', label: 'Startseite', path: 'data/startseite.json', seite: '../index.html', name: 'Startseite', leer: 'den Kirchturm' },
+    { key: 'augustinerkirche', label: 'Augustinerkirche', path: 'data/startseite-augustinerkirche.json', seite: '../pages/augustinerkirche.html', name: 'Seite Augustinerkirche', leer: 'den Kirchturm' },
     { key: 'kirchenmusik', label: 'Kirchenmusik', path: 'data/startseite-kirchenmusik.json', seite: '../pages/musik.html', name: 'Seite Kirchenmusik', leer: 'den Innenraum der Kirche' },
     { key: 'augustiner', label: 'Augustiner', path: 'data/startseite-augustiner.json', seite: '../pages/augustiner.html', name: 'Seite Augustiner', leer: 'die Wiener Augustiner' },
     { key: 'aspersdorf', label: 'Aspersdorf', path: 'data/startseite-aspersdorf.json', seite: '../pages/aspersdorf.html', name: 'Seite Aspersdorf', leer: 'die Pfarrkirche St. Georg' }

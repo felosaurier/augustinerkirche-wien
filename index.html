@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-thema="startseite">
 <head>
 <meta charset="UTF-8"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com/gtag/; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
@@ -31,119 +31,85 @@
 
   <div class="nav-center">
     <div class="nav-item" id="ni-kirche">
-      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-kirche-menu">
+      <button type="button" class="nav-btn" data-href="pages/augustinerkirche.html" aria-expanded="false" aria-controls="ni-kirche-menu">
         Augustinerkirche
         <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
       <div class="mega" id="ni-kirche-menu">
         <div class="mega-group">
-          <span class="mega-group-label">Pfarre &amp; Kloster</span>
-          <a href="pages/pfarre.html">Pfarre St. Augustin</a>
+          <span class="mega-group-label">Kloster &amp; Pfarre</span>
           <a href="index.html#kloster">Augustinerkloster</a>
+          <a href="pages/pfarre.html">Pfarre St. Augustin</a>
         </div>
         <div class="mega-group">
-          <span class="mega-group-label">Gottesdienst &amp; Leben</span>
-          <a href="pages/kalender.html">Kalender</a>
-          <a href="pages/kalender.html#woche">Wochenüberblick</a>
-          <a href="pages/gottesdienste.html">Gottesdienste</a>
+          <span class="mega-group-label">Gottesdienste &amp; Gemeindeleben</span>
+          <a href="pages/gottesdienste.html#p-zeiten">Gottesdienstzeiten</a>
+          <a href="pages/kalender.html#woche">Wochenkalender</a>
+          <a href="pages/musik.html#p-hochaemter">Hochämter</a>
           <a href="pages/gottesdienste.html#p-runden">Runden in St. Augustin</a>
           <a href="pages/sakramente.html">Sakramente</a>
           <a href="pages/sakramente.html#p-wiedereintritt">Wiedereintritt</a>
         </div>
         <div class="mega-group">
-          <span class="mega-group-label">Die Kirche</span>
-          <a href="pages/chronik.html#p-geschichte">Geschichte</a>
+          <span class="mega-group-label">Augustinerkirche</span>
+          <a href="pages/chronik.html#p-geschichte">Geschichtliches</a>
           <a href="pages/chronik.html#p-fuehrungen">Führungen</a>
-          <a href="pages/chronik.html#p-rundgang">Rundgang</a>
         </div>
       </div>
     </div>
 
     <div class="nav-item" id="ni-musik">
-      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-musik-menu">
+      <button type="button" class="nav-btn" data-href="pages/musik.html" aria-expanded="false" aria-controls="ni-musik-menu">
         Kirchenmusik
         <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
       <div class="mega" id="ni-musik-menu">
         <div class="mega-group">
-          <span class="mega-group-label">Veranstaltungen</span>
+          <span class="mega-group-label">Kirchenmusik</span>
           <a href="pages/musik.html#p-hochaemter">Hochämter</a>
-          <a href="pages/musik.html#p-hochaemter-archiv">Vergangene Hochämter</a>
+          <a href="pages/musik.html#p-hochaemter-archiv">Hochämter-Archiv</a>
         </div>
         <div class="mega-group">
-          <span class="mega-group-label">Ensemble</span>
-          <a href="pages/musik.html#p-chor">Chor von St. Augustin</a>
-          <a href="pages/musik.html#p-kammerchor">Kammerchor</a>
-          <a href="pages/musik.html#p-repertoire">Repertoire</a>
-          <a href="pages/musik.html#p-solisten">Solisten</a>
-          <a href="pages/musik.html#p-orchester">Orchester</a>
-        </div>
-        <div class="mega-group">
-          <span class="mega-group-label">Leitung &amp; Instrumente</span>
-          <a href="pages/musik.html#p-leitung">Leitung</a>
+          <span class="mega-group-label">Personen</span>
+          <a href="pages/musik.html#p-leitung">Kirchenmusikdirektor</a>
           <a href="pages/musik.html#p-organisten">Organisten</a>
-          <a href="pages/musik.html#p-gastdirigenten">Gastdirigenten</a>
-          <a href="pages/musik.html#p-orgeln">Orgeln in St. Augustin</a>
+          <a href="pages/musik.html#p-chor">Chor &amp; Orchester von St. Augustin</a>
         </div>
         <div class="mega-group">
           <span class="mega-group-label">Förderung</span>
-          <a href="pages/musik.html#p-patenschaft">Patenschaft St. Augustin</a>
-          <a href="pages/musik.html#p-cds">CDs von St. Augustin</a>
+          <a href="pages/musik.html#p-patenschaft">Patenschaftsverein</a>
         </div>
       </div>
     </div>
 
     <div class="nav-item" id="ni-aug">
-      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-aug-menu">
+      <button type="button" class="nav-btn" data-href="pages/augustiner.html" aria-expanded="false" aria-controls="ni-aug-menu">
         Augustiner
         <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
       </button>
       <div class="mega" id="ni-aug-menu">
         <div class="mega-group">
-          <span class="mega-group-label">Hl. Augustinus</span>
-          <a href="pages/augustiner.html#p-augustinus">Leben und Zeittafel</a>
-          <a href="pages/augustiner.html#p-regel">Die Augustinusregel</a>
-          <a href="pages/augustiner.html#p-spiritualitaet">Spiritualität</a>
-          <a href="pages/augustiner.html#p-forschung">Augustinus-Forschung</a>
-        </div>
-        <div class="mega-group">
-          <span class="mega-group-label">Der Augustinerorden</span>
-          <a href="pages/augustiner.html#p-orden">Geschichte des Ordens</a>
-          <a href="pages/augustiner.html#p-ordensheilige">Ordensheilige</a>
-          <a href="pages/augustiner.html#p-bedeutende">Bedeutende Augustiner</a>
+          <span class="mega-group-label">Augustiner-Vikariat Wien</span>
+          <a href="pages/augustiner.html#p-wien">Augustiner in Wien</a>
           <a href="pages/augustiner.html#p-berufung">Augustiner werden</a>
         </div>
         <div class="mega-group">
-          <span class="mega-group-label">In Österreich</span>
-          <a href="pages/augustiner.html#p-vikariat">Vikariat Wien</a>
-          <a href="pages/augustiner.html#p-wien">Die Augustiner in Wien</a>
-          <a href="pages/augustiner.html#p-links">Links</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav-item" id="ni-aspersdorf">
-      <button type="button" class="nav-btn" aria-expanded="false" aria-controls="ni-aspersdorf-menu">
-        Aspersdorf
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
-      </button>
-      <div class="mega" id="ni-aspersdorf-menu">
-        <div class="mega-group">
-          <span class="mega-group-label">Pfarre Aspersdorf</span>
-          <a href="pages/aspersdorf.html#p-leitung">Leitung</a>
-          <a href="pages/aspersdorf.html#p-kirche">Pfarrkirche St. Georg</a>
-          <a href="pages/aspersdorf.html#p-gottesdienste">Gottesdienste &amp; Kalender</a>
+          <span class="mega-group-label">Augustinerorden</span>
+          <a href="pages/augustiner.html#p-orden">Geschichte des Ordens</a>
+          <a href="pages/augustiner.html#p-spiritualitaet">Spiritualität</a>
+          <a href="pages/augustiner.html#p-ordensheilige">Ordensheilige</a>
+          <a href="pages/augustiner.html#p-bedeutende">Bedeutende Augustiner</a>
+          <a href="pages/augustiner.html#p-leo">Papst Leo XIV.</a>
         </div>
         <div class="mega-group">
-          <span class="mega-group-label">Sakramente &amp; Pfarrleben</span>
-          <a href="pages/aspersdorf.html#p-sakramente">Sakramente</a>
-          <a href="pages/aspersdorf.html#p-wiedereintritt">Wiedereintritt</a>
-          <a href="pages/aspersdorf.html#p-dienste">Dienste &amp; Mitarbeiter</a>
-          <a href="pages/aspersdorf.html#p-frauenbewegung">Katholische Frauenbewegung</a>
+          <span class="mega-group-label">Hl. Augustinus</span>
+          <a href="pages/augustiner.html#p-augustinus">Leben &amp; Zeittafel</a>
+          <a href="pages/augustiner.html#p-regel">Augustinusregel</a>
         </div>
         <div class="mega-group">
-          <span class="mega-group-label">Friedhof</span>
-          <a href="pages/aspersdorf.html#p-friedhof">Pfarrfriedhof</a>
+          <span class="mega-group-label">Pfarren von Augustinern betreut</span>
+          <a href="pages/augustinerkirche.html">Augustinerkirche Wien</a>
+          <a href="pages/aspersdorf.html">Pfarre St. Georg, Aspersdorf</a>
         </div>
       </div>
     </div>
@@ -166,8 +132,9 @@
     <noscript><div class="hero-slide is-on" style="background-image:url('assets/img/kirche/turm.webp');background-position:50% 20%"></div></noscript>
   </div>
   <div class="hero-content">
-    <h1 class="hero-h1">Ein Ort der Stille<br>und lebendigen Musik</h1>
-    <p class="hero-sub">Die Augustinerkirche Wien — Hofpfarrkirche der Habsburger, heute lebendige Pfarre und Heimat einer der bedeutendsten Kirchenmusiktraditionen Wiens.</p>
+    <p class="hero-eyebrow">Augustinerkloster &amp; Augustinerkirche</p>
+    <h1 class="hero-h1">Seit Jahrhunderten.<br>Für Menschen von heute.</h1>
+    <p class="hero-sub">Entdecken Sie einen besonderen Ort im Herzen Wiens, an dem die Suche nach Gott, die Freude an der Gemeinschaft und die Offenheit für das Leben im Geist des heiligen Augustinus Menschen verbinden.</p>
     <div class="hero-actions">
       <a class="btn btn-gold" href="pages/musik.html#p-hochaemter">Hochämter entdecken</a>
       <a class="btn btn-outline-w" href="pages/gottesdienste.html">Gottesdienste</a>
