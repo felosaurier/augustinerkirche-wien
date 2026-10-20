@@ -4,7 +4,7 @@
       "tag": "mo",
       "zeit": "18:30",
       "name": "Heilige Messe",
-      "hinweis": "Loretokapelle, September bis Juni, nicht in den Ferien",
+      "hinweis": "Loretokapelle",
       "liturgie": true,
       "hervorheben": false,
       "von": 9,
@@ -13,11 +13,10 @@
     {
       "tag": "di",
       "zeit": "07:15",
-      "name": "Tagzeitenliturgie",
+      "name": "Tagzeitenliturgie (Lesehore & Laudes)",
       "hinweis": "Loretokapelle",
       "liturgie": true,
-      "hervorheben": false,
-      "art": "tagzeit"
+      "hervorheben": false
     },
     {
       "tag": "di",
@@ -31,36 +30,32 @@
     {
       "tag": "di",
       "zeit": "18:00",
-      "name": "Tagzeitenliturgie",
+      "name": "Tagzeitenliturgie (Vesper)",
       "hinweis": "Loretokapelle",
       "liturgie": true,
-      "hervorheben": false,
-      "art": "tagzeit"
+      "hervorheben": false
     },
     {
       "tag": "di",
       "zeit": "18:30",
       "name": "Heilige Messe",
-      "hinweis": "Augustinerkirche, September bis Juni, nicht in den Ferien",
+      "hinweis": "Loretokapelle",
       "liturgie": true,
-      "hervorheben": false,
-      "von": 9,
-      "bis": 6
+      "hervorheben": false
     },
     {
       "tag": "mi",
       "zeit": "07:15",
-      "name": "Tagzeitenliturgie",
+      "name": "Tagzeitenliturgie (Laudes)",
       "hinweis": "Loretokapelle",
       "liturgie": true,
-      "hervorheben": false,
-      "art": "tagzeit"
+      "hervorheben": false
     },
     {
       "tag": "mi",
       "zeit": "18:30",
       "name": "Heilige Messe",
-      "hinweis": "Loretokapelle, September bis Juni, nicht in den Ferien",
+      "hinweis": "Loretokapelle",
       "liturgie": true,
       "hervorheben": false,
       "von": 9,
@@ -77,45 +72,40 @@
     {
       "tag": "do",
       "zeit": "07:15",
-      "name": "Tagzeitenliturgie",
+      "name": "Tagzeitenliturgie (Laudes)",
       "hinweis": "Loretokapelle",
       "liturgie": true,
-      "hervorheben": false,
-      "art": "tagzeit"
+      "hervorheben": false
     },
     {
       "tag": "do",
       "zeit": "18:00",
-      "name": "Tagzeitenliturgie",
+      "name": "Tagzeitenliturgie (Vesper)",
       "hinweis": "Loretokapelle",
       "liturgie": true,
-      "hervorheben": false,
-      "art": "tagzeit"
+      "hervorheben": false
     },
     {
       "tag": "do",
       "zeit": "18:30",
       "name": "Heilige Messe",
-      "hinweis": "Augustinerkirche, September bis Juni, nicht in den Ferien",
+      "hinweis": "Loretokapelle",
       "liturgie": true,
-      "hervorheben": false,
-      "von": 9,
-      "bis": 6
+      "hervorheben": false
     },
     {
       "tag": "fr",
       "zeit": "07:15",
-      "name": "Tagzeitenliturgie",
+      "name": "Tagzeitenliturgie (Lesehore & Laudes)",
       "hinweis": "Loretokapelle",
       "liturgie": true,
-      "hervorheben": false,
-      "art": "tagzeit"
+      "hervorheben": false
     },
     {
       "tag": "fr",
       "zeit": "08:00",
       "name": "Heilige Messe",
-      "hinweis": "September bis Juni, nicht in den Ferien",
+      "hinweis": "Loretokapelle",
       "liturgie": true,
       "hervorheben": false,
       "von": 9,
@@ -133,8 +123,8 @@
     {
       "tag": "sa",
       "zeit": "18:30",
-      "name": "Vorabendmesse",
-      "hinweis": "September bis Juni, nicht in den Ferien",
+      "name": "Hl. Messe (Vorabendmesse)",
+      "hinweis": "Loretokapelle",
       "liturgie": true,
       "hervorheben": false,
       "von": 9,
@@ -143,21 +133,20 @@
     {
       "tag": "so",
       "zeit": "11:00",
-      "name": "Hochamt mit Chor, Solisten & Orchester",
-      "hinweis": "Augustinerkirche",
+      "name": "Hochamt",
+      "hinweis": "mit Chor, Solisten & Orchester von St. Augustin",
       "liturgie": true,
       "hervorheben": true
     },
     {
       "tag": "so",
       "zeit": "",
-      "anschliessend": true,
-      "nach": "11:00",
-      "name": "Führung in der Loretokapelle",
-      "hinweis": "Loretokapelle, Herzgruft",
+      "name": "Führung (Herzgruft)",
+      "hinweis": "Loretokapelle",
       "liturgie": false,
       "hervorheben": false,
-      "art": "veranstaltung"
+      "anschliessend": true,
+      "nach": "11:00"
     },
     {
       "tag": "so",
@@ -169,11 +158,5 @@
     }
   ],
   "ferien": [],
-  "entfaellt": [
-    {
-      "datum": "2026-10-12",
-      "zeit": "",
-      "grund": ""
-    }
-  ]
+  "entfaellt": []
 }

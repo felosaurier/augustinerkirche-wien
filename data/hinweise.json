@@ -1,3 +1,17 @@
 {
-  "hinweise": []
+  "hinweise": [
+    {
+      "id": "h-mvfkgzlzah3e",
+      "titel": "Allerheiligen in St. Augustin",
+      "text": "Feiern Sie mit uns das Allerheiligenfest!",
+      "art": "info",
+      "von": "2026-10-19",
+      "bis": "2026-11-01",
+      "aktiv": false,
+      "seiten": "alle",
+      "link": "https://www.hochamt.at",
+      "linktext": "Kirchenmusik",
+      "wegklickbar": true
+    }
+  ]
 }

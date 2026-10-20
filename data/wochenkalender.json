@@ -212,6 +212,34 @@
           "art": "gottesdienst"
         }
       ]
+    },
+    {
+      "datum": "2026-10-19",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Dominic",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-20",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
     }
   ]
 }
