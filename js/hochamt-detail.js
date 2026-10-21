@@ -35,7 +35,7 @@
     const days = [];
     const other = [];
     for (const s of rest.split(/(?<=\.)\s+/).map((x) => x.trim()).filter(Boolean)) {
-      if (DAY.test(s) && s.length <= 70) days.push(s.replace(/\.$/, ''));
+      if (DAY.test(HD.plainText(s)) && s.length <= 70) days.push(HD.plainText(s).replace(/\.$/, ''));
       else other.push(s);
     }
     return { end, day: days.join(' · '), note: other.join(' ') };
@@ -77,8 +77,8 @@
       lines.map((l) => {
         const p = piece(l);
         return '<li>' + (p.composer
-          ? `<span class="hd-composer">${HD.esc(p.composer)}${p.years ? ` <span class="hd-years">${HD.esc(p.years)}</span>` : ''}</span>` : '') +
-          `<span class="hd-work">${HD.esc(p.work)}</span></li>`;
+          ? `<span class="hd-composer">${HD.richText(p.composer, '../')}${p.years ? ` <span class="hd-years">${HD.esc(p.years)}</span>` : ''}</span>` : '') +
+          `<span class="hd-work">${HD.richText(p.work, '../')}</span></li>`;
       }).join('') + '</ul></section>';
   }
   function castHTML(groups, people) {
@@ -137,7 +137,7 @@
     body.innerHTML =
       (program || '<p class="s-text">Die Mitwirkenden und das genaue Programm werden noch bekannt gegeben.</p>') +
       `<p class="hd-place">${PIN}<span><strong>${HD.esc(where.name)}</strong>${where.addr ? `<span class="hd-addr">${HD.esc(where.addr)}</span>` : ''}</span></p>` +
-      (note ? `<p class="hd-note"><span class="hd-note-label">Hinweis</span>${HD.esc(note)}</p>` : '') +
+      (note ? `<p class="hd-note"><span class="hd-note-label">Hinweis</span>${HD.richText(note, '../')}</p>` : '') +
       '<div class="hd-thanks"><p>Dankbar sind wir für Ihre Spende zur Erhaltung der Kirchenmusik!</p>' +
         '<a class="btn btn-gold hd-thanks-btn" href="musik.html#p-patenschaft">Kirchenmusik unterstützen</a></div>' +
       `<p class="hd-list-link"><a class="link-arr" href="${listHref}">${upcoming ? 'Alle Hochämter' : 'Zum Archiv'}</a></p>`;
@@ -213,7 +213,7 @@
     try {
       const res = await fetch('../data/news.csv');
       if (!res.ok) return false;
-      rows = HD.rowsToRaw(HD.parseCSV(await res.text()), NEWS_KEYS);
+      rows = HD.rowsToRaw(HD.parseCSV(HD.mailDecode(await res.text())), NEWS_KEYS);
     } catch {
       return false;
     }

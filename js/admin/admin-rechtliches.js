@@ -82,6 +82,9 @@
 
   const TOOLS = [
     ['bold', 'Fett', 'B'],
+    ['italic', 'Kursiv', 'I'],
+    ['underline', 'Unterstrichen', 'U'],
+    ['strike', 'Durchgestrichen', 'S'],
     ['link', 'Link', 'Link'],
     ['tel', 'Telefonnummer', 'Tel.'],
     ['list', 'Aufzählung', '• Liste'],
@@ -89,6 +92,7 @@
     ['h3', 'Zwischentitel', 'Zwischentitel'],
     ['todo', 'Noch offen (gelb)', 'Fehlt noch']
   ];
+  const TOOL_FACE = { bold: '<strong>B</strong>', italic: '<em>I</em>', underline: '<u>U</u>', strike: '<s>S</s>' };
   function secHTML(s, i, n) {
     const id = `rt-${i}`;
     return `<article class="adm-panel rt-sec" data-i="${i}" aria-labelledby="${id}-n">` +
@@ -107,7 +111,7 @@
       '<div class="adm-field">' +
         `<label class="adm-label" for="${id}-x">Text</label>` +
         `<div class="rt-tools" role="toolbar" aria-label="Text formatieren" aria-controls="${id}-x">` +
-          TOOLS.map(([k, title, label]) => `<button type="button" class="rt-tool" data-tool="${k}" title="${esc(title)}">${k === 'bold' ? '<strong>B</strong>' : esc(label)}</button>`).join('') +
+          TOOLS.map(([k, title, label]) => `<button type="button" class="rt-tool" data-tool="${k}" title="${esc(title)}">${TOOL_FACE[k] || esc(label)}</button>`).join('') +
         '</div>' +
         `<textarea class="adm-input rt-text" id="${id}-x" data-f="text" rows="6" spellcheck="true">${esc(s.text)}</textarea>` +
       '</div>' +
@@ -164,6 +168,9 @@
     let caret = null;   /* neue Auswahl [Anfang, Ende] innerhalb von text */
     switch (tool) {
       case 'bold': text = `**${sel || 'fett'}**`; caret = [2, text.length - 2]; break;
+      case 'italic': text = `*${sel || 'kursiv'}*`; caret = [1, text.length - 1]; break;
+      case 'underline': text = `__${sel || 'unterstrichen'}__`; caret = [2, text.length - 2]; break;
+      case 'strike': text = `~~${sel || 'durchgestrichen'}~~`; caret = [2, text.length - 2]; break;
       case 'link': text = sel ? `[${sel}](https://)` : '[Text](https://)'; caret = sel ? [text.length - 9, text.length - 1] : [1, 5]; break;
       case 'tel': text = `[${sel || '+43 (0)1 …'}](tel)`; caret = [1, text.length - 6]; break;
       case 'todo': text = `[[offen: ${sel || 'hier ergänzen'}]]`; caret = [9, text.length - 2]; break;

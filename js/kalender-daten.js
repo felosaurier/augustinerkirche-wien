@@ -199,8 +199,7 @@
 
   async function getJSON(url) {
     try {
-      const res = await fetch(url);
-      return res.ok ? await res.json() : null;
+      return await HD.fetchJSON(url);
     } catch {
       return null;
     }
@@ -293,7 +292,7 @@
     const past = iso < today;
     const now = nowHM(new Date());
     const inf = dayInfo.get(iso);
-    const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag, ...inf.heilige].filter(Boolean).map(esc).join(' · ')}</p>` : '';
+    const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag, ...inf.heilige].filter(Boolean).map(HD.formatText).join(' · ')}</p>` : '';
     return `<section class="cal-day${past ? ' past' : ''}${iso === today ? ' today' : ''}${extraClass ? ` ${extraClass}` : ''}" id="${id}" data-date="${iso}" aria-labelledby="h-${id}">` +
       `<h3 class="cal-date" id="h-${id}"><span class="cal-d">${dt.getDate()}</span>` +
       `<span class="cal-wd">${WEEKDAYS[dt.getDay()]}${iso === today ? '<span class="cal-heute"><span class="visually-hidden">, </span>heute</span>' : ''}<span class="cal-mo">${MONTHS[dt.getMonth()]}</span></span></h3>` +

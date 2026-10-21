@@ -7,6 +7,11 @@
      Formate werden in voller Groesse in WebP umgewandelt
    - das Bild kommt in den Jahresordner assets/img/news/JAHR/
    - Vorschau der Karte, wie sie auf der Startseite erscheint
+   - Fotos als Bildergalerie im Fenster der Meldung (data/news-fotos.json,
+     Kennung der Meldung -> [{bild, alt, breite, hoehe}]): bei der Kategorie
+     "Bericht" bis zu 30, sonst bis zu 5; jede Meldung bekommt dafuer einen
+     eigenen Ordner assets/img/news/JAHR/<Datum>-<Titel>/ (foto-1.webp …).
+     Ohne eigenes Bild zeigt die Karte das erste Foto.
    - Schaltflaeche im Fenster: Ziel aus Listen waehlen (Hochamt oder
      Konzert, Runde, Seite der Website, andere Website) statt Adresse;
      liegt am Enddatum ein Termin, wird er zum Verknuepfen vorgeschlagen
@@ -28,6 +33,15 @@
   let removeImage = false;
   let snap = '';
   let infos = null;
+
+  /* Bildergalerie der Meldung */
+  const PHOTOS_PATH = 'data/news-fotos.json';
+  const MAX_REPORT = 30;   /* Kategorie "Bericht" */
+  const MAX_PHOTOS = 5;    /* alle anderen Meldungen */
+  let photoMap = {};       /* Kennung der Meldung -> Liste der Fotos */
+  let photos = [];         /* Fotos im Fenster {key, path, url, ext, w, h, alt, credit, fresh} */
+  let photoSeq = 0;
+  let photoDir = '';       /* Ordner der Fotos dieser Meldung */
 
   /* | trennt in der Tabelle mehrere Eintraege einer Zelle */
   const clean = (s) => String(s || '').replace(/\|/g, '/').replace(/\s+/g, ' ').trim();
@@ -261,7 +275,8 @@
     return expired ? 'expired' : 'archive';
   }
   function rowHTML(e, i, home) {
-    const src = A.imageUrl(imgOf(e));
+    const gallery = photoMap[newsId(e)] || [];
+    const src = A.imageUrl(imgOf(e) || (gallery[0] && gallery[0].bild));
     const thumb = src
       ? `<span class="adm-thumb${e.Plakat ? '' : ' photo'}"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"/></span>`
       : '<span class="adm-thumb none"><img src="../assets/logo-gold.png" alt=""/></span>';
@@ -277,6 +292,7 @@
           `<span class="adm-row-title">${esc(e.Titel)}</span>` +
           `<span class="adm-row-people">${esc(e.Kurztext)}</span>` +
           (src ? '' : `<span class="adm-chip">${icon('image')}Ohne Bild: die Karte zeigt das Logo</span>`) +
+          (gallery.length ? `<span class="adm-chip">${icon('image')}${plural(gallery.length, 'Foto', 'Fotos')} in der Galerie</span>` : '') +
         `</span>${badge}` +
       '</button>' +
       '<div class="adm-row-actions">' +
@@ -316,6 +332,8 @@
 
   /* ---------- Fenster: Bild ---------- */
   const imageSrc = () => (image ? image.url : (!removeImage && current ? A.imageUrl(current) : ''));
+  /* Bild der Karte: eigenes Bild, sonst das erste Foto der Galerie */
+  const cardSrc = () => imageSrc() || (photos[0] ? photos[0].url : '');
 
   function renderImage() {
     const src = imageSrc();
@@ -358,6 +376,157 @@
     renderPreview();
   }
 
+  /* ---------- Fenster: Fotos (Bildergalerie) ---------- */
+  const isReport = () => /^bericht$/i.test($('f-cat').value.trim());
+  const photoLimit = () => (isReport() ? MAX_REPORT : MAX_PHOTOS);
+  const notFound = (e) => !!e && (e.status === 404 || e.name === 'NotFoundError');
+
+  async function loadPhotos() {
+    try {
+      photoMap = (await A.readJSON(PHOTOS_PATH)).bilder || {};
+    } catch (e) {
+      photoMap = {};
+      if (!notFound(e)) A.toast('Die Fotos der Neuigkeiten konnten nicht geladen werden.', 'err');
+    }
+  }
+  function renderPhotos() {
+    const limit = photoLimit();
+    $('nv-photos').innerHTML = photos.map((p, i) =>
+      `<div class="adm-ph" data-k="${p.key}">` +
+        `<span class="adm-thumb"><img src="${esc(p.url)}" alt=""/></span>` +
+        '<div class="adm-ph-fields">' +
+          `<label class="adm-label" for="ph-alt-${p.key}">Beschreibung <span class="adm-opt">${i === 0 ? 'erstes Foto, ' : ''}steht unter dem Foto</span></label>` +
+          `<input class="adm-input" type="text" id="ph-alt-${p.key}" data-ph="alt" value="${esc(p.alt)}" placeholder="z. B. Gemeinsames Mittagessen im Klostergarten"/>` +
+          `<label class="adm-label" for="ph-cr-${p.key}">Bildnachweis</label>` +
+          `<input class="adm-input" type="text" id="ph-cr-${p.key}" data-ph="credit" value="${esc(p.credit)}" placeholder="z. B. © Augustiner Wien, Foto: Max Muster"/>` +
+        '</div>' +
+        '<div class="adm-ph-act">' +
+          `<button type="button" class="adm-act icon" data-ph-act="up" aria-label="Nach vorne"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
+          `<button type="button" class="adm-act icon" data-ph-act="down" aria-label="Nach hinten"${i === photos.length - 1 ? ' disabled' : ''}>${icon('down')}</button>` +
+          `<button type="button" class="adm-act icon danger" data-ph-act="del" aria-label="Foto entfernen">${icon('trash')}</button>` +
+        '</div></div>'
+    ).join('');
+    const over = photos.length > limit;
+    const count = $('nv-photo-count');
+    count.textContent = `${plural(photos.length, 'Foto', 'Fotos')} von höchstens ${limit}` +
+      (over ? `: bitte ${photos.length - limit} entfernen oder die Kategorie „Bericht“ wählen` : '');
+    count.classList.toggle('over', over);
+    $('nv-photo-drop').hidden = photos.length >= limit;
+  }
+  /* Ordner der Fotos: bei vorhandenen Fotos deren Ordner, sonst nach Datum und Titel */
+  function folderFor() {
+    if (photoDir) return photoDir;
+    const iso = HD.isoDate($('f-date').value) || A.isoToday();
+    photoDir = `assets/img/news/${iso.slice(0, 4)}/${iso}-${HD.slug($('f-title').value, 50) || 'meldung'}/`;
+    return photoDir;
+  }
+  /* Freier Name im Ordner: foto-1.webp, foto-2.webp … */
+  async function freePhotoPath(dir, ext) {
+    const taken = new Set(photos.map((p) => p.path));
+    for (let n = 1; ; n++) {
+      const path = `${dir}foto-${n}.${ext}`;
+      if (!taken.has(path) && !(A.folder.state === 'ok' && await A.folder.exists(path))) return path;
+    }
+  }
+  async function addPhotos(files) {
+    let list = Array.from(files || []);
+    const free = photoLimit() - photos.length;
+    if (list.length > free) {
+      A.toast(free > 0
+        ? `Es passen nur noch ${plural(free, 'Foto', 'Fotos')} dazu (höchstens ${photoLimit()}${isReport() ? '' : ', bei der Kategorie „Bericht“ bis zu 30'}). Die übrigen wurden nicht übernommen.`
+        : `Es sind schon ${photoLimit()} Fotos da${isReport() ? '' : '. Bei der Kategorie „Bericht“ sind bis zu 30 möglich'}.`, 'err');
+      list = list.slice(0, Math.max(0, free));
+    }
+    for (const file of list) {
+      if (!file.type.startsWith('image/')) {
+        A.toast(`„${file.name}“ ist keine Bilddatei.`, 'err');
+        continue;
+      }
+      try {
+        const conv = await A.toWebp(file);
+        let w = 0;
+        let h = 0;
+        try {
+          const bmp = await createImageBitmap(conv.blob);
+          w = bmp.width;
+          h = bmp.height;
+          if (bmp.close) bmp.close();
+        } catch { /* Groesse unbekannt */ }
+        const path = await freePhotoPath(folderFor(), conv.ext);
+        await A.saveFile(path, conv.blob);
+        photos.push({ key: `n${++photoSeq}`, path, url: URL.createObjectURL(conv.blob), ext: conv.ext, w, h, alt: '', credit: '', fresh: true });
+        renderPhotos();
+        renderPreview();
+      } catch {
+        /* Meldung hat toWebp schon gezeigt */
+      }
+    }
+    if (list.length && A.folder.state !== 'ok') A.toast('Fotos bereit. Bitte unten herunterladen.');
+    $('nv-photo-file').value = '';
+    renderPhotos();
+    renderPreview();
+  }
+  /* Fotos, die in diesem Fenster neu dazukamen und nicht uebernommen wurden, wieder loeschen */
+  async function discardFresh(list) {
+    for (const p of list) {
+      if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
+      if (p.fresh) await A.discardFile(p.path);
+    }
+  }
+  function setPhotos(key) {
+    for (const p of photos) if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
+    photos = ((key && photoMap[key]) || []).map((b) => ({
+      key: `p${++photoSeq}`, path: b.bild, url: A.imageUrl(b.bild), ext: 'webp',
+      w: b.breite || 0, h: b.hoehe || 0, alt: b.alt || '', credit: A.credits.get(b.bild)
+    }));
+    photoDir = photos.length ? photos[0].path.replace(/[^/]+$/, '') : '';
+    renderPhotos();
+  }
+  /* Liste dieser Meldung speichern; oldKey: bisherige Kennung (Titel oder Datum geaendert) */
+  async function savePhotos(oldKey, key) {
+    const list = photos.map((p) => ({ bild: p.path, alt: p.alt.replace(/\s+/g, ' ').trim(), breite: p.w, hoehe: p.h }));
+    const next = { ...photoMap };
+    if (oldKey && oldKey !== key) delete next[oldKey];
+    if (list.length) next[key] = list;
+    else delete next[key];
+    if (JSON.stringify(next) !== JSON.stringify(photoMap)) {
+      const sorted = Object.fromEntries(Object.keys(next).sort().map((k) => [k, next[k]]));
+      await A.saveJSON(PHOTOS_PATH, { bilder: sorted });
+      photoMap = sorted;
+    }
+    if (photos.length) await A.credits.save(Object.fromEntries(photos.map((p) => [p.path, p.credit])));
+    for (const p of photos) p.fresh = false;   /* uebernommen: bleibt auch beim Schliessen */
+  }
+
+  /* ---------- Vorschau des Fensters (wie auf der Website, js/news.js) ---------- */
+  /* Bildadresse fuer die Vorschau: Pfad im Projekt, in dieser Sitzung neu Gespeichertes als blob: */
+  const previewSrc = (path) => {
+    const u = A.imageUrl(path);
+    return u && u.startsWith('blob:') ? u : path;
+  };
+  function openPreview() {
+    if (!window.AugNews) {
+      A.toast('Die Vorschau konnte nicht geladen werden. Bitte die Seite neu laden.', 'err');
+      return;
+    }
+    const own = image ? image.url : (!removeImage && current ? previewSrc(current) : '');
+    const poster = kind() === 'poster';
+    const link = readLink().link || '';
+    const link2 = $('f-link2').value.trim() ? webAddress($('f-link2').value) : '';
+    window.AugNews.preview({
+      cat: clean($('f-cat').value),
+      title: clean($('f-title').value) || 'Titel der Meldung',
+      teaser: clean($('f-teaser').value),
+      infos: infos.values().map((r) => ({ label: clean(r.label), value: clean(r.value) })).filter((r) => r.value),
+      details: $('f-details').value.split(/\n+/).map(clean).filter(Boolean),
+      thumb: own && !poster ? own : '',
+      poster: own && poster ? own : '',
+      link, linktext: link ? clean($('f-linktext').value) || defaultText() : '',
+      link2, linktext2: link2 ? clean($('f-linktext2').value) || 'Mehr Informationen' : '',
+      photos: photos.map((p) => ({ src: p.url.startsWith('blob:') ? p.url : p.path, alt: p.alt.replace(/\s+/g, ' ').trim() }))
+    }, $('nv-preview'));
+  }
+
   /* ---------- Fenster: Vorschau der Karte ---------- */
   /* Wo landet die Meldung mit den Angaben im Formular? Dafuer die Liste
      mit dieser Meldung durchrechnen (gleiche Regel wie auf der Website). */
@@ -380,20 +549,22 @@
   function renderPreview() {
     const iso = $('f-date').value;
     const cat = $('f-cat').value.trim();
-    const src = imageSrc();
+    const own = imageSrc();
+    const src = cardSrc();
     $('nv-card').innerHTML = '<div class="news-card">' +
-      `<div class="news-card-img${src ? ' adm-pan' : ''}"${src ? ' tabindex="0" role="group" aria-label="Bildausschnitt: mit der Maus ziehen oder mit den Pfeiltasten verschieben"' : ''}>` +
+      `<div class="news-card-img${own ? ' adm-pan' : ''}"${own ? ' tabindex="0" role="group" aria-label="Bildausschnitt: mit der Maus ziehen oder mit den Pfeiltasten verschieben"' : ''}>` +
         (src
-          ? `<img class="news-thumb${kind() === 'photo' ? ' news-thumb-photo' : ''}" src="${esc(src)}" alt=""${A.focusPos($('f-focus').value) ? ` style="object-position:${A.focusPos($('f-focus').value)}"` : ''} draggable="false"/>`
+          ? `<img class="news-thumb${!own || kind() === 'photo' ? ' news-thumb-photo' : ''}" src="${esc(src)}" alt=""${own && A.focusPos($('f-focus').value) ? ` style="object-position:${A.focusPos($('f-focus').value)}"` : ''} draggable="false"/>`
           : '<span class="news-noimg"><img src="../assets/logo-gold.png" alt="" width="64" height="64"/></span>') +
         (cat ? `<span class="news-card-cat">${esc(cat)}</span>` : '') +
+        (photos.length > 1 ? `<span class="news-card-photos">${plural(photos.length, 'Foto', 'Fotos')}</span>` : '') +
       '</div><div class="news-card-body">' +
         `<h3 class="news-card-title">${esc($('f-title').value.trim() || 'Titel der Meldung')}</h3>` +
-        `<p class="news-card-text">${esc($('f-teaser').value.trim() || 'Hier erscheint der Kurztext.')}</p>` +
+        `<p class="news-card-text">${HD.formatText($('f-teaser').value.trim() || 'Hier erscheint der Kurztext.')}</p>` +
         '<span class="link-arr">Mehr erfahren</span>' +
       '</div></div>';
     $('nv-where').textContent = whereText(iso);
-    $('nv-pan').hidden = !src;
+    $('nv-pan').hidden = !own;
     renderSuggest();
   }
   /* Bildausschnitt: Bild in der Karte ziehen oder mit Pfeiltasten verschieben;
@@ -502,6 +673,7 @@
     $('f-credit').value = A.credits.get(current);
     document.querySelector(`input[name="kind"][value="${e && !e.Plakat && e.Vorschaubild ? 'photo' : 'poster'}"]`).checked = true;
     delete $('f-filename').dataset.touched;
+    setPhotos(e ? newsId(e) : '');
     renderImage();
     renderPreview();
     updateCounter();
@@ -511,9 +683,12 @@
     $('nv-delete').hidden = !e;
     $('nv-view').hidden = !e;
     if (e) $('nv-view').href = `../${A.newsOnHome(entries).has(e) ? 'index.html' : 'pages/archiv.html'}?news=${encodeURIComponent(newsId(e))}`;
-    A.openDialog($('nv-dlg'), { isDirty: () => A.snapshot(form) !== snap || !!image || removeImage });
-    snap = A.snapshot(form);
+    A.openDialog($('nv-dlg'), { isDirty: isDirty });
+    snap = dirtyState();
   }
+  /* Stand des Fensters: Formular samt Fotos (Reihenfolge, Beschreibung, Nachweis) */
+  const dirtyState = () => A.snapshot($('nv-form')) + JSON.stringify(photos.map((p) => [p.path, p.alt, p.credit]));
+  const isDirty = () => dirtyState() !== snap || !!image || removeImage;
 
   /* Freier Dateiname im Jahresordner (name.webp, name-2.webp …);
      die eigene Datei einer bearbeiteten Meldung darf ersetzt werden */
@@ -548,6 +723,9 @@
     if ($('f-link2').value.trim() && !link2) errors.push([$('f-link2'), 'Diese Adresse sieht nicht richtig aus, z. B. www.musikverein.at.']);
     else if (link2 && !text2) errors.push([$('f-linktext2'), 'Bitte den Text der zweiten Schaltfläche eintragen, z. B. Karten kaufen.']);
     else if (text2 && !link2) errors.push([$('f-link2'), 'Bitte die Adresse für die zweite Schaltfläche eintragen.']);
+    if (photos.length > photoLimit()) {
+      errors.push([$('f-cat'), `Diese Meldung hat ${photos.length} Fotos. Erlaubt sind ${MAX_PHOTOS}, bei der Kategorie „Bericht“ bis zu ${MAX_REPORT}. Bitte Fotos entfernen oder „Bericht“ wählen.`]);
+    }
     if (errors.length) {
       A.showErrors(form, errors);
       return;
@@ -585,12 +763,14 @@
       const direct = await A.saveFile(PATH, toCSV(next));
       entries = next;
       if (imgOf(entry)) await A.credits.set(imgOf(entry), $('f-credit').value);
+      await savePhotos(old ? newsId(old) : '', newsId(entry));
       $('nv-dlg').close();
       render();
       flash(newsId(entry));
+      const withWhat = [imgPath ? 'Bild' : '', photos.length ? plural(photos.length, 'Foto', 'Fotos') : ''].filter(Boolean).join(' und ');
       A.toast(direct
-        ? `Gespeichert: „${title}“${imgPath ? ' mit Bild' : ''}.`
-        : `„${title}“ übernommen. Bitte unten ${imgPath ? 'beide Dateien' : 'die Datei'} herunterladen.`);
+        ? `Gespeichert: „${title}“${withWhat ? ` mit ${withWhat}` : ''}.`
+        : `„${title}“ übernommen. Bitte unten die Dateien herunterladen.`);
       A.log(`Meldung ${old ? 'geändert' : 'angelegt'}: ${title}`);
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
@@ -601,9 +781,11 @@
 
   async function remove(i) {
     const e = entries[i];
+    const gallery = photoMap[newsId(e)] || [];
     const ok = await A.confirmBox({
       title: 'Meldung löschen?',
-      html: `<strong>${esc(e.Titel)}</strong> (${esc(e.Datum)})<br><br>Die Meldung verschwindet von der Website. Das Bild bleibt im Ordner erhalten.`,
+      html: `<strong>${esc(e.Titel)}</strong> (${esc(e.Datum)})<br><br>Die Meldung verschwindet von der Website. Das Bild bleibt im Ordner erhalten.` +
+        (gallery.length ? ` Die ${plural(gallery.length, 'Foto', 'Fotos')} der Galerie werden mit gelöscht.` : ''),
       ok: 'Löschen', danger: true
     });
     if (!ok) return false;
@@ -611,6 +793,15 @@
       const next = entries.filter((x) => x !== e);
       const direct = await A.saveFile(PATH, toCSV(next));
       entries = next;
+      /* Galerie: eigener Ordner der Meldung, die Fotos werden sonst nirgends verwendet */
+      if (gallery.length) {
+        const rest = { ...photoMap };
+        delete rest[newsId(e)];
+        await A.saveJSON(PHOTOS_PATH, { bilder: rest });
+        photoMap = rest;
+        for (const b of gallery) await A.discardFile(b.bild);
+        await A.credits.save(Object.fromEntries(gallery.map((b) => [b.bild, ''])));
+      }
       render();
       A.toast(direct ? `Gelöscht: „${e.Titel}“.` : 'Gelöscht. Bitte unten die Datei herunterladen.');
       A.log(`Meldung gelöscht: ${e.Titel}`);
@@ -638,6 +829,8 @@
       if (ev.target.id === 'f-teaser') updateCounter();
       if (ev.target.id === 'f-title' && image && !$('f-filename').dataset.touched) $('f-filename').value = fileSlug(ev.target.value);
       if (ev.target.id === 'f-filename') ev.target.dataset.touched = '1';
+      /* Kategorie entscheidet, wie viele Fotos erlaubt sind */
+      if (ev.target.id === 'f-cat') renderPhotos();
       renderPreview();
     });
     $('nv-form').addEventListener('change', (ev) => {
@@ -689,6 +882,37 @@
     $('f-file').addEventListener('change', (ev) => onFile(ev.target.files[0]));
     A.wireDrop($('nv-drop'));
     $('nv-img-remove').addEventListener('click', dropImage);
+    $('nv-preview').addEventListener('click', openPreview);
+    /* Bildergalerie */
+    $('nv-photo-file').addEventListener('change', (ev) => addPhotos(ev.target.files));
+    A.wireDrop($('nv-photo-drop'), addPhotos);
+    $('nv-photos').addEventListener('input', (ev) => {
+      const k = ev.target.closest('.adm-ph');
+      const p = k && photos.find((x) => x.key === k.dataset.k);
+      if (p && ev.target.dataset.ph) p[ev.target.dataset.ph] = ev.target.value;
+    });
+    $('nv-photos').addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-ph-act]');
+      const k = b && b.closest('.adm-ph');
+      if (!k) return;
+      const i = photos.findIndex((x) => x.key === k.dataset.k);
+      const act = b.dataset.phAct;
+      if (act === 'del') {
+        discardFresh([photos[i]]);
+        photos.splice(i, 1);
+      } else {
+        const j = i + (act === 'up' ? -1 : 1);
+        if (j < 0 || j >= photos.length) return;
+        [photos[i], photos[j]] = [photos[j], photos[i]];
+      }
+      renderPhotos();
+      renderPreview();
+    });
+    $('nv-dlg').addEventListener('close', () => {
+      discardFresh(photos.filter((p) => p.fresh));
+      photos = [];
+      photoDir = '';
+    });
     $('nv-delete').addEventListener('click', async () => {
       if (editIndex >= 0 && await remove(editIndex)) $('nv-dlg').close();
     });
@@ -713,10 +937,12 @@
         render();
       }, 120);
     });
-    A.guard(() => $('nv-dlg').open && (A.snapshot($('nv-form')) !== snap || !!image || removeImage));
-    A.folder.on((state) => { if (state === 'ok') { load(); loadTargets(); } });
+    A.guard(() => $('nv-dlg').open && isDirty());
+    A.folder.on((state) => { if (state === 'ok') { load(); loadTargets(); loadPhotos(); } });
 
-    await Promise.all([load(), loadTargets()]);
+    await Promise.all([load(), loadTargets(), loadPhotos()]);
+    /* jetzt auch mit den Fotos der Galerie (eine Fehlermeldung beim Laden bleibt stehen) */
+    if (!$('nv-list').querySelector('.adm-alert')) render();
     /* Direkt oeffnen: ?neu=1 oder ?bearbeiten=<Kennung der Meldung> */
     const params = new URLSearchParams(location.search);
     const wanted = params.get('bearbeiten');

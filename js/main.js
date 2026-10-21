@@ -148,6 +148,23 @@
   /* ---------- Mobile Navigation ---------- */
   const CHEVRON = '<svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>';
   const escHTML = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  /* Formatierung aus der Verwaltung (***fett kursiv***, **fett**, *kursiv*, __unterstrichen__,
+     ~~durchgestrichen~~), ohne Links; gleiche Regeln wie HochamtData.formatText, das hier
+     nicht auf jeder Seite geladen ist */
+  const FMT = /\*\*\*(?!\s)([^\n]+?)(?<!\s)\*\*\*|\*\*(?!\s)([^\n]+?)(?<!\s)\*\*|__(?!\s)([^\n]+?)(?<!\s)__|~~(?!\s)([^\n]+?)(?<!\s)~~|\*(?![\s*])([^*\n]+?)(?<!\s)\*/g;
+  const FMT_TAGS = [['strong', 'em'], ['strong'], ['u'], ['s'], ['em']];
+  function fmtHTML(s) {
+    let html = '';
+    let last = 0;
+    const text = String(s ?? '');
+    for (const m of text.matchAll(FMT)) {
+      const k = [1, 2, 3, 4, 5].find((i) => m[i] !== undefined);
+      const tags = FMT_TAGS[k - 1];
+      html += escHTML(text.slice(last, m.index)) + tags.map((t) => `<${t}>`).join('') + fmtHTML(m[k]) + tags.slice().reverse().map((t) => `</${t}>`).join('');
+      last = m.index + m[0].length;
+    }
+    return html + escHTML(text.slice(last));
+  }
 
   /* Das Handy-Menue entsteht aus dem Laptop-Menue, damit beide immer dieselben
      Eintraege haben: oben drei Schnellzugriffe (Gottesdienste, Kalender, Kontakt), darunter die Bereiche zum Aufklappen. */
@@ -550,10 +567,21 @@
     const s = qs('script[src$="js/main.js"]');
     return s ? new URL('..', s.src).pathname : '/';
   })();
+  /* Datendatei als JSON (null, wenn sie fehlt). E-Mail-Adressen stehen darin verschluesselt
+     als [[mail:ta.renitsugua|ofni]] und werden hier wieder lesbar (wie HochamtData.mailDecode;
+     main.js laeuft auch auf Seiten ohne js/hochaemter-data.js) */
+  async function dataJSON(url) {
+    const res = await fetch(url, { cache: 'no-cache' });
+    if (!res.ok) return null;
+    const text = (await res.text()).replace(/\[\[mail:([^\]\s]+)\]\]/g, (_, code) => [...code.replace('|', '@')].reverse().join(''));
+    return JSON.parse(text);
+  }
   /* Rahmen, die zum Bild gehoeren (Bildfeld einer Karte, Link um das Bild) */
   const BOX = /(^|[-\s])(img|thumb|cover|foto|photo)([-\s]|$)/;
   let credits = null;
 
+  /* Fuer die Vergroesserung (lightbox.js): Bildnachweis zu einer Bildadresse */
+  window.AugCredit = (url) => creditFor(url);
   function creditFor(url) {
     if (!credits || !url) return '';
     let path;
@@ -797,8 +825,7 @@
     if (!bands.length) return;
     let data = null;
     try {
-      const res = await fetch(`${siteRoot}data/sprueche.json`, { cache: 'no-cache' });
-      if (res.ok) data = await res.json();
+      data = await dataJSON(`${siteRoot}data/sprueche.json`);
     } catch {
       return;
     }
@@ -841,9 +868,9 @@
     if (!host) return;
     let list;
     try {
-      const res = await fetch(`${siteRoot}data/hinweise.json`, { cache: 'no-cache' });
-      if (!res.ok) return;
-      list = (await res.json()).hinweise || [];
+      const data = await dataJSON(`${siteRoot}data/hinweise.json`);
+      if (!data) return;
+      list = data.hinweise || [];
     } catch {
       return;
     }
@@ -868,7 +895,7 @@
             : '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'}</svg>` +
           '<div class="site-banner-body">' +
             `<strong class="site-banner-title">${escHTML(h.titel)}</strong>` +
-            (h.text ? `<span class="site-banner-text">${escHTML(h.text).replace(/\n/g, '<br>')}</span>` : '') +
+            (h.text ? `<span class="site-banner-text">${h.text.split('\n').map(fmtHTML).join('<br>')}</span>` : '') +
             (href ? `<a class="site-banner-link" href="${escHTML(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${escHTML(h.linktext || 'Mehr erfahren')}</a>` : '') +
           '</div>' +
           /* wegklickbar: false = Hinweis bleibt stehen (in der Verwaltung einstellbar) */

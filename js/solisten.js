@@ -48,9 +48,7 @@
 
     let data;
     try {
-      const res = await fetch(DATA_URL);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      data = await res.json();
+      data = await HD.fetchJSON(DATA_URL);
       if (!Array.isArray(data) || !data.length) throw new Error('Leere Liste');
     } catch {
       container.innerHTML = '<p class="s-text">Die Solistenliste konnte nicht geladen werden.</p>';

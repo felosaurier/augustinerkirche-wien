@@ -112,7 +112,7 @@
             `<button type="button" class="adm-act" data-act="day" data-day="${d}">${icon('edit')}Tag</button> ` +
             `<button type="button" class="adm-act" data-act="new" data-day="${d}">${icon('plus')}Termin</button>` +
           '</span></div>' +
-        `<p class="adm-hint" style="margin:.2rem 0 .6rem">${info ? esc(info) : 'Keine Tagesbezeichnung'}</p>` +
+        `<p class="adm-hint" style="margin:.2rem 0 .6rem">${info ? HD.formatText(info) : 'Keine Tagesbezeichnung'}</p>` +
         (its.length
           ? `<ul class="adm-rows">${its.map((it) => rowHTML(d, it, items.indexOf(it))).join('')}</ul>`
           : '<p class="adm-muted">Keine Termine</p>') +

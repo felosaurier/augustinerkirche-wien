@@ -796,9 +796,14 @@
   /* Pfad -> Text beim letzten Lesen oder Speichern: daraus ergibt sich im Protokoll, was genau geaendert wurde */
   const lastText = new Map();
   const notFoundErr = (e) => !!e && (e.name === 'NotFoundError' || e.status === 404);
+  /* Datendateien liegen oeffentlich auf dem Server: E-Mail-Adressen darin werden beim Speichern
+     verschluesselt und beim Lesen wieder lesbar gemacht (HD.mailEncode/mailDecode). In der
+     Verwaltung und im Protokoll erscheinen sie deshalb immer ganz normal. */
+  const MAIL_FILE = /^data\/.+\.(json|csv)$/;
+  const plainText = (path, text) => (MAIL_FILE.test(path) ? HD.mailDecode(text) : text);
   async function readText(path) {
     try {
-      const text = folder.state === 'ok' ? await folder.read(path) : await fetchText(path);
+      const text = plainText(path, folder.state === 'ok' ? await folder.read(path) : await fetchText(path));
       readState.set(path, 'ok');
       lastText.set(path, text);
       return text;
@@ -858,6 +863,10 @@
     const isText = /\.(json|csv)$/.test(path);
     const before = isText ? await previousText(path) : null;
     const after = isText ? await blob.text() : null;
+    if (isText && MAIL_FILE.test(path)) {
+      const encoded = HD.mailEncode(after);
+      if (encoded !== after) blob = new Blob([encoded], { type: blob.type || typeFor(path) });
+    }
     let direct = false;
     if (folder.state === 'ok') {
       await folder.write(path, blob);
@@ -875,7 +884,7 @@
   async function previousText(path) {
     if (lastText.has(path)) return lastText.get(path);
     try {
-      return folder.state === 'ok' ? await (await folder.readBlob(path)).text() : await fetchText(path);
+      return plainText(path, folder.state === 'ok' ? await (await folder.readBlob(path)).text() : await fetchText(path));
     } catch {
       return null;
     }
@@ -2178,7 +2187,7 @@
       `<span class="adm-notice-ico" aria-hidden="true">${icon(a === 'wichtig' ? 'alert' : a === 'wartung' ? 'refresh' : 'info')}</span>` +
       '<div class="adm-notice-body">' +
         `<strong class="adm-notice-title">${esc(h.titel)}</strong>` +
-        (h.text ? `<p class="adm-notice-text">${esc(h.text).replace(/\n/g, '<br>')}</p>` : '') +
+        (h.text ? `<p class="adm-notice-text">${String(h.text).split('\n').map((l) => HD.richText(l, '../')).join('<br>')}</p>` : '') +
         `<span class="adm-notice-meta">${esc(meta)}</span>` +
       '</div>' +
       (closable ? `<button type="button" class="adm-act adm-notice-close" aria-label="Gelesen, ausblenden: ${esc(h.titel)}">${icon('check')}Gelesen</button>` : '') +
@@ -2266,6 +2275,106 @@
     }
   });
 
+  /* ---------- Formatierungsleiste fuer Textfelder ----------
+     Ueber jedem mehrzeiligen Textfeld der Verwaltung (textarea.adm-input) steht eine
+     Leiste: fett, kursiv, unterstrichen, durchgestrichen, Link und "Formatierung
+     entfernen"; dazu Strg+B, Strg+I, Strg+U. Sie schreibt die Zeichen, die die Website
+     anzeigt (HD.richText): **fett** *kursiv* __unterstrichen__ ~~durchgestrichen~~
+     [Text](Adresse). Ein zweiter Klick auf dasselbe Format nimmt es wieder weg.
+     Ausnahmen: data-no-format am Feld, Impressum & Datenschutz (eigene Leiste, .rt-text). */
+  const FORMATS = [
+    ['bold', '**', 'Fett (Strg+B)', '<b>B</b>', 'fett'],
+    ['italic', '*', 'Kursiv (Strg+I)', '<i>I</i>', 'kursiv'],
+    ['underline', '__', 'Unterstrichen (Strg+U)', '<u>U</u>', 'unterstrichen'],
+    ['strike', '~~', 'Durchgestrichen', '<s>S</s>', 'durchgestrichen']
+  ];
+  const FORMAT_KEYS = { b: 'bold', i: 'italic', u: 'underline' };
+  /* Steht die Auswahl schon in diesem Format? "*" darf dabei nicht Teil von "**" sein */
+  function hasMark(value, a, b, mark) {
+    const before = value.slice(Math.max(0, a - mark.length - 1), a);
+    const after = value.slice(b, b + mark.length + 1);
+    if (!before.endsWith(mark) || !after.startsWith(mark)) return false;
+    if (mark !== '*') return true;
+    /* "**fett**": ein einzelnes * davor ist nur dann kursiv, wenn davor kein weiteres * steht (oder genau drei) */
+    const left = value.slice(0, a).match(/\*+$/)[0].length;
+    const right = value.slice(b).match(/^\*+/)[0].length;
+    return left % 2 === 1 && right % 2 === 1;
+  }
+  function applyFormat(ta, kind) {
+    const { selectionStart: a, selectionEnd: b, value } = ta;
+    const sel = value.slice(a, b);
+    ta.focus();
+    if (kind === 'link') {
+      const text = sel ? `[${sel}](https://)` : '[Text](https://)';
+      ta.setRangeText(text, a, b, 'end');
+      /* Adresse markieren (bzw. das Wort "Text"), damit man gleich weitertippt */
+      if (sel) ta.setSelectionRange(a + text.length - 9, a + text.length - 1);
+      else ta.setSelectionRange(a + 1, a + 5);
+    } else if (kind === 'clear') {
+      if (!sel) {
+        toast('Bitte zuerst den Text markieren, dessen Formatierung entfernt werden soll.');
+        return;
+      }
+      const plain = HD.plainText(sel);
+      ta.setRangeText(plain, a, b, 'select');
+    } else {
+      const f = FORMATS.find((x) => x[0] === kind);
+      if (!f) return;
+      const mark = f[1];
+      if (sel.length > mark.length * 2 && sel.startsWith(mark) && sel.endsWith(mark) && (mark !== '*' || !sel.startsWith('**') || sel.startsWith('***'))) {
+        /* Auswahl samt Zeichen markiert: Zeichen entfernen */
+        ta.setRangeText(sel.slice(mark.length, -mark.length), a, b, 'select');
+      } else if (sel && hasMark(value, a, b, mark)) {
+        /* Zeichen stehen um die Auswahl: entfernen */
+        ta.setRangeText(sel, a - mark.length, b + mark.length, 'select');
+      } else {
+        /* Leerzeichen am Rand der Auswahl bleiben draussen ("**Wort** " statt "**Wort **") */
+        const lead = sel.match(/^\s*/)[0];
+        const trail = sel.slice(lead.length).match(/\s*$/)[0];
+        const core = sel.slice(lead.length, sel.length - trail.length) || f[4];
+        ta.setRangeText(`${lead}${mark}${core}${mark}${trail}`, a, b, 'end');
+        const start = a + lead.length + mark.length;
+        ta.setSelectionRange(start, start + core.length);
+      }
+    }
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  function addFormatBar(ta) {
+    if (ta.dataset.fmt || ta.hasAttribute('data-no-format') || ta.classList.contains('rt-text')) return;
+    ta.dataset.fmt = '1';
+    if (!ta.id) ta.id = `fmt-${Math.random().toString(36).slice(2, 9)}`;
+    const bar = d.createElement('div');
+    bar.className = 'fmt-bar';
+    bar.setAttribute('role', 'toolbar');
+    bar.setAttribute('aria-label', 'Text formatieren');
+    bar.setAttribute('aria-controls', ta.id);
+    bar.innerHTML = FORMATS.map(([k, , title, label]) =>
+      `<button type="button" class="fmt-btn" data-fmt="${k}" title="${title}" aria-label="${title}">${label}</button>`).join('') +
+      `<button type="button" class="fmt-btn fmt-wide" data-fmt="link" title="Link einfügen: markierten Text mit einer Adresse verknüpfen">${icon('link')}Link</button>` +
+      '<button type="button" class="fmt-btn fmt-wide" data-fmt="clear" title="Formatierung des markierten Texts entfernen">Formatierung entfernen</button>';
+    ta.before(bar);
+  }
+  function addFormatBars(root) {
+    if (root.matches && root.matches('textarea.adm-input')) addFormatBar(root);
+    if (root.querySelectorAll) root.querySelectorAll('textarea.adm-input').forEach(addFormatBar);
+  }
+  d.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('.fmt-btn');
+    const bar = btn && btn.closest('.fmt-bar');
+    const ta = bar && d.getElementById(bar.getAttribute('aria-controls'));
+    if (ta) applyFormat(ta, btn.dataset.fmt);
+  });
+  /* Die Leiste nimmt den Fokus nicht weg: die Auswahl im Feld bleibt beim Klick erhalten */
+  d.addEventListener('mousedown', (ev) => { if (ev.target.closest('.fmt-btn')) ev.preventDefault(); });
+  d.addEventListener('keydown', (ev) => {
+    const ta = ev.target;
+    if (!(ev.ctrlKey || ev.metaKey) || ev.altKey || ev.shiftKey || !ta.matches || !ta.matches('textarea[data-fmt]')) return;
+    const kind = FORMAT_KEYS[ev.key.toLowerCase()];
+    if (!kind) return;
+    ev.preventDefault();
+    applyFormat(ta, kind);
+  });
+
   /* ---------- Start ---------- */
   const starters = [];
   let readyResolve;
@@ -2273,6 +2382,11 @@
   d.addEventListener('DOMContentLoaded', async () => {
     if (!PUBLIC && !session()) return;
     d.querySelectorAll('[data-icon]').forEach((el) => el.insertAdjacentHTML('afterbegin', icon(el.dataset.icon)));
+    /* Formatierungsleiste: fuer die Textfelder der Seite und fuer spaeter eingefuegte */
+    addFormatBars(d);
+    new MutationObserver((list) => {
+      for (const m of list) for (const n of m.addedNodes) if (n.nodeType === 1) addFormatBars(n);
+    }).observe(d.body, { childList: true, subtree: true });
     if (!PUBLIC) mountTop();
     await folder.restore();
     showNotices();

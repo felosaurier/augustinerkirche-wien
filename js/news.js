@@ -6,6 +6,10 @@
      fuellen nur noch auf, wenn es weniger als 4 aktive gibt
    - Archiv (#news-archive): alle Meldungen, auch die der Startseite, nach Jahren
    - Klick auf eine Meldung oeffnet ein Fenster mit allen Infos
+   - Fotos einer Meldung (data/news-fotos.json, z. B. ein Bericht) stehen im
+     Fenster als Bildergalerie wie auf Facebook (bis zu 5 Kacheln, auf der
+     letzten "+N"); ein Klick oeffnet sie gross zum Durchblaettern (lightbox.js).
+     Ohne eigenes Bild zeigt die Karte das erste Foto.
    Aufruf mit ?news=ID oeffnet die Meldung direkt (teilbarer Link).
    Benoetigt js/hochaemter-data.js (CSV-Parser und Hilfen).
    ============================================================ */
@@ -30,8 +34,9 @@
 
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
   const { esc } = HD;
+  let previewing = false;  /* Vorschau der Verwaltung: auch blob:-Adressen (frisch gewaehlte Bilder) */
   /* Adresse aus der Tabelle: relative Pfade bekommen `base`, Unsicheres wird verworfen */
-  const url = (u) => HD.safeUrl(u, base);
+  const url = (u) => (previewing && /^blob:/.test(String(u)) ? String(u) : HD.safeUrl(u, base));
   const isExternal = (u) => /^https?:/i.test(u);
 
   /* ---------- Daten ---------- */
@@ -57,7 +62,8 @@
         details: splitPipe(o.details),
         thumb: o.thumb || '', poster: o.poster || '', link: o.link || '', linktext: o.linktext || '',
         link2: o.link2 || '', linktext2: o.linktext2 || '',
-        focus: /^\d{1,3}% \d{1,3}%$/.test(o.focus || '') ? o.focus : ''
+        focus: /^\d{1,3}% \d{1,3}%$/.test(o.focus || '') ? o.focus : '',
+        photos: []
       };
     }).filter(Boolean);
     /* Neueste zuerst; am selben Tag bleibt die Reihenfolge der Tabelle */
@@ -80,25 +86,30 @@
   /* Das Datum einer Meldung wird nirgends angezeigt; es bestimmt nur Reihenfolge, Jahr im Archiv und wie lange sie oben bleibt */
   const pageUrl = (id) => `${location.pathname}?news=${encodeURIComponent(id)}`;
 
-  /* Vorschaubild: eigenes Bild, sonst das Plakat (oberer Ausschnitt), sonst das goldene Logo */
+  /* Vorschaubild: eigenes Bild, sonst das Plakat (oberer Ausschnitt), sonst das erste
+     Foto der Galerie, sonst das goldene Logo */
   function thumbHTML(e, cls) {
-    const src = url(e.thumb || e.poster);
+    const own = url(e.thumb || e.poster);
+    const src = own || (e.photos[0] ? url(e.photos[0].src) : '');
     if (src) {
-      const pos = e.focus ? ` style="object-position:${e.focus}"` : '';
-      return `<img class="${cls}${e.poster ? '' : ' news-thumb-photo'}" src="${esc(src)}" alt="" width="640" height="480" loading="lazy" decoding="async"${pos}/>`;
+      const pos = own && e.focus ? ` style="object-position:${e.focus}"` : '';
+      return `<img class="${cls}${own && e.poster ? '' : ' news-thumb-photo'}" src="${esc(src)}" alt="" width="640" height="480" loading="lazy" decoding="async"${pos}/>`;
     }
     return `<span class="news-noimg"><img src="${esc(base)}assets/logo-gold.png" alt="" width="64" height="64" loading="lazy" decoding="async"/></span>`;
   }
+  const CAMERA = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+  const photoCount = (n) => `${n} ${n === 1 ? 'Foto' : 'Fotos'}`;
 
   /* ---------- Startseite: 4 Karten ---------- */
   function cardHTML(e) {
     return `<a class="news-card" href="${esc(pageUrl(e.id))}" data-id="${esc(e.id)}">` +
       `<div class="news-card-img">${thumbHTML(e, 'news-thumb')}` +
         (e.cat ? `<span class="news-card-cat">${esc(e.cat)}</span>` : '') +
+        (e.photos.length > 1 ? `<span class="news-card-photos">${CAMERA}${photoCount(e.photos.length)}</span>` : '') +
       '</div>' +
       '<div class="news-card-body">' +
         `<h3 class="news-card-title">${esc(e.title)}</h3>` +
-        `<p class="news-card-text">${esc(e.teaser)}</p>` +
+        `<p class="news-card-text">${HD.formatText(e.teaser)}</p>` +
         '<span class="link-arr">Mehr erfahren</span>' +
       '</div></a>';
   }
@@ -114,9 +125,11 @@
     return `<a class="news-row" href="${esc(pageUrl(e.id))}" data-id="${esc(e.id)}">` +
       `<div class="news-row-img">${thumbHTML(e, 'news-thumb')}</div>` +
       '<div class="news-row-main">' +
-        (e.cat ? `<div class="news-row-meta"><span class="news-row-cat">${esc(e.cat)}</span></div>` : '') +
+        (e.cat || e.photos.length > 1 ? '<div class="news-row-meta">' +
+          (e.cat ? `<span class="news-row-cat">${esc(e.cat)}</span>` : '') +
+          (e.photos.length > 1 ? `<span class="news-row-photos">${photoCount(e.photos.length)}</span>` : '') + '</div>' : '') +
         `<h3 class="news-row-title">${esc(e.title)}</h3>` +
-        `<p class="news-row-text">${esc(e.teaser)}</p>` +
+        `<p class="news-row-text">${HD.formatText(e.teaser)}</p>` +
       '</div>' +
       '<span class="news-row-go" aria-hidden="true">&rarr;</span></a>';
   }
@@ -170,13 +183,8 @@
   }
 
   /* ---------- Fenster ---------- */
-  /* E-Mail-Adressen im (bereits escapten) Text als verschleierte Links
-     (HD.mailHTML); das Muster enthaelt weder < > noch Anfuehrungszeichen. */
-  function linkify(text) {
-    /* sehr lange Texte ohne Leerzeichen nur noch schlicht ausgeben (das Muster waere dort langsam) */
-    if (String(text).length > 4000) return esc(text);
-    return esc(text).replace(/([A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[a-z]{2,})/g, (m) => HD.mailHTML(m));
-  }
+  /* Text der Meldung: Formatierung (fett, kursiv …), Links und E-Mail-Adressen (HD.richText) */
+  const linkify = (text) => HD.richText(text, base);
   function buildDialog() {
     dialog = document.createElement('dialog');
     dialog.className = 'news-dialog';
@@ -189,13 +197,31 @@
     dialog.addEventListener('click', (ev) => { if (ev.target === dialog) close(); });
     dialog.addEventListener('close', () => {
       document.documentElement.classList.remove('nd-lock');
-      history.replaceState(null, '', location.pathname);
+      if (!previewing) history.replaceState(null, '', location.pathname);
       if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
     });
     qs('.nd-close', dialog).addEventListener('click', close);
   }
   function close() {
     if (dialog && dialog.open) dialog.close();
+  }
+
+  /* Bildergalerie wie auf Facebook: 1 Foto gross, 2 nebeneinander, 3 und 4 mit
+     einem grossen oben, ab 5 zwei oben und drei unten; auf der fuenften Kachel
+     "+N" fuer die uebrigen. Alle Fotos sind Links derselben Galerie, so blaettert
+     die Vergroesserung (lightbox.js) durch alle, auch die nicht gezeigten. */
+  function galleryHTML(list, title) {
+    if (!list.length) return '';
+    const shown = Math.min(list.length, 5);
+    return `<div class="nd-gallery g-${shown}" role="group" aria-label="${esc(`${photoCount(list.length)} zu „${title}“`)}">` +
+      list.map((p, i) => {
+        const src = url(p.src);
+        if (!src) return '';
+        const more = i === 4 && list.length > 5 ? `<span class="nd-g-more" aria-hidden="true">+${list.length - 5}</span>` : '';
+        const label = HD.plainText(p.alt) || `Foto ${i + 1} von ${list.length}`;
+        return `<a class="nd-g" href="${esc(src)}" data-lightbox data-gallery="news" data-caption="${esc(HD.plainText(p.alt))}"${i >= 5 ? ' hidden' : ''} title="${esc(label)}">` +
+          `<img src="${esc(src)}" alt="${esc(label)}" loading="lazy" decoding="async" data-bn=""/>${more}</a>`;
+      }).join('') + '</div>';
   }
 
   function mediaHTML(e) {
@@ -228,30 +254,61 @@
   function open(id, trigger) {
     const e = entries.find((x) => x.id === id);
     if (!e) return;
+    show(e, trigger);
+    history.replaceState(null, '', pageUrl(id));
+  }
+
+  /* Fenster einer Meldung zeichnen und oeffnen (auch fuer die Vorschau der Verwaltung) */
+  function show(e, trigger) {
     if (!dialog) buildDialog();
     lastTrigger = trigger || null;
 
     const media = qs('.nd-media', dialog);
     const content = qs('.nd-content', dialog);
+    /* Mit Fotos und ohne Plakat (z. B. ein Bericht): eine Spalte, Text oben, Galerie darunter;
+       ein eigenes Foto der Meldung steht dann als erstes in der Galerie */
+    const single = e.photos.length > 0 && !e.poster;
+    const gallery = single && e.thumb && !e.photos.some((p) => p.src === e.thumb)
+      ? [{ src: e.thumb, alt: '' }, ...e.photos] : e.photos;
     qs('.nd-layout', dialog).classList.toggle('nd-photo', !e.poster);
-    media.innerHTML = mediaHTML(e);
+    qs('.nd-layout', dialog).classList.toggle('nd-single', single);
+    media.innerHTML = single ? '' : mediaHTML(e);
 
     content.innerHTML =
       (e.cat ? `<div class="nd-meta"><span class="nd-cat">${esc(e.cat)}</span></div>` : '') +
       `<h2 class="nd-title" id="nd-title">${esc(e.title)}</h2>` +
-      `<p class="nd-teaser">${esc(e.teaser)}</p>` +
+      `<p class="nd-teaser">${linkify(e.teaser)}</p>` +
       (e.infos.length ? '<div class="nd-infos">' + e.infos.map((r) =>
         `<div class="nd-info"><div class="nd-info-label">${esc(r.label || 'Info')}</div><div class="nd-info-value">${linkify(r.value)}</div></div>`
       ).join('') + '</div>' : '') +
       (e.details.length ? `<div class="nd-details">${e.details.map((p) => `<p>${linkify(p)}</p>`).join('')}</div>` : '') +
+      galleryHTML(gallery, e.title) +
       actionsHTML(e);
 
     content.scrollTop = 0;
     media.scrollTop = 0;
     document.documentElement.classList.add('nd-lock');
     if (!dialog.open) dialog.showModal();
-    history.replaceState(null, '', pageUrl(id));
   }
+
+  /* Vorschau in der Verwaltung (admin/neuigkeiten.html): Meldung mit dem Stand des
+     Formulars, Bilder auch als noch nicht gespeicherte blob:-Adressen. Die Adresse
+     der Seite bleibt dabei unveraendert. */
+  window.AugNews = {
+    preview(e, trigger) {
+      base = '../';
+      previewing = true;
+      show({
+        cat: '', teaser: '', infos: [], details: [], thumb: '', poster: '', link: '', linktext: '',
+        link2: '', linktext2: '', focus: '', photos: [], ...e
+      }, trigger);
+      /* Links der Vorschau oeffnen in einem neuen Tab, damit das Formular erhalten bleibt */
+      for (const a of dialog.querySelectorAll('.nd-content a[href]:not([data-lightbox]), .nd-media a[href]:not([data-lightbox])')) {
+        a.target = '_blank';
+        a.rel = 'noopener';
+      }
+    }
+  };
 
   /* ---------- Start ---------- */
   async function init() {
@@ -273,10 +330,21 @@
     try {
       const res = await fetch(`${base}data/news.csv`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      entries = parse(await res.text());
+      entries = parse(HD.mailDecode(await res.text()));
     } catch {
       host.innerHTML = '<p class="s-text">Die Neuigkeiten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.</p>';
       return;
+    }
+    /* Fotos der Meldungen; fehlt die Datei, gibt es eben keine Galerie */
+    try {
+      const map = (await HD.fetchJSON(`${base}data/news-fotos.json`)).bilder || {};
+      for (const e of entries) {
+        e.photos = (Array.isArray(map[e.id]) ? map[e.id] : [])
+          .filter((p) => p && typeof p.bild === 'string')
+          .map((p) => ({ src: p.bild, alt: String(p.alt || '') }));
+      }
+    } catch {
+      /* ohne Galerie weiter */
     }
     if (grid) renderLatest(grid);
     if (archive) renderArchive(archive);

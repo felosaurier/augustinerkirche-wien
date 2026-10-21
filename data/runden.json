@@ -50,7 +50,7 @@
       "kontakt": {
         "titel": "Anmeldung & Auskunft",
         "text": "P. Nikolaus Schachtner OSA",
-        "email": "p.nikolaus@augustiner.at",
+        "email": "[[mail:ta.renitsugua|sualokin.p]]",
         "telefon": "",
         "anschrift": ""
       },
@@ -126,7 +126,7 @@
       "kontakt": {
         "titel": "Kontakt",
         "text": "Pfarre St. Augustin",
-        "email": "pfarre@augustinerkirche.at",
+        "email": "[[mail:ta.ehcrikrenitsugua|errafp]]",
         "telefon": "+43 (0)1 533 70 99",
         "anschrift": "Augustinerstraße 3, 1010 Wien"
       },
@@ -209,7 +209,7 @@
       "kontakt": {
         "titel": "Kontakt",
         "text": "Informationen bei P. Nikolaus Schachtner OSA",
-        "email": "p.nikolaus@augustiner.at",
+        "email": "[[mail:ta.renitsugua|sualokin.p]]",
         "telefon": "+43 (0)1 533 70 99",
         "anschrift": "Augustinerstraße 3, 1010 Wien"
       },
@@ -271,7 +271,7 @@
       "kontakt": {
         "titel": "Kontakt",
         "text": "Pfarre St. Augustin",
-        "email": "pfarre@augustinerkirche.at",
+        "email": "[[mail:ta.ehcrikrenitsugua|errafp]]",
         "telefon": "+43 (0)1 533 70 99",
         "anschrift": "Augustinerstraße 3, 1010 Wien"
       },
@@ -317,7 +317,7 @@
       "kontakt": {
         "titel": "Mitmachen",
         "text": "Diakon Michael Schimpl",
-        "email": "diakon@augustinerkirche.at",
+        "email": "[[mail:ta.ehcrikrenitsugua|nokaid]]",
         "telefon": "",
         "anschrift": ""
       },
@@ -373,7 +373,7 @@
       "kontakt": {
         "titel": "Kontakt",
         "text": "Pfarre St. Augustin",
-        "email": "pfarre@augustinerkirche.at",
+        "email": "[[mail:ta.ehcrikrenitsugua|errafp]]",
         "telefon": "+43 (0)1 533 70 99",
         "anschrift": "Augustinerstraße 3, 1010 Wien"
       },
@@ -464,14 +464,14 @@
         },
         {
           "label": "Anmeldung",
-          "wert": "Ausflug: gerda.loidl@chello.at bzw. 0699 11 69 35 19",
+          "wert": "Ausflug: [[mail:ta.ollehc|ldiol.adreg]] bzw. 0699 11 69 35 19",
           "zusatz": ""
         }
       ],
       "kontakt": {
         "titel": "Kontakt",
         "text": "Pfarre St. Augustin",
-        "email": "pfarre@augustinerkirche.at",
+        "email": "[[mail:ta.ehcrikrenitsugua|errafp]]",
         "telefon": "+43 (0)1 533 70 99",
         "anschrift": "Augustinerstraße 3, 1010 Wien"
       },

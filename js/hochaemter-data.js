@@ -81,35 +81,70 @@
   const mailHTML = (addr, subject = '') =>
     `<a class="mail" data-mail="${esc(mailCode(addr))}"${subject ? ` data-subject="${esc(subject)}"` : ''}>${esc(mailText(addr))}</a>`;
 
-  /* Freitext aus den Datendateien -> sicheres HTML. [Text](Adresse) wird ein
-     Link (Adressen der Website relativ zur Wurzel, Praefix `base`), *Wort*
-     kursiv; E-Mail- und https-Adressen werden automatisch verlinkt. */
-  const RICH = /\[([^\]\n]+)\]\(([^)\s]+)\)|\*([^*\n]+)\*|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])/g;
+  /* Auch in den Datendateien (data/*.json, data/*.csv), die oeffentlich auf dem Server
+     liegen, steht keine Adresse im Klartext, sondern [[mail:ta.renitsugua|ofni]] (gleiche
+     Schreibweise wie data-mail). Die Verwaltung verschluesselt beim Speichern, Website und
+     Verwaltung entschluesseln gleich nach dem Laden; danach ist alles wie gewohnt. */
+  const MAIL_ADDR = /[A-Za-z0-9_.+-]+@[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)+/g;
+  const MAIL_TOKEN = /\[\[mail:([^\]\s]+)\]\]/g;
+  const mailEncode = (text) => String(text).replace(MAIL_ADDR, (addr) => `[[mail:${mailCode(addr)}]]`);
+  const mailDecode = (text) => String(text).replace(MAIL_TOKEN, (_, code) => [...code.replace('|', '@')].reverse().join(''));
+
+  /* Freitext aus den Datendateien -> sicheres HTML. Die Formatierungsleiste der
+     Verwaltung schreibt diese Zeichen (auch ineinander, z. B. **__fett und unterstrichen__**):
+       **fett**   *kursiv*   __unterstrichen__   ~~durchgestrichen~~
+       [Text](Adresse)   Link (Adressen der Website relativ zur Wurzel, Praefix `base`)
+     E-Mail- und https-Adressen werden automatisch verlinkt. Mit links: false (z. B. im
+     Kurztext einer Karte, die selbst ein Link ist) bleibt es bei der Formatierung. */
+  /* Ein Zeichen zaehlt nur, wenn direkt danach bzw. davor kein Leerzeichen steht ("3 * 4" bleibt Text) */
+  const RICH = /\[([^\]\n]+)\]\(([^)\s]+)\)|\*\*\*(?!\s)([^\n]+?)(?<!\s)\*\*\*|\*\*(?!\s)([^\n]+?)(?<!\s)\*\*|__(?!\s)([^\n]+?)(?<!\s)__|~~(?!\s)([^\n]+?)(?<!\s)~~|\*(?![\s*])([^*\n]+?)(?<!\s)\*|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])/g;
+  /* Gruppe im Muster -> HTML ("***" ist fett und kursiv zugleich) */
+  const STYLE_TAGS = { 3: ['strong', 'em'], 4: ['strong'], 5: ['u'], 6: ['s'], 7: ['em'] };
   /* Die Muster oben sind bei sehr langen Woerter-Ketten ohne Leerzeichen langsam (quadratisch):
      ein eingefuegter Riesen-Absatz koennte die Seite sekundenlang blockieren. Absaetze sind kurz,
      darum wird nur der Anfang formatiert, der Rest als schlichter Text angehaengt. */
   const RICH_MAX = 4000;
-  function richText(s, base = '') {
+  function richText(s, base = '', opts = {}) {
+    const links = opts.links !== false;
     const text = String(s ?? '');
-    if (text.length > RICH_MAX) return richText(text.slice(0, RICH_MAX), base) + esc(text.slice(RICH_MAX));
+    if (text.length > RICH_MAX) return richText(text.slice(0, RICH_MAX), base, opts) + esc(text.slice(RICH_MAX));
     let html = '';
     let last = 0;
     for (const m of text.matchAll(RICH)) {
       html += esc(text.slice(last, m.index));
+      const style = [3, 4, 5, 6, 7].find((k) => m[k] !== undefined);
       if (m[1]) {
-        const u = safeUrl(m[2], base);
-        html += u ? `<a href="${esc(u)}"${/^https?:/i.test(u) ? ' target="_blank" rel="noopener"' : ''}>${esc(m[1])}</a>` : esc(m[1]);
-      } else if (m[3]) {
-        html += `<em>${esc(m[3])}</em>`;
-      } else if (m[4]) {
-        html += mailHTML(m[4]);
+        const u = links ? safeUrl(m[2], base) : '';
+        html += u ? `<a href="${esc(u)}"${/^https?:/i.test(u) ? ' target="_blank" rel="noopener"' : ''}>${richText(m[1], base, { links: false })}</a>` : richText(m[1], base, { links: false });
+      } else if (style) {
+        const tags = STYLE_TAGS[style];
+        html += tags.map((t) => `<${t}>`).join('') + richText(m[style], base, opts) + tags.slice().reverse().map((t) => `</${t}>`).join('');
+      } else if (m[8]) {
+        html += links ? mailHTML(m[8]) : esc(m[8]);
       } else {
-        html += `<a href="${esc(m[5])}" target="_blank" rel="noopener">${esc(m[5])}</a>`;
+        html += links ? `<a href="${esc(m[9])}" target="_blank" rel="noopener">${esc(m[9])}</a>` : esc(m[9]);
       }
       last = m.index + m[0].length;
     }
     return html + esc(text.slice(last));
   }
+  /* Nur die Formatierung (fett, kursiv …), ohne Links: fuer Text in einem Link oder Knopf */
+  const formatText = (s) => richText(s, '', { links: false });
+  /* Text ohne Formatierungszeichen, z. B. fuer Seitentitel, Bildbeschreibungen und Suche;
+     verschachtelte Formate (__~~Wort~~__) werden Schicht fuer Schicht entfernt */
+  function plainText(s) {
+    let text = String(s ?? '');
+    for (let i = 0; i < 6; i++) {
+      const next = stripOnce(text);
+      if (next === text) break;
+      text = next;
+    }
+    return text;
+  }
+  const stripOnce = (s) => s
+    .replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, '$1')
+    .replace(/\*\*\*(?!\s)([^\n]+?)(?<!\s)\*\*\*|\*\*(?!\s)([^\n]+?)(?<!\s)\*\*|__(?!\s)([^\n]+?)(?<!\s)__|~~(?!\s)([^\n]+?)(?<!\s)~~/g, (_, a, b, c, d) => a ?? b ?? c ?? d)
+    .replace(/\*(?![\s*])([^*\n]+?)(?<!\s)\*/g, '$1');
   /* Telefonnummer -> tel:-Adresse ("+43 (0)1 533 70 99" -> "tel:+43153370099") */
   const telHref = (s) => `tel:${String(s).replace(/\(0\)/g, '').replace(/[^\d+]/g, '')}`;
 
@@ -351,8 +386,14 @@
   async function fetchText(url) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.text();
+    return mailDecode(await res.text());
   }
+  /* Datendatei als JSON, E-Mail-Adressen schon entschluesselt */
+  const fetchJSON = async (url, init) => {
+    const res = await fetch(url, init);
+    if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
+    return JSON.parse(mailDecode(await res.text()));
+  };
 
   /* Laedt die Tabelle; liefert normalisierte, chronologisch sortierte Eintraege */
   async function load(url) {
@@ -414,7 +455,7 @@
 
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
-    esc, pad, num, focusPos, safeUrl, richText, blocksHTML, legalHTML, mailHTML, telHref, slug, csvText, download,
+    esc, pad, num, focusPos, safeUrl, richText, formatText, plainText, blocksHTML, legalHTML, mailHTML, mailEncode, mailDecode, fetchJSON, telHref, slug, csvText, download,
     parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV

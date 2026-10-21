@@ -40,10 +40,7 @@
   const cache = new Map();
   function load(name) {
     if (!cache.has(name)) {
-      cache.set(name, fetch(`${ROOT}data/${name}`).then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      }));
+      cache.set(name, HD.fetchJSON(`${ROOT}data/${name}`));
     }
     return cache.get(name);
   }
@@ -107,7 +104,7 @@
         `<a class="rk" href="${esc(rundeHref(r))}">${cardImg(r.bild && r.bild.pfad ? r.bild : KIRCHE[spare++ % KIRCHE.length])}` +
         '<div class="rk-body">' +
           `<h3 class="rk-title">${esc(r.titel)}</h3>` +
-          (r.kurztext ? `<p class="rk-text">${esc(r.kurztext)}</p>` : '') +
+          (r.kurztext ? `<p class="rk-text">${HD.formatText(r.kurztext)}</p>` : '') +
           nextHTML(nextDate(r)) +
         '</div></a>'
       ).join('');
@@ -132,7 +129,7 @@
     if (k.anschrift) rows.push(['Anschrift', esc(k.anschrift), ' kontakt-hours']);
     return '<div class="kontakt-card">' +
       `<div class="kontakt-title">${esc(k.titel || 'Kontakt')}</div>` +
-      (k.text ? `<p class="kontakt-text">${esc(k.text)}</p>` : '') +
+      (k.text ? `<p class="kontakt-text">${rich(k.text)}</p>` : '') +
       `<div class="kontakt-rows">${rows.map(([l, v, cls]) =>
         `<div class="kontakt-row"><span class="kontakt-label">${l}</span><span class="kontakt-val${cls || ''}">${v}</span></div>`).join('')}</div></div>`;
   }
@@ -167,7 +164,7 @@
     document.title = `${title} — Augustinerkirche Wien`;
     hero.innerHTML = (k.zeile ? `<div class="ph-tag">${esc(k.zeile)}</div>` : '') +
       `<h1 class="ph-title">${titleHTML(title, k.betonung)}</h1>` +
-      (k.untertitel ? `<p class="ph-sub">${esc(k.untertitel)}</p>` : '');
+      (k.untertitel ? `<p class="ph-sub">${rich(k.untertitel)}</p>` : '');
 
     const now = new Date();
     const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -258,8 +255,8 @@
       (cover ? `<img class="cd-cover" src="${esc(cover)}" alt="" width="${HD.num(c.cover.breite, 400)}" height="${HD.num(c.cover.hoehe, 400)}" loading="lazy" decoding="async"/>` : '') +
       '<div class="cd-body">' +
         `<h4 class="cd-title">${esc(c.titel)}</h4>` +
-        (c.werke ? `<p class="cd-works">${esc(c.werke)}</p>` : '') +
-        (c.mitwirkende || c.leitung ? `<p class="cd-cast">${esc(c.mitwirkende || '')}${c.leitung ? `<span>Leitung: ${esc(c.leitung)}</span>` : ''}</p>` : '') +
+        (c.werke ? `<p class="cd-works">${rich(c.werke)}</p>` : '') +
+        (c.mitwirkende || c.leitung ? `<p class="cd-cast">${rich(c.mitwirkende || '')}${c.leitung ? `<span>Leitung: ${esc(c.leitung)}</span>` : ''}</p>` : '') +
         (samples.length ? `<div class="cd-samples" role="group" aria-label="Hörproben">${samples.map((h) =>
           `<button type="button" class="cd-play" data-audio="${esc(url(h.datei))}" aria-pressed="false">${esc(h.titel || 'Hörprobe')}</button>`).join('')}</div>` : '') +
       '</div></article>';
@@ -301,7 +298,7 @@
       (p.rolle ? `<div class="pgr-role">${esc(p.rolle)}</div>` : '') +
       (p.beruf ? `<div class="pgr-job">${esc(p.beruf)}</div>` : '') +
       '</div></div><div>' +
-      `<ul class="pgr-tasks">${(p.aufgaben || []).map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` +
+      `<ul class="pgr-tasks">${(p.aufgaben || []).map((t) => `<li>${rich(t)}</li>`).join('')}</ul>` +
       (contact ? `<div class="pgr-contact">${contact}</div>` : '') +
       '</div></li>';
   }
