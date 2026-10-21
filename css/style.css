@@ -360,6 +360,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .cards-stack .card:last-child{border-bottom:1px solid var(--line)}
 .card-title{margin-bottom:.45rem;font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.2;color:var(--blue);transition:color .2s}
 .card-text{font-size:1.02rem;line-height:1.65;color:var(--text-mid)}
+.card-price{margin:-.1rem 0 .5rem;font-size:.95rem;font-weight:600;letter-spacing:.02em;color:var(--gold-text)}
 .card-more{margin-top:.8rem;font-size:1rem;line-height:1.7;color:var(--text-mid)}
 .card-more a,.card-text a{color:var(--blue);text-decoration-color:var(--gold-l);text-underline-offset:.25em}
 a.card:hover .card-title{color:var(--gold)}
@@ -396,6 +397,11 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 /* Zwischenüberschriften und Zitate innerhalb eines Reiters */
 .pane-sub{margin:3rem 0 .9rem;font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.2;color:var(--blue)}
 .pane-facts{max-width:32rem}
+/* Kirchenmusik: online spenden (PayPal) unter den Kontodaten */
+.donate-online{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem 2rem;max-width:32rem;margin-top:1.4rem;padding:1.1rem 1.4rem;border-left:3px solid var(--gold);background:var(--bg-warm)}
+.donate-online p{flex:1 1 12rem;font-family:var(--serif);font-size:1.22rem;line-height:1.35;color:var(--blue)}
+.donate-online-btn::after{content:'\2192';margin-left:.6em;transition:transform .2s var(--ease)}
+.donate-online-btn:hover::after{transform:translateX(3px)}
 .patron-quote{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line-dark);font-family:var(--serif);font-size:1.3rem;font-weight:500;line-height:1.35;color:#fff}
 
 /* Gremien (Pfarrgemeinderat, Vermögensverwaltungsrat): Name links, Aufgaben rechts */
@@ -439,7 +445,8 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .cd-order p{font-size:.98rem;color:var(--text-mid)}
 .cd-order p a{color:var(--blue);text-decoration-color:var(--gold-l);text-underline-offset:.25em}
 .cd-group{margin-top:3rem;padding-bottom:.7rem;border-bottom:1px solid var(--blue);font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.2;color:var(--blue)}
-.cd-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:2.5rem}
+/* eine CD je Zeile, auch am Desktop */
+.cd-list{display:grid;grid-template-columns:minmax(0,1fr)}
 .cd{display:grid;grid-template-columns:5.5rem minmax(0,1fr);gap:1.1rem;align-items:start;padding:1.3rem 0;border-bottom:1px solid var(--line)}
 .cd-cover{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;background:var(--bg-soft)}
 .cd-title{margin-bottom:.35rem;font-family:var(--serif);font-size:1.25rem;font-weight:500;line-height:1.2;color:var(--blue)}
@@ -1336,7 +1343,6 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
 @media(max-width:1200px){
   /* vier Meldungen: unter grossen Laptops als 2 × 2 */
   .news-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:3rem 2.4rem}
-  .cd-list{grid-template-columns:minmax(0,1fr)}
 }
 
 @media(max-width:1024px){

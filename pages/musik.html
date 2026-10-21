@@ -167,6 +167,7 @@
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Förderung</span>
         <button type="button" class="sidebar-item" data-pane="p-patenschaft">Patenschaft</button>
+        <button type="button" class="sidebar-item" data-pane="p-paten">Paten</button>
         <button type="button" class="sidebar-item" data-pane="p-cds">CDs</button>
       </aside>
 
@@ -445,16 +446,23 @@
             <div><dt>IBAN</dt><dd>AT85 3200 0000 1525 3743</dd></div>
             <div><dt>BIC</dt><dd>RLNWATWW</dd></div>
           </dl>
+          <!-- PayPal-Link kommt aus der Verwaltung (Paten → Spenden & Möglichkeiten); bis dahin Platzhalter "#" -->
+          <div class="donate-online" data-inhalt="paypal">
+            <p>Oder bequem online spenden</p>
+            <a class="btn btn-gold donate-online-btn" href="#" target="_blank" rel="noopener">Mit PayPal spenden</a>
+          </div>
 
           <h3 class="pane-sub">Möglichkeiten der Unterstützung</h3>
-          <div class="cards-stack">
+          <div class="cards-stack" data-inhalt="stufen">
             <div class="card">
               <div class="card-title">Förderer und Förderin</div>
-              <div class="card-text">Ab € 35 im Jahr. Sie erhalten Ermäßigungen bei allen Konzerten.</div>
+              <div class="card-price">ab € 35 im Jahr</div>
+              <div class="card-text">Sie erhalten Ermäßigungen bei allen Konzerten.</div>
             </div>
             <div class="card">
               <div class="card-title">Teil-Patenschaft</div>
-              <div class="card-text">Ab € 300 tragen Sie einen Teil der Kosten einer Messaufführung. Sie erhalten eine Dankesurkunde und Ermäßigungen bei Konzerten und auf unsere CDs; auf Wunsch nennen wir Ihren Namen oder Ihr Unternehmen auf unserer Website.</div>
+              <div class="card-price">ab € 300</div>
+              <div class="card-text">Sie tragen einen Teil der Kosten einer Messaufführung und erhalten eine Dankesurkunde und Ermäßigungen bei Konzerten und auf unsere CDs; auf Wunsch nennen wir Ihren Namen oder Ihr Unternehmen auf unserer Website.</div>
             </div>
             <div class="card">
               <div class="card-title">Pate und Patin</div>
@@ -476,6 +484,17 @@
           </div>
 
           <h3 class="pane-sub">Paten von St. Augustin</h3>
+          <p class="bio-p">Wir danken allen Patinnen und Paten für die freundliche Unterstützung. <a href="#p-paten">Zur Liste der Paten von St. Augustin</a></p>
+
+          <h3 class="pane-sub">Schirmherr Franz Welser-Möst</h3>
+          <p class="bio-p">Franz Welser-Möst wurde 1960 in Linz geboren. Am dortigen Musikgymnasium wurde Balduin Sulzer auf ihn aufmerksam und zu seinem wichtigsten Lehrer und Förderer. Er studierte Komposition und Geige; nach einem schweren Autounfall 1978 musste er das Geigenspiel aufgeben und widmete sich ganz dem Dirigieren.</p>
+          <p class="bio-p">Bis 1985 leitete er das Österreichische Jugendorchester, erste Engagements führten ihn nach Winterthur, Lausanne und Norrköping. 1986 sorgte er mit dem London Philharmonic Orchestra international für Aufsehen und war von 1990 bis 1996 dessen Chefdirigent. Am Opernhaus Zürich war er 1995 bis 2002 Musikdirektor und 2005 bis 2008 Generalmusikdirektor, seit 2002 ist er Chefdirigent des Cleveland Orchestra, 2010 bis 2014 war er Generalmusikdirektor der Wiener Staatsoper. Er gastierte unter anderem an der Deutschen Oper Berlin, in Glyndebourne und seit 2004 bei den Salzburger Festspielen und ist dem Linzer Brucknerfest eng verbunden.</p>
+          <p class="bio-p">Für seinen Einsatz für Menschen mit Behinderung am Institut Hartheim erhielt er 1995 den Outstanding Achievement Award des Western Law Center in Los Angeles. Zu seinen Auszeichnungen zählen außerdem der Gramophone Award, der Japanese Record Academy Award, zwei Grammy-Nominierungen, der Mozart-Preis der Goethe-Stiftung Basel (1999), die Ehrendoktorwürde der Case Western Reserve University in Cleveland und der Titel „Conductor of the Year“ (2003) sowie eine Honorarprofessur an der Anton Bruckner Privatuniversität Linz.</p>
+          <p class="bio-p">Bei der Übernahme der Schirmherrschaft 2008 erinnerte er daran, dass große Kirchenmusik wie Mozarts Requiem oder Haydns Mariazellermesse nicht nur in Konzertsälen, sondern vor allem in den Kirchen lebendig bleiben muss, für die sie geschrieben wurde, und warb um weitere Patinnen und Paten.</p>
+        </div>
+
+        <div class="tab-pane" id="p-paten">
+          <h2 class="s-title">Paten von St. Augustin</h2>
           <p class="bio-p">Wir danken für die freundliche Unterstützung.<span data-inhalt="ehrenpaten"> Ehrenpaten sind Dr. Otto von Habsburg-Lothringen und Karl von Habsburg-Lothringen.</span></p>
           <ol class="paten-list" data-inhalt="paten">
               <li>Schirmherr Franz Welser-Möst</li>
@@ -590,12 +609,7 @@
               <li>Adi Gertraud &amp; Franz Trimmel</li>
               <li>Ulrike &amp; Mag. Thomas M. Exl</li>
           </ol>
-
-          <h3 class="pane-sub">Schirmherr Franz Welser-Möst</h3>
-          <p class="bio-p">Franz Welser-Möst wurde 1960 in Linz geboren. Am dortigen Musikgymnasium wurde Balduin Sulzer auf ihn aufmerksam und zu seinem wichtigsten Lehrer und Förderer. Er studierte Komposition und Geige; nach einem schweren Autounfall 1978 musste er das Geigenspiel aufgeben und widmete sich ganz dem Dirigieren.</p>
-          <p class="bio-p">Bis 1985 leitete er das Österreichische Jugendorchester, erste Engagements führten ihn nach Winterthur, Lausanne und Norrköping. 1986 sorgte er mit dem London Philharmonic Orchestra international für Aufsehen und war von 1990 bis 1996 dessen Chefdirigent. Am Opernhaus Zürich war er 1995 bis 2002 Musikdirektor und 2005 bis 2008 Generalmusikdirektor, seit 2002 ist er Chefdirigent des Cleveland Orchestra, 2010 bis 2014 war er Generalmusikdirektor der Wiener Staatsoper. Er gastierte unter anderem an der Deutschen Oper Berlin, in Glyndebourne und seit 2004 bei den Salzburger Festspielen und ist dem Linzer Brucknerfest eng verbunden.</p>
-          <p class="bio-p">Für seinen Einsatz für Menschen mit Behinderung am Institut Hartheim erhielt er 1995 den Outstanding Achievement Award des Western Law Center in Los Angeles. Zu seinen Auszeichnungen zählen außerdem der Gramophone Award, der Japanese Record Academy Award, zwei Grammy-Nominierungen, der Mozart-Preis der Goethe-Stiftung Basel (1999), die Ehrendoktorwürde der Case Western Reserve University in Cleveland und der Titel „Conductor of the Year“ (2003) sowie eine Honorarprofessur an der Anton Bruckner Privatuniversität Linz.</p>
-          <p class="bio-p">Bei der Übernahme der Schirmherrschaft 2008 erinnerte er daran, dass große Kirchenmusik wie Mozarts Requiem oder Haydns Mariazellermesse nicht nur in Konzertsälen, sondern vor allem in den Kirchen lebendig bleiben muss, für die sie geschrieben wurde, und warb um weitere Patinnen und Paten.</p>
+          <p class="bio-p" style="margin-top:2rem">Möchten Sie selbst Pate werden? Alles zu den Möglichkeiten finden Sie unter <a href="#p-patenschaft">Patenschaft St. Augustin</a>.</p>
         </div>
 
         <div class="tab-pane" id="p-cds">

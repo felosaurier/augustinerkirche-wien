@@ -74,6 +74,7 @@
       ['pages/musik.html#p-orchester', 'Orchester', 'Zum Orchester'],
       ['pages/musik.html#p-orgeln', 'Orgeln', 'Zu den Orgeln'],
       ['pages/musik.html#p-patenschaft', 'Patenschaft St. Augustin', 'Zur Patenschaft'],
+      ['pages/musik.html#p-paten', 'Paten von St. Augustin', 'Zu den Paten'],
       ['pages/musik.html#p-cds', 'CDs von St. Augustin', 'Zu den CDs']]],
     ['Augustinerkirche', [
       ['pages/chronik.html#p-geschichte', 'Geschichte', 'Zur Geschichte'],

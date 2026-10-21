@@ -1893,7 +1893,7 @@
       ['solisten.html', 'Solisten', 'mic', 'Sänger Sopran Alt Tenor Bass Foto'],
       ['repertoire.html', 'Repertoire', 'book', 'Komponisten Werke Messen Chor'],
       ['personen.html?bereich=musik', 'Leitung & Organisten', 'user', 'Dirigent Chorleiter Organist Orgel Gastdirigenten'],
-      ['paten.html', 'Paten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender'],
+      ['paten.html', 'Paten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender Spenden PayPal Beträge'],
       ['cds.html', 'CDs', 'disc', 'Aufnahmen Hörproben Cover']
     ] },
     { label: 'Website', items: [

@@ -16,7 +16,9 @@
    - data/pgr.json: Pfarrgemeinderat ([data-inhalt="pgr-mitglieder"],
      [data-inhalt="pgr-weitere"])
    - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
-     ([data-inhalt="paten"], [data-inhalt="ehrenpaten"])
+     ([data-inhalt="paten"], [data-inhalt="ehrenpaten"]), Moeglichkeiten
+     der Unterstuetzung ([data-inhalt="stufen"]) und PayPal-Link
+     ([data-inhalt="paypal"], ohne Link bleibt der Platzhalter)
    - data/rechtliches.json: Impressum und Datenschutz
      ([data-inhalt="rechtliches"][data-seite="impressum|datenschutz"])
    Der Inhalt im HTML bleibt als Rueckfall stehen, falls eine Datei
@@ -318,13 +320,24 @@
   async function paten() {
     const list = document.querySelector('[data-inhalt="paten"]');
     const ehren = document.querySelector('[data-inhalt="ehrenpaten"]');
-    if (!list && !ehren) return;
+    const stufen = document.querySelector('[data-inhalt="stufen"]');
+    const paypal = document.querySelector('[data-inhalt="paypal"]');
+    if (!list && !ehren && !stufen && !paypal) return;
     const data = await load('paten.json');
     if (list) list.innerHTML = (data.paten || []).map((n) => `<li>${esc(n)}</li>`).join('');
     if (ehren) {
       const e = data.ehrenpaten || [];
       ehren.textContent = e.length ? ` ${e.length === 1 ? 'Ehrenpate ist' : 'Ehrenpaten sind'} ${andList(e)}.` : '';
     }
+    /* Ohne "stufen" in der Datei bleiben die Karten aus dem HTML stehen */
+    if (stufen && Array.isArray(data.stufen) && data.stufen.length) {
+      stufen.innerHTML = data.stufen.map((s) =>
+        `<div class="card"><div class="card-title">${esc(s.titel)}</div>` +
+        (s.betrag ? `<div class="card-price">${esc(s.betrag)}</div>` : '') +
+        (s.text ? `<div class="card-text">${rich(s.text)}</div>` : '') + '</div>').join('');
+    }
+    const link = paypal && /^https:\/\//i.test(data.paypal || '') ? url(data.paypal) : '';
+    if (link) paypal.querySelector('a').href = link;
   }
 
   async function repertoire() {
