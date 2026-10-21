@@ -676,6 +676,9 @@
   async function initHeroShow() {
     const box = qs('#hero-show');
     if (!box) return;
+    /* Schrift wartet aufs erste Foto (hoechstens 0,6 s), damit beide gleich einblenden (style.css) */
+    box.classList.add('is-loading');
+    const deadline = new Promise((r) => setTimeout(r, 600));
     let data = null;
     try {
       const res = await fetch(`${siteRoot}${box.dataset.show}`);
@@ -732,7 +735,10 @@
       if (slides.length > 1) load((i + 1) % slides.length);
     }
 
-    await load(0);
+    await Promise.race([load(0), deadline]);
+    slides[0].classList.add('is-first');
+    slides[0].addEventListener('animationend', () => slides[0].classList.remove('is-first'), { once: true });
+    box.classList.remove('is-loading');
     show(0);
     if (slides.length < 2) return;
 

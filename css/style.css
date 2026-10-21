@@ -111,7 +111,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   font-family:var(--sans);font-size:1rem;font-weight:500;line-height:1;
   color:var(--nav-fg-soft);white-space:nowrap;transition:color .2s;
 }
-.nav-btn svg{width:9px;height:9px;flex-shrink:0;stroke:currentColor;opacity:.7;transition:transform .25s var(--ease)}
+.nav-btn svg{width:9px;height:9px;flex-shrink:0;stroke:currentColor;opacity:.7}
 .nav-btn:hover,.nav-item.open .nav-btn{color:var(--nav-fg)}
 .nav-item.open .nav-btn svg{transform:rotate(180deg)}
 .nav-btn.current{color:var(--nav-accent)}
@@ -127,13 +127,11 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   overflow-y:auto;overscroll-behavior:contain;
   padding:1rem 0;background:#fff;
   box-shadow:0 22px 50px rgba(16,25,46,.24);
-  /* visibility zusaetzlich zu opacity: geschlossene Menues sind so auch
-     fuer Tastatur und Screenreader verborgen. Beim Oeffnen sofort sichtbar
-     (Delay 0), beim Schliessen erst nach dem Ausblenden (Delay .18s). */
-  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-4px);
-  transition:opacity .18s,transform .18s var(--ease),visibility 0s linear .18s;
+  /* Ohne Animation: sofort offen bzw. zu. visibility haelt geschlossene
+     Menues auch vor Tastatur und Screenreader verborgen. */
+  visibility:hidden;pointer-events:none;
 }
-.nav-item.open .mega{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition-delay:0s}
+.nav-item.open .mega{visibility:visible;pointer-events:auto}
 .mega{column-count:2;column-gap:0}
 .mega-group{padding:.35rem 0;break-inside:avoid}
 .mega-group-label{display:block;padding:.3rem 1.5rem .25rem;font-size:.82rem;font-weight:600;color:var(--gold)}
@@ -212,7 +210,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   grid-column:2;grid-row:1;align-self:stretch;
   min-height:100%;
   background-color:var(--blue);background-size:cover;background-position:center;
-  animation:fade-in 1s ease-out both;
+  animation:fade-in .5s ease-out both;
 }
 /* Startseite: Foto groesser (Text bleibt links) und mehrere Fotos als Diashow (js/main.js, data/startseite.json) */
 .hero-home{grid-template-columns:minmax(0,1fr) minmax(0,52%)}
@@ -221,6 +219,10 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .hero-show{overflow:hidden;background-color:transparent;animation:none}
 .hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s ease}
 .hero-slide.is-on{opacity:1}
+/* Erstes Foto blendet genau wie die Schrift ein: die Schrift wartet, bis das
+   Foto geladen ist (hoechstens kurz, js/main.js), dann beginnen beide zugleich */
+.hero:has(.hero-show.is-loading) .hero-content{animation-play-state:paused}
+.hero-slide.is-first{transition:none;animation:fade-in .5s ease-out backwards}
 .hero-multi{cursor:pointer}
 .hero-arrow{position:absolute;top:50%;z-index:3;display:grid;place-items:center;width:3rem;height:3rem;margin-top:-1.5rem;padding:0;border:none;border-radius:50%;
   background:rgba(16,25,46,.62);color:#fff;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s,background .2s}
@@ -233,7 +235,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .hero-img[style*="aspersdorf"]{background-position:68% center}
 /* Kirchturm: Spitze immer im Bild, unten darf beschnitten werden */
 .hero-img[style*="turm"]{background-position:center 20%}
-.hero-content{grid-column:1;grid-row:1;align-self:end;max-width:46rem;padding:clamp(3rem,8vh,5rem) 0 clamp(3rem,9vh,6rem);animation:fade-in 1s ease-out .3s both}
+.hero-content{grid-column:1;grid-row:1;align-self:end;max-width:46rem;padding:clamp(3rem,8vh,5rem) 0 clamp(3rem,9vh,6rem);animation:fade-in .5s ease-out both}
 .hero-eyebrow{margin-bottom:1.3rem;font-size:1rem;font-weight:500;color:var(--nav-accent)}
 .hero-h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.3rem,3.4vw,4.2rem);line-height:1.05;letter-spacing:-.01em;color:var(--nav-fg);text-wrap:balance}
 .hero-sub{max-width:34rem;margin-top:1.6rem;font-size:1.12rem;line-height:1.65;color:var(--nav-fg-soft)}
