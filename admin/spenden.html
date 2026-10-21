@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Spenden — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-spenden.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Spenden <em>&amp; Möglichkeiten</em></h1>
+      <p class="ph-sub">PayPal-Link und die Arten der Unterstützung mit Beträgen für Kirchenmusik → <a href="../pages/musik.html#p-patenschaft" target="_blank" rel="noopener">Patenschaft</a>.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <section class="adm-panel" id="pt-spenden" aria-labelledby="sp-h">
+    <h2 class="visually-hidden" id="sp-h">Spenden und Möglichkeiten der Unterstützung</h2>
+    <div id="sp-error"></div>
+    <form id="sp-form" novalidate autocomplete="off">
+      <fieldset class="adm-fs">
+        <legend>Online spenden</legend>
+        <div class="adm-grid">
+          <div class="adm-field full">
+            <label class="adm-label" for="f-paypal">PayPal-Link <span class="adm-opt">kommt später</span></label>
+            <input class="adm-input" type="url" id="f-paypal" placeholder="https://www.paypal.com/donate/?hosted_button_id=…" aria-describedby="f-paypal-hint"/>
+            <span class="adm-hint" id="f-paypal-hint">Der Link aus PayPal (Spenden-Button oder paypal.me). Er erscheint auf der Seite Kirchenmusik → Patenschaft unter der Bankverbindung als Knopf „Mit PayPal spenden“.</span>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="adm-fs">
+        <legend>Möglichkeiten der Unterstützung</legend>
+        <p class="adm-hint adm-fs-lead l">Erscheinen in dieser Reihenfolge unter „Möglichkeiten der Unterstützung“. Der Betrag steht klein unter der Bezeichnung und darf leer bleiben.</p>
+        <div class="adm-blocks" id="sp-stufen"></div>
+        <button type="button" class="adm-list-add adm-mt-8" id="sp-add" data-icon="plus">Weitere Möglichkeit</button>
+      </fieldset>
+      <div class="adm-inline-foot">
+        <span class="adm-muted" id="sp-state"></span>
+        <button type="submit" class="btn btn-dark" id="sp-save" data-icon="check">Spenden speichern</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+</body>
+</html>

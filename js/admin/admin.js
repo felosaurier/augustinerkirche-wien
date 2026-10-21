@@ -135,7 +135,7 @@
     { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Einstellungen', page: 'rechtliches.html' },
     { key: 'hochaemter', label: 'Hochämter', group: 'Kirchenmusik', page: 'hochaemter.html' },
     { key: 'solisten', label: 'Solisten', group: 'Kirchenmusik', page: 'solisten.html' },
-    { key: 'paten', label: 'Paten', group: 'Kirchenmusik', page: 'paten.html' },
+    { key: 'paten', label: 'Paten, Spenden & Möglichkeiten', group: 'Kirchenmusik', page: 'paten.html' },
     { key: 'cds', label: 'CDs', group: 'Kirchenmusik', page: 'cds.html' },
     { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
     { key: 'repertoire', label: 'Repertoire', group: 'Kirchenmusik', page: 'repertoire.html' },
@@ -175,6 +175,8 @@
   /* Schluessel einer Seite der Verwaltung ('' = fuer alle offen) */
   function rightOfPage(page) {
     if (page === 'runden.html') return RUNDEN_KEY;
+    /* Spenden & Moeglichkeiten liegen in derselben Datei wie die Paten */
+    if (page === 'spenden.html') return 'paten';
     if (page === 'personen.html') return personenBereich() === 'kloster' ? 'mitbrueder' : 'musik-personen';
     const a = AREAS.find((x) => x.page === page);
     return a ? a.key : '';
@@ -1893,7 +1895,8 @@
       ['solisten.html', 'Solisten', 'mic', 'Sänger Sopran Alt Tenor Bass Foto'],
       ['repertoire.html', 'Repertoire', 'book', 'Komponisten Werke Messen Chor'],
       ['personen.html?bereich=musik', 'Leitung & Organisten', 'user', 'Dirigent Chorleiter Organist Orgel Gastdirigenten'],
-      ['paten.html', 'Paten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender Spenden PayPal Beträge'],
+      ['paten.html', 'Paten & Ehrenpaten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender'],
+      ['spenden.html', 'Spenden & Möglichkeiten', 'heart', 'Patenschaft Spenden PayPal Beträge Preise Förderer Stifter'],
       ['cds.html', 'CDs', 'disc', 'Aufnahmen Hörproben Cover']
     ] },
     { label: 'Website', items: [

@@ -27,7 +27,7 @@
     <div>
       <div class="ph-tag">Verwaltung</div>
       <h1 class="ph-title">Paten <em>pflegen</em></h1>
-      <p class="ph-sub">Paten und Ehrenpaten für Kirchenmusik → <a href="../pages/musik.html#p-paten" target="_blank" rel="noopener">Paten</a>. Die Paten erscheinen dort nummeriert in der Reihenfolge dieser Liste. Unter „Spenden &amp; Möglichkeiten“ stehen der PayPal-Link und die Arten der Unterstützung mit Beträgen.</p>
+      <p class="ph-sub">Paten und Ehrenpaten für Kirchenmusik → <a href="../pages/musik.html#p-paten" target="_blank" rel="noopener">Paten</a>. Die Paten erscheinen dort nummeriert in der Reihenfolge dieser Liste. PayPal-Link und Beträge stehen unter <a href="spenden.html">Spenden &amp; Möglichkeiten</a>.</p>
     </div>
     <div class="adm-head-actions">
       <button type="button" class="btn btn-gold" id="pt-new" data-icon="plus">Neuer Pate</button>
@@ -45,39 +45,12 @@
     <div class="adm-seg" role="group" aria-label="Liste wählen" id="pt-group">
       <button type="button" class="week-filter-btn active" data-group="paten" aria-pressed="true">Paten <span class="n" id="pt-n-paten"></span></button>
       <button type="button" class="week-filter-btn" data-group="ehrenpaten" aria-pressed="false">Ehrenpaten <span class="n" id="pt-n-ehrenpaten"></span></button>
-      <button type="button" class="week-filter-btn" data-group="spenden" aria-pressed="false">Spenden &amp; Möglichkeiten</button>
     </div>
   </div>
   <p class="adm-count" id="pt-count" role="status"></p>
 
   <div id="pt-list"><p class="adm-muted">Wird geladen …</p></div>
 
-  <!-- Spenden: PayPal-Link und Moeglichkeiten der Unterstuetzung -->
-  <section class="adm-panel" id="pt-spenden" aria-labelledby="sp-h" hidden>
-    <h2 class="visually-hidden" id="sp-h">Spenden und Möglichkeiten der Unterstützung</h2>
-    <form id="sp-form" novalidate autocomplete="off">
-      <fieldset class="adm-fs">
-        <legend>Online spenden</legend>
-        <div class="adm-grid">
-          <div class="adm-field full">
-            <label class="adm-label" for="f-paypal">PayPal-Link <span class="adm-opt">kommt später</span></label>
-            <input class="adm-input" type="url" id="f-paypal" placeholder="https://www.paypal.com/donate/?hosted_button_id=…" aria-describedby="f-paypal-hint"/>
-            <span class="adm-hint" id="f-paypal-hint">Der Link aus PayPal (Spenden-Button oder paypal.me). Er erscheint auf der Seite Kirchenmusik → Patenschaft unter der Bankverbindung als Knopf „Mit PayPal spenden“.</span>
-          </div>
-        </div>
-      </fieldset>
-      <fieldset class="adm-fs">
-        <legend>Möglichkeiten der Unterstützung</legend>
-        <p class="adm-hint adm-fs-lead l">Erscheinen in dieser Reihenfolge unter „Möglichkeiten der Unterstützung“. Der Betrag steht klein unter der Bezeichnung und darf leer bleiben.</p>
-        <div class="adm-blocks" id="sp-stufen"></div>
-        <button type="button" class="adm-list-add adm-mt-8" id="sp-add" data-icon="plus">Weitere Möglichkeit</button>
-      </fieldset>
-      <div class="adm-inline-foot">
-        <span class="adm-muted" id="sp-state"></span>
-        <button type="submit" class="btn btn-dark" id="sp-save" data-icon="check">Spenden speichern</button>
-      </div>
-    </form>
-  </section>
 </main>
 
 <!-- Bearbeiten -->

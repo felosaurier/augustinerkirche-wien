@@ -76,7 +76,7 @@
         `<span class="adm-area-stat">${stat}</span>` +
         (flag ? `<span class="adm-area-flag">${icon('alert')}${esc(flag)}</span>` : '') +
       '</div>' +
-      `<a class="adm-area-add" href="${addHref}" title="${addLabel}">${icon(addIcon)}<span>${addLabel}</span></a>` +
+      (addHref ? `<a class="adm-area-add" href="${addHref}" title="${addLabel}">${icon(addIcon)}<span>${addLabel}</span></a>` : '') +
     '</li>';
   }
 
@@ -171,9 +171,13 @@
           addHref: 'personen.html?bereich=musik&neu=1', addLabel: 'Neue Person'
         }),
         can('paten') && row({
-          href: 'paten.html', ico: 'heart', title: 'Paten',
+          href: 'paten.html', ico: 'heart', title: 'Paten &amp; Ehrenpaten',
           stat: pt ? `${plural(count(pt.paten), 'Pate', 'Paten')} · ${plural(count(pt.ehrenpaten), 'Ehrenpate', 'Ehrenpaten')}` : none,
           addHref: 'paten.html?neu=1', addLabel: 'Neuer Pate'
+        }),
+        can('paten') && row({
+          href: 'spenden.html', ico: 'heart', title: 'Spenden &amp; Möglichkeiten',
+          stat: pt ? `${plural(count(pt.stufen), 'Möglichkeit', 'Möglichkeiten')}${pt.paypal ? ' · PayPal' : ''}` : none
         }),
         can('cds') && row({
           href: 'cds.html', ico: 'disc', title: 'CDs', flag: noCover ? `${noCover} ohne Cover` : '',

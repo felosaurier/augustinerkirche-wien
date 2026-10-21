@@ -68,6 +68,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Solisten** | Liste für Kirchenmusik → Solisten: Foto (wird quadratisch zugeschnitten, Ausschnitt verschiebbar), Stimmlage, verstorben |
 | **Bildnachweise** | Kein eigener Bereich: bei jedem Bild (Personen, Solisten, Runden, Neuigkeiten, CDs, Pfarrgemeinderat) gibt es ein Feld „Bildnachweis“. Auf der Website steht er klein unter dem Bild, bei Titelfotos unten in der Ecke; gespeichert in `data/bildnachweise.json` |
 | **Paten** | Paten und Ehrenpaten für Kirchenmusik → Patenschaft: hinzufügen (am Ende oder ganz oben), ändern, verschieben, entfernen; die Paten erscheinen nummeriert in dieser Reihenfolge |
+| **Spenden & Möglichkeiten** | Für Kirchenmusik → Patenschaft: PayPal-Link und die Möglichkeiten der Unterstützung mit Bezeichnung, Betrag und Text; eigener Eintrag im Menü, gespeichert wie die Paten in `data/paten.json` |
 | **CDs** | Aufnahmen für Kirchenmusik → CDs: Titel, Gruppe, Werke, Mitwirkende, Leitung, Cover (mit Bildnachweis) und Hörproben als MP3, beides zum Hineinziehen; verschieben, löschen |
 | **Repertoire** | Repertoire des Chores nach Komponisten, mit Werken und Hinweisen (z. B. Uraufführungen in der Augustinerkirche) |
 | **Zugänge** | Nur für Admins: Zugang anlegen, Rolle, Name oder Passwort ändern, entfernen |
@@ -230,6 +231,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   termine.html                Eigene Termine für den Kalender pflegen
   wochenkalender.html         Wochenkalender (gedruckter Wochenplan) pflegen
   paten.html                  Paten der Kirchenmusik pflegen
+  spenden.html                Spenden & Möglichkeiten (PayPal-Link, Beträge) pflegen
   cds.html                    CDs mit Cover und Hörproben pflegen
   pgr.html                    Pfarrgemeinderat pflegen
   solisten.html               Solisten pflegen
@@ -273,6 +275,7 @@ js/
   admin-neuigkeiten.js        Neuigkeiten pflegen
   admin-termine.js            Termine für den Kalender pflegen
   admin-paten.js              Paten der Kirchenmusik pflegen
+  admin-spenden.js            Spenden & Möglichkeiten pflegen
   admin-cds.js                CDs pflegen
   admin-pgr.js                Pfarrgemeinderat pflegen
   admin-solisten.js           Solisten pflegen
