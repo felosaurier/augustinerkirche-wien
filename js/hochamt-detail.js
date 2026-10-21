@@ -33,12 +33,17 @@
     const end = m ? `${m[1] ? 'ca. ' : ''}${m[2].padStart(2, '0')}:${m[3]}` : '';
     const rest = (m ? note.replace(m[0], '') : note).trim();
     const days = [];
-    const other = [];
-    for (const s of rest.split(/(?<=\.)\s+/).map((x) => x.trim()).filter(Boolean)) {
-      if (DAY.test(HD.plainText(s)) && s.length <= 70) days.push(HD.plainText(s).replace(/\.$/, ''));
-      else other.push(s);
+    const lines = [];
+    /* Zeilenumbrueche (Enter) aus der Verwaltung bleiben im Hinweis erhalten */
+    for (const line of rest.split('\n')) {
+      const other = [];
+      for (const s of line.split(/(?<=\.)[^\S\n]+/).map((x) => x.trim()).filter(Boolean)) {
+        if (DAY.test(HD.plainText(s)) && s.length <= 70) days.push(HD.plainText(s).replace(/\.$/, ''));
+        else other.push(s);
+      }
+      if (other.length || line.trim() === '') lines.push(other.join(' '));
     }
-    return { end, day: days.join(' · '), note: other.join(' ') };
+    return { end, day: days.join(' · '), note: HD.cleanLines(lines.join('\n')) };
   }
   /* Sonntag, 1. November 2026 · Hochfest Allerheiligen · 11:00 – ca. 12:45 Uhr
      (jeder Teil bricht nur als Ganzes um) */

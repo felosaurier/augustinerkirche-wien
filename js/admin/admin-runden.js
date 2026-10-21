@@ -378,13 +378,13 @@
     } else {
       if (old && old.seite) r.seite = old.seite;
       const ok = old && old.kopf && old.titel === titel ? old.kopf.titel : titel;
-      const sp = { label: clean($('f-sp-label').value), titel: clean($('f-sp-titel').value), text: clean($('f-sp-text').value) };
+      const sp = { label: clean($('f-sp-label').value), titel: clean($('f-sp-titel').value), text: A.HD.cleanLines($('f-sp-text').value) };
       const ko = {
         titel: clean($('f-k-titel').value) || 'Kontakt', text: clean($('f-k-text').value), email,
         telefon: clean($('f-k-telefon').value), anschrift: clean($('f-k-anschrift').value)
       };
       Object.assign(r, {
-        kopf: { zeile: clean($('f-zeile').value), titel: ok, betonung: clean($('f-betonung').value), untertitel: clean($('f-untertitel').value) },
+        kopf: { zeile: clean($('f-zeile').value), titel: ok, betonung: clean($('f-betonung').value), untertitel: A.HD.cleanLines($('f-untertitel').value) },
         einleitung: lines($('f-einleitung').value),
         schwerpunkt: sp.titel || sp.text ? sp : null,
         text: lines($('f-text').value),

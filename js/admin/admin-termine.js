@@ -22,8 +22,8 @@
   let snap = '';
 
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
-  /* Beschreibung: Absaetze behalten, sonst Leerraum zusammenziehen */
-  const cleanText = (s) => String(s || '').split(/\n\s*\n/).map(clean).filter(Boolean).join('\n\n');
+  /* Beschreibung: Zeilenumbrueche und Absaetze behalten, sonst Leerraum zusammenziehen */
+  const cleanText = A.HD.cleanLines;
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
   const sortKey = (t) => `${t.datum}${t.zeit || '99'}`;
   const byDate = (a, b) => sortKey(a).localeCompare(sortKey(b));

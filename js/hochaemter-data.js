@@ -93,32 +93,47 @@
   /* Freitext aus den Datendateien -> sicheres HTML. Die Formatierungsleiste der
      Verwaltung schreibt diese Zeichen (auch ineinander, z. B. **__fett und unterstrichen__**):
        **fett**   *kursiv*   __unterstrichen__   ~~durchgestrichen~~
+       [groß]größer[/groß]   [klein]kleiner[/klein]
        [Text](Adresse)   Link (Adressen der Website relativ zur Wurzel, Praefix `base`)
-     E-Mail- und https-Adressen werden automatisch verlinkt. Mit links: false (z. B. im
-     Kurztext einer Karte, die selbst ein Link ist) bleibt es bei der Formatierung. */
-  /* Ein Zeichen zaehlt nur, wenn direkt danach bzw. davor kein Leerzeichen steht ("3 * 4" bleibt Text) */
-  const RICH = /\[([^\]\n]+)\]\(([^)\s]+)\)|\*\*\*(?!\s)([^\n]+?)(?<!\s)\*\*\*|\*\*(?!\s)([^\n]+?)(?<!\s)\*\*|__(?!\s)([^\n]+?)(?<!\s)__|~~(?!\s)([^\n]+?)(?<!\s)~~|\*(?![\s*])([^*\n]+?)(?<!\s)\*|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])/g;
+       [Text](mailto:name@beispiel.at)   E-Mail-Link (verschluesselt wie mailHTML)
+       [Text](tel:+43 1 533 70 99)       Telefon-Link
+     Jeder Zeilenumbruch (Enter) wird ein <br>. E-Mail- und https-Adressen werden
+     automatisch verlinkt. Mit links: false (z. B. im Kurztext einer Karte, die selbst
+     ein Link ist) bleibt es bei der Formatierung. */
+  /* Ein Zeichen zaehlt nur, wenn direkt danach bzw. davor kein Leerzeichen steht ("3 * 4" bleibt Text);
+     nur nach tel: duerfen in der Adresse Leerzeichen stehen */
+  const RICH = /\[([^\]\n]+)\]\(((?:tel:[^)\n]+)|[^)\s]+)\)|\*\*\*(?!\s)([^\n]+?)(?<!\s)\*\*\*|\*\*(?!\s)([^\n]+?)(?<!\s)\*\*|__(?!\s)([^\n]+?)(?<!\s)__|~~(?!\s)([^\n]+?)(?<!\s)~~|\*(?![\s*])([^*\n]+?)(?<!\s)\*|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])|\[groß\]([^\n]+?)\[\/groß\]|\[klein\]([^\n]+?)\[\/klein\]/g;
   /* Gruppe im Muster -> HTML ("***" ist fett und kursiv zugleich) */
   const STYLE_TAGS = { 3: ['strong', 'em'], 4: ['strong'], 5: ['u'], 6: ['s'], 7: ['em'] };
+  const SIZE_CLASS = { 10: 'fs-gross', 11: 'fs-klein' };
   /* Die Muster oben sind bei sehr langen Woerter-Ketten ohne Leerzeichen langsam (quadratisch):
      ein eingefuegter Riesen-Absatz koennte die Seite sekundenlang blockieren. Absaetze sind kurz,
      darum wird nur der Anfang formatiert, der Rest als schlichter Text angehaengt. */
   const RICH_MAX = 4000;
   function richText(s, base = '', opts = {}) {
     const links = opts.links !== false;
-    const text = String(s ?? '');
+    const text = String(s ?? '').replace(/\r\n?/g, '\n');
+    if (text.includes('\n')) return text.split('\n').map((l) => richText(l, base, opts)).join('<br>');
     if (text.length > RICH_MAX) return richText(text.slice(0, RICH_MAX), base, opts) + esc(text.slice(RICH_MAX));
     let html = '';
     let last = 0;
     for (const m of text.matchAll(RICH)) {
       html += esc(text.slice(last, m.index));
       const style = [3, 4, 5, 6, 7].find((k) => m[k] !== undefined);
-      if (m[1]) {
+      const size = [10, 11].find((k) => m[k] !== undefined);
+      if (m[1] && links && /^mailto:/i.test(m[2])) {
+        const addr = m[2].slice(7);
+        html += `<a class="mail" data-mail="${esc(mailCode(addr))}">${m[1].trim() === addr ? esc(mailText(addr)) : richText(m[1], base, { links: false })}</a>`;
+      } else if (m[1] && links && /^tel:/i.test(m[2])) {
+        html += `<a href="${esc(telHref(m[2].slice(4)))}">${richText(m[1], base, { links: false })}</a>`;
+      } else if (m[1]) {
         const u = links ? safeUrl(m[2], base) : '';
         html += u ? `<a href="${esc(u)}"${/^https?:/i.test(u) ? ' target="_blank" rel="noopener"' : ''}>${richText(m[1], base, { links: false })}</a>` : richText(m[1], base, { links: false });
       } else if (style) {
         const tags = STYLE_TAGS[style];
         html += tags.map((t) => `<${t}>`).join('') + richText(m[style], base, opts) + tags.slice().reverse().map((t) => `</${t}>`).join('');
+      } else if (size) {
+        html += `<span class="${SIZE_CLASS[size]}">${richText(m[size], base, opts)}</span>`;
       } else if (m[8]) {
         html += links ? mailHTML(m[8]) : esc(m[8]);
       } else {
@@ -142,9 +157,14 @@
     return text;
   }
   const stripOnce = (s) => s
-    .replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, '$1')
+    .replace(/\[([^\]\n]+)\]\(((?:tel:[^)\n]+)|[^)\s]+)\)/g, '$1')
+    .replace(/\[(groß|klein)\]([^\n]+?)\[\/\1\]/g, '$2')
     .replace(/\*\*\*(?!\s)([^\n]+?)(?<!\s)\*\*\*|\*\*(?!\s)([^\n]+?)(?<!\s)\*\*|__(?!\s)([^\n]+?)(?<!\s)__|~~(?!\s)([^\n]+?)(?<!\s)~~/g, (_, a, b, c, d) => a ?? b ?? c ?? d)
     .replace(/\*(?![\s*])([^*\n]+?)(?<!\s)\*/g, '$1');
+  /* Freitext aus einem Textfeld der Verwaltung: Leerzeichen je Zeile zusammenfassen,
+     Zeilenumbrueche (Enter) bleiben, hoechstens eine Leerzeile hintereinander */
+  const cleanLines = (s) => String(s ?? '').replace(/\r\n?/g, '\n').split('\n')
+    .map((l) => l.replace(/[^\S\n]+/g, ' ').trim()).join('\n').replace(/\n{3,}/g, '\n\n').trim();
   /* Telefonnummer -> tel:-Adresse ("+43 (0)1 533 70 99" -> "tel:+43153370099") */
   const telHref = (s) => `tel:${String(s).replace(/\(0\)/g, '').replace(/[^\d+]/g, '')}`;
 
@@ -455,7 +475,7 @@
 
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
-    esc, pad, num, focusPos, safeUrl, richText, formatText, plainText, blocksHTML, legalHTML, mailHTML, mailEncode, mailDecode, fetchJSON, telHref, slug, csvText, download,
+    esc, pad, num, focusPos, safeUrl, richText, formatText, plainText, cleanLines, blocksHTML, legalHTML, mailHTML, mailEncode, mailDecode, fetchJSON, telHref, slug, csvText, download,
     parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV

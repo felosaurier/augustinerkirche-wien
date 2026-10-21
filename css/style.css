@@ -67,6 +67,10 @@ a.mail,:is(p,li,dd) a[href^="http"]:not(.btn){overflow-wrap:anywhere}
 button{font:inherit}
 ::selection{background:var(--gold-pale);color:var(--blue-deep)}
 
+/* Schriftgröße aus der Formatierungsleiste der Verwaltung ([groß]…[/groß], [klein]…[/klein]) */
+.fs-gross{font-size:1.25em;line-height:1.4}
+.fs-klein{font-size:.85em}
+
 /* Das hidden-Attribut gilt immer, auch wenn eine Klasse display setzt */
 [hidden]{display:none!important}
 

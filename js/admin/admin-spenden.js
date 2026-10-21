@@ -110,7 +110,7 @@
       const betrag = clean(st.betrag);
       if (!titel && !betrag && !st.text) return;
       if (!titel) errors.push([blocks[i].querySelector('[data-key="titel"]'), 'Bitte eine Bezeichnung eintragen.']);
-      stufen.push({ titel, betrag, text: st.text });
+      stufen.push({ titel, betrag, text: A.HD.cleanLines(st.text) });
     });
     if (errors.length) {
       A.showErrors(form, errors);

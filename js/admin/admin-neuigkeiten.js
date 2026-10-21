@@ -517,7 +517,7 @@
     window.AugNews.preview({
       cat: clean($('f-cat').value),
       title: clean($('f-title').value) || 'Titel der Meldung',
-      teaser: clean($('f-teaser').value),
+      teaser: HD.cleanLines($('f-teaser').value.replace(/\|/g, '/')),
       infos: infos.values().map((r) => ({ label: clean(r.label), value: clean(r.value) })).filter((r) => r.value),
       details: $('f-details').value.split(/\n+/).map(clean).filter(Boolean),
       thumb: own && !poster ? own : '',
@@ -707,7 +707,7 @@
     const form = $('nv-form');
     const date = $('f-date').value;
     const title = clean($('f-title').value);
-    const teaser = clean($('f-teaser').value);
+    const teaser = HD.cleanLines($('f-teaser').value.replace(/\|/g, '/'));
     const target = readLink();
     const link = target.link || '';
     const errors = [];

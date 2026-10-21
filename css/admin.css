@@ -865,6 +865,9 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .fmt-btn b,.fmt-btn i,.fmt-btn u,.fmt-btn s{font-family:Georgia,'Times New Roman',serif;font-size:1rem;color:var(--blue)}
 .fmt-btn svg{width:15px;height:15px}
 .fmt-wide{font-size:.85rem}
+.fmt-a{font-family:Georgia,'Times New Roman',serif;font-size:1.05rem;color:var(--blue)}
+.fmt-a.sm{font-size:.82rem}
+.fmt-a sup{font-family:var(--sans);font-size:.7em;margin-left:1px}
 .fmt-btn:hover{border-color:var(--gold);color:var(--blue)}
 .fmt-btn:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 .rt-text{min-height:9rem;font-size:1rem;line-height:1.65}

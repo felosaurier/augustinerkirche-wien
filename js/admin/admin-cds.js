@@ -219,8 +219,8 @@
 
     const old = edit ? data.gruppen[edit.g].cds[edit.i] : null;
     const cd = {
-      titel, cover: currentCover(), werke: clean($('f-werke').value),
-      mitwirkende: clean($('f-mitwirkende').value), leitung: clean($('f-leitung').value),
+      titel, cover: currentCover(), werke: A.HD.cleanLines($('f-werke').value),
+      mitwirkende: A.HD.cleanLines($('f-mitwirkende').value), leitung: clean($('f-leitung').value),
       hoerproben: rows.map((h) => ({ titel: h.titel || 'Hörprobe', datei: h.datei }))
     };
     const btn = $('cd-save');

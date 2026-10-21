@@ -476,7 +476,7 @@
 
   function readForm() {
     const e = {};
-    for (const k of SIMPLE) e[k] = clean(F(k).value);
+    for (const k of SIMPLE) e[k] = k === 'note' ? A.HD.cleanLines(F(k).value) : clean(F(k).value);
     e.time = HD.isoTime(e.time) || DEFAULTS.time;
     e.extra = F('extra').value.split(/\n+/).map(cleanItem).filter(Boolean).join(' | ');
     e.soloists = soloists.values().filter((p) => p.name)

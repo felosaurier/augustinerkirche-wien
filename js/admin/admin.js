@@ -252,6 +252,7 @@
     settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
     right: '<path d="M9 5l7 7-7 7"/>',
     home: '<path d="M4 11l8-7 8 7M6 9.5V20h12V9.5M10 20v-6h4v6"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
     phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
     mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/>',
     disc: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/>',
@@ -2280,23 +2281,34 @@
 
   /* ---------- Formatierungsleiste fuer Textfelder ----------
      Ueber jedem mehrzeiligen Textfeld der Verwaltung (textarea.adm-input) steht eine
-     Leiste: fett, kursiv, unterstrichen, durchgestrichen, Link und "Formatierung
-     entfernen"; dazu Strg+B, Strg+I, Strg+U. Sie schreibt die Zeichen, die die Website
-     anzeigt (HD.richText): **fett** *kursiv* __unterstrichen__ ~~durchgestrichen~~
-     [Text](Adresse). Ein zweiter Klick auf dasselbe Format nimmt es wieder weg.
+     Leiste: fett, kursiv, unterstrichen, durchgestrichen, größer, kleiner, Link, E-Mail,
+     Telefon und "Formatierung entfernen"; dazu Strg+B, Strg+I, Strg+U. Sie schreibt die
+     Zeichen, die die Website anzeigt (HD.richText): **fett** *kursiv* __unterstrichen__
+     ~~durchgestrichen~~ [groß]…[/groß] [klein]…[/klein] [Text](Adresse)
+     [Text](mailto:Adresse) [Text](tel:Nummer). Ein zweiter Klick auf dasselbe Format nimmt
+     es wieder weg. Zeilenumbrueche (Enter) zeigt die Website so, wie sie im Feld stehen.
      Ausnahmen: data-no-format am Feld, Impressum & Datenschutz (eigene Leiste, .rt-text). */
+  /* [Art, Zeichen davor, Zeichen danach, Titel, Beschriftung, Platzhalter] */
   const FORMATS = [
-    ['bold', '**', 'Fett (Strg+B)', '<b>B</b>', 'fett'],
-    ['italic', '*', 'Kursiv (Strg+I)', '<i>I</i>', 'kursiv'],
-    ['underline', '__', 'Unterstrichen (Strg+U)', '<u>U</u>', 'unterstrichen'],
-    ['strike', '~~', 'Durchgestrichen', '<s>S</s>', 'durchgestrichen']
+    ['bold', '**', '**', 'Fett (Strg+B)', '<b>B</b>', 'fett'],
+    ['italic', '*', '*', 'Kursiv (Strg+I)', '<i>I</i>', 'kursiv'],
+    ['underline', '__', '__', 'Unterstrichen (Strg+U)', '<u>U</u>', 'unterstrichen'],
+    ['strike', '~~', '~~', 'Durchgestrichen', '<s>S</s>', 'durchgestrichen'],
+    ['big', '[groß]', '[/groß]', 'Größere Schrift', '<span class="fmt-a">A<sup>+</sup></span>', 'größer'],
+    ['small', '[klein]', '[/klein]', 'Kleinere Schrift', '<span class="fmt-a sm">A<sup>−</sup></span>', 'kleiner']
   ];
   const FORMAT_KEYS = { b: 'bold', i: 'italic', u: 'underline' };
+  /* Links: [Art, Vorsatz der Adresse, Platzhalter der Adresse, erkennt eine Auswahl, die schon die Adresse ist] */
+  const LINKS = {
+    link: ['', 'https://', /^https?:\/\/\S+$/i],
+    mail: ['mailto:', 'name@beispiel.at', /^[\w.+-]+@[\w-]+(?:\.[\w-]+)+$/],
+    tel: ['tel:', '+43 1 533 70 99', /^\+?[\d(][\d\s()/.-]{4,}$/]
+  };
   /* Steht die Auswahl schon in diesem Format? "*" darf dabei nicht Teil von "**" sein */
-  function hasMark(value, a, b, mark) {
+  function hasMark(value, a, b, mark, close = mark) {
     const before = value.slice(Math.max(0, a - mark.length - 1), a);
-    const after = value.slice(b, b + mark.length + 1);
-    if (!before.endsWith(mark) || !after.startsWith(mark)) return false;
+    const after = value.slice(b, b + close.length + 1);
+    if (!before.endsWith(mark) || !after.startsWith(close)) return false;
     if (mark !== '*') return true;
     /* "**fett**": ein einzelnes * davor ist nur dann kursiv, wenn davor kein weiteres * steht (oder genau drei) */
     const left = value.slice(0, a).match(/\*+$/)[0].length;
@@ -2307,11 +2319,17 @@
     const { selectionStart: a, selectionEnd: b, value } = ta;
     const sel = value.slice(a, b);
     ta.focus();
-    if (kind === 'link') {
-      const text = sel ? `[${sel}](https://)` : '[Text](https://)';
+    if (LINKS[kind]) {
+      const [prefix, holder, isAddr] = LINKS[kind];
+      const label = sel.trim();
+      /* Ist die Auswahl selbst schon Adresse bzw. Nummer, wird sie gleich zum Link */
+      const ready = label && isAddr.test(label);
+      const addr = ready ? label : holder;
+      const text = `[${label || 'Text'}](${prefix}${addr})`;
       ta.setRangeText(text, a, b, 'end');
-      /* Adresse markieren (bzw. das Wort "Text"), damit man gleich weitertippt */
-      if (sel) ta.setSelectionRange(a + text.length - 9, a + text.length - 1);
+      /* Sonst Adresse markieren (bzw. das Wort "Text"), damit man gleich weitertippt */
+      if (ready) ta.setSelectionRange(a + text.length, a + text.length);
+      else if (label) ta.setSelectionRange(a + text.length - 1 - addr.length, a + text.length - 1);
       else ta.setSelectionRange(a + 1, a + 5);
     } else if (kind === 'clear') {
       if (!sel) {
@@ -2323,19 +2341,19 @@
     } else {
       const f = FORMATS.find((x) => x[0] === kind);
       if (!f) return;
-      const mark = f[1];
-      if (sel.length > mark.length * 2 && sel.startsWith(mark) && sel.endsWith(mark) && (mark !== '*' || !sel.startsWith('**') || sel.startsWith('***'))) {
+      const [, mark, close] = f;
+      if (sel.length > mark.length + close.length && sel.startsWith(mark) && sel.endsWith(close) && (mark !== '*' || !sel.startsWith('**') || sel.startsWith('***'))) {
         /* Auswahl samt Zeichen markiert: Zeichen entfernen */
-        ta.setRangeText(sel.slice(mark.length, -mark.length), a, b, 'select');
-      } else if (sel && hasMark(value, a, b, mark)) {
+        ta.setRangeText(sel.slice(mark.length, -close.length), a, b, 'select');
+      } else if (sel && hasMark(value, a, b, mark, close)) {
         /* Zeichen stehen um die Auswahl: entfernen */
-        ta.setRangeText(sel, a - mark.length, b + mark.length, 'select');
+        ta.setRangeText(sel, a - mark.length, b + close.length, 'select');
       } else {
         /* Leerzeichen am Rand der Auswahl bleiben draussen ("**Wort** " statt "**Wort **") */
         const lead = sel.match(/^\s*/)[0];
         const trail = sel.slice(lead.length).match(/\s*$/)[0];
-        const core = sel.slice(lead.length, sel.length - trail.length) || f[4];
-        ta.setRangeText(`${lead}${mark}${core}${mark}${trail}`, a, b, 'end');
+        const core = sel.slice(lead.length, sel.length - trail.length) || f[5];
+        ta.setRangeText(`${lead}${mark}${core}${close}${trail}`, a, b, 'end');
         const start = a + lead.length + mark.length;
         ta.setSelectionRange(start, start + core.length);
       }
@@ -2351,9 +2369,11 @@
     bar.setAttribute('role', 'toolbar');
     bar.setAttribute('aria-label', 'Text formatieren');
     bar.setAttribute('aria-controls', ta.id);
-    bar.innerHTML = FORMATS.map(([k, , title, label]) =>
+    bar.innerHTML = FORMATS.map(([k, , , title, label]) =>
       `<button type="button" class="fmt-btn" data-fmt="${k}" title="${title}" aria-label="${title}">${label}</button>`).join('') +
       `<button type="button" class="fmt-btn fmt-wide" data-fmt="link" title="Link einfügen: markierten Text mit einer Adresse verknüpfen">${icon('link')}Link</button>` +
+      `<button type="button" class="fmt-btn fmt-wide" data-fmt="mail" title="E-Mail-Link: markierten Text (oder die markierte Adresse) zum Anschreiben verknüpfen">${icon('mail')}E-Mail</button>` +
+      `<button type="button" class="fmt-btn fmt-wide" data-fmt="tel" title="Telefon-Link: markierten Text (oder die markierte Nummer) zum Anrufen verknüpfen">${icon('phone')}Telefon</button>` +
       '<button type="button" class="fmt-btn fmt-wide" data-fmt="clear" title="Formatierung des markierten Texts entfernen">Formatierung entfernen</button>';
     ta.before(bar);
   }

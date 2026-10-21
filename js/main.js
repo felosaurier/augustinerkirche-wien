@@ -149,18 +149,18 @@
   const CHEVRON = '<svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>';
   const escHTML = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   /* Formatierung aus der Verwaltung (***fett kursiv***, **fett**, *kursiv*, __unterstrichen__,
-     ~~durchgestrichen~~), ohne Links; gleiche Regeln wie HochamtData.formatText, das hier
-     nicht auf jeder Seite geladen ist */
-  const FMT = /\*\*\*(?!\s)([^\n]+?)(?<!\s)\*\*\*|\*\*(?!\s)([^\n]+?)(?<!\s)\*\*|__(?!\s)([^\n]+?)(?<!\s)__|~~(?!\s)([^\n]+?)(?<!\s)~~|\*(?![\s*])([^*\n]+?)(?<!\s)\*/g;
-  const FMT_TAGS = [['strong', 'em'], ['strong'], ['u'], ['s'], ['em']];
+     ~~durchgestrichen~~, [groß]…[/groß], [klein]…[/klein]), ohne Links; gleiche Regeln wie
+     HochamtData.formatText, das hier nicht auf jeder Seite geladen ist */
+  const FMT = /\*\*\*(?!\s)([^\n]+?)(?<!\s)\*\*\*|\*\*(?!\s)([^\n]+?)(?<!\s)\*\*|__(?!\s)([^\n]+?)(?<!\s)__|~~(?!\s)([^\n]+?)(?<!\s)~~|\*(?![\s*])([^*\n]+?)(?<!\s)\*|\[groß\]([^\n]+?)\[\/groß\]|\[klein\]([^\n]+?)\[\/klein\]/g;
+  const FMT_TAGS = [['strong', 'em'], ['strong'], ['u'], ['s'], ['em'], ['span class="fs-gross"'], ['span class="fs-klein"']];
   function fmtHTML(s) {
     let html = '';
     let last = 0;
     const text = String(s ?? '');
     for (const m of text.matchAll(FMT)) {
-      const k = [1, 2, 3, 4, 5].find((i) => m[i] !== undefined);
+      const k = [1, 2, 3, 4, 5, 6, 7].find((i) => m[i] !== undefined);
       const tags = FMT_TAGS[k - 1];
-      html += escHTML(text.slice(last, m.index)) + tags.map((t) => `<${t}>`).join('') + fmtHTML(m[k]) + tags.slice().reverse().map((t) => `</${t}>`).join('');
+      html += escHTML(text.slice(last, m.index)) + tags.map((t) => `<${t}>`).join('') + fmtHTML(m[k]) + tags.slice().reverse().map((t) => `</${t.split(' ')[0]}>`).join('');
       last = m.index + m[0].length;
     }
     return html + escHTML(text.slice(last));
