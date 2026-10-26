@@ -86,12 +86,30 @@
           `<span class="hd-work">${HD.richText(p.work, '../')}</span></li>`;
       }).join('') + '</ul></section>';
   }
-  function castHTML(groups, people) {
+  /* Name mit Link zur Homepage (aus data/solisten.json), sonst nur der Name */
+  function nameHTML(name, homepages) {
+    const href = homepages.get(name.trim().toLowerCase());
+    return href ? `<a href="${HD.esc(href)}" target="_blank" rel="noopener">${HD.esc(name)}</a>` : HD.esc(name);
+  }
+  function castHTML(groups, people, homepages) {
     if (!groups.length && !people.length) return '';
     return '<section class="hd-sec" aria-labelledby="hd-cast-h"><h2 class="hd-sec-title" id="hd-cast-h">Ausführende</h2><ul class="hd-cast">' +
       groups.map((g) => `<li class="hd-cast-group">${HD.esc(g)}</li>`).join('') +
-      people.map((p) => `<li${p.gap ? ' class="hd-cast-gap"' : ''}><span class="hd-name">${HD.esc(p.name)}</span>${p.role ? `<span class="hd-role">${HD.esc(p.role)}</span>` : ''}</li>`).join('') +
+      people.map((p) => `<li${p.gap ? ' class="hd-cast-gap"' : ''}><span class="hd-name">${nameHTML(p.name, homepages)}</span>${p.role ? `<span class="hd-role">${HD.esc(p.role)}</span>` : ''}</li>`).join('') +
       '</ul></section>';
+  }
+  /* Homepages der Solisten: Name (klein) -> Adresse; fehlt die Liste, ohne Links */
+  async function loadHomepages() {
+    const map = new Map();
+    try {
+      for (const p of await HD.fetchJSON('../data/solisten.json')) {
+        const href = /^https?:\/\//i.test(String(p.homepage || '').trim()) && HD.safeUrl(p.homepage.trim());
+        if (p.name && href) map.set(p.name.trim().toLowerCase(), href);
+      }
+    } catch {
+      /* nur Links */
+    }
+    return map;
   }
 
   function navLink(e, dir) {
@@ -108,7 +126,7 @@
       '<p style="margin-top:1.5rem"><a class="btn btn-dark" href="musik.html#p-hochaemter">Alle Hochämter</a></p>';
   }
 
-  function render(entries, id) {
+  function render(entries, id, homepages) {
     const body = qs('#hd-body');
     const idx = entries.findIndex((e) => e.id === id);
     if (idx < 0) {
@@ -136,7 +154,7 @@
     /* Abstand zwischen den Solisten und Orgel/Dirigent */
     if (soloists.length && others.length) others[0].gap = true;
     const people = [...soloists, ...others];
-    const program = musicHTML(music) + castHTML(ensembles(e.choir, e.orchestra), people);
+    const program = musicHTML(music) + castHTML(ensembles(e.choir, e.orchestra), people, homepages);
     const where = place(e.location);
 
     body.innerHTML =
@@ -268,7 +286,8 @@
     if (!HD) return;
     const id = new URLSearchParams(location.search).get('id') || '';
     try {
-      render(await loadEntries(id), id);
+      const [entries, homepages] = await Promise.all([loadEntries(id), loadHomepages()]);
+      render(entries, id, homepages);
       /* Fotos neben dem Programm; gibt es ein Plakat, darunter */
       showPhotos(id, await showPoster(id));
     } catch {

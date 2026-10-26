@@ -19,7 +19,7 @@
 
   async function loadAll() {
     const json = (path) => A.readJSON(path);
-    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk] = await Promise.allSettled([
+    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -38,13 +38,15 @@
       A.isDev() ? json('admin/mitteilungen.json') : Promise.resolve(null),
       json('data/rechtliches.json'),
       json('data/sprueche.json'),
-      json('data/wochenkalender.json')
+      json('data/wochenkalender.json'),
+      /* fehlt die Datei noch, gibt es eben keine Alben */
+      json('data/galerie.json').catch(() => ({ alben: [] }))
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
       rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st),
-      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re), sp: val(sp), wk: val(wk)
+      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re), sp: val(sp), wk: val(wk), ga: val(ga)
     };
   }
 
@@ -81,7 +83,7 @@
   }
 
   /* Alle Bereiche, gruppiert wie die Seitenleiste (js/admin/admin.js, NAV) */
-  function renderAreas({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk }) {
+  function renderAreas({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
@@ -183,6 +185,11 @@
           href: 'cds.html', ico: 'disc', title: 'CDs', flag: noCover ? `${noCover} ohne Cover` : '',
           stat: cdN !== null ? plural(cdN, 'CD', 'CDs') : none,
           addHref: 'cds.html?neu=1', addLabel: 'Neue CD'
+        }),
+        can('galerie') && row({
+          href: 'galerie.html', ico: 'image', title: 'Galerie',
+          stat: ga ? plural(count(ga.alben), 'Album', 'Alben') : none,
+          addHref: 'galerie.html?neu=1', addLabel: 'Neues Album'
         })
       ]],
       ['Website', [

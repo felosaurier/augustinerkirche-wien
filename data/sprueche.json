@@ -1,13 +1,41 @@
 {
-  "sekunden": 10,
+  "sekunden": 8,
   "sprueche": [
     {
-      "text": "Wer singt, betet doppelt.",
-      "quelle": "Hl. Augustinus"
+      "text": "Du hast uns auf dich hin geschaffen, und unruhig ist unser Herz, bis es Ruhe findet in dir.",
+      "quelle": "Hl. Augustinus | Confessiones I, 1, 1"
     },
     {
       "text": "Gott und die Seele begehre ich zu erkennen. Nichts sonst? Nichts anderes!",
-      "quelle": "Hl. Augustinus, Soliloquia I, 7"
+      "quelle": "Hl. Augustinus | Soliloquia I, 7"
+    },
+    {
+      "text": "Wer singt, betet doppelt.",
+      "quelle": "Hl. Augustinus | Enarrationes in Psalmos 72, 1"
+    },
+    {
+      "text": "Spät habe ich dich geliebt, du Schönheit, so alt und doch so neu!",
+      "quelle": "Hl. Augustinus | Confessiones X, 27, 38"
+    },
+    {
+      "text": "Liebe, und was du willst, das tue!",
+      "quelle": "Hl. Augustinus | In epistulam Ioannis ad Parthos tractatus VII, 8"
+    },
+    {
+      "text": "Der Friede aller Dinge ist die Ruhe der Ordnung.",
+      "quelle": "Hl. Augustinus | De civitate Dei XIX, 13, 1"
+    },
+    {
+      "text": "Ehrt in euch gegenseitig Gott, dessen Tempel ihr geworden seid!",
+      "quelle": "Hl. Augustinus | Regula I, 8"
+    },
+    {
+      "text": "O Sakrament der Liebe! O Zeichen der Einheit! O Band der Liebe!",
+      "quelle": "Hl. Augustinus | In Ioannis evangelium tractatus 26, 13"
+    },
+    {
+      "text": "Geh immer weiter, bleib immer in Bewegung, mach immer Fortschritte! Bleib nicht auf dem Weg stehen, kehre nicht um und komm nicht vom Weg ab!",
+      "quelle": "Hl. Augustinus | Sermo 169, 15, 18"
     }
   ]
 }

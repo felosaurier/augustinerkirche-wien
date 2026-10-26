@@ -84,7 +84,7 @@
     ['Weitere', [
       ['pages/aspersdorf.html', 'Pfarre Aspersdorf', 'Nach Aspersdorf'],
       ['pages/archiv.html', 'Archiv der Neuigkeiten', 'Zum Archiv'],
-      ['index.html#kontakt', 'Kontakt', 'Zum Kontakt']]]
+      ['pages/augustinerkirche.html#kontakt', 'Kontakt', 'Zum Kontakt']]]
   ];
   const PAGE_LIST = PAGES.flatMap(([, list]) => list);
 
@@ -285,6 +285,7 @@
     const badge = place === 'home' ? '<span class="adm-badge on">Startseite</span>'
       : place === 'home-expired' ? `<span class="adm-badge on" title="Abgelaufen, füllt die Startseite unten auf, solange es weniger als ${A.NEWS_HOME} aktive Meldungen gibt">Startseite · abgelaufen</span>`
       : place === 'expired' ? '<span class="adm-badge">Abgelaufen · Archiv</span>'
+      : !HD.newsOnPage(e.Seiten, 'startseite') ? '<span class="adm-badge on" title="Steht unter Aktuelles auf den gewählten Seiten">Aktuell</span>'
         : `<span class="adm-badge">Archiv ${esc(e.Datum.split('.')[2])}</span>`;
     return `<li class="adm-row" data-key="${esc(newsId(e))}">` +
       `<button type="button" class="adm-row-open has-thumb" data-act="edit" data-i="${i}">${thumb}` +
@@ -294,6 +295,7 @@
           `<span class="adm-row-people">${esc(e.Kurztext)}</span>` +
           (src ? '' : `<span class="adm-chip">${icon('image')}Ohne Bild: die Karte zeigt das Logo</span>`) +
           (gallery.length ? `<span class="adm-chip">${icon('image')}${plural(gallery.length, 'Foto', 'Fotos')} in der Galerie</span>` : '') +
+          (e.Seiten ? `<span class="adm-chip">Nur auf: ${esc(HD.newsPages(e.Seiten).map((k) => HD.NEWS_PAGES.find(([x]) => x === k)[1]).join(', '))}</span>` : '') +
         `</span>${badge}` +
       '</button>' +
       '<div class="adm-row-actions">' +
@@ -657,6 +659,7 @@
     $('f-date').value = e ? HD.isoDate(e.Datum) : A.isoToday();
     $('f-bis').value = e ? HD.isoDate(e.Bis) : '';
     $('f-cat').value = e ? e.Kategorie : '';
+    setPages(e ? e.Seiten : '');
     $('f-title').value = e ? e.Titel : '';
     $('f-teaser').value = e ? e.Kurztext : '';
     $('f-details').value = e ? e.Details.split('|').map((s) => s.trim()).filter(Boolean).join('\n') : '';
@@ -687,6 +690,14 @@
     A.openDialog($('nv-dlg'), { isDirty: isDirty });
     snap = dirtyState();
   }
+  /* Seiten, auf denen die Meldung unter "Aktuelles" steht */
+  function setPages(value) {
+    const on = HD.newsPages(value);
+    $('f-pages').innerHTML = HD.NEWS_PAGES.map(([k, label]) =>
+      `<label class="adm-check"><input type="checkbox" id="f-page-${esc(k)}" name="seite" value="${esc(k)}"${on.includes(k) ? ' checked' : ''}/>${esc(label)}</label>`).join('');
+  }
+  const readPages = () => [...$('f-pages').querySelectorAll('input:checked')].map((x) => x.value);
+
   /* Stand des Fensters: Formular samt Fotos (Reihenfolge, Beschreibung, Nachweis) */
   const dirtyState = () => A.snapshot($('nv-form')) + JSON.stringify(photos.map((p) => [p.path, p.alt, p.credit]));
   const isDirty = () => dirtyState() !== snap || !!image || removeImage;
@@ -724,6 +735,8 @@
     if ($('f-link2').value.trim() && !link2) errors.push([$('f-link2'), 'Diese Adresse sieht nicht richtig aus, z. B. www.musikverein.at.']);
     else if (link2 && !text2) errors.push([$('f-linktext2'), 'Bitte den Text der zweiten Schaltfläche eintragen, z. B. Karten kaufen.']);
     else if (text2 && !link2) errors.push([$('f-link2'), 'Bitte die Adresse für die zweite Schaltfläche eintragen.']);
+    const pages = readPages();
+    if (!pages.length) errors.push([$('f-pages').querySelector('input'), 'Bitte mindestens eine Seite wählen.']);
     if (photos.length > photoLimit()) {
       errors.push([$('f-cat'), `Diese Meldung hat ${photos.length} Fotos. Erlaubt sind ${MAX_PHOTOS}, bei der Kategorie „Bericht“ bis zu ${MAX_REPORT}. Bitte Fotos entfernen oder „Bericht“ wählen.`]);
     }
@@ -738,7 +751,9 @@
       Datum: isoToDe(date), Bis: isoToDe(bis), Kategorie: clean($('f-cat').value), Titel: title, Kurztext: teaser,
       Infos: readInfos(), Details: readDetails(), Vorschaubild: '', Plakat: '',
       Link: link, Linktext: link ? clean($('f-linktext').value) || defaultText() : '',
-      'Weiterer Link': link2, 'Weiterer Linktext': link2 ? text2 : '', Bildausschnitt: ''
+      'Weiterer Link': link2, 'Weiterer Linktext': link2 ? text2 : '', Bildausschnitt: '',
+      /* alle Seiten = leer (so stehen auch kuenftige Seiten automatisch dabei) */
+      Seiten: pages.length === HD.NEWS_PAGES.length ? '' : pages.join(', ')
     };
     /* Bisheriges Bild behalten (Art kann sich geaendert haben) */
     if (!image && !removeImage && current) {

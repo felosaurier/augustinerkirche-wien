@@ -1,3 +1,84 @@
 {
-  "bilder": {}
+  "bilder": {
+    "2026-10-21-test": [
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-1.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 393
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-2.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 397
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-3.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 397
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-4.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 396
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-5.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 399
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-6.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 396
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-7.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 397
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-8.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 397
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-9.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 397
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-10.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 397
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-11.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 397
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-12.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 396
+      },
+      {
+        "bild": "assets/img/news/2026/2026-10-21-test/foto-13.webp",
+        "alt": "",
+        "breite": 400,
+        "hoehe": 397
+      }
+    ]
+  }
 }

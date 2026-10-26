@@ -361,6 +361,18 @@
     return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
   }
 
+  /* Auf welchen Seiten steht eine Meldung unter "Aktuelles"? Spalte "Seiten"
+     der news.csv: Kennungen mit Komma getrennt, leer = auf allen Seiten */
+  const NEWS_PAGES = [
+    ['startseite', 'Startseite'], ['augustinerkirche', 'Augustinerkirche'], ['kirchenmusik', 'Kirchenmusik'],
+    ['augustiner', 'Augustiner'], ['aspersdorf', 'Aspersdorf']
+  ];
+  function newsPages(value) {
+    const keys = String(value || '').toLowerCase().split(/[,;\s]+/).filter((k) => NEWS_PAGES.some(([x]) => x === k));
+    return keys.length ? keys : NEWS_PAGES.map(([k]) => k);
+  }
+  const newsOnPage = (value, page) => !page || newsPages(value).includes(page);
+
   /* Zeilen -> Roh-Objekte (Textfelder, interne Feldnamen); leere Zeilen fallen weg */
   function rowsToRaw(rows, aliases = ALIASES) {
     if (!rows.length) return [];
@@ -476,7 +488,7 @@
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
     esc, pad, num, focusPos, safeUrl, richText, formatText, plainText, cleanLines, blocksHTML, legalHTML, mailHTML, mailEncode, mailDecode, fetchJSON, telHref, slug, csvText, download,
-    parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, list,
+    parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, NEWS_PAGES, newsPages, newsOnPage, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV
   };

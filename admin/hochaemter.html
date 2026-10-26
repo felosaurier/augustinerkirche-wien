@@ -93,8 +93,14 @@
           <span class="adm-hint" id="f-date-day"></span>
         </div>
         <div class="adm-field">
-          <label class="adm-label" for="f-time">Beginn</label>
-          <input class="adm-input" type="time" id="f-time" step="300"/>
+          <span class="adm-label" id="f-time-l">Uhrzeit</span>
+          <div class="adm-times" role="group" aria-labelledby="f-time-l">
+            <label class="visually-hidden" for="f-time">Beginn</label>
+            <input class="adm-input" type="time" id="f-time" step="300" title="Beginn"/>
+            <span aria-hidden="true">bis ca.</span>
+            <label class="visually-hidden" for="f-end">Ende (ungefähr)</label>
+            <input class="adm-input" type="time" id="f-end" step="300" title="Ende (ungefähr)"/>
+          </div>
         </div>
         <div class="adm-field">
           <label class="adm-label" for="f-type">Anlass</label>
@@ -164,7 +170,7 @@
             <div class="adm-field full">
               <label class="adm-label" for="f-note">Hinweis</label>
               <textarea class="adm-input" id="f-note" rows="3" aria-describedby="f-note-hint"></textarea>
-              <span class="adm-hint" id="f-note-hint">Festtag (z. B. „Hochfest Allerheiligen.“) erscheint oben beim Datum, „Ende ca. 12:45 Uhr.“ bei der Uhrzeit. Alles andere (Karten, Eintritt …) steht als Hinweis unter dem Programm.</span>
+              <span class="adm-hint" id="f-note-hint">Festtag (z. B. „Hochfest Allerheiligen.“) erscheint oben beim Datum. Das Ende steht oben neben dem Beginn. Alles andere (Karten, Eintritt …) steht als Hinweis unter dem Programm.</span>
             </div>
           </div>
         </div>

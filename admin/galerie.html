@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Galerie — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-galerie.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Galerie <em>pflegen</em></h1>
+      <p class="ph-sub">Alben für Kirchenmusik → <a href="../pages/musik.html#p-galerie" target="_blank" rel="noopener">Galerie</a>: Fotos, Videos von YouTube und Aufnahmen zum Anhören, in der Reihenfolge dieser Liste (oben steht oben).</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="ga-new" data-icon="plus">Neues Album</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-search" data-icon="search">
+      <input type="search" id="ga-search" placeholder="Suchen: Titel, Text …" aria-label="Alben durchsuchen" autocomplete="off"/>
+    </div>
+  </div>
+  <p class="adm-count" id="ga-count" role="status"></p>
+
+  <div id="ga-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog wide" id="ga-dlg" aria-labelledby="ga-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="ga-dlg-tag">Neues Album</div>
+      <h2 class="adm-dlg-title" id="ga-dlg-title">Neues Album</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="ga-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Album</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="f-titel">Titel<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-titel" required placeholder="z. B. Haydn: Harmoniemesse"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-datum">Datum</label>
+          <input class="adm-input" type="date" id="f-datum" aria-describedby="f-datum-hint"/>
+          <span class="adm-hint" id="f-datum-hint">Steht klein unter dem Titel. Leer lassen, wenn es kein bestimmter Tag ist.</span>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-text">Text</label>
+          <textarea class="adm-input" id="f-text" rows="3" aria-describedby="f-text-hint"></textarea>
+          <span class="adm-hint" id="f-text-hint">Ein paar Sätze zum Album, z. B. Anlass, Werk und Mitwirkende.</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Fotos</legend>
+      <p class="adm-hint adm-fs-lead">Auf der Website stehen die ersten sechs, alle lassen sich groß durchblättern. Sie werden beim Speichern als WebP in einen eigenen Ordner des Albums gelegt.</p>
+      <div class="adm-ph-list" id="ga-photos"></div>
+      <label class="adm-drop" id="ga-photo-drop">
+        <span data-icon="image"></span>
+        <span class="adm-drop-main">Fotos hierher ziehen oder <u>auswählen</u></span>
+        <span class="adm-hint">Auch mehrere auf einmal, auf höchstens 2000 Pixel verkleinert.</span>
+        <input type="file" id="ga-photo-file" accept="image/*" multiple/>
+      </label>
+      <span class="adm-counter" id="ga-photo-count" aria-live="polite"></span>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Videos</legend>
+      <p class="adm-hint adm-fs-lead">Adresse des Videos auf YouTube, z. B. <code>https://www.youtube.com/watch?v=…</code> oder <code>https://youtu.be/…</code>. Das Video wird erst geladen, wenn jemand auf Abspielen klickt.</p>
+      <div id="ga-videos"></div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Aufnahmen</legend>
+      <p class="adm-hint adm-fs-lead">Titel und MP3-Datei je Aufnahme. Neue Dateien unten hineinziehen oder auswählen; sie werden beim Speichern nach <code>assets/audio/galerie/</code> gelegt.</p>
+      <div id="ga-audio"></div>
+      <label class="adm-drop adm-drop-audio adm-mt-8" id="ga-audio-drop">
+        <span data-icon="upload"></span>
+        <span class="adm-drop-main">MP3-Dateien hierher ziehen oder <u>auswählen</u></span>
+        <span class="adm-hint">Auch mehrere auf einmal. Der Dateiname wird als Titel vorgeschlagen.</span>
+        <input type="file" id="f-audio" accept="audio/mpeg,.mp3" multiple/>
+      </label>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="ga-delete" data-icon="trash">Löschen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="ga-form" class="btn btn-dark" id="ga-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

@@ -1,13 +1,105 @@
 {
-  "sekunden": 6,
+  "sekunden": 4,
   "bilder": [
+    {
+      "titel": "Turm der Augustinerkirche",
+      "bild": "assets/img/startseite/turm-der-augustinerkirche.webp",
+      "breite": 1027,
+      "hoehe": 1200,
+      "ausschnitt": "50% 0%"
+    },
+    {
+      "titel": "Blick auf die Orgelempore",
+      "bild": "assets/img/startseite/blick-auf-die-orgelempore-2.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "0% 50%"
+    },
+    {
+      "titel": "Pfarrer Pater Matthias Schlögl OSA",
+      "bild": "assets/img/startseite/20240828-3337.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "24% 50%"
+    },
+    {
+      "titel": "Hochamt in der Augustinerkirche",
+      "bild": "assets/img/startseite/hochamt-in-der-augustinerkirche.webp",
+      "breite": 2000,
+      "hoehe": 1328,
+      "ausschnitt": "59% 50%"
+    },
+    {
+      "titel": "Prior Pater Dominic Sadrawetz OSA",
+      "bild": "assets/img/startseite/img-20261022-wa0003.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 37%"
+    },
+    {
+      "titel": "Detail aus den Bänken von Johann Baptist Straub (1704-1784)",
+      "bild": "assets/img/startseite/detail-aus-den-baenken-von-johann-baptist-straub-1704-1784.webp",
+      "breite": 1024,
+      "hoehe": 877,
+      "ausschnitt": "50% 35%"
+    },
+    {
+      "titel": "Die Wiener Augustiner",
+      "bild": "assets/img/startseite/die-wiener-augustiner-3.webp",
+      "breite": 1200,
+      "hoehe": 1600,
+      "ausschnitt": "50% 90%"
+    },
+    {
+      "titel": "Blick in die Augustinerkirche",
+      "bild": "assets/img/startseite/blick-in-die-augustinerkirche.webp",
+      "breite": 1600,
+      "hoehe": 900,
+      "ausschnitt": "54% 50%"
+    },
+    {
+      "titel": "Blick von der Orgelempore",
+      "bild": "assets/img/startseite/blick-von-der-orgelempore.webp",
+      "breite": 926,
+      "hoehe": 1600,
+      "ausschnitt": "50% 43%"
+    }
+  ],
+  "frueher": [
+    {
+      "titel": "Prior Pater Dominic Sadrawetz OSA",
+      "bild": "assets/img/startseite/prior-pater-dominic-sadrawetz-osa-2.webp",
+      "breite": 1200,
+      "hoehe": 1600,
+      "ausschnitt": "50% 41%"
+    },
+    {
+      "titel": "Herzgruft der Habsburger",
+      "bild": "assets/img/startseite/herzgruft-der-habsburger.webp",
+      "breite": 768,
+      "hoehe": 531,
+      "ausschnitt": "84% 50%"
+    },
+    {
+      "titel": "Blick in die Loretokapelle",
+      "bild": "assets/img/startseite/blick-in-die-loretokapelle.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "72% 50%"
+    },
     {
       "titel": "Turm der Wiener Augustinerkirche",
       "bild": "assets/img/startseite/turm-der-wiener-augustinerkirche.webp",
       "breite": 1500,
       "hoehe": 2000,
       "ausschnitt": "50% 14%"
+    },
+    {
+      "titel": "Prior Pater Dominic Sadrawetz OSA",
+      "bild": "assets/img/startseite/prior-pater-dominic-sadrawetz-osa.webp",
+      "breite": 1077,
+      "hoehe": 1436,
+      "ausschnitt": ""
     }
-  ],
-  "frueher": []
+  ]
 }

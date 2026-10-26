@@ -21,10 +21,12 @@
 
   function cardHTML(p) {
     const name = esc(p.name) + (p.deceased ? ' †' : '');
+    /* Mit Homepage ist der Name ein Link (neues Fenster) */
+    const home = /^https?:\/\//i.test(String(p.homepage || '').trim()) && HD.safeUrl(p.homepage.trim());
     return '<div class="person-card-wide compact">' +
       `<img src="${esc(HD.safeUrl(p.image, '../'))}" alt="${name}" width="300" height="300" loading="lazy" decoding="async"/>` +
       '<div class="person-body">' +
-        `<div class="person-name">${name}</div>` +
+        `<div class="person-name">${home ? `<a href="${esc(home)}" target="_blank" rel="noopener">${name}</a>` : name}</div>` +
         `<div class="person-role">${esc(p.voice)}</div>` +
       '</div>' +
     '</div>';

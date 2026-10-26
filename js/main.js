@@ -176,7 +176,7 @@
     const quick = [
       ['Gottesdienste', `${base}pages/gottesdienste.html`],
       ['Kalender', `${base}pages/kalender.html`],
-      ['Kontakt', `${base}index.html#kontakt`]
+      ['Kontakt', `${base}pages/augustinerkirche.html#kontakt`]
     ];
     let html = '<div class="mob-quick">' +
       quick.map(([t, h]) => `<a class="mob-quick-link" href="${escHTML(h)}">${escHTML(t)}</a>`).join('') + '</div>';

@@ -1,6 +1,127 @@
 {
-  "sekunden": 6,
+  "sekunden": 4,
   "bilder": [
+    {
+      "titel": "Blick auf die Orgelempore",
+      "bild": "assets/img/startseite/blick-auf-die-orgelempore.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 0%"
+    },
+    {
+      "titel": "KMD Peter Tiefengraber",
+      "bild": "assets/img/startseite/kmd-peter-tiefengraber.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "59% 50%"
+    },
+    {
+      "titel": "Robert Kardinal Prevost OSA (heute Papst Leo XIV.) in Wien",
+      "bild": "assets/img/startseite/robert-kardinal-prevost-osa-heute-papst-leo-xiv-in-wien.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "17% 50%"
+    },
+    {
+      "titel": "Blick in das Kirchenschiff",
+      "bild": "assets/img/startseite/blick-in-das-kirchenschiff.webp",
+      "breite": 1333,
+      "hoehe": 2000,
+      "ausschnitt": "50% 62%"
+    },
+    {
+      "titel": "Wir gratulieren Günther Groissböck zum Geburtstag",
+      "bild": "assets/img/startseite/wir-gratulieren-guenther-groissboeck-zum-geburtstag.webp",
+      "breite": 1200,
+      "hoehe": 1600,
+      "ausschnitt": "50% 88%"
+    },
+    {
+      "titel": "Hochamt in der Augustinerkirche",
+      "bild": "assets/img/startseite/hochamt-in-der-augustinerkirche.webp",
+      "breite": 2000,
+      "hoehe": 1328,
+      "ausschnitt": "82% 50%"
+    },
+    {
+      "titel": "Orchester von St. Augustin mit KMD Peter Tiefengraber",
+      "bild": "assets/img/startseite/20260328-augustinerkirche-fb-chenleiphoto-02.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": ""
+    },
+    {
+      "titel": "Rieger-Orgel der Augustinerkirche",
+      "bild": "assets/img/startseite/rieger-orgel-der-augustinerkirche.webp",
+      "breite": 900,
+      "hoehe": 1200,
+      "ausschnitt": "50% 11%"
+    },
+    {
+      "titel": "Festkonzert '675 Jahre Augustinerkirche'",
+      "bild": "assets/img/startseite/festkonzert-675-jahre-augustinerkirche.webp",
+      "breite": 2000,
+      "hoehe": 1500,
+      "ausschnitt": "0% 50%"
+    },
+    {
+      "titel": "Chor von St. Augustin",
+      "bild": "assets/img/startseite/chor-von-st-augustin.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 67%"
+    },
+    {
+      "titel": "Blick von der Chorempore ins Kirchenschiff",
+      "bild": "assets/img/startseite/blick-von-der-chorempore-ins-kirchenschiff.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "0% 50%"
+    },
+    {
+      "titel": "Blick von der Orgelempore während des Hochamts",
+      "bild": "assets/img/startseite/blick-von-der-orgelempore-waehrend-des-hochamts.webp",
+      "breite": 1126,
+      "hoehe": 2000,
+      "ausschnitt": "50% 20%"
+    },
+    {
+      "titel": "Chor & Orchester von St. Augustin",
+      "bild": "assets/img/startseite/chor-orchester-von-st-augustin-2.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "64% 50%"
+    },
+    {
+      "titel": "Pfarrer, Prior & Kirchenmusikdirektor",
+      "bild": "assets/img/startseite/pfarrer-prior-kirchenmusikdirektor.webp",
+      "breite": 1200,
+      "hoehe": 1600,
+      "ausschnitt": "50% 75%"
+    },
+    {
+      "titel": "Hochamt in St. Augustin",
+      "bild": "assets/img/startseite/hochamt-in-st-augustin-2.webp",
+      "breite": 1333,
+      "hoehe": 2000,
+      "ausschnitt": "50% 27%"
+    }
+  ],
+  "frueher": [
+    {
+      "titel": "Turm der Augustinerkirche",
+      "bild": "assets/img/startseite/turm-der-augustinerkirche.webp",
+      "breite": 1027,
+      "hoehe": 1200,
+      "ausschnitt": "50% 0%"
+    },
+    {
+      "titel": "Rieger-Orgel der Augustinerkirche",
+      "bild": "assets/img/startseite/rieger-orgel-der-augustinerkirche-2.webp",
+      "breite": 1333,
+      "hoehe": 2000,
+      "ausschnitt": "50% 94%"
+    },
     {
       "titel": "Der Innenraum der Augustinerkirche",
       "bild": "assets/img/kirche/interior-hero.webp",
@@ -8,6 +129,5 @@
       "hoehe": 720,
       "ausschnitt": ""
     }
-  ],
-  "frueher": []
+  ]
 }

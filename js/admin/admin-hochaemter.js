@@ -32,6 +32,10 @@
   const KEYS = HD.FIELDS.map(([k]) => k);
   const SIMPLE = ['date', 'time', 'type', 'location', 'piece', 'conductor', 'choir', 'orchestra', 'celebrant', 'note'];
   const DEFAULTS = { time: '11:00', type: 'Hochamt', location: 'Augustinerkirche' };
+  const DEFAULT_END = '12:30';
+  /* Das Ende steht in der Tabelle im Hinweis ("Ende ca. 12:45 Uhr.", wie auf der
+     Detailseite gelesen); im Fenster hat es ein eigenes Feld neben dem Beginn. */
+  const END = /\s*Ende\s+(ca\.\s*)?(\d{1,2})[:.](\d{2})\s*(Uhr)?\.?/i;
   const VOICES = ['Sopran', 'Mezzosopran', 'Alt', 'Altus', 'Tenor', 'Bariton', 'Bass', 'Trompete', 'Violine', 'Flöte', 'Orgel', 'Rezitation'];
 
   let entries = [];          /* Textfelder wie in der CSV, Datum JJJJ-MM-TT, Uhrzeit HH:MM */
@@ -76,6 +80,15 @@
     return m ? { name: m[1].trim(), voice: m[2].trim() } : { name: String(s).trim(), voice: '' };
   }
   const joinSoloist = (p) => (p.voice ? `${p.name} (${p.voice})` : p.name);
+
+  /* Hinweis -> {end: "HH:MM" oder "", note: Hinweis ohne Ende} */
+  function splitEnd(note) {
+    const m = END.exec(note || '');
+    if (!m) return { end: '', note: note || '' };
+    return { end: `${m[2].padStart(2, '0')}:${m[3]}`, note: HD.cleanLines(note.replace(m[0], ' ')) };
+  }
+  const minutes = (t) => (t ? +t.slice(0, 2) * 60 + +t.slice(3, 5) : NaN);
+  const hhmm = (m) => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 
   /* ---------- Laden ---------- */
   async function load() {
@@ -433,6 +446,10 @@
     const form = $('ha-form');
     A.clearErrors(form);
     for (const k of SIMPLE) F(k).value = entry[k] || '';
+    const split = splitEnd(entry.note);
+    F('note').value = split.note;
+    F('end').value = entry.end !== undefined ? entry.end : split.end;
+    lastTime = F('time').value;
     F('extra').value = HD.list(entry.extra).join('\n');
     const solo = HD.list(entry.soloists).map(splitSoloist);
     soloists.set(solo.length ? solo : [{}]);
@@ -460,7 +477,17 @@
       dt.setDate(dt.getDate() + 7);
     }
   }
-  const openNew = () => openEditor({ ...DEFAULTS, date: nextFreeSunday() }, 'new');
+  const openNew = () => openEditor({ ...DEFAULTS, end: DEFAULT_END, date: nextFreeSunday() }, 'new');
+
+  /* Beginn verschoben: Ende rueckt um gleich viel mit (Dauer bleibt) */
+  let lastTime = '';
+  function shiftEnd() {
+    const now = HD.isoTime(F('time').value);
+    const before = HD.isoTime(lastTime);
+    const end = HD.isoTime(F('end').value);
+    if (now && before && end) F('end').value = hhmm(minutes(end) + minutes(now) - minutes(before) + 24 * 60);
+    if (now) lastTime = now;
+  }
 
   /* Kopie eine Woche spaeter (bzw. die naechste freie Woche) */
   function copy(i) {
@@ -478,6 +505,10 @@
     const e = {};
     for (const k of SIMPLE) e[k] = k === 'note' ? A.HD.cleanLines(F(k).value) : clean(F(k).value);
     e.time = HD.isoTime(e.time) || DEFAULTS.time;
+    /* Ende wieder als "Ende ca. … Uhr." an den Hinweis haengen */
+    const end = HD.isoTime(F('end').value);
+    const note = splitEnd(e.note).note;
+    e.note = end ? `${note}${note ? ' ' : ''}Ende ca. ${end} Uhr.` : note;
     e.extra = F('extra').value.split(/\n+/).map(cleanItem).filter(Boolean).join(' | ');
     e.soloists = soloists.values().filter((p) => p.name)
       .map((p) => joinSoloist({ name: cleanItem(p.name), voice: cleanItem(p.voice).replace(/[()]/g, '') })).join(' | ');
@@ -504,6 +535,8 @@
     const errors = [];
     if (!HD.isoDate(e.date)) errors.push([F('date'), 'Bitte ein Datum wählen.']);
     if (!e.piece) errors.push([F('piece'), 'Bitte das Werk eintragen. Es erscheint als Titel.']);
+    const end = HD.isoTime(F('end').value);
+    if (end && minutes(end) <= minutes(e.time)) errors.push([F('end'), 'Das Ende muss nach dem Beginn liegen.']);
     const clash = e.date && entries.find((x, i) => i !== editIndex && keyOf(x) === keyOf(e));
     if (clash) {
       errors.push([F('time'), `Am ${A.fmtShort(e.date)} um ${e.time} Uhr gibt es schon einen Termin („${clash.piece || clash.type}“). Bitte eine andere Uhrzeit wählen.`]);
@@ -692,6 +725,7 @@
     });
     F('date').setAttribute('aria-describedby', 'f-date-day');
     F('date').addEventListener('input', updateDay);
+    F('time').addEventListener('change', shiftEnd);
 
     $('ha-new').addEventListener('click', openNew);
     $('ha-form').addEventListener('submit', save);

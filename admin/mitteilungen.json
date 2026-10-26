@@ -1,3 +1,14 @@
 {
-  "mitteilungen": []
+  "mitteilungen": [
+    {
+      "id": "h-mvh6ralu47kt",
+      "titel": "Server keine Speicherfunktionen!",
+      "text": "Achtung!\nKEINE Daten werden übernommen bzw. gespeichert in der Zeit von 21.10 19Uhr bis 25.10 19Uhr!",
+      "art": "wichtig",
+      "von": "2026-10-20T23:00",
+      "bis": "2026-10-25T20:00",
+      "aktiv": true,
+      "von_wem": "Felix Horngacher"
+    }
+  ]
 }

@@ -4,36 +4,36 @@
       "leiste": "#10192e",
       "schrift": "auto",
       "logo": "gold",
-      "name": "",
-      "untertitel": ""
+      "name": "Augustiner in Wien",
+      "untertitel": "Augustinerkloster & Augustinerkirche"
     },
     "augustinerkirche": {
       "leiste": "#10192e",
       "schrift": "auto",
       "logo": "gold",
-      "name": "",
-      "untertitel": ""
+      "name": "Augustinerkirche",
+      "untertitel": "Pfarre St. Augustin"
     },
     "kirchenmusik": {
       "leiste": "#e9d9ad",
       "schrift": "auto",
       "logo": "gold-dunkel",
-      "name": "Kirchenmusik von St.Augustin",
-      "untertitel": ""
+      "name": "Kirchenmusik von St. Augustin",
+      "untertitel": "Zentrum der Kirchenmusik in Wien"
     },
     "augustiner": {
       "leiste": "#6e1f2b",
       "schrift": "auto",
       "logo": "gold",
-      "name": "",
-      "untertitel": ""
+      "name": "Augustinerorden",
+      "untertitel": "Augustiner-Vikariat Wien \"Maria Trost\""
     },
     "aspersdorf": {
       "leiste": "#400080",
       "schrift": "auto",
       "logo": "weiss",
-      "name": "Pfarre Aspersdorf",
-      "untertitel": ""
+      "name": "Pfarre St. Georg",
+      "untertitel": "Aspersdorf · Niederösterreich"
     }
   }
 }

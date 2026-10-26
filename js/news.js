@@ -1,7 +1,8 @@
 /* ============================================================
    Augustinerkirche Wien — news.js
    Neuigkeiten aus data/news.csv (Excel-Tabelle):
-   - Startseite (#news-grid): immer die 4 neuesten Meldungen als Karten;
+   - Startseite und Hauptseiten (#news-grid, data-seite): die 4 neuesten Meldungen
+     fuer diese Seite (Spalte "Seiten", leer = alle Seiten) als Karten;
      Meldungen mit abgelaufenem "Bis"-Datum ruecken nach unten und
      fuellen nur noch auf, wenn es weniger als 4 aktive gibt
    - Archiv (#news-archive): alle Meldungen, auch die der Startseite, nach Jahren
@@ -23,7 +24,7 @@
   const KEYS = {
     datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
     details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',
-    weitererlink: 'link2', weitererlinktext: 'linktext2', bildausschnitt: 'focus'
+    weitererlink: 'link2', weitererlinktext: 'linktext2', bildausschnitt: 'focus', seiten: 'pages'
   };
   const CLOSE_ICON = '<svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
 
@@ -63,6 +64,7 @@
         thumb: o.thumb || '', poster: o.poster || '', link: o.link || '', linktext: o.linktext || '',
         link2: o.link2 || '', linktext2: o.linktext2 || '',
         focus: /^\d{1,3}% \d{1,3}%$/.test(o.focus || '') ? o.focus : '',
+        pages: o.pages || '',
         photos: []
       };
     }).filter(Boolean);
@@ -74,12 +76,13 @@
      (einschliesslich) noch nicht vorbei ist; ohne Datum gelten zwei
      Wochen ab dem Datum der Meldung (HD.newsUntil). Sind das weniger als 6, wird mit den neuesten abgelaufenen
      aufgefuellt, die dann unten stehen. Alles andere steht im Archiv. */
-  function homeEntries() {
+  function homeEntries(page) {
     const d = new Date();
     const today = `${d.getFullYear()}-${HD.pad(d.getMonth() + 1)}-${HD.pad(d.getDate())}`;
     const expired = (e) => e.until && e.until < today;
-    const live = entries.filter((e) => !expired(e));
-    const past = entries.filter(expired);
+    const mine = entries.filter((e) => HD.newsOnPage(e.pages, page));
+    const live = mine.filter((e) => !expired(e));
+    const past = mine.filter(expired);
     return [...live, ...past].slice(0, LATEST);
   }
 
@@ -113,11 +116,19 @@
         '<span class="link-arr">Mehr erfahren</span>' +
       '</div></a>';
   }
+  /* data-seite am Container: nur die Meldungen fuer diese Seite (Spalte "Seiten");
+     auf den Hauptseiten (data-hide-empty) verschwindet der Bereich ohne Meldungen */
   function renderLatest(el) {
-    const latest = homeEntries();
+    const page = el.dataset.seite || '';
+    const latest = homeEntries(page);
+    const section = el.closest('section');
+    if (!latest.length && el.hasAttribute('data-hide-empty') && section) {
+      section.hidden = true;
+      return;
+    }
     el.innerHTML = latest.length ? latest.map(cardHTML).join('') : '<p class="s-text">Derzeit gibt es keine Meldungen.</p>';
     const more = qs('#news-more');
-    if (more) more.hidden = entries.length <= latest.length;
+    if (more) more.hidden = entries.filter((e) => HD.newsOnPage(e.pages, page)).length <= latest.length;
   }
 
   /* ---------- Archiv: nach Jahren ---------- */

@@ -2,7 +2,7 @@
 <html lang="de" data-thema="kirchenmusik">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com/gtag/; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com/gtag/; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; frame-src https://www.youtube-nocookie.com; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link rel="icon" href="../favicon.ico" sizes="any"/>
@@ -31,6 +31,38 @@
   </a>
 
   <div class="nav-center">
+    <div class="nav-item" id="ni-aug">
+      <button type="button" class="nav-btn" data-href="augustiner.html" aria-expanded="false" aria-controls="ni-aug-menu">
+        Augustiner
+        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
+      </button>
+      <div class="mega" id="ni-aug-menu">
+        <div class="mega-group">
+          <span class="mega-group-label">Augustiner-Vikariat Wien</span>
+          <a href="augustiner.html#p-wien">Augustiner in Wien</a>
+          <a href="augustiner.html#p-berufung">Augustiner werden</a>
+        </div>
+        <div class="mega-group">
+          <span class="mega-group-label">Augustinerorden</span>
+          <a href="augustiner.html#p-orden">Geschichte des Ordens</a>
+          <a href="augustiner.html#p-spiritualitaet">Spiritualität</a>
+          <a href="augustiner.html#p-ordensheilige">Ordensheilige</a>
+          <a href="augustiner.html#p-bedeutende">Bedeutende Augustiner</a>
+          <a href="augustiner.html#p-leo">Papst Leo XIV.</a>
+        </div>
+        <div class="mega-group">
+          <span class="mega-group-label">Hl. Augustinus</span>
+          <a href="augustiner.html#p-augustinus">Leben &amp; Zeittafel</a>
+          <a href="augustiner.html#p-regel">Augustinusregel</a>
+        </div>
+        <div class="mega-group">
+          <span class="mega-group-label">Pfarren von Augustinern betreut</span>
+          <a href="augustinerkirche.html">Augustinerkirche Wien</a>
+          <a href="aspersdorf.html">Pfarre St. Georg, Aspersdorf</a>
+        </div>
+      </div>
+    </div>
+
     <div class="nav-item" id="ni-kirche">
       <button type="button" class="nav-btn" data-href="augustinerkirche.html" aria-expanded="false" aria-controls="ni-kirche-menu">
         Augustinerkirche
@@ -69,6 +101,7 @@
           <span class="mega-group-label">Kirchenmusik</span>
           <a href="musik.html#p-hochaemter">Hochämter</a>
           <a href="musik.html#p-hochaemter-archiv">Hochämter-Archiv</a>
+          <a href="musik.html#p-galerie">Galerie</a>
         </div>
         <div class="mega-group">
           <span class="mega-group-label">Personen</span>
@@ -79,38 +112,6 @@
         <div class="mega-group">
           <span class="mega-group-label">Förderung</span>
           <a href="musik.html#p-patenschaft">Patenschaftsverein</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav-item" id="ni-aug">
-      <button type="button" class="nav-btn" data-href="augustiner.html" aria-expanded="false" aria-controls="ni-aug-menu">
-        Augustiner
-        <svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
-      </button>
-      <div class="mega" id="ni-aug-menu">
-        <div class="mega-group">
-          <span class="mega-group-label">Augustiner-Vikariat Wien</span>
-          <a href="augustiner.html#p-wien">Augustiner in Wien</a>
-          <a href="augustiner.html#p-berufung">Augustiner werden</a>
-        </div>
-        <div class="mega-group">
-          <span class="mega-group-label">Augustinerorden</span>
-          <a href="augustiner.html#p-orden">Geschichte des Ordens</a>
-          <a href="augustiner.html#p-spiritualitaet">Spiritualität</a>
-          <a href="augustiner.html#p-ordensheilige">Ordensheilige</a>
-          <a href="augustiner.html#p-bedeutende">Bedeutende Augustiner</a>
-          <a href="augustiner.html#p-leo">Papst Leo XIV.</a>
-        </div>
-        <div class="mega-group">
-          <span class="mega-group-label">Hl. Augustinus</span>
-          <a href="augustiner.html#p-augustinus">Leben &amp; Zeittafel</a>
-          <a href="augustiner.html#p-regel">Augustinusregel</a>
-        </div>
-        <div class="mega-group">
-          <span class="mega-group-label">Pfarren von Augustinern betreut</span>
-          <a href="augustinerkirche.html">Augustinerkirche Wien</a>
-          <a href="aspersdorf.html">Pfarre St. Georg, Aspersdorf</a>
         </div>
       </div>
     </div>
@@ -144,6 +145,18 @@
   </div>
 </section>
 
+<section class="section section-ruled" aria-labelledby="aktuelles-h">
+  <div class="inner">
+    <div class="sec-head">
+      <h2 class="s-title" id="aktuelles-h">Aktuelles <span class="s-title-sub">aus der Kirchenmusik</span></h2>
+    </div>
+    <div class="news-grid" id="news-grid" data-base="../" data-seite="kirchenmusik" data-hide-empty aria-live="polite">
+      <p class="s-text">Die aktuellen Neuigkeiten finden Sie im <a class="link-arr" href="archiv.html">Archiv</a>.</p>
+    </div>
+    <div class="news-more" id="news-more"><a class="link-arr" href="archiv.html">Alle Meldungen</a></div>
+  </div>
+</section>
+
 <section class="section">
   <div class="inner">
     <div class="with-sidebar">
@@ -151,6 +164,7 @@
         <span class="sidebar-group-label">Veranstaltungen</span>
         <button type="button" class="sidebar-item active" data-pane="p-hochaemter">Hochämter</button>
         <button type="button" class="sidebar-item" data-pane="p-hochaemter-archiv">Vergangene Hochämter</button>
+        <button type="button" class="sidebar-item" data-pane="p-galerie">Galerie</button>
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Ensemble</span>
         <button type="button" class="sidebar-item" data-pane="p-chor">Chor von St. Augustin</button>
@@ -612,6 +626,14 @@
           <p class="bio-p" style="margin-top:2rem">Möchten Sie selbst Pate werden? Alles zu den Möglichkeiten finden Sie unter <a href="#p-patenschaft">Patenschaft St. Augustin</a>.</p>
         </div>
 
+        <div class="tab-pane" id="p-galerie">
+          <h2 class="s-title">Galerie</h2>
+          <p class="s-text" style="margin-bottom:2rem">Fotos, Videos und Aufnahmen aus den Hochämtern und Konzerten der Kirchenmusik von St. Augustin.</p>
+          <div class="gal-list" data-inhalt="galerie">
+            <p class="s-text">Hier finden Sie bald Fotos, Videos und Aufnahmen.</p>
+          </div>
+        </div>
+
         <div class="tab-pane" id="p-cds">
           <h2 class="s-title">CDs von St. Augustin</h2>
           <p class="s-text">Zwanzig Aufnahmen mit dem Chor und Orchester von St. Augustin, Solistinnen und Solisten und den Organisten des Hauses: von den großen Messen der Wiener Klassik bis zu Trompete und Orgel. Jede CD kostet € 15.</p>
@@ -825,7 +847,7 @@
 <footer>
   <div class="f-verbote"><h2 class="visually-hidden">Bitte beachten Sie in der Kirche</h2><ul><li title="Keine Hunde"><svg viewBox="0 0 64 64" role="img" aria-label="Keine Hunde"><use href="../assets/icons/verbote.svg#hund"/></svg></li><li title="Bitte nicht telefonieren"><svg viewBox="0 0 64 64" role="img" aria-label="Bitte nicht telefonieren"><use href="../assets/icons/verbote.svg#handy"/></svg></li><li title="Kein Eis"><svg viewBox="0 0 64 64" role="img" aria-label="Kein Eis"><use href="../assets/icons/verbote.svg#eis"/></svg></li><li title="Kein Essen"><svg viewBox="0 0 64 64" role="img" aria-label="Kein Essen"><use href="../assets/icons/verbote.svg#essen"/></svg></li><li title="Nicht rauchen"><svg viewBox="0 0 64 64" role="img" aria-label="Nicht rauchen"><use href="../assets/icons/verbote.svg#rauchen"/></svg></li><li title="Bitte Schultern bedecken"><svg viewBox="0 0 64 64" role="img" aria-label="Bitte Schultern bedecken"><use href="../assets/icons/verbote.svg#schultern"/></svg></li><li title="Bitte keine kurze Kleidung"><svg viewBox="0 0 64 64" role="img" aria-label="Bitte keine kurze Kleidung"><use href="../assets/icons/verbote.svg#knie"/></svg></li><li title="Keine laute Musik"><svg viewBox="0 0 64 64" role="img" aria-label="Keine laute Musik"><use href="../assets/icons/verbote.svg#musik"/></svg></li><li title="Bitte Hut abnehmen"><svg viewBox="0 0 64 64" role="img" aria-label="Bitte Hut abnehmen"><use href="../assets/icons/verbote.svg#hut"/></svg></li><li title="Keine Luftballons"><svg viewBox="0 0 64 64" role="img" aria-label="Keine Luftballons"><use href="../assets/icons/verbote.svg#ballon"/></svg></li></ul></div>
   <div class="f-logo-wrap"><img class="f-logo-img" src="../assets/logo.png" alt="" width="28" height="28" loading="lazy" decoding="async"/><div class="f-logo">Augustiner<span>kirche</span> Wien</div></div>
-  <div class="f-links"><a href="../index.html#kontakt">Kontakt</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="https://www.instagram.com/augustinerkirche/" target="_blank" rel="noopener">Instagram</a></div>
+  <div class="f-links"><a href="augustinerkirche.html#kontakt">Kontakt</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="https://www.instagram.com/augustinerkirche/" target="_blank" rel="noopener">Instagram</a></div>
   <div class="f-copy">© Augustiner-Vikariat Wien 2026</div>
 </footer>
 
@@ -836,6 +858,7 @@
 <script src="../js/solisten.js"></script>
 <script src="../js/hoerproben.js"></script>
 <script src="../js/inhalte.js"></script>
+<script src="../js/news.js"></script>
 <script src="../js/lightbox.js"></script>
 </body>
 </html>

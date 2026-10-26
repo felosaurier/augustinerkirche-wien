@@ -240,6 +240,84 @@
           "art": "gottesdienst"
         }
       ]
+    },
+    {
+      "datum": "2026-10-21",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-22",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-23",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "08:00",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Nikolaus",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-24",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Hl. Messe (Vorabendmesse)",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-10-25",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Augustinerkirche",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "11:00",
+          "name": "Hochamt",
+          "zelebrant": "P. Matthias",
+          "musik": "J. Haydn: Harmoniemesse",
+          "ort": "Augustinerkirche",
+          "art": "hochamt"
+        }
+      ]
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "sekunden": 6,
+  "sekunden": 4,
   "bilder": [
     {
       "titel": "Die Wiener Augustiner",
@@ -7,7 +7,85 @@
       "breite": 1333,
       "hoehe": 2000,
       "ausschnitt": "50% 96%"
+    },
+    {
+      "titel": "Blick auf den Turm vom Klosterhof",
+      "bild": "assets/img/startseite/blick-auf-den-turm-vom-klosterhof.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 2%"
+    },
+    {
+      "titel": "Robert Kardinal Prevost OSA (Papst Leo XIV.) mit seinen Wiener Mitbrüdern",
+      "bild": "assets/img/startseite/robert-kardinal-prevost-osa-papst-leo-xiv-mit-seinen-wiener-.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "49% 50%"
+    },
+    {
+      "titel": "Robert Kardinal Prevost OSA (heute Papst Leo XIV.) in Wien",
+      "bild": "assets/img/startseite/robert-kardinal-prevost-osa-heute-papst-leo-xiv-in-wien-2.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "100% 50%"
+    },
+    {
+      "titel": "Robert Kardinal Prevost OSA (heute Papst Leo XIV.) in Wien",
+      "bild": "assets/img/startseite/robert-kardinal-prevost-osa-heute-papst-leo-xiv-in-wien-3.webp",
+      "breite": 1333,
+      "hoehe": 2000,
+      "ausschnitt": "50% 34%"
+    },
+    {
+      "titel": "Blick von der Orgelempore der Augustinerkirche",
+      "bild": "assets/img/startseite/blick-von-der-orgelempore-der-augustinerkirche.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 44%"
+    },
+    {
+      "titel": "Die Wiener Augustiner",
+      "bild": "assets/img/startseite/die-wiener-augustiner-2.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "73% 50%"
+    },
+    {
+      "titel": "Hochamt in St. Augustin",
+      "bild": "assets/img/startseite/hochamt-in-st-augustin-3.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "34% 50%"
+    },
+    {
+      "titel": "Professerneuerung",
+      "bild": "assets/img/startseite/professerneuerung.webp",
+      "breite": 1200,
+      "hoehe": 1600,
+      "ausschnitt": "50% 46%"
+    },
+    {
+      "titel": "Turm der Augustinerkirche",
+      "bild": "assets/img/startseite/turm-der-augustinerkirche-2.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 0%"
     }
   ],
-  "frueher": []
+  "frueher": [
+    {
+      "titel": "Pfarrer Pater Matthias Schlögl OSA",
+      "bild": "assets/img/startseite/20240828-3337.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "0% 50%"
+    },
+    {
+      "titel": "Robert Kardinal Prevost OSA (heute Papst Leo XIV.) in Wien",
+      "bild": "assets/img/startseite/robert-kardinal-prevost-osa-heute-papst-leo-xiv-in-wien.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "17% 50%"
+    }
+  ]
 }

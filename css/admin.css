@@ -368,6 +368,9 @@ html.adm-lock{overflow:hidden}
 .adm-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .adm-field{display:flex;flex-direction:column;gap:.35rem;min-width:0}
 .adm-field.full{grid-column:1/-1}
+.adm-times{display:flex;align-items:center;gap:.6rem}
+.adm-times .adm-input{flex:1;min-width:0}
+.adm-times span{color:var(--text-mid);font-size:.95rem;white-space:nowrap}
 .adm-label{font-size:1rem;font-weight:600;color:var(--text);line-height:1.35}
 .adm-req{margin-left:.45rem;font-size:.86rem;color:var(--gold-text);font-weight:600;vertical-align:.05em}
 .adm-opt{margin-left:.35rem;font-weight:400;font-size:.92rem;color:var(--text-light)}
@@ -399,6 +402,8 @@ select.adm-input{-webkit-appearance:none;appearance:none;padding-right:2.6rem;cu
 .adm-linked .adm-suggest-row{justify-content:flex-start}
 .adm-quick{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.1rem}
 .adm-quick .adm-act{min-height:38px;padding:0 .7rem;border-color:var(--line);font-size:.9rem}
+.adm-pages{border:0;margin:0;padding:0;min-width:0}
+.adm-pages-list{display:flex;flex-wrap:wrap;gap:0 1.4rem}
 .adm-counter{font-size:.88rem;color:var(--text-light);text-align:right}
 .adm-counter.over{color:#8a5a00}
 

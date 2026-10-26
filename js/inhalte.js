@@ -12,6 +12,8 @@
    - data/repertoire.json: Repertoire des Chores mit Suche
      ([data-inhalt="repertoire"])
    - data/cds.json: CDs von St. Augustin mit Hörproben ([data-inhalt="cds"])
+   - data/galerie.json: Galerie der Kirchenmusik mit Fotos, Videos und
+     Aufnahmen ([data-inhalt="galerie"])
    - data/rundgang.json: Rundgang durch die Kirche ([data-inhalt="rundgang"])
    - data/pgr.json: Pfarrgemeinderat ([data-inhalt="pgr-mitglieder"],
      [data-inhalt="pgr-weitere"])
@@ -272,6 +274,62 @@
     ).join('');
   }
 
+  /* ---------- Galerie der Kirchenmusik ----------
+     data/galerie.json: {alben: [{titel, datum, text, fotos: [{bild, alt, breite,
+     hoehe}], videos: [{titel, url}], audio: [{titel, datei}]}]}. Fotos zum
+     Durchblaettern (lightbox.js), Aufnahmen wie die Hoerproben der CDs
+     (hoerproben.js), Videos von YouTube erst nach einem Klick (Datenschutz). */
+  const GAL_SHOWN = 6;
+  /* YouTube-Adresse (watch, youtu.be, shorts, embed, live) -> Video-Kennung */
+  function youtubeId(u) {
+    const m = String(u || '').trim().match(/^https?:\/\/(?:www\.|m\.)?(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})(?:[?&#/].*)?$/i);
+    return m ? m[1] : '';
+  }
+  function albumHTML(a, n) {
+    const fotos = (a.fotos || []).filter((f) => f.bild && url(f.bild));
+    const videos = (a.videos || []).map((v) => ({ ...v, id: youtubeId(v.url) })).filter((v) => v.id);
+    const audio = (a.audio || []).filter((h) => h.datei && url(h.datei));
+    const date = HD.isoDate(a.datum);
+    const dt = date && HD.dateFromIso(date);
+    const more = fotos.length - GAL_SHOWN;
+    return '<article class="gal-album">' +
+      `<h3 class="gal-title">${esc(a.titel)}</h3>` +
+      (dt ? `<p class="gal-date">${dt.getDate()}. ${HD.MONTHS[dt.getMonth()]} ${dt.getFullYear()}</p>` : '') +
+      (a.text ? `<p class="gal-text">${rich(a.text)}</p>` : '') +
+      (fotos.length ? `<div class="gallery gal-photos">${fotos.map((f, i) => {
+        const cap = HD.plainText(f.alt);
+        const plus = i === GAL_SHOWN - 1 && more > 0 ? `<span class="gal-more" aria-hidden="true">+${more}</span>` : '';
+        return `<div class="g-item"${i >= GAL_SHOWN ? ' hidden' : ''}><a href="${esc(url(f.bild))}" data-lightbox data-gallery="galerie-${n}" data-caption="${esc(cap)}" title="${esc(cap || 'Foto vergrößern')}">` +
+          `<img src="${esc(url(f.bild))}" alt="${esc(cap || `Foto ${i + 1}: ${a.titel}`)}" width="${HD.num(f.breite, 900)}" height="${HD.num(f.hoehe, 600)}" loading="lazy" decoding="async"/>${plus}</a></div>`;
+      }).join('')}</div>` : '') +
+      (videos.length ? `<div class="gal-videos">${videos.map((v) =>
+        `<div class="gal-video"><button type="button" class="gal-video-load" data-yt="${esc(v.id)}" data-title="${esc(v.titel || a.titel)}">` +
+          `<span class="gal-video-play" aria-hidden="true"></span><span class="gal-video-title">${esc(v.titel || 'Video abspielen')}</span>` +
+          '<span class="gal-video-note">Beim Abspielen wird das Video von YouTube geladen.</span></button></div>').join('')}</div>` : '') +
+      (audio.length ? `<div class="cd-samples gal-audio" role="group" aria-label="Aufnahmen">${audio.map((h) =>
+        `<button type="button" class="cd-play" data-audio="${esc(url(h.datei))}" aria-pressed="false">${esc(h.titel || 'Aufnahme')}</button>`).join('')}</div>` : '') +
+      '</article>';
+  }
+  async function galerie() {
+    const host = document.querySelector('[data-inhalt="galerie"]');
+    if (!host) return;
+    const alben = ((await load('galerie.json')).alben || []).filter((a) => a && a.titel);
+    if (!alben.length) return;
+    host.innerHTML = alben.map(albumHTML).join('');
+    /* Video erst auf Klick einbetten (youtube-nocookie, startet gleich) */
+    host.addEventListener('click', (ev) => {
+      const b = ev.target.closest('.gal-video-load');
+      if (!b || !/^[\w-]{11}$/.test(b.dataset.yt)) return;
+      const f = document.createElement('iframe');
+      f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.yt}?autoplay=1&rel=0`;
+      f.title = b.dataset.title || 'Video';
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      f.referrerPolicy = 'strict-origin-when-cross-origin';
+      b.replaceWith(f);
+    });
+  }
+
   /* ---------- Rundgang durch die Kirche ---------- */
   async function rundgang() {
     const host = document.querySelector('[data-inhalt="rundgang"]');
@@ -427,7 +485,7 @@
     /* Impressum zuerst: es enthaelt die Oeffnungszeiten der Pfarrkanzlei, die kontakt() danach eintraegt */
     await rechtliches().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
-    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds, rundgang]) {
+    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds, galerie, rundgang]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     }
   });

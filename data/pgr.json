@@ -150,19 +150,6 @@
       "bild": "assets/img/personen/pgr/ursula-schimpl.webp",
       "breite": 550,
       "hoehe": 700
-    },
-    {
-      "name": "Florian Oppitz",
-      "rolle": "Ersatzmitglied",
-      "beruf": "Archäologe",
-      "aufgaben": [
-        "Mitglied im Fachausschuss Jugend"
-      ],
-      "email": "",
-      "telefon": "",
-      "bild": "assets/img/personen/pgr/florian-oppitz.webp",
-      "breite": 413,
-      "hoehe": 496
     }
   ]
 }

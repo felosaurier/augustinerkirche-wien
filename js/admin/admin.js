@@ -137,6 +137,7 @@
     { key: 'solisten', label: 'Solisten', group: 'Kirchenmusik', page: 'solisten.html' },
     { key: 'paten', label: 'Paten, Spenden & Möglichkeiten', group: 'Kirchenmusik', page: 'paten.html' },
     { key: 'cds', label: 'CDs', group: 'Kirchenmusik', page: 'cds.html' },
+    { key: 'galerie', label: 'Galerie (Fotos, Videos, Aufnahmen)', group: 'Kirchenmusik', page: 'galerie.html' },
     { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
     { key: 'repertoire', label: 'Repertoire', group: 'Kirchenmusik', page: 'repertoire.html' },
     { key: 'gottesdienste', label: 'Regelmäßige Termine', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
@@ -1002,7 +1003,7 @@
     [/^data\/startseite\.json$/, 'Startseite'], [/^data\/hinweise\.json$/, 'Hinweisbanner'],
     [/^data\/news\.csv$/, 'Neuigkeiten'], [/^data\/termine\.json$/, 'Termine'],
     [/^data\/(archiv\/)?hochaemter.*\.csv$/, 'Hochämter'], [/^data\/hochamt-fotos\.json$/, 'Hochämter'],
-    [/^data\/solisten\.json$/, 'Solisten'], [/^data\/paten\.json$/, 'Paten'], [/^data\/cds\.json$/, 'CDs'],
+    [/^data\/solisten\.json$/, 'Solisten'], [/^data\/paten\.json$/, 'Paten'], [/^data\/cds\.json$/, 'CDs'], [/^data\/galerie\.json$/, 'Galerie'],
     [/^data\/personen\.json$/, 'Personen'], [/^data\/repertoire\.json$/, 'Repertoire'],
     [/^data\/gottesdienste\.json$/, 'Regelmäßige Termine'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
     [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'],
@@ -1831,7 +1832,7 @@
 
   /* Neuigkeiten (data/news.csv): Spalten ueber die Ueberschrift finden,
      damit die Reihenfolge egal ist; neueste Meldung zuerst */
-  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext', 'Bildausschnitt'];
+  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext', 'Bildausschnitt', 'Seiten'];
   function parseNews(text) {
     const rows = HD.parseCSV(text);
     if (!rows.length) return [];
@@ -1855,10 +1856,12 @@
     const until = HD.newsUntil(HD.isoDate(e.Datum), e.Bis);
     return Boolean(until) && until < today;
   }
+  /* Nur Meldungen, die auch auf der Startseite stehen sollen (Spalte "Seiten") */
   function newsOnHome(list) {
     const today = isoToday();
-    const live = list.filter((e) => !newsExpired(e, today));
-    const past = list.filter((e) => newsExpired(e, today));
+    const mine = list.filter((e) => HD.newsOnPage(e.Seiten, 'startseite'));
+    const live = mine.filter((e) => !newsExpired(e, today));
+    const past = mine.filter((e) => newsExpired(e, today));
     return new Set([...live, ...past].slice(0, NEWS_HOME));
   }
 
@@ -1898,7 +1901,8 @@
       ['personen.html?bereich=musik', 'Leitung & Organisten', 'user', 'Dirigent Chorleiter Organist Orgel Gastdirigenten'],
       ['paten.html', 'Paten & Ehrenpaten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender'],
       ['spenden.html', 'Spenden & Möglichkeiten', 'heart', 'Patenschaft Spenden PayPal Beträge Preise Förderer Stifter'],
-      ['cds.html', 'CDs', 'disc', 'Aufnahmen Hörproben Cover']
+      ['cds.html', 'CDs', 'disc', 'Aufnahmen Hörproben Cover'],
+      ['galerie.html', 'Galerie', 'image', 'Fotos Videos YouTube Aufnahmen Alben MP3']
     ] },
     { label: 'Website', items: [
       ['startseite.html', 'Titelfotos', 'image', 'Startseite Fotos Vollbild Einstellungen'],

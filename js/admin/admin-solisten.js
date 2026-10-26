@@ -152,6 +152,7 @@
     if (p && p.surname !== surnameOf(p.name)) $('f-surname').dataset.touched = '1';
     else delete $('f-surname').dataset.touched;
     $('f-deceased').checked = !!(p && p.deceased);
+    $('f-homepage').value = (p && p.homepage) || '';
     if (image) URL.revokeObjectURL(image.url);
     image = null;
     renderPhoto();
@@ -182,6 +183,12 @@
       errors.push([$('f-name'), `„${name}“ steht schon in der Liste.`]);
     }
     if (!voice) errors.push([$('f-voice'), 'Bitte die Stimmlage wählen.']);
+    /* "www.name.at" ohne https:// wird ergaenzt */
+    let homepage = $('f-homepage').value.trim();
+    if (homepage && !/^[a-z]+:/i.test(homepage)) homepage = `https://${homepage}`;
+    if (homepage && !/^https?:\/\/[^\s/.]+\.[^\s]+$/i.test(homepage)) {
+      errors.push([$('f-homepage'), 'Bitte eine vollständige Adresse eintragen, z. B. https://www.name.at']);
+    }
     if (errors.length) {
       A.showErrors(form, errors);
       return;
@@ -189,6 +196,7 @@
 
     const old = editIndex >= 0 ? people[editIndex] : null;
     const person = { name, surname, voice, image: old ? old.image : '', deceased: $('f-deceased').checked };
+    if (homepage) person.homepage = homepage;
     const btn = $('so-save');
     btn.disabled = true;
     try {

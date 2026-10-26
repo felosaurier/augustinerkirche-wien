@@ -73,7 +73,7 @@
               <span class="adm-hint" id="f-date-hint">Bestimmt die Reihenfolge: neueste zuerst.</span>
             </div>
             <div class="adm-field">
-              <label class="adm-label" for="f-bis">Auf der Startseite bis</label>
+              <label class="adm-label" for="f-bis">Unter Aktuelles bis</label>
               <input class="adm-input" type="date" id="f-bis" aria-describedby="f-bis-hint"/>
               <span class="adm-hint" id="f-bis-hint">Danach wandert die Meldung ins Archiv. Leer lassen: zwei Wochen ab dem Datum der Meldung. Bei Veranstaltungen: der Tag der Veranstaltung.</span>
               <div class="adm-quick" role="group" aria-label="Schnellwahl für das Enddatum">
@@ -84,6 +84,11 @@
               </div>
             </div>
             <div class="adm-field full" id="nv-suggest" aria-live="polite" hidden></div>
+            <fieldset class="adm-field full adm-pages" aria-describedby="f-pages-hint">
+              <legend class="adm-label">Erscheint unter Aktuelles auf</legend>
+              <div class="adm-pages-list" id="f-pages"></div>
+              <span class="adm-hint" id="f-pages-hint">Häkchen bei allen Seiten, auf denen die Meldung stehen soll. Im Archiv stehen immer alle Meldungen.</span>
+            </fieldset>
             <div class="adm-field full">
               <label class="adm-label" for="f-cat">Kategorie</label>
               <input class="adm-input" type="text" id="f-cat" list="dl-cat" aria-describedby="f-cat-hint"/>

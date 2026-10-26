@@ -233,6 +233,7 @@ admin/                        Verwaltung (nur mit Anmeldung)
   paten.html                  Paten der Kirchenmusik pflegen
   spenden.html                Spenden & Möglichkeiten (PayPal-Link, Beträge) pflegen
   cds.html                    CDs mit Cover und Hörproben pflegen
+  galerie.html                Galerie der Kirchenmusik (Fotos, Videos, Aufnahmen) pflegen
   pgr.html                    Pfarrgemeinderat pflegen
   solisten.html               Solisten pflegen
   gottesdienste.html          Wochenplan, Ferien und Pausen, Ausfälle pflegen
@@ -277,6 +278,7 @@ js/
   admin-paten.js              Paten der Kirchenmusik pflegen
   admin-spenden.js            Spenden & Möglichkeiten pflegen
   admin-cds.js                CDs pflegen
+  admin-galerie.js            Galerie der Kirchenmusik pflegen
   admin-pgr.js                Pfarrgemeinderat pflegen
   admin-solisten.js           Solisten pflegen
   admin-gottesdienste.js      Wochenplan, Ferien und Pausen, Ausfälle
@@ -298,10 +300,11 @@ js/
 data/
   hochaemter.csv              Hochamt-Termine ab dem laufenden Jahr inkl. Mitwirkende
   archiv/                     Hochamt-Archiv 2015–2025: hochaemter-JJJJ.csv je Jahr, jahre.json
-  news.csv                    Neuigkeiten und Plakate
+  news.csv                    Neuigkeiten und Plakate (Spalte Seiten: wo sie unter Aktuelles stehen, leer = überall)
   termine.json                Eigene Termine für den Kalender (Ausflüge, Feste, Vorträge …)
   paten.json                  Paten und Ehrenpaten der Kirchenmusik
   cds.json                    CDs von St. Augustin mit Hörproben
+  galerie.json                Galerie der Kirchenmusik (entsteht beim ersten Speichern)
   pgr.json                    Pfarrgemeinderat
   bildnachweise.json          Bildnachweis je Bild, erscheint unter dem Bild
   solisten.json               Solistinnen und Solisten mit Stimmlage
