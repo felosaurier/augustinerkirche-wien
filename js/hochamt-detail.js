@@ -86,9 +86,13 @@
           `<span class="hd-work">${HD.richText(p.work, '../')}</span></li>`;
       }).join('') + '</ul></section>';
   }
-  /* Name mit Link zur Homepage (aus data/solisten.json), sonst nur der Name */
+  /* Name ohne Titel und Klammern zum Vergleichen: "KMD MMag. Peter Tiefengraber, MA"
+     und "KMD Peter Tiefengraber" ergeben beide "peter tiefengraber" */
+  const nameKey = (s) => String(s || '').replace(/\([^)]*\)/g, ' ').split(/[\s,]+/)
+    .filter((t) => t && !t.includes('.') && !/^[A-ZÄÖÜ]{2,4}$/.test(t)).join(' ').toLowerCase();
+  /* Name mit Link zur Homepage (aus data/solisten.json und data/personen.json), sonst nur der Name */
   function nameHTML(name, homepages) {
-    const href = homepages.get(name.trim().toLowerCase());
+    const href = homepages.get(nameKey(name));
     return href ? `<a href="${HD.esc(href)}" target="_blank" rel="noopener">${HD.esc(name)}</a>` : HD.esc(name);
   }
   function castHTML(groups, people, homepages) {
@@ -98,16 +102,18 @@
       people.map((p) => `<li${p.gap ? ' class="hd-cast-gap"' : ''}><span class="hd-name">${nameHTML(p.name, homepages)}</span>${p.role ? `<span class="hd-role">${HD.esc(p.role)}</span>` : ''}</li>`).join('') +
       '</ul></section>';
   }
-  /* Homepages der Solisten: Name (klein) -> Adresse; fehlt die Liste, ohne Links */
+  /* Homepages der Solisten und der Kirchenmusik (Leitung, Gastdirigenten, Organisten):
+     nameKey -> Adresse; fehlt eine Liste, gibt es fuer sie keine Links */
   async function loadHomepages() {
     const map = new Map();
-    try {
-      for (const p of await HD.fetchJSON('../data/solisten.json')) {
-        const href = /^https?:\/\//i.test(String(p.homepage || '').trim()) && HD.safeUrl(p.homepage.trim());
-        if (p.name && href) map.set(p.name.trim().toLowerCase(), href);
-      }
-    } catch {
-      /* nur Links */
+    const add = (p) => {
+      const href = p && /^https?:\/\//i.test(String(p.homepage || '').trim()) && HD.safeUrl(p.homepage.trim());
+      if (p && p.name && href) map.set(nameKey(p.name), href);
+    };
+    const [sol, pers] = await Promise.allSettled([HD.fetchJSON('../data/solisten.json'), HD.fetchJSON('../data/personen.json')]);
+    if (sol.status === 'fulfilled' && Array.isArray(sol.value)) sol.value.forEach(add);
+    if (pers.status === 'fulfilled' && pers.value) {
+      for (const g of ['leitung', 'gastdirigenten', 'organisten']) (pers.value[g] || []).forEach(add);
     }
     return map;
   }

@@ -211,9 +211,11 @@
       el.innerHTML = (data[el.dataset.personen] || []).map((p) => {
         const src = url(p.bild);
         const size = p.breite && p.hoehe ? ` width="${HD.num(p.breite, 400)}" height="${HD.num(p.hoehe, 500)}"` : '';
+        /* Mit Homepage ist der Name ein Link (neues Fenster), wie bei den Solisten */
+        const home = /^https?:\/\//i.test(String(p.homepage || '').trim()) && HD.safeUrl(p.homepage.trim());
         return `<div class="person-card-wide${compact}${src ? '' : ' no-img'}">` +
           (src ? `<img src="${esc(src)}" alt="${esc(p.bildtext || p.name)}" loading="lazy"${size} decoding="async"/>` : '') +
-          `<div class="person-body"><div class="person-name">${esc(p.name)}</div>` +
+          `<div class="person-body"><div class="person-name">${home ? `<a href="${esc(home)}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</div>` +
           (p.rolle ? `<div class="person-role">${esc(p.rolle)}</div>` : '') +
           (p.text || []).filter(Boolean).map((t) => `<p class="person-bio">${rich(t)}</p>`).join('') +
           '</div></div>';

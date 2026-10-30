@@ -70,6 +70,11 @@
           <label class="adm-label" for="f-name">Name mit Titeln<span class="adm-req">Pflichtfeld</span></label>
           <input class="adm-input" type="text" id="f-name" placeholder="z. B. P. Mag. Matthias Schlögl OSA" required/>
         </div>
+        <div class="adm-field full" id="f-homepage-field" hidden>
+          <label class="adm-label" for="f-homepage">Homepage</label>
+          <input class="adm-input" type="url" id="f-homepage" placeholder="https://…" aria-describedby="f-homepage-hint"/>
+          <span class="adm-hint" id="f-homepage-hint">Ist eine Adresse eingetragen, wird der Name verlinkt (Kirchenmusik und Ausführende bei den Hochämtern, dort auch ohne Titel erkannt). Die Homepage öffnet sich in einem neuen Fenster.</span>
+        </div>
         <div class="adm-field full">
           <label class="adm-label" for="f-text">Text</label>
           <textarea class="adm-input" id="f-text" rows="7" aria-describedby="f-text-hint"></textarea>

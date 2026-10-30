@@ -3,7 +3,7 @@
    Personen pflegen (admin/personen.html), Quelle ist
    data/personen.json mit vier Gruppen, aufgeteilt auf zwei Bereiche
    der Verwaltung: ?bereich=kloster (Mitbrueder, Chronik) und
-   ?bereich=musik (Leitung, Gastdirigenten, Organisten). Je Person Name, Aufgabe, Foto, Fotonachweis und
+   ?bereich=musik (Leitung, Gastdirigenten, Organisten; dazu Homepage). Je Person Name, Aufgabe, Foto, Fotonachweis und
    Text; Reihenfolge mit Pfeilen, Wechsel der Gruppe im Fenster.
    Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
@@ -172,6 +172,7 @@
     $('f-gruppe').value = group;
     $('f-name').value = p ? p.name : '';
     $('f-rolle').value = p ? p.rolle || '' : '';
+    $('f-homepage').value = (p && p.homepage) || '';
     $('f-text').value = p ? (p.text || []).join('\n') : '';
     $('f-bildtext').value = p ? p.bildtext || '' : '';
     $('f-credit').value = A.credits.get(p && p.bild);
@@ -203,6 +204,13 @@
       A.showErrors(form, [[$('f-name'), 'Bitte den Namen eintragen.']]);
       return;
     }
+    /* Homepage nur bei der Kirchenmusik; ohne https:// wird es ergaenzt */
+    let homepage = area === AREAS.musik ? $('f-homepage').value.trim() : '';
+    if (homepage && !/^[a-z]+:/i.test(homepage)) homepage = `https://${homepage}`;
+    if (homepage && !/^https?:\/\/[^\s/.]+\.[^\s]+$/i.test(homepage)) {
+      A.showErrors(form, [[$('f-homepage'), 'Bitte eine vollständige Adresse eintragen, z. B. https://www.name.at']]);
+      return;
+    }
     const old = editIndex >= 0 ? list(editGroup)[editIndex] : null;
     const cur = currentPhoto();
     const p = {
@@ -211,6 +219,7 @@
       breite: cur ? cur.breite || 0 : 0, hoehe: cur ? cur.hoehe || 0 : 0,
       text: $('f-text').value.split(/\n+/).map(clean).filter(Boolean)
     };
+    if (homepage) p.homepage = homepage;
     const btn = $('ps-save');
     btn.disabled = true;
     try {
@@ -265,6 +274,7 @@
     $('ps-sub').textContent = area.sub;
     $('f-gruppe').innerHTML = area.groups.map((key) => `<option value="${key}">${GROUPS[key].label}</option>`).join('');
     $('f-gruppe').closest('.adm-field').hidden = area.groups.length < 2;
+    $('f-homepage-field').hidden = area !== AREAS.musik;
     $('ps-new').addEventListener('click', () => openEditor(-1));
     $('ps-form').addEventListener('submit', save);
     $('f-file').addEventListener('change', (ev) => onFile(ev.target.files[0]));
