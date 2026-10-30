@@ -15,6 +15,8 @@
    - data/galerie.json: Galerie der Kirchenmusik mit Fotos, Videos und
      Aufnahmen ([data-inhalt="galerie"])
    - data/rundgang.json: Rundgang durch die Kirche ([data-inhalt="rundgang"])
+   - data/seite-augustiner.json, data/seite-aspersdorf.json: Abschnitte der
+     Seiten mit Leiste ([data-seite="augustiner|aspersdorf"])
    - data/pgr.json: Pfarrgemeinderat ([data-inhalt="pgr-mitglieder"],
      [data-inhalt="pgr-weitere"])
    - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
@@ -345,6 +347,118 @@
       (b.titel ? `<div class="g-cap">${esc(b.titel)}</div>` : '') + '</div>').join('');
   }
 
+  /* ---------- Abschnitte einer Seite mit Leiste (Augustiner, Aspersdorf) ----------
+     <div class="with-sidebar" data-seite="aspersdorf"> liest data/seite-aspersdorf.json
+     (admin/seiten.html): {abschnitte: [{id, titel, gruppe, zeile, ueberschrift, bloecke}]}.
+     Reihenfolge und Gruppen der Leiste folgen der Datei; ein Abschnitt, der dort
+     fehlt, verschwindet. Bausteine: einleitung, text (Absaetze durch Leerzeile
+     getrennt), zwischentitel, bild, liste, karten und fest (das Element Nr. nr
+     aus dem HTML des Abschnitts, z. B. eine Kontaktkarte oder Tabelle). */
+  const paras = (s) => String(s || '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  /* Links auf Seiten der Website mit Pfad statt voller Adresse: so oeffnen sie im selben Tab */
+  const richPage = (s) => HD.richText(s, new URL(ROOT).pathname);
+  function blockHTML(b) {
+    const rich = richPage;
+    switch (b.art) {
+      case 'einleitung': return paras(b.text).map((p) => `<p class="s-text">${rich(p)}</p>`).join('');
+      case 'text': return paras(b.text).map((p) => `<p class="bio-p">${rich(p)}</p>`).join('');
+      case 'zwischentitel': return b.text ? `<h3 class="pane-sub">${esc(b.text)}</h3>` : '';
+      case 'liste': {
+        const items = (b.punkte || []).filter(Boolean);
+        return items.length ? `<ul class="pgr-tasks pane-list">${items.map((p) => `<li>${rich(p)}</li>`).join('')}</ul>` : '';
+      }
+      case 'bild': {
+        const src = b.bild && url(b.bild);
+        if (!src) return '';
+        const w = HD.num(b.breite, 1200);
+        const h = HD.num(b.hoehe, 800);
+        return `<figure class="pane-fig${h > w ? ' hoch' : ''}"><a href="${esc(src)}" data-lightbox title="Foto vergrößern">` +
+          `<img src="${esc(src)}" alt="${esc(b.alt)}" width="${w}" height="${h}" loading="lazy" decoding="async"/></a>` +
+          (b.unterschrift ? `<figcaption>${rich(b.unterschrift)}</figcaption>` : '') + '</figure>';
+      }
+      case 'karten': {
+        const cards = (b.karten || []).filter((k) => k && (k.titel || k.text));
+        return cards.length ? '<div class="cards-stack pane-cards">' + cards.map((k) => '<div class="card">' +
+          (k.titel ? `<div class="card-title">${esc(k.titel)}</div>` : '') +
+          (k.kurz ? `<div class="card-text">${rich(k.kurz)}</div>` : '') +
+          paras(k.text).map((p) => `<p class="card-more">${rich(p)}</p>`).join('') + '</div>').join('') + '</div>' : '';
+      }
+      default: return '';
+    }
+  }
+  async function seite() {
+    const box = document.querySelector('.with-sidebar[data-seite]');
+    if (!box || !/^[a-z-]+$/.test(box.dataset.seite)) return;
+    const sidebar = box.querySelector('.sidebar');
+    const area = sidebar && sidebar.nextElementSibling;
+    if (!area) return;
+    let data;
+    try {
+      data = await load(`seite-${box.dataset.seite}.json`);
+    } catch {
+      return; /* noch nie gespeichert: das HTML gilt */
+    }
+    const list = (data.abschnitte || []).filter((a) => a && /^[\w-]+$/.test(a.id || ''));
+    if (!list.length) return;
+
+    /* Bestehende Bereiche und ihre Elemente (ohne die von main.js angehaengten Schritte) */
+    const panes = new Map(Array.from(area.querySelectorAll(':scope > .tab-pane')).map((p) => [p.id, p]));
+    const parts = new Map();
+    for (const [id, p] of panes) parts.set(id, Array.from(p.children).filter((c) => !c.classList.contains('pane-steps')));
+    const oldBtns = new Map(Array.from(sidebar.querySelectorAll('.sidebar-item[data-pane]')).map((b) => [b.dataset.pane, b]));
+    const active = (area.querySelector(':scope > .tab-pane.active') || {}).id;
+
+    const nav = sidebar.querySelector('.sidebar-list') || sidebar;
+    nav.textContent = '';
+    let group = null;
+    list.forEach((a, i) => {
+      const g = String(a.gruppe || '').trim();
+      if (i === 0 || g !== group) {
+        if (i > 0) nav.insertAdjacentHTML('beforeend', '<div class="sidebar-divider"></div>');
+        if (g) nav.insertAdjacentHTML('beforeend', `<span class="sidebar-group-label">${esc(g)}</span>`);
+        group = g;
+      }
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sidebar-item';
+      btn.dataset.pane = a.id;
+      btn.textContent = String(a.titel || a.ueberschrift || a.id);
+      btn.hidden = Boolean(oldBtns.get(a.id) && oldBtns.get(a.id).hidden);
+      nav.append(btn);
+    });
+
+    const keep = new Set();
+    for (const a of list) {
+      let pane = panes.get(a.id);
+      if (!pane) {
+        pane = document.createElement('div');
+        pane.className = 'tab-pane';
+        pane.id = a.id;
+      }
+      const own = parts.get(a.id) || [];
+      pane.textContent = '';
+      if (a.zeile) pane.insertAdjacentHTML('beforeend', `<div class="s-label">${esc(a.zeile)}</div>`);
+      if (a.ueberschrift) pane.insertAdjacentHTML('beforeend', `<h2 class="s-title">${esc(a.ueberschrift)}</h2>`);
+      for (const b of a.bloecke || []) {
+        if (!b) continue;
+        if (b.art === 'fest') {
+          const el = own[b.nr];
+          if (el) pane.append(el);
+        } else {
+          pane.insertAdjacentHTML('beforeend', blockHTML(b));
+        }
+      }
+      area.append(pane);
+      keep.add(a.id);
+    }
+    for (const [id, p] of panes) if (!keep.has(id)) p.remove();
+    const show = keep.has(active) ? active : list[0].id;
+    for (const p of area.querySelectorAll(':scope > .tab-pane')) p.classList.toggle('active', p.id === show);
+    for (const b of nav.querySelectorAll('.sidebar-item')) b.classList.toggle('active', b.dataset.pane === show);
+    /* main.js: Leiste, Schritte und aktuellen Bereich neu einrichten */
+    document.dispatchEvent(new Event('aug:leiste'));
+  }
+
   /* ---------- Pfarrgemeinderat ---------- */
   function pgrItem(p) {
     const contact = [
@@ -485,7 +599,7 @@
     /* Impressum zuerst: es enthaelt die Oeffnungszeiten der Pfarrkanzlei, die kontakt() danach eintraegt */
     await rechtliches().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
-    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds, galerie, rundgang]) {
+    for (const fn of [seite, gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds, galerie, rundgang]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     }
   });

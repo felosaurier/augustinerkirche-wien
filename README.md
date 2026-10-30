@@ -48,7 +48,7 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B. `http://localhost:8123/admin/`). Sie ist im Stil der Website gestaltet, nicht in der öffentlichen Navigation verlinkt und nur mit **Benutzername und Passwort** erreichbar.
 
 **Aufbau der Verwaltung** (Seitenleiste links mit allen Bereichen; jede Person sieht nur, was sie bearbeiten darf):
-Übersicht · **Aktuelles** (Neuigkeiten, Termine, Hochämter) · **Pfarre & Kloster** (Regelmäßige Termine, Wochenkalender, Runden, Pfarrkanzlei & Kontakt, Kirchenrundgang, Pfarrgemeinderat, Mitbrüder) · **Kirchenmusik** (Solisten, Repertoire, Leitung & Organisten, Paten, CDs) · **Website** (Titelfotos, Hinweisbanner, Sprüche, Farben & Logo, Impressum & Datenschutz) · **Verwaltung** (Zugänge, Änderungen, Mitteilungen). Oben in der Leiste eine Suche (Strg+K, Enter öffnet den ersten Treffer), unten Mein Profil und darunter zwei Symbol-Knöpfe: Website ansehen (Weltkugel) und Abmelden; die Leiste behält beim Seitenwechsel ihre Stelle. Am Computer lässt sie sich über den runden Knopf an ihrer rechten Kante einklappen (nur Symbole, Namen als Tooltip); der Browser merkt sich das. Auf Handy und Tablet (bis 960 px) klappt sie über „Menü“ von links herein. Der Hinweis zum Projektordner steht als schmale Zeile auf der Seite, solange nicht verbunden ist; verbunden steht es unten in der Leiste.
+Übersicht · **Aktuelles** (Neuigkeiten, Termine, Hochämter) · **Pfarre & Kloster** (Regelmäßige Termine, Wochenkalender, Runden, Pfarrkanzlei & Kontakt, Kirchenrundgang, Pfarrgemeinderat, Mitbrüder, Seite Augustiner, Seite Aspersdorf) · **Kirchenmusik** (Solisten, Repertoire, Leitung & Organisten, Paten, CDs, Galerie) · **Website** (Titelfotos, Hinweisbanner, Sprüche, Farben & Logo, Menü & Leiste, Impressum & Datenschutz) · **Verwaltung** (Zugänge, Änderungen, Mitteilungen). Oben in der Leiste eine Suche (Strg+K, Enter öffnet den ersten Treffer), unten Mein Profil und darunter zwei Symbol-Knöpfe: Website ansehen (Weltkugel) und Abmelden; die Leiste behält beim Seitenwechsel ihre Stelle. Am Computer lässt sie sich über den runden Knopf an ihrer rechten Kante einklappen (nur Symbole, Namen als Tooltip); der Browser merkt sich das. Auf Handy und Tablet (bis 960 px) klappt sie über „Menü“ von links herein. Der Hinweis zum Projektordner steht als schmale Zeile auf der Seite, solange nicht verbunden ist; verbunden steht es unten in der Leiste.
 
 | Bereich | Was du dort machst |
 |---|---|
@@ -60,6 +60,8 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Regelmäßige Termine** | Alles, was jede Woche gleich ist: Messen, Tagzeitenliturgie, Kanzleistunden, die Führung nach dem Hochamt (je Termin Wochentag, Uhrzeit oder „anschließend“, Kategorie im Kalender: Gottesdienst, Veranstaltung oder keine; optional „Gilt von … bis …“ Monat; Gottesdienste auch unter Liturgie-Zeiten); „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit nichts stattfindet); „Entfällt“ (fällt an einem Tag etwas aus, bleibt es im Kalender durchgestrichen mit Grund stehen) |
 | **Wochenkalender** | Vorschau des gedruckten Wochenkalenders, Woche für Woche: zeigt alles aus dem Kalender (regelmäßige Termine, Hochämter, Runden, eigene Termine). Dazu trägst du die Einzelheiten der Woche ein: je Tag Tagesbezeichnung und Heilige, je Termin Zelebrant, Musik, Ort und Hinweis, und Termine, die es sonst nicht gibt. Ein Termin, der nicht stattfindet, „entfällt“: er steht nicht im Wochenkalender und ist in der Verwaltung durchgestrichen (kein Löschen und Kopieren). Gespeichert in `data/wochenkalender.json`; ein Eintrag ersetzt den Termin des Kalenders um dieselbe Uhrzeit und behält dessen Link |
 | **Pfarrkanzlei & Kontakt** | Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
+| **Seite Augustiner / Seite Aspersdorf** | Die Abschnitte der Seite (Einträge der linken Leiste): Name und Gruppe in der Leiste, kleine Zeile, Überschrift und Bausteine (Text, Einleitung, Zwischentitel, Bild mit Unterschrift und Bildnachweis, Liste, Karten); Abschnitte und Bausteine anlegen, verschieben, entfernen. Was sich nicht als Text bearbeiten lässt (Kontaktkarten, Personenlisten, Tabellen, Zeitleisten …), bleibt ein **fester Baustein** aus dem HTML. Bis zum ersten Speichern zeigt die Website das HTML; danach baut `js/inhalte.js` die Seite aus `data/seite-augustiner.json` bzw. `data/seite-aspersdorf.json`, Bilder liegen in `assets/img/augustiner/` bzw. `assets/img/aspersdorf/` |
+| **Menü & Leiste** (Website) | Je Seite mit linker Leiste: welche Bereiche in der Leiste stehen und welche oben im Menü (neue Menüeinträge mit Wahl der Spalte). Ausgeblendete Bereiche bleiben erhalten und über Links erreichbar. Gespeichert wird nur, was vom HTML abweicht, in `data/navigation.json` |
 | **Impressum & Datenschutz** (Einstellungen) | Impressum und Datenschutzerklärung Abschnitt für Abschnitt: Überschrift, Text mit Werkzeugleiste (fett, Link, Telefon, Liste, Tabelle, Zwischentitel, „fehlt noch“), Reihenfolge, Vorschau je Abschnitt und der ganzen Seite |
 | **Änderungen** (nur Entwickler) | Alle Änderungen von allen Personen als Tabelle: Zeitpunkt, Person, Bereich, was genau (vorher → nachher), Suche und Filter, Export als CSV. Quelle ist `admin/protokoll.json`, das bei jedem Speichern mitgeschrieben wird (mit Projektordner oder auf dem Server) |
 | **Runden** | Übersicht der Runden (Reihenfolge, ein- und ausblenden) und je Runde die Seite: Kopf, Texte, Terminreihen mit Datumsauswahl (dazu Name, Uhrzeit und Ort für den Kalender), „Auf einen Blick“, Kontakt, Plakat oder Foto; neue Runden bekommen automatisch eine Seite |
@@ -234,6 +236,8 @@ admin/                        Verwaltung (nur mit Anmeldung)
   spenden.html                Spenden & Möglichkeiten (PayPal-Link, Beträge) pflegen
   cds.html                    CDs mit Cover und Hörproben pflegen
   galerie.html                Galerie der Kirchenmusik (Fotos, Videos, Aufnahmen) pflegen
+  seiten.html                 Abschnitte der Seiten Augustiner und Aspersdorf pflegen (?seite=…)
+  navigation.html             Menü & Leiste: Bereiche in Leiste und Menü oben
   pgr.html                    Pfarrgemeinderat pflegen
   solisten.html               Solisten pflegen
   gottesdienste.html          Wochenplan, Ferien und Pausen, Ausfälle pflegen
@@ -279,6 +283,8 @@ js/
   admin-spenden.js            Spenden & Möglichkeiten pflegen
   admin-cds.js                CDs pflegen
   admin-galerie.js            Galerie der Kirchenmusik pflegen
+  admin-seiten.js             Abschnitte der Seiten Augustiner und Aspersdorf pflegen
+  admin-navigation.js         Menü & Leiste pflegen
   admin-pgr.js                Pfarrgemeinderat pflegen
   admin-solisten.js           Solisten pflegen
   admin-gottesdienste.js      Wochenplan, Ferien und Pausen, Ausfälle
@@ -305,6 +311,9 @@ data/
   paten.json                  Paten und Ehrenpaten der Kirchenmusik
   cds.json                    CDs von St. Augustin mit Hörproben
   galerie.json                Galerie der Kirchenmusik (entsteht beim ersten Speichern)
+  seite-augustiner.json       Abschnitte der Seite Augustiner (entsteht beim ersten Speichern)
+  seite-aspersdorf.json       Abschnitte der Seite Aspersdorf (entsteht beim ersten Speichern)
+  navigation.json             Bereiche in Leiste und Menü oben, nur Abweichungen vom HTML (entsteht beim ersten Speichern)
   pgr.json                    Pfarrgemeinderat
   bildnachweise.json          Bildnachweis je Bild, erscheint unter dem Bild
   solisten.json               Solistinnen und Solisten mit Stimmlage

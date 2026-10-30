@@ -186,10 +186,10 @@
       html += `<div class="mob-sec" data-item="${escHTML(item.id)}">` +
         `<button type="button" class="mob-sec-btn"${btn.dataset.href ? ` data-href="${escHTML(btn.dataset.href)}"` : ''} aria-expanded="false" aria-controls="${id}">` +
         `${escHTML(btn.textContent.trim())}${CHEVRON}</button><div class="mob-sec-panel" id="${id}" hidden>`;
-      for (const group of qsa('.mega-group', item)) {
+      for (const group of qsa('.mega-group:not([hidden])', item)) {
         const label = qs('.mega-group-label', group);
         if (label) html += `<span class="mob-group-title">${escHTML(label.textContent.trim())}</span>`;
-        for (const a of qsa('a', group)) html += `<a class="mob-sub" href="${escHTML(a.getAttribute('href'))}">${escHTML(a.textContent.trim())}</a>`;
+        for (const a of qsa('a:not([hidden])', group)) html +=`<a class="mob-sub" href="${escHTML(a.getAttribute('href'))}">${escHTML(a.textContent.trim())}</a>`;
       }
       html += '</div></div>';
     }
@@ -301,8 +301,39 @@
     toggle.setAttribute('aria-expanded', String(open));
   }
 
+  /* Bereiche mit hidden stehen nicht in der Leiste, bleiben aber ueber Links
+     erreichbar; eine Gruppe ohne sichtbaren Eintrag verschwindet samt Trennlinie */
+  const visibleItems = (sidebar) => qsa('.sidebar-item', sidebar).filter((b) => !b.hidden);
+  function tidySidebarGroups(sidebar) {
+    let label = null;
+    let divider = null;
+    let shown = false;
+    const close = () => {
+      if (label) label.hidden = !shown;
+      if (divider) divider.hidden = !shown;
+    };
+    for (const el of qsa('.sidebar-group-label, .sidebar-divider, .sidebar-item', sidebar)) {
+      if (el.classList.contains('sidebar-item')) {
+        shown = shown || !el.hidden;
+      } else if (el.classList.contains('sidebar-divider')) {
+        close();
+        label = null;
+        divider = el;
+        shown = false;
+      } else {
+        if (label) {
+          close();
+          divider = null;
+        }
+        label = el;
+        shown = false;
+      }
+    }
+    close();
+  }
+
   function buildSidebarToggle(sidebar, index) {
-    const items = qsa('.sidebar-item', sidebar);
+    const items = visibleItems(sidebar);
     const list = document.createElement('div');
     list.className = 'sidebar-list';
     list.id = `sidebar-list-${index}`;
@@ -320,7 +351,7 @@
 
   /* Ablauf: am Ende jedes Bereichs geht es zum vorigen und naechsten weiter */
   function buildPaneSteps(sidebar) {
-    const items = qsa('.sidebar-item[data-pane]', sidebar);
+    const items = visibleItems(sidebar).filter((b) => b.dataset.pane);
     items.forEach((btn, i) => {
       const pane = document.getElementById(btn.dataset.pane);
       if (!pane || qs('.pane-steps', pane)) return;
@@ -352,6 +383,7 @@
 
   function initSidebarTabs() {
     qsa('.sidebar').forEach((sidebar, i) => {
+      tidySidebarGroups(sidebar);
       buildSidebarToggle(sidebar, i);
       buildPaneSteps(sidebar);
     });
@@ -933,11 +965,110 @@
     new MutationObserver(decodeMail).observe(document.body, { childList: true, subtree: true });
   }
 
+  /* ---------- Leiste und Menue oben (Verwaltung: admin/navigation.html) ----------
+     data/navigation.json: {bereiche: {"musik.html#p-solisten": {titel, leiste, menue, gruppe}}}
+     - leiste: Eintrag in der linken Leiste der Seite zeigen
+     - menue: Eintrag im Menue oben zeigen; fehlt er dort, kommt er in die Spalte
+       gruppe ("ni-musik|Personen" = Menuepunkt|Spalte) mit dem Namen titel
+     Ohne Datei gilt das HTML. */
+  function refreshSidebar(sidebar) {
+    tidySidebarGroups(sidebar);
+    const area = sidebar.nextElementSibling;
+    if (area) for (const s of qsa('.pane-steps', area)) s.remove();
+    buildPaneSteps(sidebar);
+    const hint = qs('.sidebar-toggle-hint', sidebar);
+    if (hint) hint.textContent = `${visibleItems(sidebar).length} Bereiche`;
+  }
+
+  function menuLinks(file, pane) {
+    return qsa('.nav-center .mega a').filter((a) => {
+      const u = new URL(a.href, location.href);
+      return u.pathname.endsWith(`/pages/${file}`) && u.hash === `#${pane}`;
+    });
+  }
+
+  let navBereiche = null;
+  /* true, wenn sich in der Leiste etwas geaendert hat */
+  function applyLeiste(sidebar) {
+    if (!navBereiche) return false;
+    const file = location.pathname.split('/').pop();
+    let changed = false;
+    for (const btn of qsa('.sidebar-item[data-pane]', sidebar)) {
+      const b = navBereiche[`${file}#${btn.dataset.pane}`];
+      if (!b || typeof b.leiste !== 'boolean' || btn.hidden === !b.leiste) continue;
+      btn.hidden = !b.leiste;
+      changed = true;
+    }
+    return changed;
+  }
+
+  /* inhalte.js hat die Abschnitte einer Seite aus der Verwaltung neu aufgebaut */
+  document.addEventListener('aug:leiste', () => {
+    for (const sidebar of qsa('.sidebar')) {
+      applyLeiste(sidebar);
+      refreshSidebar(sidebar);
+      for (const btn of qsa('.sidebar-item[data-pane]', sidebar)) btn.setAttribute('aria-controls', btn.dataset.pane);
+      const area = sidebar.nextElementSibling;
+      const target = location.hash && document.getElementById(location.hash.slice(1));
+      const pane = target && area && area.contains(target) ? target.closest('.tab-pane') : qs('.tab-pane.active', area);
+      if (pane) activatePane(sidebar, pane.id);
+    }
+    revealObserve();
+  });
+
+  async function initNavigation() {
+    let bereiche;
+    try {
+      const res = await fetch(`${siteRoot}data/navigation.json`);
+      if (!res.ok) return;
+      bereiche = (await res.json()).bereiche;
+    } catch {
+      return;
+    }
+    if (!bereiche || typeof bereiche !== 'object') return;
+    navBereiche = bereiche;
+    for (const sidebar of qsa('.sidebar')) if (applyLeiste(sidebar)) refreshSidebar(sidebar);
+
+    const logo = qs('.nav-logo-wrap');
+    const base = ((logo && logo.getAttribute('href')) || 'index.html').replace(/index\.html$/, '');
+    let menuChanged = false;
+    for (const [key, b] of Object.entries(bereiche)) {
+      const m = /^([\w-]+\.html)#([\w-]+)$/.exec(key);
+      if (!m || !b || typeof b.menue !== 'boolean') continue;
+      const links = menuLinks(m[1], m[2]);
+      if (!b.menue) {
+        for (const a of links) if (!a.hidden) { a.hidden = true; menuChanged = true; }
+        continue;
+      }
+      if (links.length) {
+        for (const a of links) if (a.hidden) { a.hidden = false; menuChanged = true; }
+        continue;
+      }
+      const [itemId, label] = String(b.gruppe || '').split('|');
+      const item = itemId && document.getElementById(itemId);
+      if (!item || !b.titel) continue;
+      const groups = qsa('.mega-group', item);
+      const group = groups.find((g) => (qs('.mega-group-label', g) || { textContent: '' }).textContent.trim() === label) || groups[groups.length - 1];
+      if (!group) continue;
+      const a = document.createElement('a');
+      a.href = `${base}pages/${m[1]}#${m[2]}`;
+      a.textContent = String(b.titel);
+      group.append(a);
+      menuChanged = true;
+    }
+    if (!menuChanged) return;
+    for (const g of qsa('.nav-center .mega-group')) g.hidden = !qs('a:not([hidden])', g);
+    const mob = qs('#mob-menu');
+    if (mob) buildMobileMenu(mob);
+    markCurrentNav();
+  }
+
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', () => {
     initDropdowns();
     initMobileNav();
     initSidebarTabs();
+    initNavigation();
     initSakrChips();
     initMail();
     initHeroShow();
