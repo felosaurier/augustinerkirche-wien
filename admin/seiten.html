@@ -27,10 +27,11 @@
     <div>
       <div class="ph-tag">Verwaltung</div>
       <h1 class="ph-title" id="sx-title">Seite</h1>
-      <p class="ph-sub" id="sx-sub">Abschnitte der Seite mit Texten, Bildern, Listen und Karten. Feste Bausteine (z. B. Kontaktkarten oder Tabellen) bleiben, wie sie sind, und lassen sich verschieben oder entfernen.</p>
+      <p class="ph-sub" id="sx-sub">Kopf, Bereiche und Abschnitte der Seite mit allen Texten, Bildern, Karten, Listen und Tabellen. Module wie Aktuelles oder die Hochämter werden in ihren eigenen Bereichen gepflegt.</p>
     </div>
     <div class="adm-head-actions">
-      <a class="btn btn-outline" id="sx-view" href="#" target="_blank" rel="noopener" data-icon="eye">Seite ansehen</a>
+      <button type="button" class="btn btn-dark" id="sx-preview" data-icon="eye">Vorschau</button>
+      <a class="btn btn-outline" id="sx-view" href="#" target="_blank" rel="noopener" data-icon="external">Seite ansehen</a>
     </div>
   </div>
 </div>
@@ -41,13 +42,11 @@
 
   <form id="sx-form" novalidate autocomplete="off">
     <div id="sx-list"><p class="adm-muted">Die Seite wird geladen …</p></div>
-    <button type="button" class="btn btn-outline" id="sx-add" data-icon="plus">Neuer Abschnitt</button>
     <div class="adm-inline-foot">
       <span class="adm-muted" id="sx-state"></span>
       <button type="submit" class="btn btn-dark" id="sx-save" data-icon="check">Seite speichern</button>
     </div>
   </form>
-  <datalist id="sx-groups"></datalist>
 </main>
 
 </body>

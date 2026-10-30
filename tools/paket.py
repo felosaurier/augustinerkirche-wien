@@ -51,7 +51,11 @@ TEST_MESS_ID = 'G-VORSCHAU01'
 # Inhalte, die auf dem Server gepflegt werden: kommen mit --update nicht ins Paket
 INHALTE = ('data/', 'assets/img/', 'assets/audio/', 'assets/programme/', 'admin/zugaenge.json', 'admin/mitteilungen.json', 'admin/protokoll.json')
 # Dateien, die erst beim ersten Speichern in der Verwaltung entstehen; bis dahin gilt das HTML
-ENTSTEHEN = ('data/galerie.json', 'data/navigation.json', 'data/seite-augustiner.json', 'data/seite-aspersdorf.json')
+ENTSTEHEN = ('data/galerie.json', 'data/navigation.json')
+
+
+def entsteht(rel):
+    return rel in ENTSTEHEN or re.fullmatch(r'data/seite-[a-z-]+\.json', rel) is not None
 
 
 def fehler(text):
@@ -210,7 +214,7 @@ def pruefen(site, update=False):
         z = ziel(von, ref)
         if z is None:
             return
-        if (update and z.startswith(INHALTE)) or z in ENTSTEHEN:
+        if (update and z.startswith(INHALTE)) or entsteht(z):
             return
         if z.startswith('..') or not exakt_da(site, z):
             probleme.append((art, von, ref))
@@ -239,7 +243,7 @@ def pruefen(site, update=False):
             for m in re.finditer(r'(?<![A-Za-z0-9_./-])((?:assets|data)/[A-Za-z0-9_\-./%@+()]+\.(?:webp|png|jpe?g|gif|svg|ico|mp3|m4a|ogg|wav|pdf|csv|json))(?![A-Za-z0-9_])', text):
                 if re.search(r'JJJJ|YYYY|NNNN', m.group(1)):
                     continue  # Platzhalter in Kommentaren, z. B. hochaemter-JJJJ.csv
-                if (update and m.group(1).startswith(INHALTE)) or m.group(1) in ENTSTEHEN:
+                if (update and m.group(1).startswith(INHALTE)) or entsteht(m.group(1)):
                     continue
                 if not exakt_da(site, m.group(1)):
                     probleme.append(('Daten', rel, m.group(1)))
