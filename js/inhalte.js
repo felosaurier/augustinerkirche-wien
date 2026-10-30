@@ -15,8 +15,8 @@
    - data/galerie.json: Galerie der Kirchenmusik mit Fotos, Videos und
      Aufnahmen ([data-inhalt="galerie"])
    - data/rundgang.json: Rundgang durch die Kirche ([data-inhalt="rundgang"])
-   - data/seite-<seite>.json: Kopf, Bereiche und Abschnitte einer Seite aus
-     admin/seiten.html (<main data-pflege="<seite>">)
+   - data/seite-augustiner.json, data/seite-aspersdorf.json: Abschnitte der
+     Seiten mit Leiste ([data-seite="augustiner|aspersdorf"])
    - data/pgr.json: Pfarrgemeinderat ([data-inhalt="pgr-mitglieder"],
      [data-inhalt="pgr-weitere"])
    - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
@@ -347,343 +347,61 @@
       (b.titel ? `<div class="g-cap">${esc(b.titel)}</div>` : '') + '</div>').join('');
   }
 
-  /* ---------- Seiten aus der Verwaltung (admin/seiten.html) ----------
-     <main data-pflege="augustiner"> liest data/seite-augustiner.json:
-     {kopf, bereiche, abschnitte}
-     - kopf: Titelbereich {zeile, titel, text, knoepfe: [{text, link}]}
-     - bereiche: Teile der Seite unter dem Kopf, in dieser Reihenfolge:
-       {art: 'inhalt', id, ueberschrift, unter, bloecke}, {art: 'teaser', …},
-       {art: 'html', html} (frei), {art: 'leiste'} (die Leiste mit den Abschnitten) und {art: 'modul', key}
-       (ein Teil, der anderswo gepflegt wird, z. B. Aktuelles; bleibt aus dem HTML)
-     - abschnitte: Eintraege der linken Leiste {id, titel, gruppe, zeile, ueberschrift, bloecke}
-     Bausteine siehe blockHTML; {art: 'modul', key} nimmt ein Element aus dem HTML.
-     Fehlt die Datei, gilt das HTML. Mit ?vorschau=<seite> kommt der ungespeicherte
-     Stand aus der Verwaltung (localStorage desselben Servers). */
-  const PAGE_KEY = (document.querySelector('main[data-pflege]') || { dataset: {} }).dataset.pflege || '';
-  const PREVIEW = PAGE_KEY && new URLSearchParams(location.search).get('vorschau') === PAGE_KEY;
-  const ROOT_PATH = new URL(ROOT).pathname;
-  /* Diese Seite relativ zur Wurzel, fuer [Text](#sprungmarke) im Text */
-  const PAGE_REL = location.pathname.startsWith(ROOT_PATH) ? location.pathname.slice(ROOT_PATH.length) : '';
-  /* Links auf Seiten der Website mit Pfad statt voller Adresse: so oeffnen sie im selben Tab.
-     [Text](mailto:adresse?subject=Betreff) wird ein verschluesselter E-Mail-Link mit Betreff. */
-  function richPage(s, opts) {
-    const subj = [];
-    const text = String(s ?? '').replace(/\]\(#/g, `](${PAGE_REL}#`).replace(/\[([^\]\n]+)\]\(mailto:([^)\s?]+)\?subject=([^)\n]+)\)/g, (m, t, addr, sub) => {
-      subj.push([t, addr, sub]);
-      return `\u0001${subj.length - 1}\u0001`;
-    });
-    return HD.richText(text, ROOT_PATH, opts).replace(/\u0001(\d+)\u0001/g, (m, i) => {
-      const [t, addr, sub] = subj[+i];
-      const html = HD.mailHTML(addr, sub);
-      return t.trim() === addr ? html : html.replace(/>[^<]*<\/a>$/, `>${esc(t)}</a>`);
-    });
-  }
+  /* ---------- Abschnitte einer Seite mit Leiste (Augustiner, Aspersdorf) ----------
+     <div class="with-sidebar" data-seite="aspersdorf"> liest data/seite-aspersdorf.json
+     (admin/seiten.html): {abschnitte: [{id, titel, gruppe, zeile, ueberschrift, bloecke}]}.
+     Reihenfolge und Gruppen der Leiste folgen der Datei; ein Abschnitt, der dort
+     fehlt, verschwindet. Bausteine: einleitung, text (Absaetze durch Leerzeile
+     getrennt), zwischentitel, bild, liste, karten und fest (das Element Nr. nr
+     aus dem HTML des Abschnitts, z. B. eine Kontaktkarte oder Tabelle). */
   const paras = (s) => String(s || '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
-  const pageUrl = (link) => {
-    const l = String(link || '').trim();
-    if (/^#[\w-]+$/.test(l)) return l;
-    return HD.safeUrl(l, ROOT_PATH);
-  };
-  const imgUrl = (p) => (PREVIEW && /^data:image\/(png|jpe?g|webp|gif);base64,/.test(p || '') ? p : url(p));
-  const linkAttrs = (href) => (/^https?:/i.test(href) ? ' target="_blank" rel="noopener"' : '');
-
-  /* Freier HTML-Baustein: nur unbedenkliche Elemente und Attribute */
-  const HTML_TAGS = new Set(['A', 'ABBR', 'B', 'BLOCKQUOTE', 'BR', 'CAPTION', 'CITE', 'CODE', 'DD', 'DIV', 'DL', 'DT', 'EM', 'FIGCAPTION', 'FIGURE', 'H2', 'H3', 'H4', 'HR', 'I', 'IMG', 'LI', 'MARK', 'OL', 'P', 'Q', 'S', 'SECTION', 'SMALL', 'SPAN', 'STRONG', 'SUB', 'SUP', 'TABLE', 'TBODY', 'TD', 'TFOOT', 'TH', 'THEAD', 'TIME', 'TR', 'U', 'UL']);
-  const HTML_ATTRS = new Set(['class', 'style', 'href', 'src', 'alt', 'title', 'width', 'height', 'loading', 'decoding', 'target', 'rel', 'colspan', 'rowspan', 'id', 'data-mail', 'data-subject', 'data-lightbox', 'aria-label', 'aria-hidden', 'role']);
-  function cleanHTML(html) {
-    const tpl = document.createElement('template');
-    tpl.innerHTML = String(html || '');
-    const walk = (node) => {
-      for (const el of Array.from(node.children)) {
-        if (!HTML_TAGS.has(el.tagName)) {
-          el.remove();
-          continue;
-        }
-        for (const a of Array.from(el.attributes)) {
-          const n = a.name.toLowerCase();
-          if (!HTML_ATTRS.has(n)) el.removeAttribute(a.name);
-          else if ((n === 'href' || n === 'src') && !/^#/.test(a.value) && !HD.safeUrl(a.value)) el.removeAttribute(a.name);
-          else if (n === 'style' && /url\s*\(|expression|javascript:/i.test(a.value)) el.removeAttribute(a.name);
-        }
-        walk(el);
-      }
-    };
-    walk(tpl.content);
-    return tpl.innerHTML;
-  }
-
-  const rows = (list) => (Array.isArray(list) ? list.filter((r) => r && typeof r === 'object') : []);
-  const lines = (list) => (Array.isArray(list) ? list.map((x) => String(x || '').trim()).filter(Boolean) : []);
-  function cardHTML(k, stil) {
-    const h = stil === 'intro' ? 'h2' : stil === 'drei' ? 'h3' : 'div';
-    const kurzTag = stil === 'drei' || stil === 'intro' ? 'p' : 'div';
-    const daten = rows(k.daten).filter((d) => d.begriff || d.wert);
-    const links = rows(k.links).filter((l) => l.text && pageUrl(l.link));
-    const knoepfe = rows(k.knoepfe).filter((l) => l.text && pageUrl(l.link));
-    const ziel = k.ziel && pageUrl(k.ziel);
-    const tag = ziel ? 'a' : 'div';
-    return `<${tag} class="card"${ziel ? ` href="${esc(ziel)}"${linkAttrs(ziel)}` : ''}${/^[\w-]+$/.test(k.id || '') ? ` id="${esc(k.id)}"` : ''}>` +
-      (k.titel ? `<${h} class="card-title">${esc(k.titel)}</${h}>` : '') +
-      (k.kurz ? `<${kurzTag} class="card-text">${richPage(k.kurz)}</${kurzTag}>` : '') +
-      paras(k.text).map((p) => `<p class="card-more">${richPage(p)}</p>`).join('') +
-      (daten.length ? `<dl class="organ-facts">${daten.map((d) => `<div><dt>${esc(d.begriff)}</dt><dd>${richPage(d.wert)}</dd></div>`).join('')}</dl>` : '') +
-      (k.kontakt ? `<p class="card-contact">${richPage(k.kontakt, ziel ? { links: false } : undefined)}</p>` : '') +
-      (links.length && !ziel ? `<ul class="card-links">${links.map((l) => `<li><a class="link-arr" href="${esc(pageUrl(l.link))}"${linkAttrs(pageUrl(l.link))}>${esc(l.text)}</a></li>`).join('')}</ul>` : '') +
-      (knoepfe.length && !ziel ? `<div class="card-actions">${knoepfe.map((l, i) => `<a class="btn ${i ? 'btn-outline' : 'btn-gold'}" href="${esc(pageUrl(l.link))}"${linkAttrs(pageUrl(l.link))}>${esc(l.text)}</a>`).join('')}</div>` : '') +
-      (ziel && k.zieltext ? `<span class="link-arr">${esc(k.zieltext)}</span>` : '') +
-      `</${tag}>`;
-  }
-  function factsHTML(f) {
-    const punkte = lines(f && f.punkte);
-    if (!punkte.length) return '';
-    return `<div class="sakr-facts"><div class="sakr-facts-title">${esc((f && f.titel) || 'Gut zu wissen')}</div><ul>${punkte.map((p) => `<li>${richPage(p)}</li>`).join('')}</ul></div>`;
-  }
-  /* ctx.sakramente: die Sakrament-Bausteine desselben Abschnitts (fuer Nummer und Sprungleiste) */
-  function blockHTML(b, ctx = {}) {
+  /* Links auf Seiten der Website mit Pfad statt voller Adresse: so oeffnen sie im selben Tab */
+  const richPage = (s) => HD.richText(s, new URL(ROOT).pathname);
+  function blockHTML(b) {
+    const rich = richPage;
     switch (b.art) {
-      case 'einleitung': return paras(b.text).map((p) => `<p class="s-text">${richPage(p)}</p>`).join('');
-      case 'text': return paras(b.text).map((p) => `<p class="bio-p">${richPage(p)}</p>`).join('');
-      case 'zwischentitel': return b.text ? `<h3 class="${b.stil === 'klein' ? 'card-title' : 'pane-sub'}">${esc(b.text)}</h3>` : '';
-      case 'zeile': return b.text ? `<div class="s-label">${esc(b.text)}</div>` : '';
+      case 'einleitung': return paras(b.text).map((p) => `<p class="s-text">${rich(p)}</p>`).join('');
+      case 'text': return paras(b.text).map((p) => `<p class="bio-p">${rich(p)}</p>`).join('');
+      case 'zwischentitel': return b.text ? `<h3 class="pane-sub">${esc(b.text)}</h3>` : '';
       case 'liste': {
-        const items = lines(b.punkte);
-        return items.length ? `<ul class="pgr-tasks pane-list">${items.map((p) => `<li>${richPage(p)}</li>`).join('')}</ul>` : '';
+        const items = (b.punkte || []).filter(Boolean);
+        return items.length ? `<ul class="pgr-tasks pane-list">${items.map((p) => `<li>${rich(p)}</li>`).join('')}</ul>` : '';
       }
       case 'bild': {
-        const src = b.bild && imgUrl(b.bild);
+        const src = b.bild && url(b.bild);
         if (!src) return '';
         const w = HD.num(b.breite, 1200);
         const h = HD.num(b.hoehe, 800);
-        const img = `<img src="${esc(src)}" alt="${esc(b.alt)}" width="${w}" height="${h}" loading="lazy" decoding="async"/>`;
-        if (b.stil === 'breit') {
-          return b.unterschrift
-            ? `<figure class="pane-fig pane-wide">${img}<figcaption>${richPage(b.unterschrift)}</figcaption></figure>`
-            : img.replace('<img ', '<img class="pane-wide-img" ');
-        }
-        if (b.stil === 'gruppe') {
-          return `<figure class="mitbrueder-foto"><a href="${esc(src)}" data-lightbox title="Foto in voller Größe öffnen">${img}</a>` +
-            (b.unterschrift ? `<figcaption>${richPage(b.unterschrift)}</figcaption>` : '') + '</figure>';
-        }
-        const cls = b.stil === 'rechts' ? ' side' : h > w ? ' hoch' : '';
-        return `<figure class="pane-fig${cls}"><a href="${esc(src)}" data-lightbox title="Foto vergrößern">${img}</a>` +
-          (b.unterschrift ? `<figcaption>${richPage(b.unterschrift)}</figcaption>` : '') + '</figure>';
+        return `<figure class="pane-fig${h > w ? ' hoch' : ''}"><a href="${esc(src)}" data-lightbox title="Foto vergrößern">` +
+          `<img src="${esc(src)}" alt="${esc(b.alt)}" width="${w}" height="${h}" loading="lazy" decoding="async"/></a>` +
+          (b.unterschrift ? `<figcaption>${rich(b.unterschrift)}</figcaption>` : '') + '</figure>';
       }
       case 'karten': {
-        const cards = rows(b.karten).filter((k) => k.titel || k.kurz || k.text);
-        if (!cards.length) return '';
-        const cls = { zwei: 'cards-2 pane-cards', drei: 'cards-3 pane-cards', intro: 'cards-2 cards-intro' }[b.stil] || 'cards-stack pane-cards';
-        return `<div class="${cls}">${cards.map((k) => cardHTML(k, b.stil)).join('')}</div>`;
+        const cards = (b.karten || []).filter((k) => k && (k.titel || k.text));
+        return cards.length ? '<div class="cards-stack pane-cards">' + cards.map((k) => '<div class="card">' +
+          (k.titel ? `<div class="card-title">${esc(k.titel)}</div>` : '') +
+          (k.kurz ? `<div class="card-text">${rich(k.kurz)}</div>` : '') +
+          paras(k.text).map((p) => `<p class="card-more">${rich(p)}</p>`).join('') + '</div>').join('') + '</div>' : '';
       }
-      case 'kontaktkarte': {
-        const zeilen = rows(b.zeilen).filter((z) => z.label || z.wert);
-        return '<div class="kontakt-card">' +
-          (b.titel ? `<div class="kontakt-title">${esc(b.titel)}</div>` : '') +
-          (b.text ? `<p class="kontakt-text">${richPage(b.text)}</p>` : '') +
-          (zeilen.length ? `<div class="kontakt-rows">${zeilen.map((z) => `<div class="kontakt-row"><span class="kontakt-label">${esc(z.label)}</span><span class="kontakt-val${z.zeiten ? ' kontakt-hours' : ''}">${richPage(z.wert)}</span></div>`).join('')}</div>` : '') +
-          '</div>';
-      }
-      case 'personen': {
-        const ps = rows(b.personen).filter((p) => p.name);
-        return ps.length ? `<ul class="pgr-list">${ps.map((p) => '<li class="pgr-item">' +
-          `<div><div class="pgr-name">${esc(p.name)}</div>${p.rolle ? `<div class="pgr-role">${esc(p.rolle)}</div>` : ''}</div>` +
-          `<div><ul class="pgr-tasks">${lines(p.aufgaben).map((a) => `<li>${richPage(a)}</li>`).join('')}</ul>` +
-          (p.kontakt ? `<div class="pgr-contact">${richPage(p.kontakt)}</div>` : '') + '</div></li>').join('')}</ul>` : '';
-      }
-      case 'zeitleiste': {
-        const es = rows(b.eintraege).filter((e) => e.jahr || e.text);
-        return es.length ? `<div class="timeline">${es.map((e) => `<div class="timeline-item"><div class="timeline-year">${esc(e.jahr)}</div><div class="timeline-text">${richPage(e.text)}</div></div>`).join('')}</div>` : '';
-      }
-      case 'kennzahlen': {
-        const fs = rows(b.zahlen).filter((f) => f.zahl || f.text);
-        return fs.length ? `<div class="facts pane-facts-row">${fs.map((f) => `<div class="fact"><div class="fact-n">${esc(f.zahl)}</div><div class="fact-l">${esc(f.text)}</div></div>`).join('')}</div>` : '';
-      }
-      case 'daten': {
-        const ds = rows(b.daten).filter((d) => d.begriff || d.wert);
-        return ds.length ? `<dl class="organ-facts pane-facts">${ds.map((d) => `<div><dt>${esc(d.begriff)}</dt><dd>${richPage(d.wert)}</dd></div>`).join('')}</dl>` : '';
-      }
-      case 'gutzuwissen': return factsHTML(b);
-      case 'links': {
-        const ls = rows(b.links).filter((l) => l.text && pageUrl(l.link));
-        const as = ls.map((l) => `<a class="link-arr" href="${esc(pageUrl(l.link))}"${linkAttrs(pageUrl(l.link))}>${esc(l.text)}</a>`);
-        /* frei: ein einzelner Link ohne eigenen Absatz (wie im HTML gewachsen) */
-        return b.stil === 'frei' && as.length === 1 ? as[0] : `<p class="bio-p pane-links">${as.join('')}</p>`;
-      }
-      case 'linkliste': {
-        const ls = rows(b.links).filter((l) => l.text && pageUrl(l.link));
-        return ls.length ? `<ul class="link-list">${ls.map((l) => `<li><a href="${esc(pageUrl(l.link))}"${linkAttrs(pageUrl(l.link))}>${esc(l.text)}</a>${l.hinweis ? `<span>${esc(l.hinweis)}</span>` : ''}</li>`).join('')}</ul>` : '';
-      }
-      case 'heilige': {
-        const hs = rows(b.eintraege).filter((e) => e.name);
-        return hs.length ? `<ul class="saint-list">${hs.map((e) => `<li><span class="saint-date">${esc(e.datum)}</span><span>${esc(e.name)}</span></li>`).join('')}</ul>` : '';
-      }
-      case 'tabelle': {
-        const zs = rows(b.zeilen).filter((z) => lines(z.zellen).length);
-        const cols = Math.max(1, ...zs.map((z) => (z.kopf ? 1 : z.zellen.length)));
-        return zs.length ? `<table class="fee-table">${zs.map((z) => (z.kopf
-          ? `<tr><th colspan="${cols}">${esc(z.zellen.join(' '))}</th></tr>`
-          : `<tr>${z.zellen.map((c) => `<td>${richPage(c)}</td>`).join('')}</tr>`)).join('')}</table>` : '';
-      }
-      case 'sakrament': {
-        const nr = HD.pad((ctx.sakramente || []).indexOf(b) + 1);
-        return `<div class="sakr-sec"${/^[\w-]+$/.test(b.anker || '') ? ` id="${esc(b.anker)}"` : ''}>` +
-          `<div class="sakr-sec-nr">${nr}</div><h3 class="sakr-sec-title">${esc(b.titel)}</h3>` +
-          paras(b.text).map((p) => `<p class="bio-p">${richPage(p)}</p>`).join('') +
-          factsHTML(b.fakten) + '</div>';
-      }
-      case 'sprungleiste': {
-        const list = (ctx.sakramente || []).filter((s) => /^[\w-]+$/.test(s.anker || ''));
-        if (!list.length) return '';
-        const group = (hidden) => `<div class="sakr-track-group"${hidden ? ' aria-hidden="true"' : ''}>` + list.map((s, i) =>
-          `<button type="button" class="sakr-chip" data-target="${esc(s.anker)}"${hidden ? ' tabindex="-1"' : ''}><span class="sakr-chip-nr">${HD.pad(i + 1)}</span><span class="sakr-chip-name">${esc(s.kurz || s.titel)}</span></button><span class="sakr-dot" aria-hidden="true"></span>`).join('') + '</div>';
-        return `<div class="sakr-band sakr-band-inline" role="group" aria-label="${esc(b.titel || 'Zu den Sakramenten')} springen">` +
-          `<div class="sakr-band-label">${esc(b.titel || 'Zu den Sakramenten')}</div>` +
-          `<div class="sakr-marquee"><div class="sakr-track">${group(false)}${group(true)}</div></div></div>`;
-      }
-      case 'personenkarten': {
-        const ps = rows(b.personen).filter((x) => x.name);
-        return ps.length ? `<div class="people-stack">${ps.map((x) => {
-          const src = x.bild && imgUrl(x.bild);
-          return `<div class="person-card-wide${b.stil === 'kompakt' ? ' compact' : ''}">` +
-            (src ? `<img src="${esc(src)}" alt="${esc(x.alt || x.name)}" loading="lazy" width="${HD.num(x.breite, 480)}" height="${HD.num(x.hoehe, 620)}" decoding="async"/>` : '') +
-            `<div class="person-body"><div class="person-name">${esc(x.name)}</div>${x.rolle ? `<div class="person-role">${esc(x.rolle)}</div>` : ''}` +
-            paras(x.text).map((t) => `<p class="person-bio">${richPage(t)}</p>`).join('') + '</div></div>';
-        }).join('')}</div>` : '';
-      }
-      case 'orgeln': {
-        const os = rows(b.orgeln).filter((o) => o.titel);
-        return os.length ? `<div class="organ-grid">${os.map((o) => {
-          const src = o.bild && imgUrl(o.bild);
-          const ds = rows(o.daten).filter((d) => d.begriff || d.wert);
-          return '<div class="organ-card">' +
-            (src ? `<img class="organ-img" src="${esc(src)}" alt="${esc(o.alt || o.titel)}" loading="lazy" width="${HD.num(o.breite, 900)}" height="${HD.num(o.hoehe, 1200)}" decoding="async"/>` : '') +
-            `<div class="organ-body"><h3 class="organ-title">${esc(o.titel)}</h3>` +
-            (ds.length ? `<dl class="organ-facts">${ds.map((d) => `<div><dt>${esc(d.begriff)}</dt><dd>${richPage(d.wert)}</dd></div>`).join('')}</dl>` : '') +
-            paras(o.text).map((t) => `<p class="organ-desc">${richPage(t)}</p>`).join('') + '</div></div>';
-        }).join('')}</div>` : '';
-      }
-      case 'gottesdienstzeiten': {
-        const zs = rows(b.zeiten).filter((z) => z.tag || z.name);
-        return zs.length ? `<div class="pane-gd"><table class="gd-table">${zs.map((z) => `<tr><td class="gd-day">${esc(z.tag)}</td><td class="gd-time">${esc(z.zeit)}</td>` +
-          `<td><div class="gd-name">${esc(z.name)}</div>${z.hinweis ? `<div class="gd-note">${richPage(z.hinweis)}</div>` : ''}</td></tr>`).join('')}</table></div>` : '';
-      }
-      case 'zitatkasten':
-        return '<div class="patron-box">' + (b.zeile ? `<div class="s-label">${esc(b.zeile)}</div>` : '') +
-          (b.name ? `<div class="patron-name">${esc(b.name)}</div>` : '') + (b.text ? `<div class="patron-text">${richPage(b.text)}</div>` : '') +
-          (b.zitat ? `<blockquote class="patron-quote">${esc(b.zitat)}</blockquote>` : '') + '</div>';
-      case 'programme': {
-        const ps = rows(b.jahre).filter((j) => j.jahr);
-        return ps.length ? `<ul class="prog-list">${ps.map((j) => `<li><span class="prog-year">${esc(j.jahr)}</span><span class="prog-links">` +
-          rows(j.links).filter((l) => l.text && pageUrl(l.link)).map((l) => `<a href="${esc(pageUrl(l.link))}" target="_blank" rel="noopener">${esc(l.text)}</a>`).join('') + '</span></li>').join('')}</ul>` : '';
-      }
-      case 'html': return cleanHTML(b.html);
       default: return '';
     }
   }
-
-  /* Schluessel eines Elements aus dem HTML, das an seinem Platz bleibt (Modul):
-     eigene ID, sonst die erste ID oder data-inhalt/data-personen darin */
-  function modKey(el) {
-    if (el.id) return `#${el.id}`;
-    const d = el.querySelector('[id]');
-    if (d) return `>#${d.id}`;
-    const di = el.matches('[data-inhalt]') ? el : el.querySelector('[data-inhalt]');
-    if (di) return `[data-inhalt=${di.dataset.inhalt}]`;
-    const dp = el.matches('[data-personen]') ? el : el.querySelector('[data-personen]');
-    if (dp) return `[data-personen=${dp.dataset.personen}]`;
-    return `.${el.className.trim().split(/\s+/)[0]}`;
-  }
-  /* Bausteine eines Bereichs oder Abschnitts; own: die Elemente aus dem HTML */
-  function fillBlocks(host, bloecke, own) {
-    const list = rows(bloecke);
-    const ctx = { sakramente: list.filter((b) => b.art === 'sakrament') };
-    const used = new Set();
-    for (const b of list) {
-      if (b.art === 'modul' || b.art === 'fest') {
-        const el = b.art === 'fest' ? own[b.nr] : own.find((e) => !used.has(e) && modKey(e) === b.key);
-        if (el) {
-          used.add(el);
-          host.append(el);
-        }
-      } else {
-        host.insertAdjacentHTML('beforeend', blockHTML(b, ctx));
-      }
-    }
-  }
-
-  function applyKopf(k) {
-    if (!k || typeof k !== 'object') return;
-    const main = document.querySelector('main[data-pflege]');
-    const hero = main.querySelector(':scope > .hero .hero-content');
-    const ph = main.querySelector(':scope > .page-hero');
-    const set = (sel, html, root) => {
-      const el = root && root.querySelector(sel);
-      if (el && html !== null) el.innerHTML = html;
-    };
-    const titel = String(k.titel || '').split('\n').map((l) => richPage(l.trim(), { links: false })).join('<br>');
-    if (hero) {
-      set('.hero-eyebrow', esc(k.zeile || ''), hero);
-      set('.hero-h1', titel, hero);
-      set('.hero-sub', richPage(k.text || ''), hero);
-      const acts = hero.querySelector('.hero-actions');
-      const btns = rows(k.knoepfe).filter((l) => l.text && pageUrl(l.link));
-      if (acts) acts.innerHTML = btns.map((l, i) => `<a class="btn ${i ? 'btn-outline-w' : 'btn-gold'}" href="${esc(pageUrl(l.link))}"${linkAttrs(pageUrl(l.link))}>${esc(l.text)}</a>`).join('');
-    } else if (ph) {
-      set('.ph-tag', esc(k.zeile || ''), ph);
-      set('.ph-title', titel, ph);
-      set('.ph-sub', richPage(k.text || ''), ph);
-    }
-  }
-
-  function applyBereiche(list) {
-    const main = document.querySelector('main[data-pflege]');
-    const kids = Array.from(main.children);
-    const head = kids.filter((el) => el.matches('.hero, .page-hero'));
-    const own = kids.filter((el) => !head.includes(el));
-    const used = new Set();
-    const frag = document.createDocumentFragment();
-    for (const b of list) {
-      if (b.art === 'leiste' || b.art === 'modul') {
-        const el = b.art === 'leiste' ? own.find((e) => e.querySelector('.with-sidebar')) : own.find((e) => !used.has(e) && modKey(e) === b.key);
-        if (el) {
-          used.add(el);
-          frag.append(el);
-        }
-      } else if (b.art === 'html') {
-        const tpl = document.createElement('template');
-        tpl.innerHTML = cleanHTML(b.html);
-        frag.append(tpl.content);
-      } else if (b.art === 'teaser') {
-        const sec = document.createElement('section');
-        sec.className = 'herzgruft';
-        const src = b.bild && imgUrl(b.bild);
-        sec.innerHTML = '<div>' + (b.zeile ? `<div class="s-label">${esc(b.zeile)}</div>` : '') +
-          (b.titel ? `<h2 class="s-title">${esc(b.titel)}</h2>` : '') +
-          paras(b.text).map((p) => `<p class="s-text">${richPage(p)}</p>`).join('') +
-          (b.linktext && pageUrl(b.link) ? `<a class="link-arr" href="${esc(pageUrl(b.link))}">${esc(b.linktext)}</a>` : '') +
-          '</div><div class="herzgruft-img"></div>';
-        if (src) sec.lastElementChild.style.backgroundImage = `url("${src.replace(/"/g, '%22')}")`;
-        frag.append(sec);
-      } else if (b.art === 'inhalt') {
-        const sec = document.createElement('section');
-        sec.className = 'section section-ruled';
-        if (/^[\w-]+$/.test(b.id || '')) sec.id = b.id;
-        const inner = document.createElement('div');
-        inner.className = 'inner';
-        if (b.ueberschrift) inner.innerHTML = `<div class="sec-head"><h2 class="s-title">${esc(b.ueberschrift)}${b.unter ? ` <span class="s-title-sub">${esc(b.unter)}</span>` : ''}</h2></div>`;
-        fillBlocks(inner, b.bloecke, []);
-        sec.append(inner);
-        frag.append(sec);
-      }
-    }
-    for (const el of own) if (!used.has(el)) el.remove();
-    main.append(frag);
-  }
-
-  function applyAbschnitte(list) {
-    const box = document.querySelector('main[data-pflege] .with-sidebar');
-    const sidebar = box && box.querySelector('.sidebar');
+  async function seite() {
+    const box = document.querySelector('.with-sidebar[data-seite]');
+    if (!box || !/^[a-z-]+$/.test(box.dataset.seite)) return;
+    const sidebar = box.querySelector('.sidebar');
     const area = sidebar && sidebar.nextElementSibling;
-    if (!area || !list.length) return;
+    if (!area) return;
+    let data;
+    try {
+      data = await load(`seite-${box.dataset.seite}.json`);
+    } catch {
+      return; /* noch nie gespeichert: das HTML gilt */
+    }
+    const list = (data.abschnitte || []).filter((a) => a && /^[\w-]+$/.test(a.id || ''));
+    if (!list.length) return;
+
+    /* Bestehende Bereiche und ihre Elemente (ohne die von main.js angehaengten Schritte) */
     const panes = new Map(Array.from(area.querySelectorAll(':scope > .tab-pane')).map((p) => [p.id, p]));
     const parts = new Map();
     for (const [id, p] of panes) parts.set(id, Array.from(p.children).filter((c) => !c.classList.contains('pane-steps')));
@@ -721,7 +439,15 @@
       pane.textContent = '';
       if (a.zeile) pane.insertAdjacentHTML('beforeend', `<div class="s-label">${esc(a.zeile)}</div>`);
       if (a.ueberschrift) pane.insertAdjacentHTML('beforeend', `<h2 class="s-title">${esc(a.ueberschrift)}</h2>`);
-      fillBlocks(pane, a.bloecke, own);
+      for (const b of a.bloecke || []) {
+        if (!b) continue;
+        if (b.art === 'fest') {
+          const el = own[b.nr];
+          if (el) pane.append(el);
+        } else {
+          pane.insertAdjacentHTML('beforeend', blockHTML(b));
+        }
+      }
       area.append(pane);
       keep.add(a.id);
     }
@@ -729,34 +455,7 @@
     const show = keep.has(active) ? active : list[0].id;
     for (const p of area.querySelectorAll(':scope > .tab-pane')) p.classList.toggle('active', p.id === show);
     for (const b of nav.querySelectorAll('.sidebar-item')) b.classList.toggle('active', b.dataset.pane === show);
-  }
-
-  async function seite() {
-    if (!/^[a-z-]+$/.test(PAGE_KEY)) return;
-    let data = null;
-    if (PREVIEW) {
-      try {
-        data = JSON.parse(localStorage.getItem(`aug-vorschau-${PAGE_KEY}`));
-      } catch {
-        data = null;
-      }
-      if (data) {
-        document.body.insertAdjacentHTML('afterbegin', '<div class="preview-bar" role="status">Vorschau aus der Verwaltung: noch nicht gespeichert</div>');
-      }
-    }
-    if (!data) {
-      try {
-        data = await load(`seite-${PAGE_KEY}.json`);
-      } catch {
-        return; /* noch nie gespeichert: das HTML gilt */
-      }
-    }
-    if (!data || typeof data !== 'object') return;
-    applyKopf(data.kopf);
-    if (Array.isArray(data.bereiche) && data.bereiche.length) applyBereiche(rows(data.bereiche));
-    const abschnitte = rows(data.abschnitte).filter((a) => /^[\w-]+$/.test(a.id || ''));
-    if (abschnitte.length) applyAbschnitte(abschnitte);
-    /* main.js: Leiste, Schritte, aktuellen Bereich und Sprungziel neu einrichten */
+    /* main.js: Leiste, Schritte und aktuellen Bereich neu einrichten */
     document.dispatchEvent(new Event('aug:leiste'));
   }
 

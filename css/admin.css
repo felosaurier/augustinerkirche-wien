@@ -404,16 +404,7 @@ select.adm-input{-webkit-appearance:none;appearance:none;padding-right:2.6rem;cu
 .adm-sx-card{padding:.6rem 0 .4rem;border-top:1px dashed var(--line)}
 .adm-sx-card-head{display:flex;align-items:center;justify-content:space-between}
 .adm-sx-add{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding-bottom:1.2rem}
-.adm-sx-body{padding:0 1.2rem 1.2rem}
-.adm-sx-body>.adm-grid{margin-top:1rem}
-.adm-sx-rows,.adm-sx-group{margin:.4rem 0;padding:.6rem .8rem .8rem;border:1px solid var(--line)}
-.adm-sx-rows>legend,.adm-sx-group>legend{padding:0 .3rem}
-.adm-sx-row{padding:.5rem 0 .7rem;border-bottom:1px dashed var(--line)}
-.adm-sx-row-head{display:flex;align-items:center;gap:.5rem}
-.adm-sx-rowadd{margin-top:.6rem}
-.adm-sx-new{margin:.2rem 0 1.4rem}
-.adm-sx-add select{max-width:20rem}
-.adm-sx-code{font-family:ui-monospace,Consolas,monospace;font-size:.88rem}
+#sx-add{margin:.4rem 0 1.4rem}
 
 /* Menue & Leiste (admin/navigation.html) */
 .adm-nv-wrap{overflow-x:auto}

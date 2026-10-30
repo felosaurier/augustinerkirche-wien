@@ -84,11 +84,11 @@
   /* Seiten, deren Abschnitte in der Verwaltung gepflegt werden (admin/seiten.html):
      Reihenfolge, Namen und neue Abschnitte kommen aus data/seite-<name>.json */
   async function withSections(page) {
-    const seite = A.SEITEN.find((x) => x[1] === `pages/${page.file}`);
-    if (!seite) return page;
+    const m = /^(augustiner|aspersdorf)\.html$/.exec(page.file);
+    if (!m) return page;
     let list;
     try {
-      list = (await A.readJSON(`data/seite-${seite[0]}.json`)).abschnitte;
+      list = (await A.readJSON(`data/seite-${m[1]}.json`)).abschnitte;
     } catch {
       return page;
     }

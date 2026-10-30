@@ -1013,9 +1013,6 @@
       const pane = target && area && area.contains(target) ? target.closest('.tab-pane') : qs('.tab-pane.active', area);
       if (pane) activatePane(sidebar, pane.id);
     }
-    /* Sprungziel ausserhalb der Leiste (z. B. index.html#kloster): neu gebaut, also neu hinspringen */
-    const target = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
-    if (target && !target.closest('.tab-pane')) target.scrollIntoView({ block: 'start' });
     revealObserve();
   });
 

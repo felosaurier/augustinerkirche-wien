@@ -125,19 +125,6 @@
      Gespeichert als rechte: { bereiche: [Schluessel], runden: [Runden-IDs] };
      der Schluessel "runden" bedeutet alle Runden samt Anlegen, Loeschen und
      Reihenfolge, sonst nur die einzeln genannten Runden bearbeiten. */
-  /* Seiten, deren Kopf, Bereiche und Abschnitte unter admin/seiten.html?seite=… gepflegt
-     werden (data/seite-<seite>.json): [Schluessel, Datei, Name, Symbol] */
-  const SEITEN = [
-    ['startseite', 'index.html', 'Startseite', 'home'],
-    ['augustinerkirche', 'pages/augustinerkirche.html', 'Augustinerkirche', 'book'],
-    ['kirchenmusik', 'pages/musik.html', 'Kirchenmusik', 'music'],
-    ['augustiner', 'pages/augustiner.html', 'Augustiner', 'users'],
-    ['aspersdorf', 'pages/aspersdorf.html', 'Aspersdorf', 'home'],
-    ['pfarre', 'pages/pfarre.html', 'Pfarre St. Augustin', 'users'],
-    ['gottesdienste', 'pages/gottesdienste.html', 'Gottesdienste', 'clock'],
-    ['sakramente', 'pages/sakramente.html', 'Sakramente', 'book'],
-    ['chronik', 'pages/chronik.html', 'Chronik', 'history']
-  ];
   const AREAS = [
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Aktuelles', page: 'neuigkeiten.html' },
     { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Aktuelles', page: 'termine.html' },
@@ -160,7 +147,8 @@
     { key: 'rundgang', label: 'Kirchenrundgang', group: 'Pfarre & Kloster', page: 'rundgang.html' },
     { key: 'pgr', label: 'Pfarrgemeinderat', group: 'Pfarre & Kloster', page: 'pgr.html' },
     { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' },
-    ...SEITEN.map(([k, , name]) => ({ key: `seite-${k}`, label: `Seite ${name}`, group: 'Seiten', page: 'seiten.html' }))
+    { key: 'seite-augustiner', label: 'Seite Augustiner (Kloster & Orden)', group: 'Pfarre & Kloster', page: 'seiten.html' },
+    { key: 'seite-aspersdorf', label: 'Seite Aspersdorf', group: 'Pfarre & Kloster', page: 'seiten.html' }
   ];
   /* "Runden" gehoert zu Pfarre & Kloster, steht aber wegen der Einzelauswahl getrennt */
   const RUNDEN_KEY = 'runden';
@@ -1024,7 +1012,7 @@
     [/^data\/gottesdienste\.json$/, 'Regelmäßige Termine'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
     [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'],
     [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
-    [/^data\/sprueche\.json$/, 'Sprüche'], [/^data\/themen\.json$/, 'Farben & Logo'], [/^data\/navigation\.json$/, 'Menü & Leiste'], [/^data\/seite-[a-z-]+\.json$/, 'Seiten'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
+    [/^data\/sprueche\.json$/, 'Sprüche'], [/^data\/themen\.json$/, 'Farben & Logo'], [/^data\/navigation\.json$/, 'Menü & Leiste'], [/^data\/seite-augustiner\.json$/, 'Seite Augustiner'], [/^data\/seite-aspersdorf\.json$/, 'Seite Aspersdorf'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
     [/^admin\/zugaenge\.json$/, 'Zugänge'], [/^admin\/mitteilungen\.json$/, 'Mitteilungen'],
     [/^assets\/img\/startseite\//, 'Startseite'], [/^assets\/img\/news\//, 'Neuigkeiten'], [/^assets\//, 'Dateien']
   ];
@@ -1909,9 +1897,10 @@
       ['kontakt.html', 'Pfarrkanzlei & Kontakt', 'phone', 'Öffnungszeiten Telefon E-Mail Adresse Straße Kanzlei'],
       ['rundgang.html', 'Kirchenrundgang', 'image', 'Chronik Bilder Fotos Führung Geschichte'],
       ['pgr.html', 'Pfarrgemeinderat', 'users', 'PGR Mitglieder'],
-      ['personen.html?bereich=kloster', 'Mitbrüder', 'user', 'Patres Brüder Kloster Konvent']
+      ['personen.html?bereich=kloster', 'Mitbrüder', 'user', 'Patres Brüder Kloster Konvent'],
+      ['seiten.html?seite=augustiner', 'Seite Augustiner', 'book', 'Kloster Orden Augustinus Regel Abschnitte Texte Bilder'],
+      ['seiten.html?seite=aspersdorf', 'Seite Aspersdorf', 'home', 'Pfarre St. Georg Friedhof Abschnitte Texte Bilder']
     ] },
-    { label: 'Seiten', items: SEITEN.map(([k, , name, ico]) => [`seiten.html?seite=${k}`, name, ico, 'Seite Texte Bilder Abschnitte Bausteine Kopf']) },
     { label: 'Kirchenmusik', items: [
       ['solisten.html', 'Solisten', 'mic', 'Sänger Sopran Alt Tenor Bass Foto'],
       ['repertoire.html', 'Repertoire', 'book', 'Komponisten Werke Messen Chor'],
@@ -1947,10 +1936,9 @@
     };
     return NAV.map((g) => ({ ...g, items: g.items.filter(([href]) => ok(href)) })).filter((g) => g.items.length);
   }
-  /* Recht fuer admin/seiten.html?seite=… (unbekannt: die erste Seite) */
+  /* Recht fuer admin/seiten.html?seite=augustiner|aspersdorf */
   function seitenKey(query) {
-    const k = new URLSearchParams(query || '').get('seite');
-    return `seite-${SEITEN.some((x) => x[0] === k) ? k : SEITEN[0][0]}`;
+    return new URLSearchParams(query || '').get('seite') === 'aspersdorf' ? 'seite-aspersdorf' : 'seite-augustiner';
   }
   /* Bereich der Personen-Seite: Mitbrueder (Kloster) oder Kirchenmusik */
   function personenBereich() {
@@ -1962,7 +1950,6 @@
   function isHere(href) {
     const [page, query] = href.split('?');
     if (page !== pageName()) return false;
-    if (page === 'seiten.html') return seitenKey(query) === seitenKey(location.search);
     const bereich = query && new URLSearchParams(query).get('bereich');
     return !bereich || bereich === personenBereich();
   }
@@ -2506,7 +2493,7 @@
     guard: (fn) => guards.push(fn),
     /* Anmeldung und Zugaenge */
     session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, isDev, adminRole, roleOf, ROLES, personenBereich,
-    AREAS, SEITEN, RUNDEN_KEY, rightsOf, can, canRunde, canAllRunden, canAnyRunde,
+    AREAS, RUNDEN_KEY, rightsOf, can, canRunde, canAllRunden, canAnyRunde,
     parseAccounts, accountsJSON, makeAccount, checkDevCode, checkPassword, normUser, stampOf,
     pwLevel, pwProblem, suggestPassword, MIN_PW, ACCOUNTS,
     /* Dateien */
