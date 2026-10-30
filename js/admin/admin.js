@@ -146,9 +146,7 @@
     { key: 'kontakt', label: 'Pfarrkanzlei & Kontakt', group: 'Pfarre & Kloster', page: 'kontakt.html' },
     { key: 'rundgang', label: 'Kirchenrundgang', group: 'Pfarre & Kloster', page: 'rundgang.html' },
     { key: 'pgr', label: 'Pfarrgemeinderat', group: 'Pfarre & Kloster', page: 'pgr.html' },
-    { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' },
-    { key: 'seite-augustiner', label: 'Seite Augustiner (Kloster & Orden)', group: 'Pfarre & Kloster', page: 'seiten.html' },
-    { key: 'seite-aspersdorf', label: 'Seite Aspersdorf', group: 'Pfarre & Kloster', page: 'seiten.html' }
+    { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' }
   ];
   /* "Runden" gehoert zu Pfarre & Kloster, steht aber wegen der Einzelauswahl getrennt */
   const RUNDEN_KEY = 'runden';
@@ -182,7 +180,6 @@
     /* Spenden & Moeglichkeiten liegen in derselben Datei wie die Paten */
     if (page === 'spenden.html') return 'paten';
     if (page === 'personen.html') return personenBereich() === 'kloster' ? 'mitbrueder' : 'musik-personen';
-    if (page === 'seiten.html') return seitenKey(location.search);
     const a = AREAS.find((x) => x.page === page);
     return a ? a.key : '';
   }
@@ -1012,7 +1009,7 @@
     [/^data\/gottesdienste\.json$/, 'Regelmäßige Termine'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
     [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'],
     [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
-    [/^data\/sprueche\.json$/, 'Sprüche'], [/^data\/themen\.json$/, 'Farben & Logo'], [/^data\/navigation\.json$/, 'Menü & Leiste'], [/^data\/seite-augustiner\.json$/, 'Seite Augustiner'], [/^data\/seite-aspersdorf\.json$/, 'Seite Aspersdorf'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
+    [/^data\/sprueche\.json$/, 'Sprüche'], [/^data\/themen\.json$/, 'Farben & Logo'], [/^data\/navigation\.json$/, 'Menü & Leiste'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
     [/^admin\/zugaenge\.json$/, 'Zugänge'], [/^admin\/mitteilungen\.json$/, 'Mitteilungen'],
     [/^assets\/img\/startseite\//, 'Startseite'], [/^assets\/img\/news\//, 'Neuigkeiten'], [/^assets\//, 'Dateien']
   ];
@@ -1897,9 +1894,7 @@
       ['kontakt.html', 'Pfarrkanzlei & Kontakt', 'phone', 'Öffnungszeiten Telefon E-Mail Adresse Straße Kanzlei'],
       ['rundgang.html', 'Kirchenrundgang', 'image', 'Chronik Bilder Fotos Führung Geschichte'],
       ['pgr.html', 'Pfarrgemeinderat', 'users', 'PGR Mitglieder'],
-      ['personen.html?bereich=kloster', 'Mitbrüder', 'user', 'Patres Brüder Kloster Konvent'],
-      ['seiten.html?seite=augustiner', 'Seite Augustiner', 'book', 'Kloster Orden Augustinus Regel Abschnitte Texte Bilder'],
-      ['seiten.html?seite=aspersdorf', 'Seite Aspersdorf', 'home', 'Pfarre St. Georg Friedhof Abschnitte Texte Bilder']
+      ['personen.html?bereich=kloster', 'Mitbrüder', 'user', 'Patres Brüder Kloster Konvent']
     ] },
     { label: 'Kirchenmusik', items: [
       ['solisten.html', 'Solisten', 'mic', 'Sänger Sopran Alt Tenor Bass Foto'],
@@ -1929,16 +1924,11 @@
     const ok = (href) => {
       const [page, query] = href.split('?');
       if (page === 'personen.html') return can(new URLSearchParams(query).get('bereich') === 'kloster' ? 'mitbrueder' : 'musik-personen');
-      if (page === 'seiten.html') return can(seitenKey(query));
       if (page === 'zugaenge.html') return isAdmin();
       if (page === 'aenderungen.html' || page === 'mitteilungen.html') return isDev();
       return allowed(rightOfPage(page));
     };
     return NAV.map((g) => ({ ...g, items: g.items.filter(([href]) => ok(href)) })).filter((g) => g.items.length);
-  }
-  /* Recht fuer admin/seiten.html?seite=augustiner|aspersdorf */
-  function seitenKey(query) {
-    return new URLSearchParams(query || '').get('seite') === 'aspersdorf' ? 'seite-aspersdorf' : 'seite-augustiner';
   }
   /* Bereich der Personen-Seite: Mitbrueder (Kloster) oder Kirchenmusik */
   function personenBereich() {

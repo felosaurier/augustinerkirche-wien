@@ -360,7 +360,6 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .cards-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));gap:2.5rem 3rem}
 .card-links{display:flex;flex-direction:column;gap:.55rem;margin-top:1.1rem;list-style:none}
 .cards-stack{display:flex;flex-direction:column;max-width:46rem}
-.pane-cards{margin:1.5rem 0 2rem}
 .card{display:block;padding:1.4rem 0 1.6rem;border-top:1px solid var(--blue);color:inherit;text-decoration:none}
 .cards-stack .card{border-top-color:var(--line)}
 .cards-stack .card:first-child{border-top-color:var(--blue)}
@@ -422,7 +421,6 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .pgr-role{margin-top:.2rem;font-size:.92rem;font-weight:500;color:var(--gold)}
 .pgr-job{margin-top:.1rem;font-size:.88rem;color:var(--text-light)}
 .pgr-tasks{list-style:none}
-.pane-list{margin:.4rem 0 1.4rem}
 .pgr-tasks li{position:relative;margin-bottom:.25rem;padding-left:1rem;font-size:.97rem;line-height:1.55;color:var(--text-mid)}
 .pgr-tasks li::before{content:'';position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--gold)}
 .pgr-contact{margin-top:.35rem;font-size:.95rem}

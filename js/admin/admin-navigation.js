@@ -81,32 +81,10 @@
     return { file, name, items };
   }
 
-  /* Seiten, deren Abschnitte in der Verwaltung gepflegt werden (admin/seiten.html):
-     Reihenfolge, Namen und neue Abschnitte kommen aus data/seite-<name>.json */
-  async function withSections(page) {
-    const m = /^(augustiner|aspersdorf)\.html$/.exec(page.file);
-    if (!m) return page;
-    let list;
-    try {
-      list = (await A.readJSON(`data/seite-${m[1]}.json`)).abschnitte;
-    } catch {
-      return page;
-    }
-    if (!Array.isArray(list) || !list.length) return page;
-    const known = new Map(page.items.map((it) => [it.key, it]));
-    page.items = list.filter((s) => s && /^[\w-]+$/.test(s.id || '')).map((s) => {
-      const key = `${page.file}#${s.id}`;
-      const it = known.get(key);
-      const ort = placesOf(key);
-      return { key, titel: clean(s.titel) || s.id, gruppe: clean(s.gruppe), leiste0: it ? it.leiste0 : true, menue0: ort.length > 0, ort };
-    });
-    return page;
-  }
-
   async function load() {
     try {
       menu = readMenu(parse(await A.fetchText('index.html')));
-      pages = await Promise.all(PAGES.map(async ([file, name]) => withSections(readPage(file, name, parse(await A.fetchText(`pages/${file}`))))));
+      pages = await Promise.all(PAGES.map(async ([file, name]) => readPage(file, name, parse(await A.fetchText(`pages/${file}`)))));
     } catch (e) {
       $('nv-pages').innerHTML = `<div class="adm-alert">${A.icon('alert')}<div>Die Seiten der Website konnten nicht gelesen werden (${esc(e.message)}).</div></div>`;
       return;

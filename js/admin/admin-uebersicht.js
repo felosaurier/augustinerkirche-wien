@@ -154,14 +154,6 @@
           href: 'personen.html?bereich=kloster', ico: 'user', title: 'Mitbrüder',
           stat: ps ? plural(people(['mitbrueder']), 'Mitbruder', 'Mitbrüder') : none,
           addHref: 'personen.html?bereich=kloster&neu=1', addLabel: 'Neuer Mitbruder'
-        }),
-        can('seite-augustiner') && row({
-          href: 'seiten.html?seite=augustiner', ico: 'book', title: 'Seite Augustiner',
-          stat: 'Kloster & Orden: Abschnitte, Texte, Bilder', addHref: 'seiten.html?seite=augustiner', addLabel: 'Bearbeiten', addIcon: 'edit'
-        }),
-        can('seite-aspersdorf') && row({
-          href: 'seiten.html?seite=aspersdorf', ico: 'home', title: 'Seite Aspersdorf',
-          stat: 'Pfarre St. Georg: Abschnitte, Texte, Bilder', addHref: 'seiten.html?seite=aspersdorf', addLabel: 'Bearbeiten', addIcon: 'edit'
         })
       ]],
       ['Kirchenmusik', [

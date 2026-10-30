@@ -1002,20 +1002,6 @@
     return changed;
   }
 
-  /* inhalte.js hat die Abschnitte einer Seite aus der Verwaltung neu aufgebaut */
-  document.addEventListener('aug:leiste', () => {
-    for (const sidebar of qsa('.sidebar')) {
-      applyLeiste(sidebar);
-      refreshSidebar(sidebar);
-      for (const btn of qsa('.sidebar-item[data-pane]', sidebar)) btn.setAttribute('aria-controls', btn.dataset.pane);
-      const area = sidebar.nextElementSibling;
-      const target = location.hash && document.getElementById(location.hash.slice(1));
-      const pane = target && area && area.contains(target) ? target.closest('.tab-pane') : qs('.tab-pane.active', area);
-      if (pane) activatePane(sidebar, pane.id);
-    }
-    revealObserve();
-  });
-
   async function initNavigation() {
     let bereiche;
     try {
