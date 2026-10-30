@@ -155,7 +155,7 @@ def hinweise(test, cookie, verwaltung, update=False):
     kopf = '**Das ist ein Test-Paket.** Gegenüber dem Live-Paket gilt:' if test else '**Das ist das Live-Paket:** die Dateien genau wie im Projekt, ohne Test-Zusätze.'
     text = kopf + '\n\n' + '\n'.join('- ' + p for p in punkte)
     if not test:
-        text += ('\n- Es gibt keine `robots.txt` und keine Sitemap. Vor dem Veröffentlichen die gelb markierten Stellen in Impressum und Datenschutz ergänzen, '
+        text += ('\n- `robots.txt` lässt Suchmaschinen auf die ganze Website außer `admin/`; eine Sitemap gibt es nicht. Vor dem Veröffentlichen die gelb markierten Stellen in Impressum und Datenschutz ergänzen, '
                  'die Mess-ID für die Statistik eintragen (siehe README, „Cookies und Besucherstatistik“) und https einrichten.')
     return text
 
