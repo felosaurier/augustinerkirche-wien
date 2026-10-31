@@ -37,7 +37,9 @@
   /* Wurzel der Website (aus der Adresse dieses Skripts), damit Pfade aus
      den Datendateien auf jeder Unterseite stimmen */
   const ROOT = new URL('..', document.currentScript.src).href;
-  const url = (p) => HD.safeUrl(p, ROOT);
+  /* Vorschau in der Verwaltung: noch nicht gespeicherte Dateien kommen als blob:-Adressen */
+  let previewing = false;
+  const url = (p) => (previewing && /^blob:/.test(String(p)) ? String(p) : HD.safeUrl(p, ROOT));
   const rich = (s) => HD.richText(s, ROOT);
   const qsa = (sel) => Array.from(document.querySelectorAll(sel));
 
@@ -227,7 +229,8 @@
   async function kontakt() {
     const strips = qsa('[data-inhalt="kontakt"]');
     const lines = qsa('[data-inhalt="kanzlei"]');
-    if (!strips.length && !lines.length) return;
+    const actions = qsa('[data-inhalt="kontakt-aktionen"]');
+    if (!strips.length && !lines.length && !actions.length) return;
     const k = await load('kontakt.json');
     /* Leere Zeile = kleiner Abstand (nicht am Anfang oder Ende) */
     const all = k.kanzlei || [];
@@ -244,6 +247,20 @@
         `<div><div class="cs-label">E-Mail</div><div class="cs-val">${HD.mailHTML(k.email)}</div></div>` +
         `<div><div class="cs-label">Pfarrkanzlei</div><div class="cs-val cs-hours">${hours.map((h) => (filled(h)
           ? `<span>${esc(h.tage)}</span><span>${esc(h.zeit)}</span>` : '<span class="cs-gap" aria-hidden="true"></span>')).join('')}</div></div>`;
+    }
+    /* Grosse Knoepfe fuer das Handy: anrufen und die Route in der Karten-App planen */
+    const ziel = encodeURIComponent(`${k.adresse}, ${k.ort}`);
+    const routeLinks = [
+      ['Google Maps', `https://www.google.com/maps/dir/?api=1&destination=${ziel}`],
+      ['Apple Karten', `https://maps.apple.com/?daddr=${ziel}&dirflg=d`],
+      ['Waze', `https://waze.com/ul?q=${ziel}&navigate=yes`],
+      ['OpenStreetMap', `https://www.openstreetmap.org/search?query=${ziel}`]
+    ];
+    for (const el of actions) {
+      el.innerHTML = (k.telefon || []).filter((t) => t.nummer).map((t) =>
+        `<a class="btn btn-gold" href="${esc(HD.telHref(t.nummer))}">${esc(t.bezeichnung ? `${t.bezeichnung} anrufen` : 'Anrufen')}<span class="kt-act-n">${esc(t.nummer)}</span></a>`).join('') +
+        '<details class="kt-route"><summary class="btn btn-outline">Route planen</summary><ul class="kt-route-list">' +
+        routeLinks.map(([t, h]) => `<li><a href="${esc(h)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('') + '</ul></details>';
     }
     for (const el of lines) {
       el.textContent = `Pfarrkanzlei: ${hours.filter(filled).map((h) => `${h.tage} ${h.zeit}`.trim()).join(' ')}`;
@@ -290,6 +307,7 @@
   function albumHTML(a, n) {
     const fotos = (a.fotos || []).filter((f) => f.bild && url(f.bild));
     const videos = (a.videos || []).map((v) => ({ ...v, id: youtubeId(v.url) })).filter((v) => v.id);
+    const files = (a.videos || []).filter((v) => v && (/\.(mp4|webm)$/i.test(v.datei || '') || (previewing && /^blob:/.test(v.datei || ''))) && url(v.datei));
     const audio = (a.audio || []).filter((h) => h.datei && url(h.datei));
     const date = HD.isoDate(a.datum);
     const dt = date && HD.dateFromIso(date);
@@ -308,6 +326,9 @@
         `<div class="gal-video"><button type="button" class="gal-video-load" data-yt="${esc(v.id)}" data-title="${esc(v.titel || a.titel)}">` +
           `<span class="gal-video-play" aria-hidden="true"></span><span class="gal-video-title">${esc(v.titel || 'Video abspielen')}</span>` +
           '<span class="gal-video-note">Beim Abspielen wird das Video von YouTube geladen.</span></button></div>').join('')}</div>` : '') +
+      (files.length ? `<div class="gal-videos">${files.map((v) =>
+        `<figure class="gal-video gal-video-file"><video controls preload="metadata" playsinline src="${esc(url(v.datei))}#t=0.1" aria-label="${esc(v.titel || a.titel)}"></video>` +
+        (v.titel ? `<figcaption class="gal-video-cap">${esc(v.titel)}</figcaption>` : '') + '</figure>').join('')}</div>` : '') +
       (audio.length ? `<div class="cd-samples gal-audio" role="group" aria-label="Aufnahmen">${audio.map((h) =>
         `<button type="button" class="cd-play" data-audio="${esc(url(h.datei))}" aria-pressed="false">${esc(h.titel || 'Aufnahme')}</button>`).join('')}</div>` : '') +
       '</article>';
@@ -315,10 +336,16 @@
   async function galerie() {
     const host = document.querySelector('[data-inhalt="galerie"]');
     if (!host) return;
-    const alben = ((await load('galerie.json')).alben || []).filter((a) => a && a.titel);
+    /* "sichtbar": erst ab diesem Tag (JJJJ-MM-TT) */
+    const d = new Date();
+    const heute = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const alben = ((await load('galerie.json')).alben || []).filter((a) => a && a.titel && !(a.sichtbar && a.sichtbar > heute));
     if (!alben.length) return;
     host.innerHTML = alben.map(albumHTML).join('');
-    /* Video erst auf Klick einbetten (youtube-nocookie, startet gleich) */
+    wireVideos(host);
+  }
+  /* Video erst auf Klick einbetten (youtube-nocookie, startet gleich) */
+  function wireVideos(host) {
     host.addEventListener('click', (ev) => {
       const b = ev.target.closest('.gal-video-load');
       if (!b || !/^[\w-]{11}$/.test(b.dataset.yt)) return;
@@ -331,6 +358,17 @@
       b.replaceWith(f);
     });
   }
+  /* Vorschau eines Albums in der Verwaltung (admin/galerie.html) */
+  window.AugGalerie = {
+    preview(album, host) {
+      previewing = true;
+      host.innerHTML = albumHTML(album, 0);
+      if (!host.dataset.wired) {
+        host.dataset.wired = '1';
+        wireVideos(host);
+      }
+    }
+  };
 
   /* ---------- Rundgang durch die Kirche ---------- */
   async function rundgang() {

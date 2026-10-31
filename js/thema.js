@@ -17,6 +17,11 @@
   'use strict';
 
   const html = d.documentElement;
+  /* Hell oder dunkel, vom Knopf in der Titelzeile gewaehlt (ohne Wahl folgt die Seite dem Geraet) */
+  try {
+    const modus = w.localStorage.getItem('aug-modus');
+    if (modus === 'dark' || modus === 'light') html.dataset.theme = modus;
+  } catch { /* ohne Speicher gilt die Einstellung des Geraets */ }
   const script = d.currentScript;
   const ROOT = script ? new URL('..', script.src).href : '/';
   const KEY = 'aug-themen';
@@ -100,6 +105,20 @@
     if (d.readyState !== 'loading') setLogo();
   }
 
+  /* Kleine Bildfassungen fuers Handy: data/bilder-klein.json listet die Bilder, zu denen es "<name>-m.webp" gibt
+     (erzeugt von tools/bilder-klein.py und beim Hochladen in der Verwaltung). klein(pfad) liefert auf schmalen
+     Bildschirmen die kleine Fassung, sonst das Original; ready ist erfuellt, sobald die Liste da ist. */
+  let kleinListe = new Set();
+  const schmal = w.matchMedia ? w.matchMedia('(max-width: 900px)') : { matches: false };
+  const kleinReady = fetch(`${ROOT}data/bilder-klein.json`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => { kleinListe = new Set((data && Array.isArray(data.bilder) ? data.bilder : []).filter((x) => typeof x === 'string')); })
+    .catch(() => { /* ohne Liste gelten die Originale */ });
+  w.AugBild = {
+    ready: kleinReady,
+    klein: (pfad) => (schmal.matches && kleinListe.has(pfad) ? String(pfad).replace(/\.webp$/, '-m.webp') : pfad)
+  };
+
   const thema = THEMEN.includes(html.dataset.thema) ? html.dataset.thema : 'augustinerkirche';
   /* Eintrag eines Themas; die Startseite hatte frueher keinen eigenen */
   const pick = (all, k) => all[k] || (k === 'startseite' ? all.augustinerkirche : null);
@@ -107,11 +126,23 @@
   /* Die Verwaltung braucht nur die Hilfen oben */
   if (html.dataset.thema === 'keins') return;
 
+  /* Der Name neben dem Logo bleibt unsichtbar, bis der eingetragene Name feststeht: sonst blitzt kurz der
+     Text aus dem HTML auf (css/style.css, .thema-wait). Spaetestens nach 0,8 s erscheint er in jedem Fall. */
+  html.classList.add('thema-wait');
+  const fertig = () => html.classList.remove('thema-wait');
+  w.setTimeout(fertig, 800);
+  let gemerkt = false;
   try {
     const cached = JSON.parse(w.localStorage.getItem(KEY) || 'null');
-    if (cached && pick(cached, thema)) apply(pick(cached, thema));
+    if (cached && pick(cached, thema)) {
+      apply(pick(cached, thema));
+      gemerkt = true;
+    }
   } catch { /* kein Speicher: dann erst mit der Datei */ }
-  d.addEventListener('DOMContentLoaded', setLogo);
+  d.addEventListener('DOMContentLoaded', () => {
+    setLogo();
+    if (gemerkt) fertig();
+  });
 
   fetch(`${ROOT}data/themen.json`, { cache: 'no-cache' })
     .then((r) => (r.ok ? r.json() : null))
@@ -121,5 +152,9 @@
       try { w.localStorage.setItem(KEY, JSON.stringify(all)); } catch { /* egal */ }
       apply(pick(all, thema) || STANDARD);
     })
-    .catch(() => { /* ohne Datei bleibt die Titelzeile, wie sie ist */ });
+    .catch(() => { /* ohne Datei bleibt die Titelzeile, wie sie ist */ })
+    .finally(() => {
+      if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', fertig);
+      else fertig();
+    });
 })(window, document);

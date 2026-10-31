@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
 <meta name="color-scheme" content="light"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="robots" content="noindex,nofollow"/>
@@ -89,10 +89,19 @@
               <div class="adm-pages-list" id="f-pages"></div>
               <span class="adm-hint" id="f-pages-hint">Häkchen bei allen Seiten, auf denen die Meldung stehen soll. Im Archiv stehen immer alle Meldungen.</span>
             </fieldset>
+            <fieldset class="adm-field full adm-pages adm-pub" aria-describedby="f-pub-hint">
+              <legend class="adm-label">Veröffentlichung</legend>
+              <label class="adm-check"><input type="checkbox" id="f-draft"/> Entwurf: auf der Website nicht sichtbar</label>
+              <p class="adm-approval" id="f-approval" hidden>Deine Meldungen gibt ein Admin frei. Sie werden als Entwurf gespeichert und erscheinen erst, wenn der Admin das Häkchen entfernt.</p>
+              <label class="adm-label" for="f-ab">Sichtbar ab <span class="adm-opt">optional</span></label>
+              <input class="adm-input" type="date" id="f-ab"/>
+              <span class="adm-hint" id="f-pub-hint">Ein Entwurf bleibt verborgen, bis das Häkchen entfernt wird. Mit „Sichtbar ab“ erscheint die Meldung von selbst an diesem Tag; das Enddatum zählt dann ab diesem Tag.</span>
+            </fieldset>
             <div class="adm-field full">
               <label class="adm-label" for="f-cat">Kategorie</label>
               <input class="adm-input" type="text" id="f-cat" list="dl-cat" aria-describedby="f-cat-hint"/>
-              <span class="adm-hint" id="f-cat-hint">z. B. Bericht, Kirchenmusik, Konzert, Pfarrleben. Ein Bericht kann bis zu 30 Fotos haben.</span>
+              <span class="adm-hint" id="f-cat-hint">z. B. Bericht, Kirchenmusik, Konzert, Pfarrleben. Die Kategorie wird im Archiv zum Filtern verwendet.</span>
+              <label class="adm-check"><input type="checkbox" id="f-report"/> Als Bericht kennzeichnen (bis zu 30 Fotos)</label>
             </div>
             <div class="adm-field full">
               <label class="adm-label" for="f-title">Titel<span class="adm-req">Pflichtfeld</span></label>
@@ -145,7 +154,7 @@
 
         <fieldset class="adm-fs">
           <legend>Fotos (Bildergalerie)</legend>
-          <p class="adm-hint adm-fs-lead">Erscheinen im Fenster der Meldung als Bildergalerie wie auf Facebook und lassen sich dort groß durchblättern. Bei der Kategorie <b>Bericht</b> bis zu 30 Fotos, sonst bis zu 5. Ohne eigenes Bild oben zeigt die Karte das erste Foto.</p>
+          <p class="adm-hint adm-fs-lead">Erscheinen im Fenster der Meldung als Bildergalerie wie auf Facebook und lassen sich dort groß durchblättern. Bei einem <b>Bericht</b> (Häkchen bei der Kategorie) bis zu 30 Fotos, sonst bis zu 5. Ohne eigenes Bild oben zeigt die Karte das erste Foto.</p>
           <div class="adm-ph-list" id="nv-photos"></div>
           <label class="adm-drop" id="nv-photo-drop">
             <span data-icon="image"></span>
@@ -154,6 +163,18 @@
             <input type="file" id="nv-photo-file" accept="image/*" multiple/>
           </label>
           <span class="adm-counter" id="nv-photo-count" aria-live="polite"></span>
+        </fieldset>
+
+        <fieldset class="adm-fs">
+          <legend>Videos</legend>
+          <p class="adm-hint adm-fs-lead">Eigene Videos als MP4 oder WebM (bis 200 MB), sie stehen im Fenster der Meldung unter der Galerie und werden erst beim Abspielen geladen. Am besten vorher auf Handy-Qualität oder Full HD verkleinern, damit sie schnell laden.</p>
+          <div class="adm-ph-list" id="nv-videos"></div>
+          <label class="adm-drop" id="nv-video-drop">
+            <span data-icon="upload"></span>
+            <span class="adm-drop-main">Videos hierher ziehen oder <u>auswählen</u></span>
+            <span class="adm-hint">Auch mehrere auf einmal. Die Dateien kommen beim Speichern nach <code>assets/video/news/</code>.</span>
+            <input type="file" id="nv-video-file" accept="video/mp4,video/webm,.mp4,.webm" multiple/>
+          </label>
         </fieldset>
 
         <fieldset class="adm-fs">

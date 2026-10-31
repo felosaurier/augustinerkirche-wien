@@ -2,7 +2,7 @@
 
 Dieses Paket stammt aus `python tools/paket.py{{OPTION}}`. Es enthält **nur den Programmcode** (Seiten, Stile, Skripte, Symbole) und erneuert damit eine Website, die schon auf dem Server läuft.
 
-**Nicht enthalten** sind die Inhalte, die auf dem Server in der Verwaltung gepflegt werden: `data/` (Tabellen, Hinweisbanner, Startseite, Bildnachweise, Impressum und Datenschutz …), `assets/img/`, `assets/audio/`, `assets/programme/`, `admin/zugaenge.json`, `admin/mitteilungen.json` und das Änderungsprotokoll `admin/protokoll.json`. Sie bleiben auf dem Server genau so, wie sie sind. Die Konfiguration des Webservers liegt unter `server/` bei; erneuert wird sie nur mit Schritt 4.
+**Nicht enthalten** sind die Inhalte, die auf dem Server in der Verwaltung gepflegt werden: `data/` (Tabellen, Hinweisbanner, Startseite, Bildnachweise, Impressum und Datenschutz …), `assets/img/`, `assets/audio/`, `assets/video/`, `assets/programme/`, `admin/zugaenge.json`, `admin/mitteilungen.json` und das Änderungsprotokoll `admin/protokoll.json`. Sie bleiben auf dem Server genau so, wie sie sind. Die Konfiguration des Webservers liegt unter `server/` bei; erneuert wird sie nur mit Schritt 4.
 
 {{HINWEISE}}
 

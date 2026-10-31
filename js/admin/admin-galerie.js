@@ -7,7 +7,8 @@
    - Anlegen, Bearbeiten, Verschieben, Löschen
    - Fotos als WebP nach assets/img/galerie/<album>/, mit Beschreibung
      und Bildnachweis; geschrieben wird erst beim Speichern
-   - Videos: Adressen von YouTube
+   - Videos: Adressen von YouTube {titel, url} oder eigene Dateien (MP4/WebM)
+     {titel, datei} nach assets/video/galerie/
    - Aufnahmen: MP3-Dateien nach assets/audio/galerie/
    Fehlt die Datei noch, beginnt die Liste leer; das erste Speichern legt sie an.
    Benoetigt js/hochaemter-data.js und js/admin/admin.js.
@@ -20,6 +21,7 @@
   const PATH = 'data/galerie.json';
   const IMG_DIR = 'assets/img/galerie/';
   const AUDIO_DIR = 'assets/audio/galerie/';
+  const VIDEO_DIR = 'assets/video/galerie/';
   const MAX_PHOTOS = 60;
   const MAX_AUDIO_MB = 30;
 
@@ -31,6 +33,9 @@
   const audio = new Map(); /* pfad -> File, neu gewaehlte Aufnahmen */
   let videos = null;      /* Listen-Eingabe der Videos */
   let tracks = null;      /* Listen-Eingabe der Aufnahmen */
+  const videoFiles = new Map(); /* pfad -> File, neu gewaehlte Videodateien */
+  const previewUrls = new Map(); /* pfad -> blob:-Adresse fuer die Vorschau */
+  let vfiles = null;      /* Listen-Eingabe der Videodateien */
   let snap = '';
 
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
@@ -63,6 +68,7 @@
     const src = fotos[0] && A.imageUrl(fotos[0].bild);
     const parts = [
       a.datum ? A.fmtShort(a.datum) : '',
+      HD.isoDate(a.sichtbar || '') > A.isoToday() ? `sichtbar ab ${A.fmtShort(HD.isoDate(a.sichtbar))}` : '',
       plural(fotos.length, 'Foto', 'Fotos'),
       (a.videos || []).length ? plural(a.videos.length, 'Video', 'Videos') : '',
       (a.audio || []).length ? plural(a.audio.length, 'Aufnahme', 'Aufnahmen') : ''
@@ -191,6 +197,19 @@
   }
 
   /* ---------- Fenster: Aufnahmen ---------- */
+  async function onVideoFiles(files) {
+    for (const picked of files) {
+      const ok = await A.checkVideo(picked);
+      if (!ok) continue;
+      const base = HD.slug(ok.file.name.replace(/\.[^.]+$/, ''), 60) || 'video';
+      let path = `${VIDEO_DIR}${base}.${ok.ext}`;
+      for (let n = 2; videoFiles.has(path) || (A.folder.state === 'ok' && await A.folder.exists(path)); n++) path = `${VIDEO_DIR}${base}-${n}.${ok.ext}`;
+      videoFiles.set(path, ok.file);
+      vfiles.add({ titel: ok.file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '), datei: path });
+    }
+    $('f-vfile').value = '';
+  }
+
   async function onAudio(files) {
     for (const picked of files) {
       if (!/\.mp3$/i.test(picked.name) && picked.type !== 'audio/mpeg') {
@@ -221,7 +240,7 @@
   }
 
   /* ---------- Fenster ---------- */
-  const dirtyState = () => A.snapshot($('ga-form')) + JSON.stringify(videos.values()) + JSON.stringify(tracks.values()) +
+  const dirtyState = () => A.snapshot($('ga-form')) + JSON.stringify(videos.values()) + JSON.stringify(vfiles.values()) + JSON.stringify(tracks.values()) +
     JSON.stringify(photos.map((p) => [p.key, p.alt, p.credit]));
 
   function openEditor(i = -1) {
@@ -232,11 +251,14 @@
     A.clearErrors(form);
     $('f-titel').value = a ? a.titel || '' : '';
     $('f-datum').value = a ? HD.isoDate(a.datum) : '';
+    $('f-ab').value = a ? HD.isoDate(a.sichtbar || '') : '';
     $('f-text').value = a ? a.text || '' : '';
     setPhotos(a);
-    videos.set(a ? a.videos || [] : []);
+    videos.set(a ? (a.videos || []).filter((v) => !v.datei) : []);
+    vfiles.set(a ? (a.videos || []).filter((v) => v.datei) : []);
     tracks.set(a ? a.audio || [] : []);
     audio.clear();
+    videoFiles.clear();
     $('ga-dlg-tag').textContent = a ? 'Bearbeiten' : 'Neues Album';
     $('ga-dlg-title').textContent = a ? a.titel : 'Neues Album';
     $('ga-delete').hidden = !a;
@@ -250,6 +272,7 @@
     const titel = clean($('f-titel').value);
     const datum = HD.isoDate($('f-datum').value) || '';
     const vids = videos.values().map((v) => ({ titel: clean(v.titel), url: clean(v.url) })).filter((v) => v.titel || v.url);
+    const vrows = vfiles.values().map((v) => ({ titel: clean(v.titel), datei: clean(v.datei) })).filter((v) => v.titel || v.datei);
     const rows = tracks.values().map((h) => ({ titel: clean(h.titel), datei: clean(h.datei) })).filter((h) => h.titel || h.datei);
     const errors = [];
     if (!titel) errors.push([$('f-titel'), 'Bitte den Titel eintragen.']);
@@ -258,6 +281,12 @@
       const field = [...videos.el.querySelectorAll('input[data-key="url"]')].find((inp) => clean(inp.value) === badVideo.url) ||
         videos.el.querySelector('input[data-key="url"]');
       errors.push([field, `Video „${badVideo.titel || badVideo.url || 'ohne Adresse'}“: bitte eine Adresse von YouTube eintragen.`]);
+    }
+    const badFile = vrows.find((v) => !v.datei || !/\.(mp4|webm)$/i.test(v.datei) || !HD.safeUrl(v.datei, '../'));
+    if (badFile) {
+      const field = [...vfiles.el.querySelectorAll('input[data-key="datei"]')].find((inp) => clean(inp.value) === badFile.datei) ||
+        vfiles.el.querySelector('input[data-key="datei"]');
+      errors.push([field, `Videodatei „${badFile.titel || badFile.datei}“: bitte eine MP4- oder WebM-Datei angeben.`]);
     }
     const badTrack = rows.find((h) => !h.datei || !/\.mp3$/i.test(h.datei) || !HD.safeUrl(h.datei, '../'));
     if (badTrack) {
@@ -283,11 +312,16 @@
         p.blob = null;
       }
       for (const h of rows) if (audio.has(h.datei)) await A.saveFile(h.datei, audio.get(h.datei));
+      for (const v of vrows) if (videoFiles.has(v.datei)) await A.saveFile(v.datei, videoFiles.get(v.datei));
       const album = {
         titel, datum, text: HD.cleanLines($('f-text').value),
+        ...(HD.isoDate($('f-ab').value) ? { sichtbar: HD.isoDate($('f-ab').value) } : {}),
         fotos: photos.map((p) => ({ bild: p.path, alt: clean(p.alt), breite: p.w, hoehe: p.h })),
         /* einheitliche Adresse, egal wie sie eingetragen wurde */
-        videos: vids.map((v) => ({ titel: v.titel, url: `https://www.youtube.com/watch?v=${youtubeId(v.url)}` })),
+        videos: [
+          ...vids.map((v) => ({ titel: v.titel, url: `https://www.youtube.com/watch?v=${youtubeId(v.url)}` })),
+          ...vrows.map((v) => ({ titel: v.titel || 'Video', datei: v.datei }))
+        ],
         audio: rows.map((h) => ({ titel: h.titel || 'Aufnahme', datei: h.datei }))
       };
       const next = alben.slice();
@@ -307,6 +341,33 @@
     } finally {
       btn.disabled = false;
     }
+  }
+
+  /* Vorschau mit dem Stand des Formulars (ungespeichert: neue Dateien als blob:) */
+  function previewUrl(path) {
+    if (!videoFiles.has(path)) return path;
+    if (!previewUrls.has(path)) previewUrls.set(path, URL.createObjectURL(videoFiles.get(path)));
+    return previewUrls.get(path);
+  }
+  function openPreview() {
+    if (!window.AugGalerie) {
+      A.toast('Die Vorschau konnte nicht geladen werden. Bitte die Seite neu laden.', 'err');
+      return;
+    }
+    const src = (p) => (p.url.startsWith('blob:') ? p.url : p.path);
+    const album = {
+      titel: clean($('f-titel').value) || 'Titel des Albums',
+      datum: HD.isoDate($('f-datum').value) || '',
+      text: HD.cleanLines($('f-text').value),
+      fotos: photos.map((p) => ({ bild: src(p), alt: clean(p.alt), breite: p.w, hoehe: p.h })),
+      videos: [
+        ...videos.values().filter((v) => youtubeId(v.url)).map((v) => ({ titel: clean(v.titel), url: `https://www.youtube.com/watch?v=${youtubeId(v.url)}` })),
+        ...vfiles.values().filter((v) => v.datei).map((v) => ({ titel: clean(v.titel), datei: previewUrl(v.datei) }))
+      ],
+      audio: tracks.values().filter((h) => h.datei).map((h) => ({ titel: clean(h.titel), datei: h.datei }))
+    };
+    window.AugGalerie.preview(album, $('ga-prev-body'));
+    $('ga-prev').showModal();
   }
 
   async function remove(i) {
@@ -354,6 +415,13 @@
       ],
       addLabel: 'Video hinzufügen', rowLabel: 'Video'
     });
+    vfiles = A.listEditor($('ga-vfiles'), {
+      fields: [
+        { key: 'titel', label: 'Titel des Videos', placeholder: 'z. B. Einzug zum Hochamt' },
+        { key: 'datei', label: 'Videodatei', placeholder: 'assets/video/galerie/….mp4' }
+      ],
+      addLabel: 'Videodatei von Hand eintragen', rowLabel: 'Videodatei'
+    });
     tracks = A.listEditor($('ga-audio'), {
       fields: [
         { key: 'titel', label: 'Titel der Aufnahme', placeholder: 'z. B. Kyrie' },
@@ -363,11 +431,18 @@
     });
     $('ga-new').addEventListener('click', () => openEditor());
     $('ga-form').addEventListener('submit', save);
+    $('ga-preview').addEventListener('click', openPreview);
+    $('ga-prev').addEventListener('click', (ev) => {
+      if (ev.target === $('ga-prev') || ev.target.closest('[data-close]')) $('ga-prev').close();
+    });
+    $('ga-prev').addEventListener('close', () => $('ga-prev-body').querySelectorAll('video,audio').forEach((m) => m.pause()));
     $('ga-delete').addEventListener('click', () => { if (edit >= 0) remove(edit); });
     $('ga-photo-file').addEventListener('change', (ev) => addPhotos(ev.target.files));
     A.wireDrop($('ga-photo-drop'), addPhotos);
     $('f-audio').addEventListener('change', (ev) => onAudio([...ev.target.files]));
     A.wireDrop($('ga-audio-drop'));
+    $('f-vfile').addEventListener('change', (ev) => onVideoFiles([...ev.target.files]));
+    A.wireDrop($('ga-vfile-drop'));
     $('ga-photos').addEventListener('input', (ev) => {
       const k = ev.target.closest('.adm-ph');
       const p = k && photos.find((x) => x.key === k.dataset.k);

@@ -24,7 +24,7 @@
   const KEYS = {
     datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
     details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',
-    weitererlink: 'link2', weitererlinktext: 'linktext2', bildausschnitt: 'focus', seiten: 'pages'
+    weitererlink: 'link2', weitererlinktext: 'linktext2', bildausschnitt: 'focus', seiten: 'pages', bericht: 'report', entwurf: 'draft', ab: 'from'
   };
   const CLOSE_ICON = '<svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
 
@@ -53,6 +53,10 @@
     const out = HD.rowsToRaw(HD.parseCSV(text), KEYS).map((o, order) => {
       const iso = HD.isoDate(o.date);
       if (!iso || !o.title) return null;
+      /* Entwurf oder noch nicht "Sichtbar ab": gibt es fuer Besucher nicht */
+      const d0 = new Date();
+      const today = `${d0.getFullYear()}-${HD.pad(d0.getMonth() + 1)}-${HD.pad(d0.getDate())}`;
+      if (/^ja$/i.test(o.draft || '') || (HD.isoDate(o.from || '') && HD.isoDate(o.from) > today)) return null;
       return {
         id: `${iso}-${HD.slug(o.title)}`,
         iso, order,
@@ -65,6 +69,7 @@
         link2: o.link2 || '', linktext2: o.linktext2 || '',
         focus: /^\d{1,3}% \d{1,3}%$/.test(o.focus || '') ? o.focus : '',
         pages: o.pages || '',
+        report: /^ja$/i.test(o.report || '') || /^bericht$/i.test(o.cat || ''),
         photos: []
       };
     }).filter(Boolean);
@@ -92,14 +97,17 @@
   /* Vorschaubild: eigenes Bild, sonst das Plakat (oberer Ausschnitt), sonst das erste
      Foto der Galerie, sonst das goldene Logo */
   function thumbHTML(e, cls) {
-    const own = url(e.thumb || e.poster);
-    const src = own || (e.photos[0] ? url(e.photos[0].src) : '');
+    const klein = (p) => (window.AugBild && p ? window.AugBild.klein(p) : p);
+    const own = url(klein(e.thumb || e.poster));
+    const src = own || (e.photos[0] ? url(klein(e.photos[0].src)) : '');
     if (src) {
       const pos = own && e.focus ? ` style="object-position:${e.focus}"` : '';
       return `<img class="${cls}${own && e.poster ? '' : ' news-thumb-photo'}" src="${esc(src)}" alt="" width="640" height="480" loading="lazy" decoding="async"${pos}/>`;
     }
     return `<span class="news-noimg"><img src="${esc(base)}assets/logo-gold.png" alt="" width="64" height="64" loading="lazy" decoding="async"/></span>`;
   }
+  const DOC = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 15.5h7M9 19h4"/></svg>';
+  const SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/></svg>';
   const CAMERA = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
   const photoCount = (n) => `${n} ${n === 1 ? 'Foto' : 'Fotos'}`;
 
@@ -107,7 +115,7 @@
   function cardHTML(e) {
     return `<a class="news-card" href="${esc(pageUrl(e.id))}" data-id="${esc(e.id)}">` +
       `<div class="news-card-img">${thumbHTML(e, 'news-thumb')}` +
-        (e.cat ? `<span class="news-card-cat">${esc(e.cat)}</span>` : '') +
+        (e.cat || e.report ? `<span class="news-card-cat">${e.report ? DOC : ''}${esc(e.cat || 'Bericht')}</span>` : '') +
         (e.photos.length > 1 ? `<span class="news-card-photos">${CAMERA}${photoCount(e.photos.length)}</span>` : '') +
       '</div>' +
       '<div class="news-card-body">' +
@@ -146,51 +154,74 @@
   }
   function renderArchive(el) {
     /* Alle Meldungen, auch die auf der Startseite: so muss man nicht zurueck */
-    const older = entries;
-    if (!older.length) {
+    if (!entries.length) {
       el.innerHTML = '<p class="s-text">Es gibt noch keine Meldungen.</p>';
       return;
     }
-    /* Einmal nach Jahren gruppieren (Map behaelt die Einfuegereihenfolge) */
-    const byYear = new Map();
-    for (const e of older) {
-      const y = e.dateObj.getFullYear();
-      if (!byYear.has(y)) byYear.set(y, []);
-      byYear.get(y).push(e);
-    }
-    const years = [...byYear.keys()].sort((a, b) => b - a);
+    const years = [...new Set(entries.map((e) => e.dateObj.getFullYear()))].sort((a, b) => b - a);
+    const cats = [...new Set(entries.map((e) => e.cat).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de'));
+    const hasReports = entries.some((e) => e.report);
+    const opt = (v, t, n) => `<option value="${esc(v)}">${esc(t)}${n === undefined ? '' : ` (${n})`}</option>`;
+    const countBy = (fn) => entries.reduce((m, e) => m.set(fn(e), (m.get(fn(e)) || 0) + 1), new Map());
+    const catN = countBy((e) => e.cat);
+    const yearN = countBy((e) => e.dateObj.getFullYear());
+    const monthN = countBy((e) => e.dateObj.getMonth());
+    const months = [...monthN.keys()].sort((a, b) => a - b);
 
-    /* Handy: Jahr als Aufklappmenue (Reiter ausgeblendet, siehe style.css) */
     el.innerHTML =
-      '<div class="kal-select-wrap news-year-wrap"><label class="kal-select-label" for="news-year-select">Jahr wählen</label>' +
-        '<select id="news-year-select" class="kal-select">' +
-          years.map((y) => `<option value="${y}">${y}</option>`).join('') +
-        '</select></div>' +
-      '<div class="news-years" role="group" aria-label="Jahr wählen">' +
-        years.map((y, i) =>
-          `<button type="button" class="news-year${i === 0 ? ' active' : ''}" data-year="${y}" aria-pressed="${i === 0}">${y}<span class="news-year-n">${byYear.get(y).length}</span></button>`
-        ).join('') +
-      '</div>' +
-      '<div class="news-rows" id="news-rows" aria-live="polite"></div>';
+      '<form class="news-filter" role="search" aria-label="Archiv filtern" onsubmit="return false">' +
+        '<div class="news-filter-field news-filter-q"><label for="nf-q">Suche</label>' +
+          '<input type="search" id="nf-q" class="news-filter-input" placeholder="Titel oder Text" autocomplete="off"/></div>' +
+        '<div class="news-filter-field"><label for="nf-cat">Kategorie</label>' +
+          `<select id="nf-cat" class="news-filter-input">${opt('', 'Alle Kategorien')}${cats.map((c) => opt(c, c, catN.get(c))).join('')}</select></div>` +
+        '<div class="news-filter-field"><label for="nf-year">Jahr</label>' +
+          `<select id="nf-year" class="news-filter-input">${opt('', 'Alle Jahre')}${years.map((y) => opt(y, y, yearN.get(y))).join('')}</select></div>` +
+        '<div class="news-filter-field"><label for="nf-month">Monat</label>' +
+          `<select id="nf-month" class="news-filter-input">${opt('', 'Alle Monate')}${months.map((m) => opt(m, HD.MONTHS[m], monthN.get(m))).join('')}</select></div>` +
+        (hasReports ? '<label class="news-filter-check"><input type="checkbox" id="nf-report"/> Nur Berichte</label>' : '') +
+        '<button type="button" class="news-filter-reset" id="nf-reset" hidden>Zurücksetzen</button>' +
+      '</form>' +
+      '<p class="news-filter-count" id="nf-count" aria-live="polite"></p>' +
+      '<div class="news-rows" id="news-rows"></div>';
 
     const rows = qs('#news-rows', el);
-    const select = qs('#news-year-select', el);
-    /* Reiter und Aufklappmenue zeigen immer dasselbe Jahr */
-    const show = (y) => {
-      rows.innerHTML = byYear.get(y).map(rowHTML).join('');
-      for (const x of el.querySelectorAll('.news-year')) {
-        const on = Number(x.dataset.year) === y;
-        x.classList.toggle('active', on);
-        x.setAttribute('aria-pressed', String(on));
+    const q = qs('#nf-q', el), cat = qs('#nf-cat', el), year = qs('#nf-year', el), month = qs('#nf-month', el);
+    const rep = qs('#nf-report', el), reset = qs('#nf-reset', el), count = qs('#nf-count', el);
+    const fold = (t) => String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+    const apply = () => {
+      const words = fold(q.value).split(/\s+/).filter(Boolean);
+      const list = entries.filter((e) =>
+        (!cat.value || e.cat === cat.value) &&
+        (!year.value || String(e.dateObj.getFullYear()) === year.value) &&
+        (!month.value || String(e.dateObj.getMonth()) === month.value) &&
+        (!rep || !rep.checked || e.report) &&
+        (!words.length || words.every((w) => fold(`${e.title} ${e.teaser} ${e.cat}`).includes(w))));
+      const filtered = !!(q.value || cat.value || year.value || month.value || (rep && rep.checked));
+      reset.hidden = !filtered;
+      count.textContent = filtered ? `${list.length} von ${entries.length} Meldungen` : '';
+      if (!list.length) {
+        rows.innerHTML = '<p class="s-text">Keine Meldung gefunden. Bitte die Filter ändern.</p>';
+        return;
       }
-      select.value = String(y);
+      /* Nach Jahren gruppiert (die Liste ist schon neueste zuerst) */
+      let html = '', last = null;
+      for (const e of list) {
+        const y = e.dateObj.getFullYear();
+        if (y !== last) { html += `<h2 class="news-year-head">${y}</h2>`; last = y; }
+        html += rowHTML(e);
+      }
+      rows.innerHTML = html;
     };
-    el.addEventListener('click', (ev) => {
-      const b = ev.target.closest('.news-year');
-      if (b) show(Number(b.dataset.year));
+    el.addEventListener('input', apply);
+    el.addEventListener('change', apply);
+    reset.addEventListener('click', () => {
+      q.value = ''; cat.value = ''; year.value = ''; month.value = '';
+      if (rep) rep.checked = false;
+      apply();
+      q.focus();
     });
-    select.addEventListener('change', () => show(Number(select.value)));
-    show(years[0]);
+    apply();
   }
 
   /* ---------- Fenster ---------- */
@@ -205,13 +236,36 @@
       '<div class="nd-layout"><div class="nd-media"></div><div class="nd-content"></div></div>';
     document.body.appendChild(dialog);
     /* Klick auf den abgedunkelten Hintergrund (das dialog-Element selbst) schliesst */
-    dialog.addEventListener('click', (ev) => { if (ev.target === dialog) close(); });
+    dialog.addEventListener('click', (ev) => {
+      if (ev.target === dialog) close();
+      const b = ev.target.closest('[data-share]');
+      if (b) share(b);
+    });
     dialog.addEventListener('close', () => {
+      dialog.querySelectorAll('video').forEach((v) => v.pause());
       document.documentElement.classList.remove('nd-lock');
       if (!previewing) history.replaceState(null, '', location.pathname);
       if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
     });
     qs('.nd-close', dialog).addEventListener('click', close);
+  }
+  /* Teilen: Menue des Geraets (Handy), sonst Link in die Zwischenablage */
+  async function share(btn) {
+    const e = entries.find((x) => x.id === btn.dataset.share);
+    if (!e) return;
+    const link = new URL(pageUrl(e.id), location.href).href;
+    const note = btn.parentNode.querySelector('.nd-share-note');
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: e.title, text: e.teaser, url: link });
+        return;
+      }
+      await navigator.clipboard.writeText(link);
+      note.textContent = 'Link kopiert.';
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+      note.textContent = link;
+    }
   }
   function close() {
     if (dialog && dialog.open) dialog.close();
@@ -233,6 +287,17 @@
         return `<a class="nd-g" href="${esc(src)}" data-lightbox data-gallery="news" data-caption="${esc(HD.plainText(p.alt))}"${i >= 5 ? ' hidden' : ''} title="${esc(label)}">` +
           `<img src="${esc(src)}" alt="${esc(label)}" loading="lazy" decoding="async" data-bn=""/>${more}</a>`;
       }).join('') + '</div>';
+  }
+
+  /* Eigene Videos der Meldung (MP4/WebM), geladen wird erst beim Abspielen */
+  function videosHTML(list) {
+    const playable = (s) => /\.(mp4|webm)$/i.test(s) || (previewing && /^blob:/.test(s));
+    const items = list.filter((v) => v && playable(String(v.src)))
+      .map((v) => ({ src: url(v.src), titel: HD.plainText(v.titel) })).filter((v) => v.src);
+    if (!items.length) return '';
+    return '<div class="nd-videos">' + items.map((v) =>
+      `<figure class="nd-video"><video controls preload="metadata" playsinline src="${esc(v.src)}#t=0.1" aria-label="${esc(v.titel || 'Video')}"></video>` +
+      (v.titel ? `<figcaption>${esc(v.titel)}</figcaption>` : '') + '</figure>').join('') + '</div>';
   }
 
   function mediaHTML(e) {
@@ -283,18 +348,23 @@
       ? [{ src: e.thumb, alt: '' }, ...e.photos] : e.photos;
     qs('.nd-layout', dialog).classList.toggle('nd-photo', !e.poster);
     qs('.nd-layout', dialog).classList.toggle('nd-single', single);
-    media.innerHTML = single ? '' : mediaHTML(e);
+    /* Mit Plakat: Fotos in der linken Spalte unter dem Plakat */
+    media.innerHTML = single ? '' : `<div class="nd-media-in">${mediaHTML(e)}${galleryHTML(gallery, e.title)}</div>`;
 
     content.innerHTML =
-      (e.cat ? `<div class="nd-meta"><span class="nd-cat">${esc(e.cat)}</span></div>` : '') +
+      (e.cat || e.report ? '<div class="nd-meta">' +
+        (e.report ? `<span class="nd-cat nd-report">${DOC}Bericht</span>` : '') +
+        (e.cat && !(e.report && /^bericht$/i.test(e.cat)) ? `<span class="nd-cat">${esc(e.cat)}</span>` : '') + '</div>' : '') +
       `<h2 class="nd-title" id="nd-title">${esc(e.title)}</h2>` +
       `<p class="nd-teaser">${linkify(e.teaser)}</p>` +
       (e.infos.length ? '<div class="nd-infos">' + e.infos.map((r) =>
         `<div class="nd-info"><div class="nd-info-label">${esc(r.label || 'Info')}</div><div class="nd-info-value">${linkify(r.value)}</div></div>`
       ).join('') + '</div>' : '') +
       (e.details.length ? `<div class="nd-details">${e.details.map((p) => `<p>${linkify(p)}</p>`).join('')}</div>` : '') +
-      galleryHTML(gallery, e.title) +
-      actionsHTML(e);
+      (single ? galleryHTML(gallery, e.title) : '') +
+      videosHTML(e.videos || []) +
+      actionsHTML(e) +
+      (previewing ? '' : `<div class="nd-share"><button type="button" class="nd-share-btn" data-share="${esc(e.id)}">${SHARE}Meldung teilen</button><span class="nd-share-note" role="status"></span></div>`);
 
     content.scrollTop = 0;
     media.scrollTop = 0;
@@ -342,6 +412,7 @@
       const res = await fetch(`${base}data/news.csv`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       entries = parse(HD.mailDecode(await res.text()));
+      if (window.AugBild) await Promise.race([window.AugBild.ready, new Promise((r) => setTimeout(r, 400))]);
     } catch {
       host.innerHTML = '<p class="s-text">Die Neuigkeiten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.</p>';
       return;
@@ -356,6 +427,17 @@
       }
     } catch {
       /* ohne Galerie weiter */
+    }
+    /* Videos der Meldungen; fehlt die Datei, gibt es eben keine */
+    try {
+      const vmap = (await HD.fetchJSON(`${base}data/news-videos.json`)).videos || {};
+      for (const e of entries) {
+        e.videos = (Array.isArray(vmap[e.id]) ? vmap[e.id] : [])
+          .filter((v) => v && typeof v.datei === 'string')
+          .map((v) => ({ src: v.datei, titel: String(v.titel || '') }));
+      }
+    } catch {
+      /* ohne Videos weiter */
     }
     if (grid) renderLatest(grid);
     if (archive) renderArchive(archive);

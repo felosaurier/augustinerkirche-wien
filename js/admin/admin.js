@@ -158,9 +158,15 @@
     const r = acc.rechte;
     return {
       bereiche: Array.isArray(r.bereiche) ? r.bereiche.map(String) : [],
-      runden: Array.isArray(r.runden) ? r.runden.map(String) : []
+      runden: Array.isArray(r.runden) ? r.runden.map(String) : [],
+      freigabe: !!r.freigabe
     };
   }
+  /* Redaktion mit Freigabe: Meldungen werden nur als Entwurf gespeichert, ein Admin gibt sie frei */
+  const needsApproval = () => {
+    const r = rightsOf(session());
+    return !!r && r.freigabe;
+  };
   const can = (key) => {
     const r = rightsOf(session());
     return !r || r.bereiche.includes(key);
@@ -881,6 +887,8 @@
       renderPending();
     }
     if (isText) lastText.set(path, after);
+    /* Neues Bild in assets/img: dazu eine kleine Fassung fuers Handy (<name>-m.webp, Liste data/bilder-klein.json) */
+    if (/^assets\/img\/.+\.webp$/.test(path) && !/-m\.webp$/.test(path) && blob.type === 'image/webp') await makeSmall(path, blob);
     noteChange(path, isText ? describeChange(path, before, after) : [`Datei gespeichert: ${fileName(path)}`]);
     return direct;
   }
@@ -893,6 +901,36 @@
     } catch {
       return null;
     }
+  }
+  /* Kleine Fassung eines Bildes (900 px breit) fuers Handy; nur wenn das Bild deutlich groesser ist */
+  const SMALL_LIST = 'data/bilder-klein.json';
+  let smallChain = Promise.resolve();
+  async function makeSmall(path, blob) {
+    try {
+      const bmp = await createImageBitmap(blob);
+      const w = bmp.width;
+      const h = bmp.height;
+      if (w <= 1100) {
+        if (bmp.close) bmp.close();
+        return;
+      }
+      const W = 900;
+      const c = document.createElement('canvas');
+      c.width = W;
+      c.height = Math.round((h * W) / w);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      if (bmp.close) bmp.close();
+      const small = await new Promise((r) => c.toBlob(r, 'image/webp', 0.78));
+      if (!small || small.size >= blob.size * 0.85) return;
+      await saveFile(path.replace(/\.webp$/, '-m.webp'), small);
+      /* Liste ergaenzen (nacheinander, damit parallele Uploads sich nicht ueberschreiben) */
+      smallChain = smallChain.then(async () => {
+        let list = [];
+        try { list = (await readJSON(SMALL_LIST)).bilder || []; } catch { /* Datei gibt es noch nicht */ }
+        if (!list.includes(path)) await saveFile(SMALL_LIST, JSON.stringify({ breite: W, bilder: [...list, path].sort() }, null, 2) + '\n');
+      }).catch(() => { /* die kleine Fassung ist nur eine Zugabe */ });
+      await smallChain;
+    } catch { /* ohne kleine Fassung gilt das Original */ }
   }
   const saveJSON = (path, data) => saveFile(path, JSON.stringify(data, null, 2) + '\n');
   /* Eine eben erst geschriebene Datei wieder verwerfen (z. B. Foto, das doch nicht
@@ -1298,14 +1336,15 @@
      Eingaben (input/change/click/drop, nach dem Ereignis per requestAnimationFrame) und
      zusaetzlich einer kurzen Abfrage, solange das Fenster offen ist (z. B. wenn ein Bild
      erst spaeter fertig geladen ist). dlg._isDirty ist eine Funktion ohne Argumente. */
-  function syncDirtyState(dlg, reset) {
+  function syncDirtyState(dlg, reset, force) {
     let dirty = false;
     try {
       dirty = !reset && dlg.open && !!dlg._isDirty && !!dlg._isDirty();
     } catch {
       /* Zustand gerade nicht lesbar: als unveraendert zeigen */
     }
-    if (dlg._dirtyShown === dirty && !reset) return;
+    if (!reset && dlg.open) saveDraft(dlg, dirty);
+    if (dlg._dirtyShown === dirty && !reset && !force) return;
     dlg._dirtyShown = dirty;
     dlg.classList.toggle('is-dirty', dirty);
     if (dlg._stateEl) dlg._stateEl.textContent = dirty ? 'Ungespeicherte Änderungen' : '';
@@ -1331,9 +1370,103 @@
     dlg.addEventListener('close', () => {
       clearInterval(dlg._dirtyTimer);
       cancelAnimationFrame(raf);
+      dropDraft(dlg);
       syncDirtyState(dlg, true);
     });
   }
+
+  /* ---------- Entwurf automatisch zwischenspeichern ----------
+     Solange ein Fenster mit ungespeicherten Eingaben offen ist, liegt der Stand im Browser
+     (localStorage, nur dieses Geraet). Schliesst man das Fenster (Speichern oder Verwerfen),
+     verschwindet er; bleibt er liegen (Seite neu geladen, Browser am Handy beendet, Verbindung weg),
+     bietet das Fenster beim naechsten Oeffnen an, ihn wiederherzustellen. Passwoerter, Dateien und
+     Eintraege ohne feste Kennung (Listenzeilen) werden nicht gesichert. */
+  const DRAFT_PREFIX = 'aug-adm-entwurf:';
+  const DRAFT_DAYS = 7;
+  const draftKey = (dlg) => {
+    const s = session();
+    const title = ((dlg.querySelector('.adm-dlg-title') || {}).textContent || '').trim();
+    return `${DRAFT_PREFIX}${s ? s.benutzer : ''}:${pageName()}:${dlg.id}:${title}`;
+  };
+  const draftEls = (dlg) => Array.from(dlg.querySelectorAll('.adm-dlg-body input, .adm-dlg-body select, .adm-dlg-body textarea'))
+    .filter((e) => !['file', 'password', 'hidden', 'button', 'submit', 'color'].includes(e.type) && (e.id || e.name));
+  const draftId = (e) => e.id || `${e.name}:${e.value}`;
+  const draftRead = (dlg) => {
+    const o = {};
+    for (const e of draftEls(dlg)) o[draftId(e)] = e.type === 'checkbox' || e.type === 'radio' ? e.checked : e.value;
+    return o;
+  };
+  function purgeDrafts() {
+    try {
+      const old = Date.now() - DRAFT_DAYS * 86400000;
+      for (const k of Object.keys(localStorage)) {
+        if (!k.startsWith(DRAFT_PREFIX)) continue;
+        let t = 0;
+        try { t = JSON.parse(localStorage.getItem(k)).t; } catch { /* kaputt: weg */ }
+        if (!(t > old)) localStorage.removeItem(k);
+      }
+    } catch { /* ohne Speicher kein Entwurf */ }
+  }
+  function saveDraft(dlg, dirty) {
+    if (!dlg._draftKey || dlg._draftHold) return;
+    try {
+      if (dirty) localStorage.setItem(dlg._draftKey, JSON.stringify({ t: Date.now(), v: draftRead(dlg) }));
+      else localStorage.removeItem(dlg._draftKey);
+    } catch { /* Speicher voll oder gesperrt */ }
+  }
+  function dropDraft(dlg) {
+    try { if (dlg._draftKey) localStorage.removeItem(dlg._draftKey); } catch { /* egal */ }
+    dlg._draftHold = false;
+    const bar = dlg.querySelector('.adm-draft');
+    if (bar) bar.remove();
+  }
+  function offerDraft(dlg) {
+    dlg._draftHold = false;
+    dlg.querySelectorAll('.adm-draft').forEach((b) => b.remove());
+    let draft = null;
+    try { draft = JSON.parse(localStorage.getItem(dlg._draftKey)); } catch { /* keiner da */ }
+    const body = dlg.querySelector('.adm-dlg-body');
+    if (!draft || !draft.v || !body) return;
+    const now = draftRead(dlg);
+    if (Object.keys(draft.v).every((k) => !(k in now) || now[k] === draft.v[k])) {
+      dropDraft(dlg);
+      return;
+    }
+    dlg._draftHold = true;
+    const dt = new Date(draft.t);
+    const when = `${dt.toLocaleDateString('de-AT')} um ${dt.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })} Uhr`;
+    const bar = d.createElement('div');
+    bar.className = 'adm-draft';
+    bar.setAttribute('role', 'status');
+    bar.innerHTML = `<div><b>${icon('info')}Nicht gespeicherter Entwurf gefunden</b><span>Stand: ${esc(when)}. Fotos und Listenzeilen bitte nach dem Wiederherstellen prüfen.</span></div>` +
+      '<div class="adm-draft-act"><button type="button" class="btn btn-dark btn-sm" data-draft="restore">Wiederherstellen</button>' +
+      '<button type="button" class="btn btn-quiet btn-sm" data-draft="drop">Verwerfen</button></div>';
+    bar.addEventListener('click', (ev) => {
+      const act = ev.target.closest('[data-draft]');
+      if (!act) return;
+      if (act.dataset.draft === 'restore') {
+        for (const e of draftEls(dlg)) {
+          const k = draftId(e);
+          if (!(k in draft.v)) continue;
+          if (e.type === 'checkbox' || e.type === 'radio') e.checked = !!draft.v[k];
+          else e.value = draft.v[k];
+          e.dispatchEvent(new Event('input', { bubbles: true }));
+          e.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        dlg._draftHold = false;
+        bar.remove();
+        syncDirtyState(dlg);
+        toast('Entwurf wiederhergestellt.');
+      } else {
+        dropDraft(dlg);
+      }
+    });
+    body.prepend(bar);
+  }
+  /* Handy: wird die Seite in den Hintergrund geschoben, kann der Browser sie beenden. Vorher sichern. */
+  const flushDrafts = () => d.querySelectorAll('dialog[open]').forEach((dlg) => { if (dlg._draftKey) syncDirtyState(dlg, false, true); });
+  d.addEventListener('visibilitychange', () => { if (d.visibilityState === 'hidden') flushDrafts(); });
+  w.addEventListener('pagehide', flushDrafts);
 
   /* Oeffnet ein <dialog>. isDirty(): ungespeicherte Eingaben? Dann wird
      beim Schliessen (Escape, X, Abbrechen) erst nachgefragt. */
@@ -1353,6 +1486,14 @@
     }
     foldSections(dlg);
     dlg.showModal();
+    purgeDrafts();
+    dlg._draftKey = opts.isDirty ? draftKey(dlg) : '';
+    /* Liegt ein Entwurf da, wird er bis zur Antwort nicht ueberschrieben (setTimeout statt rAF: laeuft auch im Hintergrund) */
+    dlg._draftHold = false;
+    if (dlg._draftKey) {
+      try { dlg._draftHold = !!localStorage.getItem(dlg._draftKey); } catch { /* kein Speicher */ }
+      if (dlg._draftHold) setTimeout(() => offerDraft(dlg), 0);
+    }
     ROOT.classList.add('adm-lock');
     /* erst im naechsten Takt: die Aufrufer setzen ihren Ausgangsstand (snap) erst nach openDialog */
     requestAnimationFrame(() => syncDirtyState(dlg));
@@ -1525,6 +1666,16 @@
       focus: danger ? 'no' : 'yes'
     });
     return r === 'yes';
+  }
+
+  /* Hinweise vor dem Speichern (keine Fehler): die Person entscheidet, ob trotzdem gespeichert wird */
+  async function confirmWarnings(items, { title = 'Vor dem Speichern', ok = 'Trotzdem speichern', cancel = 'Zurück zum Bearbeiten' } = {}) {
+    if (!items.length) return true;
+    return confirmBox({
+      title,
+      html: `<p>Das ist aufgefallen:</p><ul class="adm-warnlist">${items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`,
+      ok, cancel
+    });
   }
 
   /* ---------- Formularfehler: am Feld und als Liste oben ---------- */
@@ -1773,7 +1924,35 @@
     if (kind === 'jpg') return b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
     if (kind === 'webp') return b.length >= 12 && at(0, 'RIFF') && at(8, 'WEBP');
     if (kind === 'mp3') return b.length >= 3 && (at(0, 'ID3') || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0));
+    if (kind === 'mp4') return b.length >= 8 && at(4, 'ftyp');
+    if (kind === 'webm') return b.length >= 4 && b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3;
     return false;
+  }
+
+  /* Videodatei zum Hochladen pruefen (MP4 oder WebM, Endung und Dateikopf muessen passen).
+     Liefert {file, ext}; bei einem Fehler wird er gemeldet und null geliefert. */
+  const MAX_VIDEO_MB = 200;
+  async function checkVideo(picked) {
+    const ext = (picked.name.match(/\.(mp4|webm)$/i) || [])[1];
+    if (!ext) {
+      toast(`${picked.name}: bitte ein Video als MP4- oder WebM-Datei wählen.`, 'err');
+      return null;
+    }
+    if (picked.size > MAX_VIDEO_MB * 1024 * 1024) {
+      toast(`${picked.name} ist größer als ${MAX_VIDEO_MB} MB. Bitte kürzen oder stärker komprimieren.`, 'err');
+      return null;
+    }
+    let file;
+    try {
+      file = await stableFile(picked);
+    } catch {
+      return null;
+    }
+    if (!(await magicOk(file, ext.toLowerCase()))) {
+      toast(`${file.name}: Das ist kein gültiges Video (Dateiinhalt und Endung passen nicht zusammen).`, 'err');
+      return null;
+    }
+    return { file, ext: ext.toLowerCase() };
   }
 
   async function toWebp(file, opts = {}) {
@@ -1833,7 +2012,7 @@
 
   /* Neuigkeiten (data/news.csv): Spalten ueber die Ueberschrift finden,
      damit die Reihenfolge egal ist; neueste Meldung zuerst */
-  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext', 'Bildausschnitt', 'Seiten'];
+  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext', 'Bildausschnitt', 'Seiten', 'Bericht', 'Entwurf', 'Ab'];
   function parseNews(text) {
     const rows = HD.parseCSV(text);
     if (!rows.length) return [];
@@ -1858,9 +2037,13 @@
     return Boolean(until) && until < today;
   }
   /* Nur Meldungen, die auch auf der Startseite stehen sollen (Spalte "Seiten") */
+  /* Entwurf oder noch nicht "Sichtbar ab": steht nirgends auf der Website */
+  function newsHidden(e, today = isoToday()) {
+    return /^ja$/i.test(e.Entwurf || '') || (!!HD.isoDate(e.Ab || '') && HD.isoDate(e.Ab) > today);
+  }
   function newsOnHome(list) {
     const today = isoToday();
-    const mine = list.filter((e) => HD.newsOnPage(e.Seiten, 'startseite'));
+    const mine = list.filter((e) => !newsHidden(e, today) && HD.newsOnPage(e.Seiten, 'startseite'));
     const live = mine.filter((e) => !newsExpired(e, today));
     const past = mine.filter((e) => newsExpired(e, today));
     return new Set([...live, ...past].slice(0, NEWS_HOME));
@@ -1985,7 +2168,8 @@
             g.items.map(([href, label, ico, keys]) =>
               `<li><a href="${href}" data-keys="${esc(keys || '')}"${isHere(href) ? ' aria-current="page"' : ''}>${icon(ico)}<span>${esc(label)}</span></a></li>`).join('') +
             '</ul></div>').join('') +
-          '<p class="adm-side-none" id="adm-side-none" hidden>Kein Bereich gefunden.</p>' +
+          '<div class="adm-side-hits" id="adm-side-hits" hidden></div>' +
+          '<p class="adm-side-none" id="adm-side-none" hidden>Nichts gefunden.</p>' +
         '</nav>' +
         '<div class="adm-side-foot">' +
           '<div class="adm-side-folder" data-adm-folder-side></div>' +
@@ -2105,11 +2289,11 @@
     sync();
 
     /* Suche: blendet nicht passende Eintraege aus; Enter oeffnet den ersten Treffer */
-    const visible = () => links.filter((a) => !a.closest('li').hidden);
+    const visible = () => links.filter((a) => !a.closest('li').hidden);   /* Bereiche der Leiste */
     const filter = () => {
       const words = normSearch(q.value).split(/\s+/).filter(Boolean);
       let any = 0;
-      side.querySelectorAll('.adm-side-group').forEach((g) => {
+      side.querySelectorAll('.adm-side-nav > .adm-side-group').forEach((g) => {
         const h = g.querySelector('.adm-side-h');
         let n = 0;
         g.querySelectorAll('li').forEach((li) => {
@@ -2121,12 +2305,93 @@
         g.hidden = !n;
         any += n;
       });
-      $('adm-side-none').hidden = any > 0;
+      navHits = any;
+      $('adm-side-none').hidden = any > 0 || hitCount > 0;
+      searchContent(words);
     };
+
+    /* Inhalte durchsuchen: Meldungen, Hochaemter, Runden, Personen … (nur, was die Person bearbeiten darf).
+       Der Bestand wird beim ersten Suchen geladen und danach wiederverwendet. */
+    let navHits = 0;
+    let hitCount = 0;
+    let index = null;
+    let seq = 0;
+    const hitBox = $('adm-side-hits');
+    const allowedHrefs = new Set(allowedNav().flatMap((g) => g.items.map(([href]) => href)));
+    const csvObjects = (text) => {
+      const rows = HD.parseCSV(text);
+      const head = (rows[0] || []).map((c) => String(c).replace(/^﻿/, '').trim());
+      return rows.slice(1).map((r) => Object.fromEntries(head.map((h, k) => [h, (r[k] || '').trim()])));
+    };
+    const SOURCES = [
+      ['neuigkeiten.html', 'Neuigkeiten', async () => parseNews(await readText('data/news.csv')).map((e) => ({
+        t: e.Titel, s: [e.Datum, e.Kategorie].filter(Boolean).join(' · '),
+        h: [e.Titel, e.Kurztext, e.Kategorie, e.Infos, e.Details].join(' '),
+        href: `neuigkeiten.html?bearbeiten=${encodeURIComponent(`${HD.isoDate(e.Datum)}-${HD.slug(e.Titel)}`)}`
+      }))],
+      ['hochaemter.html', 'Hochämter', async () => csvObjects(await readText('data/hochaemter.csv')).filter((e) => HD.isoDate(e.Datum)).map((e) => ({
+        t: [e.Anlass, e.Werk].filter(Boolean).join(': '), s: [e.Datum, e.Uhrzeit].filter(Boolean).join(' '),
+        h: Object.values(e).join(' '),
+        href: `hochaemter.html?bearbeiten=${HD.isoDate(e.Datum)}-${(e.Uhrzeit || '').replace(':', '')}`
+      }))],
+      ['runden.html', 'Runden', async () => ((await readJSON('data/runden.json')).runden || []).map((r) => ({
+        t: r.titel, s: r.kurztext || '', h: `${r.titel} ${r.kurztext || ''}`, href: `runden.html?bearbeiten=${encodeURIComponent(r.id)}`
+      }))],
+      ['solisten.html', 'Solisten', async () => (await readJSON('data/solisten.json')).map((x) => ({
+        t: x.name, s: x.voice || '', h: `${x.name} ${x.voice || ''}`, href: 'solisten.html'
+      }))],
+      ['personen.html?bereich=kloster', 'Mitbrüder', async () => ((await readJSON('data/personen.json')).mitbrueder || []).map((x) => ({
+        t: x.name, s: x.rolle || '', h: `${x.name} ${x.rolle || ''}`, href: 'personen.html?bereich=kloster'
+      }))],
+      ['personen.html?bereich=musik', 'Leitung & Organisten', async () => {
+        const p = await readJSON('data/personen.json');
+        return [...(p.leitung || []), ...(p.gastdirigenten || []), ...(p.organisten || [])]
+          .map((x) => (typeof x === 'string' ? { name: x } : x))
+          .map((x) => ({ t: x.name, s: x.rolle || '', h: `${x.name} ${x.rolle || ''}`, href: 'personen.html?bereich=musik' }));
+      }],
+      ['pgr.html', 'Pfarrgemeinderat', async () => ((await readJSON('data/pgr.json')).mitglieder || []).map((x) => ({
+        t: x.name, s: x.rolle || '', h: `${x.name} ${x.rolle || ''} ${x.beruf || ''}`, href: 'pgr.html'
+      }))],
+      ['cds.html', 'CDs', async () => ((await readJSON('data/cds.json')).gruppen || []).flatMap((g) => (g.cds || []).map((c) => ({
+        t: c.titel, s: g.titel || '', h: `${c.titel} ${c.werke || ''} ${c.mitwirkende || ''} ${c.leitung || ''}`, href: 'cds.html'
+      })))]
+    ].filter(([href]) => allowedHrefs.has(href));
+    const loadIndex = () => {
+      if (!index) {
+        index = Promise.all(SOURCES.map(async ([, label, load]) => {
+          try { return [label, (await load()).filter((x) => x.t).map((x) => ({ ...x, n: normSearch(x.h) }))]; } catch { return [label, []]; }
+        }));
+      }
+      return index;
+    };
+    async function searchContent(words) {
+      const mine = ++seq;
+      const long = words.join('').length >= 2;
+      if (!long || !SOURCES.length) {
+        hitCount = 0;
+        hitBox.hidden = true;
+        hitBox.innerHTML = '';
+        return;
+      }
+      const groups = await loadIndex();
+      if (mine !== seq) return;
+      let total = 0;
+      const html = groups.map(([label, list]) => {
+        const found = list.filter((x) => words.every((wd) => x.n.includes(wd)));
+        total += found.length;
+        return found.length ? `<div class="adm-side-group"><h2 class="adm-side-h">${esc(label)} (${found.length})</h2><ul>` +
+          found.slice(0, 5).map((x) => `<li><a href="${esc(x.href)}" class="adm-hit"><span>${esc(x.t)}</span>${x.s ? `<small>${esc(x.s)}</small>` : ''}</a></li>`).join('') +
+          '</ul></div>' : '';
+      }).join('');
+      hitCount = total;
+      hitBox.innerHTML = html;
+      hitBox.hidden = !total;
+      $('adm-side-none').hidden = navHits > 0 || total > 0;
+    }
     q.addEventListener('input', filter);
     q.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        const first = visible()[0];
+        const first = visible()[0] || hitBox.querySelector('a');
         if (first) location.href = first.href;
       } else if (e.key === 'Escape' && q.value) {
         e.stopPropagation();
@@ -2255,6 +2520,39 @@
     });
     bump();
   }
+
+  /* Als App installierbar (Handy: "Zum Startbildschirm"): Manifest und ein kleiner Service Worker.
+     Der Browser meldet, wenn sich die Verwaltung installieren laesst (nicht iPhone: dort ueber "Teilen"). */
+  const install = { event: null, done: false, listeners: [] };
+  if (!d.querySelector('link[rel="manifest"]')) {
+    const m = d.createElement('link');
+    m.rel = 'manifest';
+    m.href = 'manifest.webmanifest';
+    d.head.appendChild(m);
+  }
+  if ('serviceWorker' in w.navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    w.navigator.serviceWorker.register('sw.js', { scope: './' }).catch(() => { /* ohne Installation geht alles weiter */ });
+  }
+  w.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    install.event = e;
+    install.listeners.forEach((fn) => fn());
+  });
+  w.addEventListener('appinstalled', () => {
+    install.event = null;
+    install.done = true;
+    install.listeners.forEach((fn) => fn());
+  });
+  const installApp = async () => {
+    const e = install.event;
+    if (!e) return false;
+    e.prompt();
+    const r = await e.userChoice;
+    install.event = null;
+    install.listeners.forEach((fn) => fn());
+    return r.outcome === 'accepted';
+  };
+  const standalone = () => w.matchMedia('(display-mode: standalone)').matches || w.navigator.standalone === true;
 
   /* Warnung beim Verlassen mit ungespeicherten Aenderungen */
   const guards = [hasUnsaved];
@@ -2482,7 +2780,7 @@
     start: (fn) => starters.push(fn),
     guard: (fn) => guards.push(fn),
     /* Anmeldung und Zugaenge */
-    session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, isDev, adminRole, roleOf, ROLES, personenBereich,
+    session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, isDev, adminRole, roleOf, ROLES, personenBereich, needsApproval, confirmWarnings, appInstall: { can: () => !!install.event, run: installApp, standalone, onChange: (fn) => install.listeners.push(fn) },
     AREAS, RUNDEN_KEY, rightsOf, can, canRunde, canAllRunden, canAnyRunde,
     parseAccounts, accountsJSON, makeAccount, checkDevCode, checkPassword, normUser, stampOf,
     pwLevel, pwProblem, suggestPassword, MIN_PW, ACCOUNTS,
@@ -2492,7 +2790,7 @@
     /* Oberflaeche */
     toast, confirmBox, choiceBox, passwordBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,
     noticeHTML, noticeActive, showNotices,
-    listEditor, checkBlankRows, isBlankRow, toWebp, magicOk, wireDrop, log, recentLog, readProtocol, protocolError, PROTOCOL, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired,
+    listEditor, checkBlankRows, isBlankRow, toWebp, magicOk, checkVideo, wireDrop, log, recentLog, readProtocol, protocolError, PROTOCOL, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired, newsHidden,
     /* Datum */
     isoToday, isoOf, fmtDate, fmtShort, initials
   };

@@ -12,6 +12,8 @@
      "Bericht" bis zu 30, sonst bis zu 5; jede Meldung bekommt dafuer einen
      eigenen Ordner assets/img/news/JAHR/<Datum>-<Titel>/ (foto-1.webp …).
      Ohne eigenes Bild zeigt die Karte das erste Foto.
+   - Videos (MP4/WebM) in data/news-videos.json, Kennung -> [{datei, titel}],
+     Dateien in assets/video/news/JAHR/; erscheinen unter der Galerie
    - Schaltflaeche im Fenster: Ziel aus Listen waehlen (Hochamt oder
      Konzert, Runde, Seite der Website, andere Website) statt Adresse;
      liegt am Enddatum ein Termin, wird er zum Verknuepfen vorgeschlagen
@@ -53,6 +55,11 @@
   const toCSV = (list) => HD.csvText([A.NEWS_HEAD, ...list.map((o) => A.NEWS_HEAD.map((h) => o[h]))]);
   /* Neueste zuerst; am selben Tag bleibt die bisherige Reihenfolge */
   const sortEntries = (list) => list.sort((a, b) => HD.isoDate(b.Datum).localeCompare(HD.isoDate(a.Datum)));
+  /* Ohne Enddatum zaehlen zwei Wochen ab dem spaeteren von Datum und "Sichtbar ab" */
+  const untilBase = (iso) => {
+    const ab = HD.isoDate($('f-ab').value);
+    return ab && ab > iso ? ab : iso;
+  };
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
   /* ---------- Ziel der Schaltflaeche ---------- */
@@ -84,7 +91,7 @@
     ['Weitere', [
       ['pages/aspersdorf.html', 'Pfarre Aspersdorf', 'Nach Aspersdorf'],
       ['pages/archiv.html', 'Archiv der Neuigkeiten', 'Zum Archiv'],
-      ['pages/augustinerkirche.html#kontakt', 'Kontakt', 'Zum Kontakt']]]
+      ['pages/kontakt.html', 'Kontakt', 'Zum Kontakt']]]
   ];
   const PAGE_LIST = PAGES.flatMap(([, list]) => list);
 
@@ -282,7 +289,9 @@
       ? `<span class="adm-thumb${e.Plakat ? '' : ' photo'}"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"/></span>`
       : '<span class="adm-thumb none"><img src="../assets/logo-gold.png" alt=""/></span>';
     const place = placeOf(e, home);
-    const badge = place === 'home' ? '<span class="adm-badge on">Startseite</span>'
+    const badge = /^ja$/i.test(e.Entwurf || '') ? '<span class="adm-badge" title="Auf der Website nicht sichtbar">Entwurf</span>'
+      : A.newsHidden(e) ? `<span class="adm-badge" title="Noch nicht sichtbar">Geplant ab ${esc(isoToDe(HD.isoDate(e.Ab)))}</span>`
+      : place === 'home' ? '<span class="adm-badge on">Startseite</span>'
       : place === 'home-expired' ? `<span class="adm-badge on" title="Abgelaufen, füllt die Startseite unten auf, solange es weniger als ${A.NEWS_HOME} aktive Meldungen gibt">Startseite · abgelaufen</span>`
       : place === 'expired' ? '<span class="adm-badge">Abgelaufen · Archiv</span>'
       : !HD.newsOnPage(e.Seiten, 'startseite') ? '<span class="adm-badge on" title="Steht unter Aktuelles auf den gewählten Seiten">Aktuell</span>'
@@ -293,12 +302,15 @@
           `<span class="adm-row-date">${esc(e.Datum)}${e.Bis ? ` · bis ${esc(e.Bis)}` : ''}${e.Kategorie ? ` · ${esc(e.Kategorie)}` : ''}</span>` +
           `<span class="adm-row-title">${esc(e.Titel)}</span>` +
           `<span class="adm-row-people">${esc(e.Kurztext)}</span>` +
+          '<span class="adm-chips">' +
           (src ? '' : `<span class="adm-chip">${icon('image')}Ohne Bild: die Karte zeigt das Logo</span>`) +
           (gallery.length ? `<span class="adm-chip">${icon('image')}${plural(gallery.length, 'Foto', 'Fotos')} in der Galerie</span>` : '') +
           (e.Seiten ? `<span class="adm-chip">Nur auf: ${esc(HD.newsPages(e.Seiten).map((k) => HD.NEWS_PAGES.find(([x]) => x === k)[1]).join(', '))}</span>` : '') +
+          '</span>' +
         `</span>${badge}` +
       '</button>' +
       '<div class="adm-row-actions">' +
+        `<button type="button" class="adm-act" data-act="dup" data-i="${i}" aria-label="Duplizieren: ${esc(e.Titel)}">${icon('plus')}Duplizieren</button>` +
         `<button type="button" class="adm-act danger" data-act="del" data-i="${i}" aria-label="Löschen: ${esc(e.Titel)}">${icon('trash')}Löschen</button>` +
       '</div></li>';
   }
@@ -380,7 +392,7 @@
   }
 
   /* ---------- Fenster: Fotos (Bildergalerie) ---------- */
-  const isReport = () => /^bericht$/i.test($('f-cat').value.trim());
+  const isReport = () => $('f-report').checked;
   const photoLimit = () => (isReport() ? MAX_REPORT : MAX_PHOTOS);
   const notFound = (e) => !!e && (e.status === 404 || e.name === 'NotFoundError');
 
@@ -396,7 +408,7 @@
     const limit = photoLimit();
     $('nv-photos').innerHTML = photos.map((p, i) =>
       `<div class="adm-ph" data-k="${p.key}">` +
-        `<span class="adm-thumb"><img src="${esc(p.url)}" alt=""/></span>` +
+        `<span class="adm-thumb" data-ph-grip title="Zum Verschieben ziehen" style="cursor:grab"><img src="${esc(p.url)}" alt=""/></span>` +
         '<div class="adm-ph-fields">' +
           `<label class="adm-label" for="ph-alt-${p.key}">Beschreibung <span class="adm-opt">${i === 0 ? 'erstes Foto, ' : ''}steht unter dem Foto</span></label>` +
           `<input class="adm-input" type="text" id="ph-alt-${p.key}" data-ph="alt" value="${esc(p.alt)}" placeholder="z. B. Gemeinsames Mittagessen im Klostergarten"/>` +
@@ -412,7 +424,7 @@
     const over = photos.length > limit;
     const count = $('nv-photo-count');
     count.textContent = `${plural(photos.length, 'Foto', 'Fotos')} von höchstens ${limit}` +
-      (over ? `: bitte ${photos.length - limit} entfernen oder die Kategorie „Bericht“ wählen` : '');
+      (over ? `: bitte ${photos.length - limit} entfernen oder „Als Bericht kennzeichnen“ ankreuzen` : '');
     count.classList.toggle('over', over);
     $('nv-photo-drop').hidden = photos.length >= limit;
   }
@@ -436,8 +448,8 @@
     const free = photoLimit() - photos.length;
     if (list.length > free) {
       A.toast(free > 0
-        ? `Es passen nur noch ${plural(free, 'Foto', 'Fotos')} dazu (höchstens ${photoLimit()}${isReport() ? '' : ', bei der Kategorie „Bericht“ bis zu 30'}). Die übrigen wurden nicht übernommen.`
-        : `Es sind schon ${photoLimit()} Fotos da${isReport() ? '' : '. Bei der Kategorie „Bericht“ sind bis zu 30 möglich'}.`, 'err');
+        ? `Es passen nur noch ${plural(free, 'Foto', 'Fotos')} dazu (höchstens ${photoLimit()}${isReport() ? '' : ', als Bericht bis zu 30'}). Die übrigen wurden nicht übernommen.`
+        : `Es sind schon ${photoLimit()} Fotos da${isReport() ? '' : '. Als Bericht sind bis zu 30 möglich'}.`, 'err');
       list = list.slice(0, Math.max(0, free));
     }
     for (const file of list) {
@@ -457,7 +469,7 @@
         } catch { /* Groesse unbekannt */ }
         const path = await freePhotoPath(folderFor(), conv.ext);
         await A.saveFile(path, conv.blob);
-        photos.push({ key: `n${++photoSeq}`, path, url: URL.createObjectURL(conv.blob), ext: conv.ext, w, h, alt: '', credit: '', fresh: true });
+        photos.push({ key: `n${++photoSeq}`, path, url: URL.createObjectURL(conv.blob), ext: conv.ext, w, h, alt: '', credit: '', fresh: true, size: conv.blob.size });
         renderPhotos();
         renderPreview();
       } catch {
@@ -501,6 +513,62 @@
     for (const p of photos) p.fresh = false;   /* uebernommen: bleibt auch beim Schliessen */
   }
 
+  /* ---------- Fenster: Videos (data/news-videos.json: {videos: {Kennung: [{datei, titel}]}}) ---------- */
+  const VIDEOS_PATH = 'data/news-videos.json';
+  let videoMap = {};
+  let vids = [];           /* {key, path, titel, file}; file nur bei neu gewaehlten, noch nicht geschriebenen */
+  let vidSeq = 0;
+
+  async function loadVideos() {
+    try {
+      videoMap = (await A.readJSON(VIDEOS_PATH)).videos || {};
+    } catch (e) {
+      videoMap = {};
+      if (!notFound(e)) A.toast('Die Videos der Neuigkeiten konnten nicht geladen werden.', 'err');
+    }
+  }
+  function renderVideos() {
+    $('nv-videos').innerHTML = vids.map((v) =>
+      `<div class="adm-ph" data-k="${v.key}">` +
+        `<div class="adm-ph-fields"><label class="adm-label" for="vd-${v.key}">Titel des Videos <span class="adm-opt">${esc(A.fileName(v.path))}${v.file ? ' · neu, ' + Math.round(v.file.size / 1048576) + ' MB' : ''}</span></label>` +
+        `<input class="adm-input" type="text" id="vd-${v.key}" data-vd="titel" value="${esc(v.titel)}" placeholder="z. B. Einzug der Ministranten"/></div>` +
+        `<div class="adm-ph-act"><button type="button" class="adm-act icon danger" data-vd-act="del" aria-label="Video entfernen">${icon('trash')}</button></div></div>`
+    ).join('');
+  }
+  async function addVideos(files) {
+    for (const picked of Array.from(files || [])) {
+      const ok = await A.checkVideo(picked);
+      if (!ok) continue;
+      const year = (HD.isoDate($('f-date').value) || A.isoToday()).slice(0, 4);
+      const base = `assets/video/news/${year}/${HD.slug(ok.file.name.replace(/\.[^.]+$/, ''), 50) || 'video'}`;
+      let path = `${base}.${ok.ext}`;
+      for (let n = 2; vids.some((v) => v.path === path) || (A.folder.state === 'ok' && await A.folder.exists(path)); n++) path = `${base}-${n}.${ok.ext}`;
+      vids.push({ key: `v${++vidSeq}`, path, titel: ok.file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '), file: ok.file });
+    }
+    $('nv-video-file').value = '';
+    renderVideos();
+  }
+  function setVideos(key) {
+    vids = ((key && videoMap[key]) || []).map((v) => ({ key: `v${++vidSeq}`, path: v.datei, titel: v.titel || '', file: null }));
+    renderVideos();
+  }
+  async function saveVideos(oldKey, key) {
+    for (const v of vids) {
+      if (v.file) {
+        await A.saveFile(v.path, v.file);
+        v.file = null;
+      }
+    }
+    const next = { ...videoMap };
+    if (oldKey && oldKey !== key) delete next[oldKey];
+    if (vids.length) next[key] = vids.map((v) => ({ datei: v.path, titel: clean(v.titel) || 'Video' }));
+    else delete next[key];
+    if (JSON.stringify(next) !== JSON.stringify(videoMap)) {
+      await A.saveJSON(VIDEOS_PATH, { videos: Object.fromEntries(Object.keys(next).sort().map((k) => [k, next[k]])) });
+      videoMap = next;
+    }
+  }
+
   /* ---------- Vorschau des Fensters (wie auf der Website, js/news.js) ---------- */
   /* Bildadresse fuer die Vorschau: Pfad im Projekt, in dieser Sitzung neu Gespeichertes als blob: */
   const previewSrc = (path) => {
@@ -517,6 +585,7 @@
     const link = readLink().link || '';
     const link2 = $('f-link2').value.trim() ? webAddress($('f-link2').value) : '';
     window.AugNews.preview({
+      report: $('f-report').checked,
       cat: clean($('f-cat').value),
       title: clean($('f-title').value) || 'Titel der Meldung',
       teaser: HD.cleanLines($('f-teaser').value.replace(/\|/g, '/')),
@@ -526,7 +595,8 @@
       poster: own && poster ? own : '',
       link, linktext: link ? clean($('f-linktext').value) || defaultText() : '',
       link2, linktext2: link2 ? clean($('f-linktext2').value) || 'Mehr Informationen' : '',
-      photos: photos.map((p) => ({ src: p.url.startsWith('blob:') ? p.url : p.path, alt: p.alt.replace(/\s+/g, ' ').trim() }))
+      photos: photos.map((p) => ({ src: p.url.startsWith('blob:') ? p.url : p.path, alt: p.alt.replace(/\s+/g, ' ').trim() })),
+      videos: vids.map((v) => ({ src: v.file ? (v.url = v.url || URL.createObjectURL(v.file)) : v.path, titel: clean(v.titel) }))
     }, $('nv-preview'));
   }
 
@@ -535,8 +605,11 @@
      mit dieser Meldung durchrechnen (gleiche Regel wie auf der Website). */
   function whereText(iso) {
     if (!HD.isoDate(iso)) return '';
-    const bis = HD.newsUntil(iso, $('f-bis').value);
-    const me = { Datum: isoToDe(iso), Bis: isoToDe(bis) };
+    const bis = HD.newsUntil(untilBase(iso), $('f-bis').value);
+    const ab = HD.isoDate($('f-ab').value);
+    const me = { Datum: isoToDe(iso), Bis: isoToDe(bis), Entwurf: $('f-draft').checked ? 'ja' : '', Ab: ab };
+    if ($('f-draft').checked) return 'Entwurf: Die Meldung ist auf der Website nicht sichtbar.';
+    if (ab && ab > A.isoToday()) return `Wird ab ${A.fmtDate(ab)} sichtbar (bis einschließlich ${A.fmtDate(bis)}).`;
     const next = entries.slice();
     if (editIndex >= 0) next[editIndex] = me;
     else next.push(me);
@@ -649,16 +722,25 @@
     .join(' | ');
   const readDetails = () => $('f-details').value.split(/\n+/).map(clean).filter(Boolean).join(' | ');
 
-  function openEditor(i) {
+  /* copy: Inhalt der Meldung i als neue Meldung (Entwurf, heutiges Datum, ohne Fotos) */
+  function openEditor(i, copy) {
     const e = i >= 0 ? entries[i] : null;
-    editIndex = i;
+    editIndex = copy ? -1 : i;
     suggestOff = false;
     const form = $('nv-form');
     form.reset();
     A.clearErrors(form);
-    $('f-date').value = e ? HD.isoDate(e.Datum) : A.isoToday();
-    $('f-bis').value = e ? HD.isoDate(e.Bis) : '';
+    $('f-date').value = e && !copy ? HD.isoDate(e.Datum) : A.isoToday();
+    $('f-bis').value = e && !copy ? HD.isoDate(e.Bis) : '';
+    $('f-draft').checked = copy ? true : !!e && /^ja$/i.test(e.Entwurf || '');
+    $('f-ab').value = e && !copy ? HD.isoDate(e.Ab || '') : '';
+    /* Redaktion mit Freigabe: immer Entwurf, ein Admin gibt frei */
+    $('f-draft').disabled = A.needsApproval();
+    $('f-approval').hidden = !A.needsApproval();
+    if (A.needsApproval()) $('f-draft').checked = true;
     $('f-cat').value = e ? e.Kategorie : '';
+    /* Frueher war "Bericht" eine Kategorie: gilt weiterhin als Bericht */
+    $('f-report').checked = e ? /^ja$/i.test(e.Bericht || '') || /^bericht$/i.test(e.Kategorie) : false;
     setPages(e ? e.Seiten : '');
     $('f-title').value = e ? e.Titel : '';
     $('f-teaser').value = e ? e.Kurztext : '';
@@ -677,16 +759,19 @@
     $('f-credit').value = A.credits.get(current);
     document.querySelector(`input[name="kind"][value="${e && !e.Plakat && e.Vorschaubild ? 'photo' : 'poster'}"]`).checked = true;
     delete $('f-filename').dataset.touched;
-    setPhotos(e ? newsId(e) : '');
+    setPhotos(e && !copy ? newsId(e) : '');
+    setVideos(e && !copy ? newsId(e) : '');
     renderImage();
     renderPreview();
     updateCounter();
 
-    $('nv-dlg-tag').textContent = e ? 'Meldung bearbeiten' : 'Neue Meldung';
-    $('nv-dlg-title').textContent = e ? e.Titel : 'Neue Meldung';
-    $('nv-delete').hidden = !e;
-    $('nv-view').hidden = !e;
-    if (e) $('nv-view').href = `../${A.newsOnHome(entries).has(e) ? 'index.html' : 'pages/archiv.html'}?news=${encodeURIComponent(newsId(e))}`;
+    const existing = e && !copy;
+    $('nv-dlg-tag').textContent = copy ? 'Kopie einer Meldung' : e ? 'Meldung bearbeiten' : 'Neue Meldung';
+    $('nv-dlg-title').textContent = copy ? `Kopie: ${e.Titel}` : e ? e.Titel : 'Neue Meldung';
+    $('nv-delete').hidden = !existing;
+    $('nv-view').hidden = !existing || A.newsHidden(e);
+    if (existing) $('nv-view').href = `../${A.newsOnHome(entries).has(e) ? 'index.html' : 'pages/archiv.html'}?news=${encodeURIComponent(newsId(e))}`;
+    isCopy = !!copy;
     A.openDialog($('nv-dlg'), { isDirty: isDirty });
     snap = dirtyState();
   }
@@ -699,8 +784,9 @@
   const readPages = () => [...$('f-pages').querySelectorAll('input:checked')].map((x) => x.value);
 
   /* Stand des Fensters: Formular samt Fotos (Reihenfolge, Beschreibung, Nachweis) */
-  const dirtyState = () => A.snapshot($('nv-form')) + JSON.stringify(photos.map((p) => [p.path, p.alt, p.credit]));
-  const isDirty = () => dirtyState() !== snap || !!image || removeImage;
+  const dirtyState = () => A.snapshot($('nv-form')) + JSON.stringify(photos.map((p) => [p.path, p.alt, p.credit])) + JSON.stringify(vids.map((v) => [v.path, v.titel]));
+  let isCopy = false;   /* Kopie: gilt als geaendert, bis sie gespeichert ist */
+  const isDirty = () => isCopy || dirtyState() !== snap || !!image || removeImage;
 
   /* Freier Dateiname im Jahresordner (name.webp, name-2.webp …);
      die eigene Datei einer bearbeiteten Meldung darf ersetzt werden */
@@ -723,7 +809,7 @@
     const link = target.link || '';
     const errors = [];
     /* Ohne eigenes Enddatum: zwei Wochen ab dem Datum der Meldung */
-    const bis = HD.newsUntil(date, $('f-bis').value);
+    const bis = HD.newsUntil(untilBase(date), $('f-bis').value);
     if (!HD.isoDate(date)) errors.push([$('f-date'), 'Bitte das Datum der Meldung wählen.']);
     else if (bis < date) errors.push([$('f-bis'), 'Das Enddatum liegt vor dem Datum der Meldung.']);
     if (!title) errors.push([$('f-title'), 'Bitte einen Titel eintragen.']);
@@ -738,11 +824,29 @@
     const pages = readPages();
     if (!pages.length) errors.push([$('f-pages').querySelector('input'), 'Bitte mindestens eine Seite wählen.']);
     if (photos.length > photoLimit()) {
-      errors.push([$('f-cat'), `Diese Meldung hat ${photos.length} Fotos. Erlaubt sind ${MAX_PHOTOS}, bei der Kategorie „Bericht“ bis zu ${MAX_REPORT}. Bitte Fotos entfernen oder „Bericht“ wählen.`]);
+      errors.push([$('f-report'), `Diese Meldung hat ${photos.length} Fotos. Erlaubt sind ${MAX_PHOTOS}, als Bericht bis zu ${MAX_REPORT}. Bitte Fotos entfernen oder „Als Bericht kennzeichnen“ ankreuzen.`]);
+    }
+    /* Gleiche Kennung (Datum + Titel) wie eine andere Meldung: Link und Fotos kaemen durcheinander */
+    if (HD.isoDate(date) && title && entries.some((x, k) => k !== editIndex && newsId(x) === `${HD.isoDate(date)}-${HD.slug(title)}`)) {
+      errors.push([$('f-title'), 'Es gibt schon eine Meldung mit diesem Titel und Datum. Bitte den Titel oder das Datum ändern.']);
     }
     if (errors.length) {
       A.showErrors(form, errors);
       return;
+    }
+
+    /* Hinweise (keine Fehler): bei einem Entwurf nicht noetig, der ist noch in Arbeit */
+    if (!$('f-draft').checked && !A.needsApproval()) {
+      const hints = [];
+      const noAlt = photos.filter((p) => !p.alt.trim()).length;
+      if (noAlt) hints.push(`${plural(noAlt, 'Foto hat', 'Fotos haben')} keine Beschreibung. Sie hilft Sehbehinderten, die Bilder zu verstehen.`);
+      const big = [image && image.blob.size, ...photos.map((p) => p.size || 0)].filter((n) => n > 1500000).length;
+      if (big) hints.push(`${plural(big, 'Bild ist', 'Bilder sind')} größer als 1,5 MB und laden am Handy langsam.`);
+      if (!image && !(!removeImage && current) && !photos.length) hints.push('Es gibt weder ein Bild noch ein Foto: Die Karte zeigt nur das Logo.');
+      if (!clean($('f-cat').value)) hints.push('Keine Kategorie: Die Meldung lässt sich im Archiv nicht danach filtern.');
+      if (teaser.length > TEASER_MAX) hints.push(`Der Kurztext ist mit ${teaser.length} Zeichen länger als ${TEASER_MAX} und wird auf der Karte abgeschnitten.`);
+      if ($('f-ziel').value === 'hochamt' && link && !haEntries.some((x) => HA_PREFIX + x.id === link)) hints.push('Die Schaltfläche führt zu einem Termin, den es in der Hochamt-Liste nicht (mehr) gibt.');
+      if (!(await A.confirmWarnings(hints))) return;
     }
 
     const old = editIndex >= 0 ? entries[editIndex] : null;
@@ -753,7 +857,10 @@
       Link: link, Linktext: link ? clean($('f-linktext').value) || defaultText() : '',
       'Weiterer Link': link2, 'Weiterer Linktext': link2 ? text2 : '', Bildausschnitt: '',
       /* alle Seiten = leer (so stehen auch kuenftige Seiten automatisch dabei) */
-      Seiten: pages.length === HD.NEWS_PAGES.length ? '' : pages.join(', ')
+      Seiten: pages.length === HD.NEWS_PAGES.length ? '' : pages.join(', '),
+      Bericht: $('f-report').checked ? 'ja' : '',
+      Entwurf: $('f-draft').checked || A.needsApproval() ? 'ja' : '',
+      Ab: HD.isoDate($('f-ab').value) ? isoToDe(HD.isoDate($('f-ab').value)) : ''
     };
     /* Bisheriges Bild behalten (Art kann sich geaendert haben) */
     if (!image && !removeImage && current) {
@@ -780,6 +887,8 @@
       entries = next;
       if (imgOf(entry)) await A.credits.set(imgOf(entry), $('f-credit').value);
       await savePhotos(old ? newsId(old) : '', newsId(entry));
+      await saveVideos(old ? newsId(old) : '', newsId(entry));
+      isCopy = false;
       $('nv-dlg').close();
       render();
       flash(newsId(entry));
@@ -818,6 +927,14 @@
         for (const b of gallery) await A.discardFile(b.bild);
         await A.credits.save(Object.fromEntries(gallery.map((b) => [b.bild, ''])));
       }
+      const clips = videoMap[newsId(e)] || [];
+      if (clips.length) {
+        const rest = { ...videoMap };
+        delete rest[newsId(e)];
+        await A.saveJSON(VIDEOS_PATH, { videos: rest });
+        videoMap = rest;
+        for (const c of clips) await A.discardFile(c.datei);
+      }
       render();
       A.toast(direct ? `Gelöscht: „${e.Titel}“.` : 'Gelöscht. Bitte unten die Datei herunterladen.');
       A.log(`Meldung gelöscht: ${e.Titel}`);
@@ -845,8 +962,8 @@
       if (ev.target.id === 'f-teaser') updateCounter();
       if (ev.target.id === 'f-title' && image && !$('f-filename').dataset.touched) $('f-filename').value = fileSlug(ev.target.value);
       if (ev.target.id === 'f-filename') ev.target.dataset.touched = '1';
-      /* Kategorie entscheidet, wie viele Fotos erlaubt sind */
-      if (ev.target.id === 'f-cat') renderPhotos();
+      /* "Bericht" entscheidet, wie viele Fotos erlaubt sind */
+      if (ev.target.id === 'f-report') renderPhotos();
       renderPreview();
     });
     $('nv-form').addEventListener('change', (ev) => {
@@ -907,6 +1024,44 @@
       const p = k && photos.find((x) => x.key === k.dataset.k);
       if (p && ev.target.dataset.ph) p[ev.target.dataset.ph] = ev.target.value;
     });
+    /* Fotos per Ziehen umsortieren: das Vorschaubild ist der Griff */
+    let dragKey = '';
+    const rowOf = (t) => t.closest('.adm-ph');
+    $('nv-photos').addEventListener('pointerdown', (ev) => {
+      const row = ev.target.closest('[data-ph-grip]') && rowOf(ev.target);
+      if (row) row.draggable = true;
+    });
+    $('nv-photos').addEventListener('dragstart', (ev) => {
+      const row = rowOf(ev.target);
+      if (!row || !row.draggable) return;
+      dragKey = row.dataset.k;
+      ev.dataTransfer.effectAllowed = 'move';
+      ev.dataTransfer.setData('text/plain', dragKey);
+      row.classList.add('dragging');
+    });
+    $('nv-photos').addEventListener('dragover', (ev) => {
+      if (!dragKey) return;
+      ev.preventDefault();
+      const row = rowOf(ev.target);
+      $('nv-photos').querySelectorAll('.drop-over').forEach((x) => x.classList.remove('drop-over'));
+      if (row && row.dataset.k !== dragKey) row.classList.add('drop-over');
+    });
+    $('nv-photos').addEventListener('drop', (ev) => {
+      const row = rowOf(ev.target);
+      if (!dragKey || !row) return;
+      ev.preventDefault();
+      const from = photos.findIndex((x) => x.key === dragKey);
+      const to = photos.findIndex((x) => x.key === row.dataset.k);
+      dragKey = '';
+      if (from < 0 || to < 0 || from === to) return renderPhotos();
+      photos.splice(to, 0, photos.splice(from, 1)[0]);
+      renderPhotos();
+      renderPreview();
+    });
+    $('nv-photos').addEventListener('dragend', () => {
+      dragKey = '';
+      renderPhotos();
+    });
     $('nv-photos').addEventListener('click', (ev) => {
       const b = ev.target.closest('[data-ph-act]');
       const k = b && b.closest('.adm-ph');
@@ -924,7 +1079,21 @@
       renderPhotos();
       renderPreview();
     });
+    $('nv-video-file').addEventListener('change', (ev) => addVideos(ev.target.files));
+    A.wireDrop($('nv-video-drop'));
+    $('nv-videos').addEventListener('input', (ev) => {
+      const k = ev.target.closest('.adm-ph');
+      const v = k && vids.find((x) => x.key === k.dataset.k);
+      if (v && ev.target.dataset.vd) v.titel = ev.target.value;
+    });
+    $('nv-videos').addEventListener('click', (ev) => {
+      const k = ev.target.closest('[data-vd-act]') && ev.target.closest('.adm-ph');
+      if (!k) return;
+      vids = vids.filter((x) => x.key !== k.dataset.k);
+      renderVideos();
+    });
     $('nv-dlg').addEventListener('close', () => {
+      vids = [];
       discardFresh(photos.filter((p) => p.fresh));
       photos = [];
       photoDir = '';
@@ -937,6 +1106,7 @@
       if (!b) return;
       if (b.dataset.act === 'edit') openEditor(Number(b.dataset.i));
       if (b.dataset.act === 'del') remove(Number(b.dataset.i));
+      if (b.dataset.act === 'dup') openEditor(Number(b.dataset.i), true);
       if (b.dataset.act === 'new') openEditor(-1);
       if (b.dataset.act === 'clear') {
         $('nv-search').value = '';
@@ -954,9 +1124,9 @@
       }, 120);
     });
     A.guard(() => $('nv-dlg').open && isDirty());
-    A.folder.on((state) => { if (state === 'ok') { load(); loadTargets(); loadPhotos(); } });
+    A.folder.on((state) => { if (state === 'ok') { load(); loadTargets(); loadPhotos(); loadVideos(); } });
 
-    await Promise.all([load(), loadTargets(), loadPhotos()]);
+    await Promise.all([load(), loadTargets(), loadPhotos(), loadVideos()]);
     /* jetzt auch mit den Fotos der Galerie (eine Fehlermeldung beim Laden bleibt stehen) */
     if (!$('nv-list').querySelector('.adm-alert')) render();
     /* Direkt oeffnen: ?neu=1 oder ?bearbeiten=<Kennung der Meldung> */

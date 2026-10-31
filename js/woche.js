@@ -25,6 +25,7 @@
   let items = [];
   let monday = null;    /* Date, Montag der gezeigten Woche */
   let day = 'alle';     /* Filter nach Wochentag */
+  let ready = false;    /* Termine sind geladen */
 
   const isoOf = KD.isoOf;
   const addDays = (dt, n) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + n);
@@ -84,6 +85,15 @@
     render(focusSel);
   }
 
+  /* Zum heutigen Tag springen (nur wenn die aktuelle Woche gezeigt wird; die Kopfzeile bleibt sichtbar) */
+  function scrollToToday(smooth) {
+    if (root.hidden || monday === null || isoOf(monday) !== isoOf(thisMonday())) return;
+    const el = root.querySelector(`#woche-${isoOf(new Date())}`);
+    if (!el) return;
+    const behavior = smooth && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto';
+    el.scrollIntoView({ block: 'start', behavior });
+  }
+
   /* Monat oder Woche zeigen */
   const cal = document.getElementById('cal');
   function setView(view, push) {
@@ -95,6 +105,11 @@
       else a.removeAttribute('aria-current');
     }
     if (push) history.replaceState(null, '', `${location.pathname}${location.search}${week ? '#woche' : ''}`);
+    /* Beim Wechsel zur Woche: immer zum heutigen Tag (bei einer anderen Woche bleibt es oben) */
+    if (week && ready) {
+      if (monday !== null && isoOf(monday) !== isoOf(thisMonday()) && !new URLSearchParams(location.search).has('woche')) go(thisMonday());
+      scrollToToday(true);
+    }
   }
   document.addEventListener('click', (ev) => {
     const v = ev.target.closest('.cal-view');
@@ -112,6 +127,9 @@
     items = await KD.load(base);
     root.classList.add('ready');
     render();
+    ready = true;
+    /* Aufruf der Woche (#woche): zum heutigen Tag; ?woche=... zeigt bewusst eine andere Woche */
+    if (!q) window.requestAnimationFrame(() => scrollToToday(false));
     KD.watchPast(root, () => render());
 
     root.addEventListener('click', (ev) => {
@@ -121,7 +139,10 @@
         /* unten gedrückt: der Fokus bleibt unten, die Seite springt zum Anfang der neuen Woche */
         const foot = nav.closest('.wk-foot');
         const sel = (s) => `${foot ? '.wk-foot ' : ''}${s}`;
-        if (what === 'heute') go(thisMonday(), sel('[data-wk="next"]'));
+        if (what === 'heute') {
+          go(thisMonday(), sel('[data-wk="next"]'));
+          scrollToToday(true);
+        }
         else go(addDays(monday, what === 'prev' ? -7 : 7), sel(`[data-wk="${what}"]`));
         if (foot) root.querySelector('.wk-head').scrollIntoView({ block: 'start' });
         return;

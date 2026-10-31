@@ -17,6 +17,8 @@
 <script src="../js/hochaemter-data.js"></script>
 <script src="../js/admin/admin.js"></script>
 <script src="../js/admin/admin-galerie.js" defer></script>
+<script src="../js/inhalte.js" defer></script>
+<script src="../js/lightbox.js" defer></script>
 </head>
 <body class="adm">
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
@@ -66,6 +68,11 @@
           <input class="adm-input" type="text" id="f-titel" required placeholder="z. B. Haydn: Harmoniemesse"/>
         </div>
         <div class="adm-field">
+          <label class="adm-label" for="f-ab">Sichtbar ab</label>
+          <input class="adm-input" type="date" id="f-ab" aria-describedby="f-ab-hint"/>
+          <span class="adm-hint" id="f-ab-hint">Leer = sofort sichtbar. Mit Datum erscheint das Album erst an diesem Tag auf der Website.</span>
+        </div>
+        <div class="adm-field">
           <label class="adm-label" for="f-datum">Datum</label>
           <input class="adm-input" type="date" id="f-datum" aria-describedby="f-datum-hint"/>
           <span class="adm-hint" id="f-datum-hint">Steht klein unter dem Titel. Leer lassen, wenn es kein bestimmter Tag ist.</span>
@@ -98,6 +105,18 @@
     </fieldset>
 
     <fieldset class="adm-fs">
+      <legend>Videodateien</legend>
+      <p class="adm-hint adm-fs-lead">Eigene Videos als MP4 oder WebM (bis 200 MB). Neue Dateien unten hineinziehen oder auswählen; sie werden beim Speichern nach <code>assets/video/galerie/</code> gelegt. Am besten vorher auf Handy-Qualität oder Full HD verkleinern, damit sie schnell laden.</p>
+      <div id="ga-vfiles"></div>
+      <label class="adm-drop adm-drop-audio adm-mt-8" id="ga-vfile-drop">
+        <span data-icon="upload"></span>
+        <span class="adm-drop-main">Videodateien hierher ziehen oder <u>auswählen</u></span>
+        <span class="adm-hint">Auch mehrere auf einmal. Der Dateiname wird als Titel vorgeschlagen.</span>
+        <input type="file" id="f-vfile" accept="video/mp4,video/webm,.mp4,.webm" multiple/>
+      </label>
+    </fieldset>
+
+    <fieldset class="adm-fs">
       <legend>Aufnahmen</legend>
       <p class="adm-hint adm-fs-lead">Titel und MP3-Datei je Aufnahme. Neue Dateien unten hineinziehen oder auswählen; sie werden beim Speichern nach <code>assets/audio/galerie/</code> gelegt.</p>
       <div id="ga-audio"></div>
@@ -114,11 +133,20 @@
       <button type="button" class="adm-act danger" id="ga-delete" data-icon="trash">Löschen</button>
     </div>
     <div class="adm-dlg-foot-r">
+      <button type="button" class="adm-act" id="ga-preview" data-icon="eye" title="Album so, wie es auf der Website erscheint, mit dem Stand dieses Formulars (auch ungespeichert)">Vorschau</button>
       <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
       <button type="submit" form="ga-form" class="btn btn-dark" id="ga-save" data-icon="check">Speichern</button>
     </div>
   </div>
 </dialog>
 
+<!-- Vorschau -->
+<dialog class="adm-dialog wide" id="ga-prev" aria-label="Vorschau des Albums">
+  <div class="adm-dlg-head">
+    <div><div class="adm-dlg-tag">Vorschau</div><h2 class="adm-dlg-title">So erscheint das Album auf der Website</h2></div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Vorschau schließen" data-icon="close"></button>
+  </div>
+  <div class="adm-dlg-body" id="ga-prev-body"></div>
+</dialog>
 </body>
 </html>

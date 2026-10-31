@@ -176,7 +176,7 @@
     const quick = [
       ['Gottesdienste', `${base}pages/gottesdienste.html`],
       ['Kalender', `${base}pages/kalender.html`],
-      ['Kontakt', `${base}pages/augustinerkirche.html#kontakt`]
+      ['Kontakt', `${base}pages/kontakt.html`]
     ];
     let html = '<div class="mob-quick">' +
       quick.map(([t, h]) => `<a class="mob-quick-link" href="${escHTML(h)}">${escHTML(t)}</a>`).join('') + '</div>';
@@ -485,7 +485,9 @@
     const events = ['wheel', 'touchstart', 'keydown', 'mousedown'];
     let done = false;
     const jump = () => {
-      if (!done) target.scrollIntoView({ behavior: 'instant', block: 'start' });
+      /* Wochenueberblick (kalender.html#woche): zum heutigen Tag, nicht an den Anfang der Woche */
+      const ziel = (target.id === 'woche' && target.querySelector('.cal-day.today')) || target;
+      if (!done) ziel.scrollIntoView({ behavior: 'instant', block: 'start' });
     };
     const ro = 'ResizeObserver' in window ? new ResizeObserver(jump) : null;
     const stop = () => {
@@ -638,7 +640,8 @@
     for (const img of qsa('img:not([data-bn])')) {
       img.dataset.bn = '';
       const text = creditFor(img.currentSrc || img.getAttribute('src'));
-      if (!text || img.closest('.mobile-menu, nav, footer')) continue;
+      /* Vergroesserung und Fotoreihen: der Nachweis steht dort einmal in der Unterschrift (lightbox.js), nicht unter jedem Foto */
+      if (!text || img.closest('.mobile-menu, nav, footer, .lb-fig, .lb-strip, .nd-gallery, .news-row-img, .news-card-img')) continue;
       /* Zum Bild gehoerende Rahmen mitnehmen, damit der Text darunter steht */
       let box = img;
       for (let i = 0; i < 3; i++) {
@@ -725,7 +728,8 @@
     }
     if (!items.length) items = HERO_FALLBACK;
     const secs = Math.min(30, Math.max(3, Number(data && data.sekunden) || 6));
-    const url = (b) => encodeURI(`${siteRoot}${b.bild}`);
+    if (window.AugBild) await Promise.race([window.AugBild.ready, new Promise((r) => setTimeout(r, 400))]);
+    const url = (b) => encodeURI(`${siteRoot}${window.AugBild ? window.AugBild.klein(b.bild) : b.bild}`);
 
     const slides = items.map((b) => {
       const el = document.createElement('div');
@@ -741,6 +745,7 @@
       const el = slides[i];
       if (!el.style.backgroundImage) el.style.backgroundImage = `url("${url(items[i])}")`;
       const img = new Image();
+      if (i === 0) img.fetchPriority = 'high';
       img.onload = img.onerror = resolve;
       img.src = url(items[i]);
     });
@@ -750,6 +755,8 @@
     credit.hidden = true;
     box.append(credit);
     let cur = -1;
+    let paused = false;
+    let heroCount = () => {};
     heroCredit = () => {
       const text = cur >= 0 ? creditFor(url(items[cur])) : '';
       credit.textContent = text;
@@ -764,6 +771,7 @@
         el.setAttribute('aria-hidden', String(k !== i));
       });
       heroCredit();
+      heroCount();
       if (slides.length > 1) load((i + 1) % slides.length);
     }
 
@@ -808,11 +816,75 @@
       }
     });
     box.addEventListener('focusin', () => clearTimeout(hideTimer));
+    /* Wischen am Handy: nach links = naechstes, nach rechts = voriges Foto */
+    let sx = 0;
+    let sy = 0;
+    box.addEventListener('touchstart', (ev) => {
+      sx = ev.touches[0].clientX;
+      sy = ev.touches[0].clientY;
+    }, { passive: true });
+    box.addEventListener('touchend', (ev) => {
+      const dx = ev.changedTouches[0].clientX - sx;
+      const dy = ev.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      go(cur + (dx < 0 ? 1 : -1));
+    }, { passive: true });
 
+    /* Pause und Anzeige "2 / 6" unten links (Bildwechsel anhalten ist auch eine Anforderung an barrierefreie Seiten) */
+    const ctrl = document.createElement('div');
+    ctrl.className = 'hero-ctrl';
+    const pauseBtn = document.createElement('button');
+    pauseBtn.type = 'button';
+    pauseBtn.className = 'hero-pause';
+    const PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14M16 5v14"/></svg>';
+    const PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg>';
+    const count = document.createElement('span');
+    count.className = 'hero-count';
+    count.setAttribute('aria-hidden', 'true');
+    const setPaused = (p) => {
+      paused = p;
+      pauseBtn.innerHTML = p ? PLAY : PAUSE;
+      pauseBtn.setAttribute('aria-label', p ? 'Bildwechsel fortsetzen' : 'Bildwechsel anhalten');
+      pauseBtn.setAttribute('aria-pressed', String(p));
+      box.classList.toggle('is-paused', p);
+    };
+    pauseBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      setPaused(!paused);
+    });
+    ctrl.addEventListener('click', (ev) => ev.stopPropagation());
+    ctrl.append(pauseBtn, count);
+    box.append(ctrl);
+    setPaused(false);
+    heroCount = () => { count.textContent = `${cur + 1} / ${slides.length}`; };
+    heroCount();
+
+    /* Balken unten: zeigt, wann das Foto wechselt; steht still, solange die Pfeile da sind */
+    const bar = document.createElement('div');
+    bar.className = 'hero-timer';
+    bar.setAttribute('aria-hidden', 'true');
+    const fill = document.createElement('span');
+    bar.append(fill);
+    box.append(bar);
+    const STEP = 100;
+    let elapsed = 0;
+    let shown = -1;
     setInterval(() => {
-      if (reducedMotion.matches || document.hidden || box.classList.contains('show-arrows') || box.contains(document.activeElement)) return;
-      go(cur + 1);
-    }, secs * 1000);
+      if (cur !== shown) {
+        shown = cur;
+        elapsed = 0;
+      }
+      bar.hidden = reducedMotion.matches;
+      if (paused || reducedMotion.matches || document.hidden || box.classList.contains('show-arrows') || box.contains(document.activeElement)) return;
+      elapsed += STEP;
+      if (elapsed >= secs * 1000) {
+        elapsed = 0;
+        fill.style.transform = 'scaleX(1)';
+        go(cur + 1);
+        return;
+      }
+      fill.style.transform = `scaleX(${elapsed / (secs * 1000)})`;
+    }, STEP);
   }
 
   /* ---------- Hinweisbanner (data/hinweise.json) ----------
@@ -1016,7 +1088,7 @@
     for (const sidebar of qsa('.sidebar')) if (applyLeiste(sidebar)) refreshSidebar(sidebar);
 
     const logo = qs('.nav-logo-wrap');
-    const base = ((logo && logo.getAttribute('href')) || 'index.html').replace(/index\.html$/, '');
+    const base = ((logo && (logo.getAttribute('href'))) || 'index.html').replace(/index\.html$/, '');
     let menuChanged = false;
     for (const [key, b] of Object.entries(bereiche)) {
       const m = /^([\w-]+\.html)#([\w-]+)$/.exec(key);
@@ -1049,8 +1121,228 @@
     markCurrentNav();
   }
 
+  /* ---------- Startseite: Bewegung beim Scrollen ----------
+     Bereiche steigen sanft ein, sobald sie ins Bild kommen; Listen (Hochaemter, Meldungen, Karten)
+     nacheinander. Nur auf der Startseite, nicht bei "reduzierte Bewegung" (Klassen: style.css, "Bewegung"). */
+  function initHomeMotion() {
+    if (!qs('main.home') || reducedMotion.matches || !('IntersectionObserver' in window)) return;
+    const groups = [
+      ['.hs-head', 'motion-in'], ['.hs-list', 'motion-stagger'], ['.sec-head', 'motion-in'], ['.news-grid', 'motion-stagger'],
+      ['.news-more', 'motion-in'], ['.zahlen-liste', 'motion-stagger'], ['.cards-2', 'motion-stagger'], ['.herzgruft > div:first-child', 'motion-in'], ['.herzgruft-img', 'motion-img']
+    ];
+    const io = new IntersectionObserver((entries) => {
+      for (const en of entries) {
+        if (!en.isIntersecting) continue;
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    /* Herzgruft-Bild: sanfte Parallaxe beim Scrollen */
+    const img = qs('main.home .herzgruft-img');
+    if (img) {
+      let tick = false;
+      const move = () => {
+        tick = false;
+        const r = img.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) return;
+        const d = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
+        img.style.setProperty('--par', `${Math.max(-1, Math.min(1, d)) * -28}px`);
+      };
+      window.addEventListener('scroll', () => {
+        if (!tick) {
+          tick = true;
+          requestAnimationFrame(move);
+        }
+      }, { passive: true });
+      move();
+    }
+    for (const [sel, cls] of groups) {
+      for (const el of qsa(`main.home ${sel}`)) {
+        el.classList.add(cls);
+        io.observe(el);
+      }
+    }
+  }
+
+  /* ---------- Karte (Kontaktseite) ----------
+     Google Maps wird erst nach einem Klick eingebettet (Datenschutz), wie die Videos der Galerie. */
+  function initMap() {
+    document.addEventListener('click', (ev) => {
+      const b = ev.target.closest('.kt-map-load');
+      const box = b && b.closest('[data-map]');
+      if (!box || !/^https:\/\/www\.google\.com\/maps\?/.test(box.dataset.map)) return;
+      const f = document.createElement('iframe');
+      f.src = box.dataset.map;
+      f.title = 'Karte: Augustinerstraße 3, 1010 Wien';
+      f.loading = 'lazy';
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      f.allowFullscreen = true;
+      b.replaceWith(f);
+    });
+  }
+
+  /* ---------- Auswahl "Route planen" (Kontaktseite): schliesst bei Klick daneben oder mit Esc ---------- */
+  function initRouteMenu() {
+    const close = (except) => {
+      for (const d of qsa('details.kt-route[open]')) if (d !== except) d.removeAttribute('open');
+    };
+    document.addEventListener('click', (ev) => close(ev.target.closest('details.kt-route')));
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key !== 'Escape') return;
+      const open = qs('details.kt-route[open]');
+      if (!open) return;
+      open.removeAttribute('open');
+      const sum = qs('summary', open);
+      if (sum) sum.focus();
+    });
+  }
+
+  /* ---------- Nach oben, Startseite in der Fusszeile ---------- */
+  function initWege() {
+    const logo = qs('.nav-logo-wrap');
+    const home = (logo && logo.getAttribute('href')) || 'index.html';
+    const links = qs('footer .f-links');
+    if (links && !/(^|\/)index\.html$/.test(location.pathname) && location.pathname !== '/' && !qs('a[data-startseite]', links)) {
+      links.insertAdjacentHTML('afterbegin', `<a data-startseite href="${escHTML(home)}">Startseite</a>`);
+    }
+    const top = document.createElement('button');
+    top.type = 'button';
+    top.className = 'to-top';
+    top.hidden = true;
+    top.setAttribute('aria-label', 'Nach oben');
+    top.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 15l7-7 7 7"/></svg>';
+    top.addEventListener('click', () => window.scrollTo({ top: 0, behavior: scrollBehavior() }));
+    document.body.append(top);
+    let tick = false;
+    window.addEventListener('scroll', () => {
+      if (tick) return;
+      tick = true;
+      requestAnimationFrame(() => {
+        tick = false;
+        top.hidden = window.scrollY < window.innerHeight * 1.2;
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- Suche (js/suche.js wird erst beim ersten Klick geladen) ---------- */
+  function initSuche() {
+    const right = qs('.nav-right');
+    if (!right || qs('.suche-btn')) return;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'suche-btn';
+    b.setAttribute('aria-label', 'Suche');
+    b.setAttribute('aria-haspopup', 'dialog');
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>';
+    right.prepend(b);
+    let loading = null;
+    const open = () => {
+      if (window.AugSuche) return window.AugSuche.open();
+      if (!loading) {
+        loading = new Promise((resolve, reject) => {
+          const sc = document.createElement('script');
+          sc.src = `${siteRoot}js/suche.js`;
+          sc.onload = resolve;
+          sc.onerror = reject;
+          document.head.append(sc);
+        });
+      }
+      loading.then(() => window.AugSuche.open()).catch(() => { loading = null; });
+    };
+    b.addEventListener('click', open);
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || '') && !(document.activeElement || {}).isContentEditable) {
+        ev.preventDefault();
+        open();
+      }
+    });
+  }
+
+  /* ---------- Zahlen auf der Startseite: zaehlen beim Einblenden hoch ---------- */
+  function initZahlen() {
+    const felder = qsa('.zahl-n');
+    if (!felder.length) return;
+    /* data-seit: Jahre seit einem Jahr (immer aktuell); data-zaehlen: feste Zahl; data-plus: mit "+" */
+    const ziel = (el) => (el.dataset.seit ? new Date().getFullYear() - Number(el.dataset.seit) : Number(el.dataset.zaehlen));
+    const text = (el, n) => `${n.toLocaleString('de-AT')}${'plus' in el.dataset && n >= ziel(el) ? '+' : ''}`;
+    for (const el of felder) el.textContent = text(el, ziel(el));
+    if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver((entries) => {
+      for (const en of entries) {
+        if (!en.isIntersecting) continue;
+        io.unobserve(en.target);
+        const el = en.target;
+        const end = ziel(el);
+        const t0 = performance.now();
+        const dauer = 1600;
+        const step = (t) => {
+          const p = Math.min(1, (t - t0) / dauer);
+          const e = 1 - Math.pow(1 - p, 3);
+          el.textContent = text(el, Math.round(end * e));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+    }, { threshold: 0.6 });
+    for (const el of felder) {
+      el.textContent = text(el, 0);
+      io.observe(el);
+    }
+  }
+
+  /* ---------- Hell / Dunkel ----------
+     Schalter oben beim X des mobilen Menues; die Wahl merkt sich der Browser (js/thema.js setzt sie
+     beim Laden). Ohne Wahl folgt die Seite der Einstellung des Geraets. */
+  let modusLabel = () => {};
+  function initModus() {
+    const html = document.documentElement;
+    const dark = () => (html.dataset.theme ? html.dataset.theme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const label = () => {
+      const text = dark() ? 'Heller Modus' : 'Dunkler Modus';
+      for (const b of qsa('[data-modus]')) {
+        if (b.classList.contains('modus-btn')) {
+          b.setAttribute('aria-label', `${text} einschalten`);
+          b.title = text;
+        } else b.textContent = text;
+      }
+    };
+    /* Oben beim X des mobilen Menues (nur sichtbar, solange das Menue offen ist) */
+    const knopf = '<button type="button" class="modus-btn" data-modus>' +
+      '<svg class="m-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/></svg>' +
+      '<svg class="m-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg></button>';
+    const burger = qs('#hamburger');
+    if (burger && !qs('.modus-btn')) burger.insertAdjacentHTML('beforebegin', knopf);
+    document.addEventListener('click', (ev) => {
+      if (!ev.target.closest('[data-modus]')) return;
+      const next = dark() ? 'light' : 'dark';
+      html.dataset.theme = next;
+      try { window.localStorage.setItem('aug-modus', next); } catch { /* wird nicht gemerkt */ }
+      label();
+    });
+    label();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', label);
+    modusLabel = label;
+  }
+
+  /* ---------- Als App installierbar, Offline-Seite ----------
+     sw.js (Wurzel der Website) haelt nur ein paar Dateien bereit; ohne Netz erscheint offline.html. */
+  function initApp() {
+    if (!('serviceWorker' in navigator) || !(location.protocol === 'https:' || location.hostname === 'localhost')) return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register(`${siteRoot}sw.js`, { scope: siteRoot }).catch(() => { /* ohne Installation geht alles weiter */ });
+    });
+  }
+
   /* ---------- Init ---------- */
   document.addEventListener('DOMContentLoaded', () => {
+    initModus();
+    initWege();
+    initRouteMenu();
+    initSuche();
+    initMap();
+    initHomeMotion();
+    initZahlen();
+    initApp();
     initDropdowns();
     initMobileNav();
     initSidebarTabs();
