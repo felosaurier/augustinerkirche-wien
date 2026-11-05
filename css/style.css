@@ -874,6 +874,9 @@ a.kal-row:hover .kal-name{color:var(--gold)}
 
 /* ══ NEUIGKEITEN: Fenster und Archiv ══ */
 html.nd-lock{overflow:hidden}
+/* Platz des Scrollbalkens immer freihalten: sonst springt die Seite zur Seite,
+   wenn ein Fenster (Suche, Meldung) sie sperrt und der Balken verschwindet */
+html{scrollbar-gutter:stable}
 .news-dialog{
   width:min(1240px,calc(100vw - 2rem));max-width:none;max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);
   margin:auto;padding:0;border:0;overflow:hidden;background:var(--surface);color:var(--text);
@@ -1884,6 +1887,8 @@ body.adm .suche-btn,body.adm .to-top{display:none!important}
 .suche-head{display:flex;align-items:center;gap:.5rem;padding:.9rem 1rem;border-bottom:1px solid var(--line)}
 .suche-input{flex:1;min-width:0;padding:.7rem .4rem;border:0;background:none;color:var(--text);font:inherit;font-size:1.2rem}
 .suche-input:focus{outline:none}
+/* Eingebautes Loeschen-Kreuz des Browsers weg: das Fenster hat schon ein X */
+.suche-input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
 .suche-input::placeholder{color:var(--text-light)}
 .suche-close{display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:50%;background:none;color:var(--heading);cursor:pointer}
 .suche-close:hover{background:var(--bg-soft)}
@@ -1896,6 +1901,8 @@ body.adm .suche-btn,body.adm .to-top{display:none!important}
 .suche-sec a:hover,.suche-sec a:focus-visible{background:var(--bg-soft)}
 .suche-t{font-family:var(--serif);font-size:1.12rem;line-height:1.3}
 .suche-m{font-size:.92rem;color:var(--text-light)}
+.suche-x{font-size:.92rem;line-height:1.45;color:var(--text-mid);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.suche-more{padding:.6rem 0 0;font-size:.9rem}
 
 /* ---------- Schrift und Kontrast: kleine Texte etwas groesser und kraeftiger ---------- */
 :root{--text-light:#565c6b}
