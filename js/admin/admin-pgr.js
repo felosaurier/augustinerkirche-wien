@@ -3,8 +3,12 @@
    Pfarrgemeinderat pflegen (admin/pgr.html), Quelle ist
    data/pgr.json: {mitglieder: [...], weitere: [...]}, je Person
    {name, rolle, beruf, aufgaben: [..], email, telefon}.
-   Erscheint auf pages/pfarre.html → Pfarrgemeinderat in der
+   Erscheint auf pages/augustinerkirche.html#p-pfarre → Pfarrgemeinderat in der
    Reihenfolge der Listen.
+   Dieselbe Seite pflegt auch die Gremien der Pfarre Aspersdorf
+   (admin/aspersdorf-gremien.html, <body data-pgr="aspersdorf">): Quelle ist dann
+   data/pgr-aspersdorf.json mit den Listen mitglieder (Pfarrgemeinderat) und
+   vwr (Vermoegensverwaltungsrat), sie erscheinen auf pages/aspersdorf.html → Leitung.
    Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
@@ -12,11 +16,15 @@
 
   const A = window.Admin;
   const { $, esc, icon } = A;
-  const PATH = 'data/pgr.json';
-  const IMG_DIR = 'assets/img/personen/pgr/';
-  const LABEL = { mitglieder: 'Mitglieder', weitere: 'Ersatzmitglieder & weitere' };
+  const ASP = document.body.dataset.pgr === 'aspersdorf';
+  const PATH = ASP ? 'data/pgr-aspersdorf.json' : 'data/pgr.json';
+  const IMG_DIR = ASP ? 'assets/img/personen/aspersdorf/' : 'assets/img/personen/pgr/';
+  const LABEL = ASP ? { mitglieder: 'Pfarrgemeinderat', vwr: 'Vermögensverwaltungsrat' } : { mitglieder: 'Mitglieder', weitere: 'Ersatzmitglieder & weitere' };
+  const KEYS = Object.keys(LABEL);
+  const WHAT = ASP ? 'Gremium der Pfarre Aspersdorf' : 'Pfarrgemeinderat';
+  const WHERE = ASP ? 'Pfarre Aspersdorf → Leitung' : 'Pfarre → Pfarrgemeinderat';
 
-  let data = { mitglieder: [], weitere: [] };
+  let data = Object.fromEntries(KEYS.map((k) => [k, []]));
   let query = '';
   let edit = null;        /* {group, i} oder null = neu */
   let snap = '';
@@ -25,14 +33,14 @@
 
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-  const copy = () => ({ mitglieder: data.mitglieder.slice(), weitere: data.weitere.slice() });
+  const copy = () => Object.fromEntries(KEYS.map((k) => [k, data[k].slice()]));
 
   /* ---------- Laden und Liste ---------- */
   async function load() {
     try {
       const d = (await A.readJSON(PATH));
       if (!d || !Array.isArray(d.mitglieder)) throw new Error('unerwarteter Inhalt');
-      data = { mitglieder: d.mitglieder, weitere: Array.isArray(d.weitere) ? d.weitere : [] };
+      data = Object.fromEntries(KEYS.map((k) => [k, Array.isArray(d[k]) ? d[k] : []]));
     } catch (e) {
       $('pg-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Datei <code>${PATH}</code> konnte nicht geladen werden (${esc(e.message)}).</div></div>`;
       return;
@@ -70,7 +78,7 @@
       return `<section class="adm-pgr-sec" aria-label="${LABEL[g]}"><h2 class="adm-pgr-h">${LABEL[g]} <span class="n">${all.length}</span></h2>` +
         `<ul class="adm-rows">${list.map(({ p, i }) => rowHTML(g, p, i, all.length - 1, words.length > 0)).join('')}</ul></section>`;
     });
-    const total = data.mitglieder.length + data.weitere.length;
+    const total = KEYS.reduce((n, k) => n + data[k].length, 0);
     $('pg-count').textContent = words.length
       ? `${plural(shown, 'Treffer', 'Treffer')} für „${query.trim()}“`
       : plural(total, 'Person', 'Personen');
@@ -232,7 +240,7 @@
       render();
       flash(target, pos);
       A.toast(direct ? `Gespeichert: ${name}.` : `${name} übernommen. Bitte unten die Datei herunterladen.`);
-      A.log(`Pfarrgemeinderat ${edit ? 'geändert' : 'ergänzt'}: ${name}`);
+      A.log(`${WHAT} ${edit ? 'geändert' : 'ergänzt'}: ${name}`);
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
     } finally {
@@ -243,8 +251,8 @@
   async function remove(g, i) {
     const p = data[g][i];
     const ok = await A.confirmBox({
-      title: 'Aus dem Pfarrgemeinderat entfernen?',
-      html: `<strong>${esc(p.name)}</strong>${p.rolle ? `<br>${esc(p.rolle)}` : ''}<br><br>Die Person verschwindet von der Seite Pfarre → Pfarrgemeinderat.`,
+      title: ASP ? `Aus „${LABEL[g]}“ entfernen?` : 'Aus dem Pfarrgemeinderat entfernen?',
+      html: `<strong>${esc(p.name)}</strong>${p.rolle ? `<br>${esc(p.rolle)}` : ''}<br><br>Die Person verschwindet von der Seite ${WHERE}.`,
       ok: 'Entfernen', danger: true
     });
     if (!ok) return;
@@ -255,7 +263,7 @@
       if ($('pg-dlg').open) $('pg-dlg').close();
       render();
       A.toast(direct ? `Entfernt: ${p.name}.` : 'Entfernt. Bitte unten die Datei herunterladen.');
-      A.log(`Pfarrgemeinderat entfernt: ${p.name}`);
+      A.log(`${WHAT} entfernt: ${p.name}`);
     } catch (err) {
       A.toast(`Entfernen nicht möglich: ${err.message}`, 'err');
     }

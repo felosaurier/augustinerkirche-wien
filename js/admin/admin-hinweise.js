@@ -233,7 +233,7 @@
     if (vonT && !vonD) errors.push([$('f-von'), 'Zur Uhrzeit fehlt das Datum.']);
     if (bisT && !bisD) errors.push([$('f-bis'), 'Zur Uhrzeit fehlt das Datum.']);
     if (vonD && bisD && timeOf(bis, true) < timeOf(von, false)) errors.push([$('f-bis'), 'Das Ende liegt vor dem Beginn.']);
-    if (link === null) errors.push([$('f-link'), 'Diese Adresse sieht nicht richtig aus, z. B. www.beispiel.at oder pages/pfarre.html.']);
+    if (link === null) errors.push([$('f-link'), 'Diese Adresse sieht nicht richtig aus, z. B. www.beispiel.at oder pages/augustinerkirche.html#p-pfarre.']);
     if (errors.length) {
       A.showErrors(form, errors);
       return;

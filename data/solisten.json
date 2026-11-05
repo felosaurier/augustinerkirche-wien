@@ -4,279 +4,383 @@
     "surname": "Achrainer",
     "voice": "Bariton",
     "image": "assets/img/personen/solisten/achrainer-martin.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.martinachrainer.com/"
   },
   {
     "name": "Alexander Aigner",
     "surname": "Aigner",
     "voice": "Bariton",
     "image": "assets/img/personen/solisten/aigner-alexander.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.instagram.com/alexander.aigner.baritone/"
   },
   {
     "name": "Taisiya Albani",
     "surname": "Albani",
     "voice": "Mezzosopran",
     "image": "assets/img/personen/solisten/albani-taisiya.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.estherschollum.at/artists/taisiya-albani/"
   },
   {
     "name": "Hiroshi Amako",
     "surname": "Amako",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/amako-hiroshi.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.wiener-staatsoper.at/ensemble/detail/hiroshi-amako/"
   },
   {
     "name": "Katrin Auzinger",
     "surname": "Auzinger",
     "voice": "Alt",
     "image": "assets/img/personen/solisten/auzinger-katrin.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.katrinauzinger.com/"
   },
   {
     "name": "Stephen Chaundy",
     "surname": "Chaundy",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/chaundy-stephen.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.stephenchaundy.com/deutsch"
   },
   {
     "name": "Theresa Dax",
     "surname": "Dax",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/dax-theresa.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.theresadax.com/"
   },
   {
     "name": "Thomas Diestler",
     "surname": "Diestler",
     "voice": "Altus",
     "image": "assets/img/personen/solisten/diestler-thomas.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.diestler.net/"
   },
   {
     "name": "Christiane Döcker",
     "surname": "Döcker",
     "voice": "Mezzosopran",
     "image": "assets/img/personen/solisten/doecker-christiane.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.christianedoecker.at/"
   },
   {
     "name": "Simona Eisinger",
     "surname": "Eisinger",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/eisinger-simona.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.simona-eisinger.at/"
   },
   {
     "name": "Norbert Ernst",
     "surname": "Ernst",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/ernst-norbert.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.componissima.at/interpretinnen/norbert-ernst/"
   },
   {
     "name": "Günther Groissböck",
     "surname": "Groissböck",
     "voice": "Bass",
     "image": "assets/img/personen/solisten/groissboeck-guenther.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.wiener-staatsoper.at/ensemble/detail/guenther-groissboeck/"
   },
   {
     "name": "Franz Gürtelschmied",
     "surname": "Gürtelschmied",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/guertelschmied-franz.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.guertelschmied.com/"
   },
   {
     "name": "Regine Hangler",
     "surname": "Hangler",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/hangler-regine.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.hilbert.de/kuenstler/saenger/sopran/regine-hangler/"
   },
   {
     "name": "Günter Haumer",
     "surname": "Haumer",
-    "voice": "Bariton",
+    "voice": "Bass",
     "image": "assets/img/personen/solisten/haumer-guenter.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.ghaumer.com/de/home-2/"
   },
   {
     "name": "Gernot Heinrich",
     "surname": "Heinrich",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/heinrich-gernot.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "http://www.gernotheinrich.at/"
+  },
+  {
+    "name": "Yasushi Hirano",
+    "surname": "Hirano",
+    "voice": "Bassbariton",
+    "image": "assets/img/personen/solisten/hirano-yasushi.webp",
+    "deceased": false,
+    "homepage": "https://www.proscenium.at/kuenstler/yasushi_hirano.php"
   },
   {
     "name": "Cornelia Horak",
     "surname": "Horak",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/horak-cornelia.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.corneliahorak.at/"
   },
   {
     "name": "David Jagodic",
     "surname": "Jagodic",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/jagodic-david.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.davidjagodic.com/"
   },
   {
     "name": "Andreas Jankowitsch",
     "surname": "Jankowitsch",
     "voice": "Bass",
     "image": "assets/img/personen/solisten/jankowitsch-andreas.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.andreas-jankowitsch.net/"
   },
   {
     "name": "Megan Kahts",
     "surname": "Kahts",
     "voice": "Mezzosopran",
     "image": "assets/img/personen/solisten/kahts-megan.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://megankahts.com/de/"
   },
   {
     "name": "Alexander Kaimbacher",
     "surname": "Kaimbacher",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/kaimbacher-alexander.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://alexanderkaimbacher.at/"
+  },
+  {
+    "name": "Emmi Kauppinen",
+    "surname": "Kauppinen",
+    "voice": "Sopran",
+    "image": "assets/img/personen/solisten/kauppinen-emmi.webp",
+    "deceased": false,
+    "homepage": "https://emmikauppinen.com/"
   },
   {
     "name": "Clemens Kerschbaumer",
     "surname": "Kerschbaumer",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/kerschbaumer-clemens.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.clemenskerschbaumer.com/biographie"
   },
   {
     "name": "Johanna Krokovay",
     "surname": "Krokovay",
     "voice": "Alt",
     "image": "assets/img/personen/solisten/krokovay-johanna.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.johannakrokovay.com/"
   },
   {
     "name": "Marcell Krokovay",
     "surname": "Krokovay",
     "voice": "Bass",
     "image": "assets/img/personen/solisten/krokovay-marcell.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.krokovay.eu/"
   },
   {
     "name": "Miriam Kutrowatz",
     "surname": "Kutrowatz",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/kutrowatz-miriam.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.miriamkutrowatz.com/"
   },
   {
     "name": "Ursula Langmayr",
     "surname": "Langmayr",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/langmayr-ursula.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "http://ursula-langmayr.net/html/home_d.php"
   },
   {
     "name": "Georg Lehner",
     "surname": "Lehner",
     "voice": "Bariton",
     "image": "assets/img/personen/solisten/lehner-georg.webp",
-    "deceased": false
-  },
-  {
-    "name": "Martin Maier",
-    "surname": "Maier",
-    "voice": "Tenor",
-    "image": "assets/img/personen/solisten/maier-martin.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.richard-wagner-konservatorium.at/abteilungen/theorie-und-sologesang/georg-lehner/"
   },
   {
     "name": "Sarah Raphaela Mair",
     "surname": "Mair",
     "voice": "Mezzosopran",
     "image": "assets/img/personen/solisten/mair-sarah-raphaela.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://sarah-raphaela-mair.com/"
   },
   {
     "name": "Martin Mairinger",
     "surname": "Mairinger",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/mairinger-martin.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.martinmairinger.at/"
   },
   {
     "name": "Stephanie Maitland",
     "surname": "Maitland",
     "voice": "Mezzosopran",
     "image": "assets/img/personen/solisten/maitland-stephanie.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.wiener-staatsoper.at/ensemble/detail/stephanie-maitland/"
+  },
+  {
+    "name": "Jorge Alberto Martinez",
+    "surname": "Martinez",
+    "voice": "Bariton",
+    "image": "assets/img/personen/solisten/martinez-jorge-alberto.webp",
+    "deceased": false,
+    "homepage": "https://www.jorgealbertomartinez.com/"
+  },
+  {
+    "name": "Telmo Mazurek",
+    "surname": "Mazurek",
+    "voice": "Bass",
+    "image": "assets/img/personen/solisten/mazurek-telmo.webp",
+    "deceased": false,
+    "homepage": "https://www.musicsecrets.de/%C3%BCber-uns/lehrer/telmo-mazurek/"
+  },
+  {
+    "name": "Ayelén Mose",
+    "surname": "Mose",
+    "voice": "Sopran",
+    "image": "assets/img/personen/solisten/mose-ayel-n.webp",
+    "deceased": false,
+    "homepage": "https://www.instagram.com/ayelenpaulamose/"
   },
   {
     "name": "Jakob Nistler",
     "surname": "Nistler",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/nistler-jakob.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://jakobnistler.com/"
+  },
+  {
+    "name": "Felix Pacher",
+    "surname": "Pacher",
+    "voice": "Bass",
+    "image": "assets/img/personen/solisten/pacher-felix.webp",
+    "deceased": false,
+    "homepage": "https://felixpacher.com/"
   },
   {
     "name": "KS Annely Peebo",
     "surname": "Peebo",
     "voice": "Mezzosopran",
     "image": "assets/img/personen/solisten/peebo-ks-annely.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.annelypeebo.com/"
   },
   {
-    "name": "RAMOS Gustavo Quaresma",
-    "surname": "Quaresma",
+    "name": "Severin Praßl-Wisiak",
+    "surname": "Praßl-Wisiak",
+    "voice": "Tenor",
+    "image": "assets/img/personen/solisten/prassl-wisiak-severin.webp",
+    "deceased": false,
+    "homepage": "https://www.instagram.com/severin.prawis/"
+  },
+  {
+    "name": "Gustavo Quaresma Ramos",
+    "surname": "Ramos",
     "voice": "Tenor",
     "image": "assets/img/personen/solisten/quaresma-ramos-gustavo.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.instagram.com/gustavo_quaresma_tenor/"
+  },
+  {
+    "name": "Eva Maria Riedl",
+    "surname": "Riedl",
+    "voice": "Alt",
+    "image": "assets/img/personen/solisten/riedl-eva-maria.webp",
+    "deceased": false,
+    "homepage": "http://www.riedlbuschan.com/"
   },
   {
     "name": "Hedwig Ritter",
     "surname": "Ritter",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/ritter-hedwig.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.hedwigritter.com/"
   },
   {
     "name": "Klemens Sander",
     "surname": "Sander",
     "voice": "Bariton",
     "image": "assets/img/personen/solisten/sander-klemens.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.klemenssander.at/ks/"
   },
   {
     "name": "Eva-Maria Schmid",
     "surname": "Schmid",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/schmid-eva-maria.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.evamariaschmid.com/"
   },
   {
     "name": "Maximilian Schnabel",
     "surname": "Schnabel",
     "voice": "Bariton",
     "image": "assets/img/personen/solisten/schnabel-maximilian.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.maximilianschnabel.com/vita/"
   },
   {
     "name": "Cornelia Sonnleithner",
     "surname": "Sonnleithner",
     "voice": "Mezzosopran",
     "image": "assets/img/personen/solisten/sonnleithner-cornelia.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.corneliasonnleithner.com/"
   },
   {
     "name": "Katrin Targo",
     "surname": "Targo",
     "voice": "Sopran",
     "image": "assets/img/personen/solisten/targo-katrin.webp",
-    "deceased": false
+    "deceased": false,
+    "homepage": "https://www.wienmodern.at/2020-bio-katrin-delyse-targo-de-3916"
+  },
+  {
+    "name": "KS Clemens Unterreiner",
+    "surname": "Unterreiner",
+    "voice": "Bariton",
+    "image": "assets/img/personen/solisten/unterrainer-ks-clemens.webp",
+    "deceased": false,
+    "homepage": "https://www.unterreiner.at/"
   }
 ]

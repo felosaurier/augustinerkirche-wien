@@ -83,7 +83,9 @@
   function collectRights() {
     const checked = (name) => Array.from(document.querySelectorAll(`#zg-rights input[name="${name}"]:checked`), (i) => i.value);
     const bereiche = checked('recht');
-    return { bereiche, runden: bereiche.includes(A.RUNDEN_KEY) ? [] : checked('runde') };
+    const out = { bereiche, runden: bereiche.includes(A.RUNDEN_KEY) ? [] : checked('runde') };
+    if ($('zg-freigabe').checked) out.freigabe = true;
+    return out;
   }
   function syncRights() {
     /* Gruppen-Kaestchen: an, wenn alle darin an sind; halb, wenn nur manche */
@@ -114,7 +116,8 @@
       const names = runden.filter((r) => sel.runden.has(r.id)).map((r) => r.titel);
       labels.push(names.length === 1 ? `Runde ${names[0]}` : names.length && names.length <= 3 ? `Runden ${names.join(', ')}` : plural(sel.runden.size, 'Runde', 'Runden'));
     }
-    return labels.length ? `Darf bearbeiten: ${labels.join(', ')}` : 'Darf noch nichts bearbeiten';
+    const approval = acc.rechte.freigabe ? ' · Neuigkeiten nur als Entwurf (Freigabe durch Admin)' : '';
+    return (labels.length ? `Darf bearbeiten: ${labels.join(', ')}` : 'Darf noch nichts bearbeiten') + approval;
   }
 
   async function load() {
@@ -191,6 +194,7 @@
     devOk = false;
     document.querySelector('input[name="rolle"][value="redaktion"]').disabled = lastAdmin;
     $('zg-rights').innerHTML = rightsHTML(rightsSel(acc));
+    $('zg-freigabe').checked = !!(acc && acc.rechte && acc.rechte.freigabe);
     syncRights();
     $('zg-role-hint').textContent = lastAdmin ? 'Das ist der einzige Admin. Lege zuerst einen weiteren Admin an, bevor du diese Rolle änderst.' : '';
     $('f-user').readOnly = !!acc;

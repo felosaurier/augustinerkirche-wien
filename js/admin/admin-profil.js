@@ -123,5 +123,20 @@
       A.toast('Passwort eingesetzt. Bitte notieren oder im Passwort-Manager speichern.');
     });
     $('pf-form').addEventListener('submit', save);
+
+    /* Als App installieren: Android/Computer per Knopf, iPhone nur ueber "Teilen" */
+    const inst = A.appInstall;
+    const text = $('pf-app-text');
+    const base = text.textContent;
+    const showApp = () => {
+      $('pf-app-install').hidden = !inst.can();
+      if (inst.standalone()) text.textContent = 'Du nutzt die Verwaltung gerade als App.';
+      else if (!inst.can() && /iPhone|iPad|iPod/.test(navigator.userAgent)) text.textContent = `${base} Auf dem iPhone: unten auf „Teilen“ tippen, dann „Zum Home-Bildschirm“.`;
+      else if (!inst.can()) text.textContent = `${base} Am Handy: im Browsermenü „App installieren“ oder „Zum Startbildschirm hinzufügen“ wählen.`;
+      else text.textContent = base;
+    };
+    inst.onChange(showApp);
+    $('pf-app-install').addEventListener('click', () => inst.run());
+    showApp();
   });
 })();

@@ -25,9 +25,9 @@
     ['Wochenkalender', 'pages/kalender.html#woche', 'termine woche messen gottesdienst heute'],
     ['Kalender (Monat)', 'pages/kalender.html', 'termine monat'],
     ['Archiv der Neuigkeiten', 'pages/archiv.html', 'meldungen berichte nachrichten'],
-    ['Gottesdienste', 'pages/gottesdienste.html', 'messe heilige messe zeiten beichte liturgie'],
+    ['Gottesdienste', 'pages/augustinerkirche.html#p-zeiten', 'messe heilige messe zeiten beichte liturgie'],
     ['Hochämter', 'pages/musik.html#p-hochaemter', 'sonntag 11 uhr konzert chor orchester messe'],
-    ['Sakramente', 'pages/sakramente.html', 'taufe hochzeit trauung firmung erstkommunion'],
+    ['Sakramente', 'pages/augustinerkirche.html#p-sakramente', 'taufe hochzeit trauung firmung erstkommunion'],
     ['Impressum', 'pages/impressum.html', 'rechtliches verantwortlich'],
     ['Datenschutz', 'pages/datenschutz.html', 'rechtliches daten cookies']
   ];

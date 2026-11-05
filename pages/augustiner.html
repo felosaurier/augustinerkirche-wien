@@ -14,6 +14,19 @@
 <meta name="theme-color" content="#10192e"/>
 <title>Die Augustiner — Augustinerkirche Wien</title>
 <meta name="description" content="Der heilige Augustinus und seine Regel, der Augustinerorden, bedeutende Augustiner und das Wirken der Augustiner in Österreich und Wien."/>
+<!--seo-anfang-->
+<link rel="canonical" href="https://augustinerkirche.augustiner.at/pages/augustiner.html"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Augustinerkirche Wien"/>
+<meta property="og:locale" content="de_AT"/>
+<meta property="og:title" content="Die Augustiner — Augustinerkirche Wien"/>
+<meta property="og:description" content="Der heilige Augustinus und seine Regel, der Augustinerorden, bedeutende Augustiner und das Wirken der Augustiner in Österreich und Wien."/>
+<meta property="og:url" content="https://augustinerkirche.augustiner.at/pages/augustiner.html"/>
+<meta property="og:image" content="https://augustinerkirche.augustiner.at/assets/img/kirche/turm.webp"/>
+<meta property="og:image:width" content="712"/>
+<meta property="og:image:height" content="1186"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<!--seo-ende-->
 <link rel="stylesheet" href="../css/style.css"/>
 <script src="../js/thema.js"></script>
 </head>
@@ -21,7 +34,7 @@
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
 
 <nav aria-label="Hauptnavigation">
-  <a class="nav-logo-wrap" href="../index.html">
+  <a class="nav-logo-wrap" href="augustiner.html" data-home="../index.html">
     <img class="nav-logo-img" src="../assets/logo.png" alt="" width="38" height="38" decoding="async"/>
     <div>
       <div class="nav-logo-text">Augustiner<span>kirche</span> Wien</div>
@@ -71,21 +84,25 @@
         <div class="mega-group">
           <span class="mega-group-label">Kloster &amp; Pfarre</span>
           <a href="../index.html#kloster">Augustinerkloster</a>
-          <a href="pfarre.html">Pfarre St. Augustin</a>
+          <a href="augustinerkirche.html#p-pfarre">Pfarre St. Augustin</a>
         </div>
         <div class="mega-group">
-          <span class="mega-group-label">Gottesdienste &amp; Gemeindeleben</span>
-          <a href="gottesdienste.html#p-zeiten">Gottesdienstzeiten</a>
+          <span class="mega-group-label">Gottesdienste</span>
+          <a href="augustinerkirche.html#p-zeiten">Gottesdienstzeiten</a>
           <a href="kalender.html#woche">Wochenkalender</a>
           <a href="musik.html#p-hochaemter">Hochämter</a>
-          <a href="gottesdienste.html#p-runden">Runden in St. Augustin</a>
-          <a href="sakramente.html">Sakramente</a>
-          <a href="sakramente.html#p-wiedereintritt">Wiedereintritt</a>
+          <a href="augustinerkirche.html#p-predigten">Predigten und Ansprachen</a>
+        </div>
+        <div class="mega-group">
+          <span class="mega-group-label">Gemeindeleben</span>
+          <a href="augustinerkirche.html#p-runden">Runden in St. Augustin</a>
+          <a href="augustinerkirche.html#p-sakramente">Sakramente</a>
+          <a href="augustinerkirche.html#p-wiedereintritt">Wiedereintritt</a>
         </div>
         <div class="mega-group">
           <span class="mega-group-label">Augustinerkirche</span>
-          <a href="chronik.html#p-geschichte">Geschichtliches</a>
-          <a href="chronik.html#p-fuehrungen">Führungen</a>
+          <a href="augustinerkirche.html#p-geschichte">Geschichtliches</a>
+          <a href="augustinerkirche.html#p-fuehrungen">Führungen</a>
         </div>
       </div>
     </div>
@@ -109,6 +126,11 @@
           <a href="musik.html#p-chor">Chor &amp; Orchester von St. Augustin</a>
         </div>
         <div class="mega-group">
+          <span class="mega-group-label">Orgeln</span>
+          <a href="orgel-rieger.html">Rieger-Orgel</a>
+          <a href="orgel-reil.html">Reil-Orgel</a>
+        </div>
+        <div class="mega-group">
           <span class="mega-group-label">Förderung</span>
           <a href="musik.html#p-patenschaft">Patenschaftsverein</a>
           <a href="musik.html#p-paten">Paten</a>
@@ -119,7 +141,7 @@
   </div>
 
   <div class="nav-right">
-    <a href="gottesdienste.html" class="nav-cta">Gottesdienste</a>
+    <a href="augustinerkirche.html#p-zeiten" class="nav-cta">Gottesdienste</a>
     <button type="button" class="hamburger" id="hamburger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mob-menu">
       <span></span><span></span><span></span>
     </button>
@@ -154,7 +176,7 @@
     <div class="news-grid" id="news-grid" data-base="../" data-seite="augustiner" data-hide-empty aria-live="polite">
       <p class="s-text">Die aktuellen Neuigkeiten finden Sie im <a class="link-arr" href="archiv.html">Archiv</a>.</p>
     </div>
-    <div class="news-more" id="news-more"><a class="link-arr" href="archiv.html">Alle Meldungen</a></div>
+    <div class="news-more" id="news-more"><a class="btn btn-dark" href="archiv.html">Alle Meldungen</a></div>
   </div>
 </section>
 
@@ -162,23 +184,27 @@
   <div class="inner">
     <div class="with-sidebar">
       <aside class="sidebar sidebar-flat" aria-label="Unterseiten Augustiner">
-        <span class="sidebar-group-label">Hl. Augustinus</span>
-        <button type="button" class="sidebar-item active" data-pane="p-augustinus">Leben und Zeittafel</button>
-        <button type="button" class="sidebar-item" data-pane="p-regel">Die Augustinusregel</button>
-        <button type="button" class="sidebar-item" data-pane="p-spiritualitaet">Spiritualität</button>
-        <button type="button" class="sidebar-item" data-pane="p-forschung" hidden>Augustinus-Forschung</button>
+        <span class="sidebar-group-label">Augustiner-Vikariat Wien</span>
+        <button type="button" class="sidebar-item" data-pane="p-vikariat" hidden>Vikariat Wien</button>
+        <button type="button" class="sidebar-item" data-pane="p-wien">Augustiner in Wien</button>
+        <button type="button" class="sidebar-item" data-pane="p-berufung">Augustiner werden</button>
+        <button type="button" class="sidebar-item" data-pane="p-links" hidden>Links</button>
         <div class="sidebar-divider"></div>
-        <span class="sidebar-group-label">Der Augustinerorden</span>
+        <span class="sidebar-group-label">Augustinerorden</span>
         <button type="button" class="sidebar-item" data-pane="p-orden">Geschichte des Ordens</button>
+        <button type="button" class="sidebar-item" data-pane="p-spiritualitaet">Spiritualität</button>
         <button type="button" class="sidebar-item" data-pane="p-ordensheilige">Ordensheilige</button>
         <button type="button" class="sidebar-item" data-pane="p-bedeutende">Bedeutende Augustiner</button>
         <button type="button" class="sidebar-item" data-pane="p-leo">Papst Leo XIV.</button>
-        <button type="button" class="sidebar-item" data-pane="p-berufung">Augustiner werden</button>
         <div class="sidebar-divider"></div>
-        <span class="sidebar-group-label">In Österreich</span>
-        <button type="button" class="sidebar-item" data-pane="p-vikariat" hidden>Vikariat Wien</button>
-        <button type="button" class="sidebar-item" data-pane="p-wien">Die Augustiner in Wien</button>
-        <button type="button" class="sidebar-item" data-pane="p-links" hidden>Links</button>
+        <span class="sidebar-group-label">Hl. Augustinus</span>
+        <button type="button" class="sidebar-item active" data-pane="p-augustinus">Leben &amp; Zeittafel</button>
+        <button type="button" class="sidebar-item" data-pane="p-regel">Augustinusregel</button>
+        <button type="button" class="sidebar-item" data-pane="p-forschung" hidden>Augustinus-Forschung</button>
+        <div class="sidebar-divider"></div>
+        <span class="sidebar-group-label">Pfarren von Augustinern betreut</span>
+        <a class="sidebar-item" href="augustinerkirche.html">Augustinerkirche Wien</a>
+        <a class="sidebar-item" href="aspersdorf.html">Pfarre St. Georg, Aspersdorf</a>
       </aside>
 
       <div class="tab-content-area">
@@ -469,7 +495,7 @@
 
           <div class="cards-stack" style="margin-top:2rem">
             <div class="card"><div class="card-title">Aufgabengebiete</div><div class="card-text">Seelsorge, Bildung und Kirchenmusik.</div><p class="card-more">Neben der täglichen Pfarrseelsorge — Gottesdienste, Sakramentenspendung, Beichte und Begleitung in Lebenskrisen — engagieren sich die Augustiner in Wien in der Trägerschaft der Kirchenmusik von St. Augustin, in der Betreuung der Herzgruft und Führungen sowie im ökumenischen und kulturellen Austausch der Inneren Stadt.</p></div>
-            <div class="card"><div class="card-title">Geschichte in Wien</div><div class="card-text">Von der Hofpfarrkirche bis zur Stadtpfarre.</div><p class="card-more">Von 1327 bis 1836 wirkten Augustiner an der Kirche, seit 1951 betreuen sie sie wieder. Sie ist für Orden und Gemeinde ein Ort, an dem Gottes Nähe in Liturgie, Verkündigung und Eucharistiefeier erfahrbar wird: Hier wird getauft und getraut, hier beten die Mönche das Stundengebet, feiert die Pfarre ihre Gottesdienste und das sonntägliche Hochamt mit Chor und Orchester von St. Augustin.</p><p class="card-more">Von 1634 bis 1918 war die Augustinerkirche Hofpfarrkirche, in der viele Mitglieder des Kaiserhauses heirateten. Seit Wien 1722 Erzbistum wurde, zog der neue Erzbischof von hier in feierlicher Prozession zum Stephansdom. 1630 hatte Kaiser Ferdinand II. die Augustiner-Barfüßer an die Kirche berufen; zwischen 1750 und 1780 lebten bis zu 90 Augustiner im Kloster. Einer der bedeutendsten war P. Abraham a Sancta Clara, dessen gedruckte Predigten die Wiener aufrüttelten. 1783 wurde die Kirche Pfarrkirche.</p><p class="card-more">1836 erlosch das Kloster infolge der josephinischen Reformen, 115 Jahre lang betreuten Diözesanpriester die Kirche. 1951 übernahmen heimatvertriebene sudetendeutsche Augustiner Kirche und Kloster; anfangs lag der Schwerpunkt auf der Pfarrarbeit und der Betreuung von Heimatvertriebenen. Heute ist das Kloster Sitz des Regionalvikars und Studienhaus des Vikariats. Ausführlich nachzulesen unter <a class="link-arr" href="chronik.html#p-geschichte">Geschichte</a>.</p></div>
+            <div class="card"><div class="card-title">Geschichte in Wien</div><div class="card-text">Von der Hofpfarrkirche bis zur Stadtpfarre.</div><p class="card-more">Von 1327 bis 1836 wirkten Augustiner an der Kirche, seit 1951 betreuen sie sie wieder. Sie ist für Orden und Gemeinde ein Ort, an dem Gottes Nähe in Liturgie, Verkündigung und Eucharistiefeier erfahrbar wird: Hier wird getauft und getraut, hier beten die Mönche das Stundengebet, feiert die Pfarre ihre Gottesdienste und das sonntägliche Hochamt mit Chor und Orchester von St. Augustin.</p><p class="card-more">Von 1634 bis 1918 war die Augustinerkirche Hofpfarrkirche, in der viele Mitglieder des Kaiserhauses heirateten. Seit Wien 1722 Erzbistum wurde, zog der neue Erzbischof von hier in feierlicher Prozession zum Stephansdom. 1630 hatte Kaiser Ferdinand II. die Augustiner-Barfüßer an die Kirche berufen; zwischen 1750 und 1780 lebten bis zu 90 Augustiner im Kloster. Einer der bedeutendsten war P. Abraham a Sancta Clara, dessen gedruckte Predigten die Wiener aufrüttelten. 1783 wurde die Kirche Pfarrkirche.</p><p class="card-more">1836 erlosch das Kloster infolge der josephinischen Reformen, 115 Jahre lang betreuten Diözesanpriester die Kirche. 1951 übernahmen heimatvertriebene sudetendeutsche Augustiner Kirche und Kloster; anfangs lag der Schwerpunkt auf der Pfarrarbeit und der Betreuung von Heimatvertriebenen. Heute ist das Kloster Sitz des Regionalvikars und Studienhaus des Vikariats. Ausführlich nachzulesen unter <a class="link-arr" href="augustinerkirche.html#p-geschichte">Geschichte</a>.</p></div>
           </div>
         </div>
 

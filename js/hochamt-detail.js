@@ -73,7 +73,9 @@
   }
   /* Augustinerkirche mit Adresse, andere Orte wie eingetragen */
   const place = (loc) => (/^augustinerkirche$/i.test(loc.trim())
-    ? { name: 'Augustinerkirche', addr: '1010 Wien, Hofburg – Josefsplatz' } : { name: loc, addr: '' });
+    ? { name: 'Augustinerkirche', addr: '1010 Wien, Hofburg – Josefsplatz', query: 'Augustinerkirche, Augustinerstraße 3, 1010 Wien' } : { name: loc, addr: '' });
+  /* Ort in Google Maps (Suche nach Name bzw. Adresse) */
+  const mapsUrl = (w) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(w.query || `${w.name}, Wien`)}`;
   const PIN = '<svg class="hd-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
 
   function musicHTML(lines) {
@@ -165,7 +167,7 @@
 
     body.innerHTML =
       (program || '<p class="s-text">Die Mitwirkenden und das genaue Programm werden noch bekannt gegeben.</p>') +
-      `<p class="hd-place">${PIN}<span><strong>${HD.esc(where.name)}</strong>${where.addr ? `<span class="hd-addr">${HD.esc(where.addr)}</span>` : ''}</span></p>` +
+      `<p class="hd-place">${PIN}<a class="hd-map" href="${HD.esc(mapsUrl(where))}" target="_blank" rel="noopener" title="In Google Maps öffnen (neues Fenster)"><strong>${HD.esc(where.name)}</strong>${where.addr ? `<span class="hd-addr">${HD.esc(where.addr)}</span>` : ''}</a></p>` +
       (note ? `<p class="hd-note"><span class="hd-note-label">Hinweis</span>${HD.richText(note, '../')}</p>` : '') +
       '<div class="hd-thanks"><p>Dankbar sind wir für Ihre Spende zur Erhaltung der Kirchenmusik!</p>' +
         '<a class="btn btn-gold hd-thanks-btn" href="musik.html#p-patenschaft">Kirchenmusik unterstützen</a></div>' +
@@ -188,9 +190,8 @@
     }
   }
 
-  /* Fotos dieses Termins zeigen: ohne Plakat neben dem Programm (Spalte des Plakats),
-     mit Plakat unter dem Programm */
-  async function showPhotos(id, hasPoster) {
+  /* Fotos dieses Termins zeigen: immer in der Spalte neben dem Programm, unter dem Plakat (falls es eines gibt) */
+  async function showPhotos(id) {
     const aside = qs('#hd-poster');
     const body = qs('#hd-body');
     if (!aside || !body || !id) return;
@@ -211,15 +212,6 @@
       return `<figure class="hd-photo"><img src="${HD.esc(b.src)}" alt="${HD.esc(cap || `Foto: ${title}`)}"${dim} loading="lazy" decoding="async"/>` +
         (cap ? `<figcaption>${HD.esc(cap)}</figcaption>` : '') + '</figure>';
     }).join('');
-    if (hasPoster) {
-      /* Unter dem Programm, vor dem Link "Alle Hochaemter" */
-      if (!body.lastElementChild) return;
-      const sec = document.createElement('div');
-      sec.className = 'hd-photos-wrap';
-      sec.innerHTML = `<h2 class="s-title hd-photos-title">Fotos</h2><div class="hd-photos">${figures}</div>`;
-      body.lastElementChild.before(sec);
-      return;
-    }
     const host = document.createElement('div');
     host.className = 'hd-aside-photos';
     host.innerHTML = figures;
@@ -233,7 +225,7 @@
   /* Plakat der verknuepften Meldung neben dem Programm zeigen */
   const NEWS_KEYS = {
     datum: 'date', titel: 'title', plakat: 'poster', vorschaubild: 'thumb', link: 'link',
-    weitererlink: 'link2', weitererlinktext: 'linktext2'
+    weitererlink: 'link2', weitererlinktext: 'linktext2', entwurf: 'draft', ab: 'from'
   };
   async function showPoster(id) {
     const aside = qs('#hd-poster');
@@ -247,7 +239,10 @@
       return false;
     }
     const target = `pages/hochamt.html?id=${id}`;
-    const n = rows.find((r) => (r.poster || r.thumb) && safeDecode(String(r.link || '').trim()) === target);
+    const dd = new Date();
+    const today = `${dd.getFullYear()}-${HD.pad(dd.getMonth() + 1)}-${HD.pad(dd.getDate())}`;
+    const visible = (r) => !/^ja$/i.test(r.draft || '') && !(HD.isoDate(r.from || '') && HD.isoDate(r.from) > today);
+    const n = rows.find((r) => visible(r) && (r.poster || r.thumb) && safeDecode(String(r.link || '').trim()) === target);
     const src = n && HD.safeUrl(n.poster || n.thumb, '../');
     if (!src) return false;
     const newsId = `${HD.isoDate(n.date)}-${HD.slug(n.title)}`;
@@ -295,7 +290,8 @@
       const [entries, homepages] = await Promise.all([loadEntries(id), loadHomepages()]);
       render(entries, id, homepages);
       /* Fotos neben dem Programm; gibt es ein Plakat, darunter */
-      showPhotos(id, await showPoster(id));
+      await showPoster(id);
+      showPhotos(id);
     } catch {
       qs('#hd-body').innerHTML = FALLBACK;
     }

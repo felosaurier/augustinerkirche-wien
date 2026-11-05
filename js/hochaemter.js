@@ -46,11 +46,69 @@
       '</select>';
   }
 
+  /* Zeilen mit einer Ueberschrift "Monat Jahr" vor jedem neuen Monat */
+  function rowsWithMonths(entries) {
+    let last = '';
+    return entries.map((e) => {
+      const key = `${e.dateObj.getFullYear()}-${e.dateObj.getMonth()}`;
+      const head = key === last ? '' :
+        `<h3 class="kal-month">${HD.MONTHS[e.dateObj.getMonth()]} ${e.dateObj.getFullYear()}</h3>`;
+      last = key;
+      return head + rowHTML(e);
+    }).join('');
+  }
+
+  /* Das naechste Hochamt gross, rechts die vier danach als Vorschau */
+  function renderNext(entries, boardEl) {
+    const next = entries[0];
+    if (!boardEl || !next) return;
+    const days = Math.round((next.dateObj - HD.today()) / 86400000);
+    const when = days <= 0 ? 'heute' : days === 1 ? 'morgen' : `in ${days} Tagen`;
+    const wd = next.dateObj.toLocaleDateString('de-AT', { weekday: 'long' });
+    const who = [['Zelebrant', next.celebrant], ['Dirigent', next.conductor], ['Chor', next.choir], ['Orchester', next.orchestra], ['Organist', next.organist]].filter(([, v]) => v);
+    const href = (e) => `hochamt.html?id=${encodeURIComponent(e.id)}`;
+    const later = entries.slice(1, 5).map((e) =>
+      `<li><a href="${href(e)}"><span class="nh-slot-day">${HD.pad(e.dateObj.getDate())}<small>${HD.MONTHS_SHORT[e.dateObj.getMonth()]}</small></span>` +
+      `<span class="nh-slot-txt"><span class="nh-slot-when">${HD.WEEKDAYS_SHORT[e.dateObj.getDay()]}, ${HD.esc(e.time)} Uhr${e.piece && e.piece !== e.type ? ` · ${HD.esc(e.type)}` : ''}</span>` +
+      `<b>${HD.esc(e.piece || e.type)}</b></span></a></li>`).join('');
+    boardEl.innerHTML =
+      '<div class="nh-main">' +
+        `<p class="nh-kicker">Nächstes Hochamt, ${when}</p>` +
+        '<div class="nh-date">' +
+          `<span class="nh-day">${HD.pad(next.dateObj.getDate())}</span>` +
+          `<span class="nh-md"><b>${HD.MONTHS[next.dateObj.getMonth()]}</b><span>${HD.esc(wd)}, ${HD.esc(next.time)} Uhr</span></span>` +
+        '</div>' +
+        (next.piece && next.piece !== next.type
+          ? `<p class="nh-type">${HD.esc(next.type)}</p><h3 class="nh-piece">${HD.esc(next.piece)}</h3>`
+          : `<h3 class="nh-piece">${HD.esc(next.type)}</h3>`) +
+        (who.length ? `<ul class="nh-who">${who.map(([k, v]) => `<li><span>${HD.esc(k)}</span> ${HD.esc(v)}</li>`).join('')}</ul>` : '') +
+      '</div>' +
+      (later ? `<div class="nh-next"><p class="nh-kicker">Vorschau</p><ul>${later}</ul></div>` : '') +
+      '<div class="nh-foot">' +
+        `<a class="btn btn-dark" href="${href(next)}">Details</a>` +
+        (later ? '<a class="btn btn-outline" href="#kal-list" data-nh-more>Weitere Hochämter</a>' : '') +
+      '</div>';
+    const section = qs('#nh-section');
+    if (section) section.hidden = false;
+    const more = qs('[data-nh-more]', boardEl);
+    if (more) {
+      more.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        /* ist ein anderer Bereich offen, erst zu den Hochaemtern wechseln */
+        const tab = qs('.sidebar-item[data-pane="p-hochaemter"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+        const list = qs('#kal-list');
+        if (list) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }
+
   /* Alle kommenden Termine untereinander, nach Datum */
   function renderUpcoming(entries, listEl) {
     listEl.innerHTML = entries.length
-      ? entries.map(rowHTML).join('')
+      ? rowsWithMonths(entries)
       : '<p class="s-text">Derzeit sind keine kommenden Hochämter eingetragen.</p>';
+    renderNext(entries, qs('#nh-board'));
   }
 
   function renderArchive(entries, archiveYears, listEl) {
@@ -90,7 +148,7 @@
     const rowsEl = qs('.kal-archive-rows', listEl);
     const yearSelect = qs('#kal-year-select', listEl);
     const buttons = qsa('.news-year', listEl);
-    const fill = (list) => { rowsEl.innerHTML = list.slice().sort(HD.byDateTimeDesc).map(rowHTML).join(''); };
+    const fill = (list) => { rowsEl.innerHTML = rowsWithMonths(list.slice().sort(HD.byDateTimeDesc)); };
 
     /* Wird schnell zwischen Jahren gewechselt, darf eine spaet eintreffende
        Antwort das zuletzt gewaehlte Jahr nicht ueberschreiben: jede Anfrage

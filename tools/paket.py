@@ -12,7 +12,7 @@ weiteren Programme.
     python tools/paket.py --verwaltung --update   nur Programmcode, zum Aktualisieren eines laufenden Servers
 
 Mit --update fehlen im Paket die Inhalte, die auf dem Server gepflegt werden (data/, assets/img/,
-assets/audio/, assets/programme/, admin/zugaenge.json, admin/mitteilungen.json, admin/protokoll.json). So kann das Hochladen
+assets/audio/, assets/pdf/, assets/programme/, admin/zugaenge.json, admin/mitteilungen.json, admin/protokoll.json). So kann das Hochladen
 die Meldungen, Tabellen und Fotos auf dem Server nicht ueberschreiben. Ordner und Archiv tragen
 "-update" im Namen; dazu gehoert eine eigene, kurze Anleitung (tools/server/UPDATE.md).
 
@@ -30,6 +30,7 @@ verweist, im Paket liegt, auch in der Groß- und Kleinschreibung (Windows ist da
 """
 import argparse
 import hashlib
+import json
 import html.parser
 import os
 import posixpath
@@ -43,15 +44,15 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / 'dist'
 VORLAGEN = ROOT / 'tools' / 'server'
 
-DATEIEN = ['index.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html']
+DATEIEN = ['index.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
 ORDNER = ['pages', 'css', 'js', 'assets', 'data']
 
 TEST_MESS_ID = 'G-VORSCHAU01'
 
 # Inhalte, die auf dem Server gepflegt werden: kommen mit --update nicht ins Paket
-INHALTE = ('data/', 'assets/img/', 'assets/audio/', 'assets/video/', 'assets/programme/', 'admin/zugaenge.json', 'admin/mitteilungen.json', 'admin/protokoll.json')
+INHALTE = ('data/', 'assets/img/', 'assets/audio/', 'assets/video/', 'assets/pdf/', 'assets/programme/', 'admin/zugaenge.json', 'admin/mitteilungen.json', 'admin/protokoll.json')
 # Dateien, die erst beim ersten Speichern in der Verwaltung entstehen; bis dahin gilt das HTML
-ENTSTEHEN = ('data/galerie.json', 'data/navigation.json')
+ENTSTEHEN = ('data/galerie.json', 'data/navigation.json', 'data/news-videos.json', 'data/bilder-klein.json')
 
 
 def fehler(text):
@@ -284,6 +285,14 @@ def main():
 
     if test:
         schreiben(site / 'robots.txt', 'User-agent: *\nDisallow: /\n')
+    else:
+        # Live: robots.txt mit Verweis auf die Sitemap (Suchmaschinen duerfen alles ausser admin/; die Verwaltung ist ohnehin nicht oeffentlich)
+        try:
+            adresse = json.loads((ROOT / 'tools' / 'seo-einstellungen.json').read_text(encoding='utf-8'))['adresse'].rstrip('/')
+        except (OSError, ValueError, KeyError):
+            adresse = ''
+        if adresse and (ROOT / 'sitemap.xml').exists():
+            schreiben(site / 'robots.txt', f'User-agent: *\nDisallow: /admin/\n\nSitemap: {adresse}/sitemap.xml\n')
     if cookie:
         cookie_vorschau(site)
 

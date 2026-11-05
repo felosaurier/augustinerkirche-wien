@@ -69,11 +69,11 @@
     <fieldset class="adm-fs">
       <legend>Person</legend>
       <div class="adm-grid">
-        <div class="adm-field full">
+        <div class="adm-field">
           <label class="adm-label" for="f-name">Name<span class="adm-req">Pflichtfeld</span></label>
           <input class="adm-input" type="text" id="f-name" autocomplete="off" required/>
         </div>
-        <div class="adm-field full">
+        <div class="adm-field">
           <label class="adm-label" for="f-user">Benutzername<span class="adm-req" id="f-user-req">Pflichtfeld</span></label>
           <input class="adm-input" type="text" id="f-user" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="f-user-hint" required/>
           <span class="adm-hint" id="f-user-hint">Kleinbuchstaben, ohne Leerzeichen, z. B. <code>maria</code>.</span>
@@ -97,6 +97,10 @@
         <button type="button" class="adm-list-add" id="zg-rights-none">Nichts auswählen</button>
       </div>
       <div id="zg-rights" class="adm-field"></div>
+      <div class="adm-extra">
+        <label class="adm-check"><input type="checkbox" id="zg-freigabe"/>Neuigkeiten nur als Entwurf speichern (ein Admin gibt sie frei)</label>
+        <p class="adm-hint zg-rg-hint">Die Meldungen dieser Person erscheinen erst auf der Website, wenn ein Admin bei „Entwurf“ das Häkchen entfernt. Unter „Noch offen“ steht, wie viele Entwürfe warten.</p>
+      </div>
     </fieldset>
     <fieldset class="adm-fs">
       <legend id="zg-pw-legend">Passwort</legend>

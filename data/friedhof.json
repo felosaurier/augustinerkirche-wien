@@ -1,0 +1,112 @@
+{
+  "tabellen": [
+    {
+      "titel": "Friedhofsgebühren",
+      "stand": "Gültig ab 1. Jänner 2014",
+      "einleitung": "Gebühren für Erwerbung bzw. Erneuerung von Grabstellen für 10 Jahre.",
+      "zeilen": [
+        {
+          "text": "Wandgräber",
+          "betrag": ""
+        },
+        {
+          "text": "Einzelgrab — bis zu 2 Personen",
+          "betrag": "€ 125,00"
+        },
+        {
+          "text": "Doppelgrab — bis zu 4 Personen",
+          "betrag": "€ 170,00"
+        },
+        {
+          "text": "Reihengräber",
+          "betrag": ""
+        },
+        {
+          "text": "Einzelgrab — bis zu 2 Personen",
+          "betrag": "€ 100,00"
+        },
+        {
+          "text": "Doppelgrab — bis zu 4 Personen",
+          "betrag": "€ 150,00"
+        },
+        {
+          "text": "Kind",
+          "betrag": "€ 50,00"
+        },
+        {
+          "text": "Grüfte",
+          "betrag": ""
+        },
+        {
+          "text": "Gruft — bis zu 4 Personen",
+          "betrag": "€ 930,00"
+        },
+        {
+          "text": "Gruft — bis zu 6 Personen",
+          "betrag": "€ 1.200,00"
+        },
+        {
+          "text": "Gruft — bis zu 12 Personen",
+          "betrag": "€ 1.500,00"
+        }
+      ],
+      "hinweis": "Für Auswärtige erhöhen sich die jeweiligen Sätze um 50 %."
+    },
+    {
+      "titel": "Gebühren für Grabdenkmäler",
+      "stand": "",
+      "einleitung": "",
+      "zeilen": [
+        {
+          "text": "Grabkreuz",
+          "betrag": "€ 20,00"
+        },
+        {
+          "text": "Grabstein bis 2 m",
+          "betrag": "€ 70,00"
+        },
+        {
+          "text": "Grabstein bis 3 m",
+          "betrag": "€ 100,00"
+        },
+        {
+          "text": "Grabstein über 3 m",
+          "betrag": "€ 130,00"
+        },
+        {
+          "text": "Figurale Denkmäler",
+          "betrag": "€ 120,00"
+        },
+        {
+          "text": "Denkmalüberdachung",
+          "betrag": "€ 50,00"
+        },
+        {
+          "text": "Grababdeckungen",
+          "betrag": "€ 120,00"
+        },
+        {
+          "text": "Grabeinfassungen",
+          "betrag": "€ 60,00"
+        }
+      ],
+      "hinweis": "Für Auswärtige erhöhen sich die jeweiligen Sätze um 50 %."
+    },
+    {
+      "titel": "Gebühren für Kranz- und Bukett-Entsorgung",
+      "stand": "",
+      "einleitung": "",
+      "zeilen": [
+        {
+          "text": "Kranz",
+          "betrag": "€ 4,00"
+        },
+        {
+          "text": "Bukett",
+          "betrag": "€ 3,00"
+        }
+      ],
+      "hinweis": "Für Auswärtige erhöhen sich die jeweiligen Sätze um 50 %."
+    }
+  ]
+}

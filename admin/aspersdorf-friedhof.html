@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Aspersdorf: Friedhofsgebühren — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-aspersdorf-friedhof.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Friedhofsgebühren <em>Aspersdorf</em></h1>
+      <p class="ph-sub">Die Gebührentabellen des Pfarrfriedhofs, wie sie unter <a href="../pages/aspersdorf.html#p-friedhof" target="_blank" rel="noopener">Pfarre Aspersdorf → Pfarrfriedhof</a> stehen, in der Reihenfolge dieser Liste.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="fh-new" data-icon="plus">Neue Tabelle</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <p class="adm-count" id="fh-count" role="status"></p>
+  <div id="fh-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog" id="fh-dlg" aria-labelledby="fh-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="fh-dlg-tag">Hinzufügen</div>
+      <h2 class="adm-dlg-title" id="fh-dlg-title">Neue Tabelle</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="fh-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Tabelle</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-titel">Überschrift<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-titel" required maxlength="120" placeholder="z. B. Friedhofsgebühren"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-stand">Gültigkeit <span class="adm-opt">optional</span></label>
+          <input class="adm-input" type="text" id="f-stand" maxlength="80" placeholder="z. B. Gültig ab 1. Jänner 2014"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-einleitung">Einleitung <span class="adm-opt">optional</span></label>
+          <input class="adm-input" type="text" id="f-einleitung" maxlength="300" placeholder="z. B. Gebühren für Erwerbung bzw. Erneuerung von Grabstellen für 10 Jahre."/>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Zeilen</legend>
+      <div class="adm-field full" role="group" aria-labelledby="f-zeilen-l">
+        <span class="adm-label" id="f-zeilen-l">Bezeichnung und Betrag</span>
+        <div id="f-zeilen"></div>
+        <span class="adm-hint">Eine Zeile ohne Betrag wird als Zwischenüberschrift gezeigt (z. B. „Wandgräber“). Mit den Pfeilen lassen sich Zeilen verschieben.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Hinweis</legend>
+      <div class="adm-field full">
+        <label class="adm-label" for="f-hinweis">Hinweis unter der Tabelle <span class="adm-opt">optional</span></label>
+        <input class="adm-input" type="text" id="f-hinweis" maxlength="300" placeholder="z. B. Für Auswärtige erhöhen sich die jeweiligen Sätze um 50 %."/>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="fh-delete" data-icon="trash">Entfernen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="fh-form" class="btn btn-dark" id="fh-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

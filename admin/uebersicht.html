@@ -35,14 +35,20 @@
 <main class="adm-main" id="main">
   <div data-adm-folder></div>
 
-  <section class="adm-panel" aria-labelledby="ov-todo-h">
-    <h2 class="adm-panel-title" id="ov-todo-h">Noch offen <span class="ov-count" id="ov-todo-n"></span></h2>
-    <p class="adm-panel-sub">Was bei den nächsten Terminen noch fehlt.</p>
-    <div id="ov-todo"><p class="adm-muted">Wird geladen …</p></div>
-  </section>
+  <div class="ov-top">
+    <section class="ov-board" id="ov-board" aria-label="Nächstes Hochamt" hidden></section>
+
+    <section class="adm-panel ov-todo" aria-labelledby="ov-todo-h">
+      <h2 class="adm-panel-title" id="ov-todo-h">Noch offen <span class="ov-count" id="ov-todo-n"></span></h2>
+      <p class="adm-panel-sub">Was bei den nächsten Terminen noch fehlt.</p>
+      <div id="ov-todo"><p class="adm-muted">Wird geladen …</p></div>
+    </section>
+  </div>
+
+  <section class="ov-stats" id="ov-stats" aria-label="Auf einen Blick" hidden></section>
 
   <section class="ov-areas" aria-labelledby="ov-areas-h">
-    <h2 class="adm-panel-title" id="ov-areas-h">Alle Bereiche</h2>
+    <h2 class="ov-areas-h" id="ov-areas-h">Bereiche</h2>
     <div class="adm-areagroups" id="ov-areas"><p class="adm-muted">Wird geladen …</p></div>
   </section>
 

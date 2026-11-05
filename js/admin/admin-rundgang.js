@@ -2,7 +2,7 @@
    Augustinerkirche Wien — admin-rundgang.js
    Kirchenrundgang pflegen (admin/rundgang.html), Quelle ist
    data/rundgang.json: {bilder: [{titel, bild, breite, hoehe, format (normal|breit|hoch), ausschnitt ("x% y%")}]}.
-   Erscheint auf pages/chronik.html → Rundgang in der Reihenfolge
+   Erscheint auf pages/augustinerkirche.html#p-geschichte → Rundgang in der Reihenfolge
    der Liste; ein Klick vergroessert das Bild.
    Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */

@@ -78,6 +78,7 @@
   }
   const logoUrl = (v) => `${ROOT}assets/logo/logo-${LOGOS.includes(v) ? v : STANDARD.logo}.png`;
 
+  const NAMEN_JE_BEREICH = false;
   let logo = '';
   let names = null;
   function setLogo() {
@@ -88,8 +89,9 @@
         img.classList.add('v');
       }
     }
-    /* Text neben dem Logo: nur wenn in der Verwaltung eingetragen */
-    if (names) {
+    /* Text neben dem Logo: auf allen Seiten gleich (Vorlage tools/vorlagen/nav.html); die Namen je Bereich
+       aus der Verwaltung werden nicht mehr eingesetzt. Wieder einschalten: NAMEN_JE_BEREICH = true */
+    if (NAMEN_JE_BEREICH && names) {
       for (const el of d.querySelectorAll('nav .nav-logo-text')) if (names.name && el.textContent !== names.name) el.textContent = names.name;
       for (const el of d.querySelectorAll('nav .nav-logo-sub')) if (names.untertitel && el.textContent !== names.untertitel) el.textContent = names.untertitel;
     }

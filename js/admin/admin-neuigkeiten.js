@@ -53,8 +53,19 @@
   const newsId = (e) => `${HD.isoDate(e.Datum)}-${HD.slug(e.Titel)}`;
   const kind = () => (document.querySelector('input[name="kind"]:checked') || {}).value || 'poster';
   const toCSV = (list) => HD.csvText([A.NEWS_HEAD, ...list.map((o) => A.NEWS_HEAD.map((h) => o[h]))]);
-  /* Neueste zuerst; am selben Tag bleibt die bisherige Reihenfolge */
-  const sortEntries = (list) => list.sort((a, b) => HD.isoDate(b.Datum).localeCompare(HD.isoDate(a.Datum)));
+  /* Die Reihenfolge der Tabelle ist die auf der Website. Eine neue Meldung (oder eine mit
+     geaendertem Datum) wird nach Datum eingereiht: vor die erste aeltere, am selben Tag
+     ganz oben. Danach laesst sie sich mit den Pfeilen verschieben. */
+  function placeEntry(list, e, oldIndex = -1, keep = false) {
+    if (oldIndex >= 0 && keep) {
+      list[oldIndex] = e;
+      return;
+    }
+    if (oldIndex >= 0) list.splice(oldIndex, 1);
+    const iso = HD.isoDate(e.Datum);
+    const at = list.findIndex((x) => HD.isoDate(x.Datum) <= iso);
+    list.splice(at < 0 ? list.length : at, 0, e);
+  }
   /* Ohne Enddatum zaehlen zwei Wochen ab dem spaeteren von Datum und "Sichtbar ab" */
   const untilBase = (iso) => {
     const ab = HD.isoDate($('f-ab').value);
@@ -67,26 +78,25 @@
   /* Seiten der Website: [Adresse, Name in der Auswahl, Text der Schaltflaeche] */
   const PAGES = [
     ['Gottesdienste', [
-      ['pages/gottesdienste.html', 'Gottesdienste: Liturgie-Zeiten', 'Zu den Gottesdiensten'],
+      ['pages/augustinerkirche.html#p-zeiten', 'Gottesdienste: Liturgie-Zeiten', 'Zu den Gottesdiensten'],
       ['pages/kalender.html#woche', 'Kalender: Wochenüberblick', 'Zum Wochenüberblick'],
-      ['pages/gottesdienste.html#p-runden', 'Runden in St. Augustin (Übersicht)', 'Zu den Runden'],
-      ['pages/sakramente.html', 'Sakramente', 'Zu den Sakramenten']]],
+      ['pages/augustinerkirche.html#p-runden', 'Runden in St. Augustin (Übersicht)', 'Zu den Runden'],
+      ['pages/augustinerkirche.html#p-sakramente', 'Sakramente', 'Zu den Sakramenten']]],
     ['Kirchenmusik', [
       ['pages/musik.html#p-hochaemter', 'Hochämter: alle Termine', 'Alle Hochämter ansehen'],
-      ['pages/musik.html#p-hochaemter-archiv', 'Vergangene Hochämter', 'Zu den vergangenen Hochämtern'],
+      ['pages/musik.html#p-hochaemter-archiv', 'Hochämter-Archiv', 'Zum Hochämter-Archiv'],
       ['pages/musik.html#p-chor', 'Chor von St. Augustin', 'Zum Chor'],
       ['pages/musik.html#p-kammerchor', 'Kammerchor', 'Zum Kammerchor'],
       ['pages/musik.html#p-repertoire', 'Repertoire des Chores', 'Zum Repertoire'],
       ['pages/musik.html#p-solisten', 'Solisten', 'Zu den Solisten'],
       ['pages/musik.html#p-orchester', 'Orchester', 'Zum Orchester'],
-      ['pages/musik.html#p-orgeln', 'Orgeln', 'Zu den Orgeln'],
       ['pages/musik.html#p-patenschaft', 'Patenschaft St. Augustin', 'Zur Patenschaft'],
       ['pages/musik.html#p-paten', 'Paten von St. Augustin', 'Zu den Paten'],
       ['pages/musik.html#p-cds', 'CDs von St. Augustin', 'Zu den CDs']]],
     ['Augustinerkirche', [
-      ['pages/chronik.html#p-geschichte', 'Geschichte', 'Zur Geschichte'],
-      ['pages/chronik.html#p-herzgruft', 'Herzgruft', 'Zur Herzgruft'],
-      ['pages/chronik.html#p-fuehrungen', 'Führungen', 'Zu den Führungen'],
+      ['pages/augustinerkirche.html#p-geschichte', 'Geschichte', 'Zur Geschichte'],
+      ['pages/augustinerkirche.html#p-herzgruft', 'Herzgruft', 'Zur Herzgruft'],
+      ['pages/augustinerkirche.html#p-fuehrungen', 'Führungen', 'Zu den Führungen'],
       ['pages/augustiner.html#p-wien', 'Die Augustiner in Wien', 'Zu den Augustinern in Wien']]],
     ['Weitere', [
       ['pages/aspersdorf.html', 'Pfarre Aspersdorf', 'Nach Aspersdorf'],
@@ -282,14 +292,15 @@
     if (home.has(e)) return expired ? 'home-expired' : 'home';
     return expired ? 'expired' : 'archive';
   }
-  function rowHTML(e, i, home) {
+  function rowHTML(e, i, home, searching) {
     const gallery = photoMap[newsId(e)] || [];
     const src = A.imageUrl(imgOf(e) || (gallery[0] && gallery[0].bild));
     const thumb = src
       ? `<span class="adm-thumb${e.Plakat ? '' : ' photo'}"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"/></span>`
       : '<span class="adm-thumb none"><img src="../assets/logo-gold.png" alt=""/></span>';
     const place = placeOf(e, home);
-    const badge = /^ja$/i.test(e.Entwurf || '') ? '<span class="adm-badge" title="Auf der Website nicht sichtbar">Entwurf</span>'
+    const draft = /^ja$/i.test(e.Entwurf || '');
+    const badge = draft ? '<span class="adm-badge" title="Auf der Website nicht sichtbar">Entwurf</span>'
       : A.newsHidden(e) ? `<span class="adm-badge" title="Noch nicht sichtbar">Geplant ab ${esc(isoToDe(HD.isoDate(e.Ab)))}</span>`
       : place === 'home' ? '<span class="adm-badge on">Startseite</span>'
       : place === 'home-expired' ? `<span class="adm-badge on" title="Abgelaufen, füllt die Startseite unten auf, solange es weniger als ${A.NEWS_HOME} aktive Meldungen gibt">Startseite · abgelaufen</span>`
@@ -310,8 +321,16 @@
         `</span>${badge}` +
       '</button>' +
       '<div class="adm-row-actions">' +
-        `<button type="button" class="adm-act" data-act="dup" data-i="${i}" aria-label="Duplizieren: ${esc(e.Titel)}">${icon('plus')}Duplizieren</button>` +
-        `<button type="button" class="adm-act danger" data-act="del" data-i="${i}" aria-label="Löschen: ${esc(e.Titel)}">${icon('trash')}Löschen</button>` +
+        /* Pfeile nur in der ganzen Liste (nicht in Suchtreffern) */
+        (searching ? '' :
+          `<button type="button" class="adm-act icon" data-act="up" data-i="${i}" aria-label="Nach oben: ${esc(e.Titel)}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
+          `<button type="button" class="adm-act icon" data-act="down" data-i="${i}" aria-label="Nach unten: ${esc(e.Titel)}" title="Nach unten"${i === entries.length - 1 ? ' disabled' : ''}>${icon('down')}</button>`) +
+        /* Entwurf ein/aus; wer eine Freigabe braucht, kann nicht selbst veroeffentlichen */
+        (A.needsApproval() ? '' : draft
+          ? `<button type="button" class="adm-act icon" data-act="publish" data-i="${i}" aria-label="Veröffentlichen: ${esc(e.Titel)}" title="Entwurf: auf der Website verborgen. Klicken zum Veröffentlichen">${icon('eyeOff')}</button>`
+          : `<button type="button" class="adm-act icon" data-act="draft" data-i="${i}" aria-label="Als Entwurf verbergen: ${esc(e.Titel)}" title="Sichtbar. Klicken, um sie als Entwurf zu verbergen">${icon('eye')}</button>`) +
+        `<button type="button" class="adm-act icon" data-act="dup" data-i="${i}" aria-label="Duplizieren: ${esc(e.Titel)}" title="Duplizieren">${icon('copy')}</button>` +
+        `<button type="button" class="adm-act icon danger" data-act="del" data-i="${i}" aria-label="Löschen: ${esc(e.Titel)}" title="Löschen">${icon('trash')}</button>` +
       '</div></li>';
   }
 
@@ -332,17 +351,54 @@
         : `<div class="adm-empty"><p class="adm-empty-title">Noch keine Meldungen</p><p>Lege die erste Meldung an.</p><button type="button" class="btn btn-gold" data-act="new">${icon('plus')}Neue Meldung</button></div>`;
       return;
     }
-    $('nv-list').innerHTML = '<ul class="adm-rows">' + list.map(({ e, i }) => rowHTML(e, i, home)).join('') + '</ul>';
+    $('nv-list').innerHTML = '<ul class="adm-rows">' + list.map(({ e, i }) => rowHTML(e, i, home, words.length > 0)).join('') + '</ul>';
   }
 
-  function flash(key) {
+  function flash(key, sel) {
     const row = document.querySelector(`.adm-row[data-key="${CSS.escape(key)}"]`);
     if (!row) return;
     row.classList.remove('flash');
     void row.offsetWidth;
     row.classList.add('flash');
     row.scrollIntoView({ block: 'nearest' });
-    row.querySelector('.adm-row-open').focus({ preventScroll: true });
+    (row.querySelector(sel || '.adm-row-open') || row.querySelector('.adm-row-open')).focus({ preventScroll: true });
+  }
+
+  /* Pfeile: Meldung mit der Nachbarin tauschen (Reihenfolge auf der Website) */
+  async function move(i, dir) {
+    const j = i + dir;
+    if (j < 0 || j >= entries.length) return;
+    const next = entries.slice();
+    [next[i], next[j]] = [next[j], next[i]];
+    try {
+      await A.saveFile(PATH, toCSV(next));
+      entries = next;
+      render();
+      flash(newsId(next[j]), `[data-act="${dir < 0 ? 'up' : 'down'}"]:not([disabled])`);
+    } catch (err) {
+      A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
+    }
+  }
+
+  /* Auge: Entwurf (verborgen) ein- oder ausschalten, ohne das Fenster zu oeffnen */
+  async function setDraft(i, on) {
+    const e = entries[i];
+    const next = entries.slice();
+    next[i] = { ...e, Entwurf: on ? 'ja' : '' };
+    try {
+      const direct = await A.saveFile(PATH, toCSV(next));
+      entries = next;
+      render();
+      flash(newsId(next[i]), `[data-act="${on ? 'publish' : 'draft'}"]`);
+      const later = !on && A.newsHidden(next[i]);
+      A.toast(!direct ? 'Übernommen. Bitte unten die Datei herunterladen.'
+        : on ? `„${e.Titel}“ ist jetzt ein Entwurf und auf der Website verborgen.`
+          : later ? `„${e.Titel}“ ist freigegeben und erscheint ab ${isoToDe(HD.isoDate(e.Ab))}.`
+            : `„${e.Titel}“ ist jetzt auf der Website sichtbar.`);
+      A.log(`Meldung ${on ? 'als Entwurf verborgen' : 'veröffentlicht'}: ${e.Titel}`);
+    } catch (err) {
+      A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
+    }
   }
 
   /* ---------- Fenster: Bild ---------- */
@@ -611,9 +667,7 @@
     if ($('f-draft').checked) return 'Entwurf: Die Meldung ist auf der Website nicht sichtbar.';
     if (ab && ab > A.isoToday()) return `Wird ab ${A.fmtDate(ab)} sichtbar (bis einschließlich ${A.fmtDate(bis)}).`;
     const next = entries.slice();
-    if (editIndex >= 0) next[editIndex] = me;
-    else next.push(me);
-    sortEntries(next);
+    placeEntry(next, me, editIndex, editIndex >= 0 && HD.isoDate(entries[editIndex].Datum) === iso);
     const home = A.newsOnHome(next);
     if (home.has(me)) {
       const pos = [...home].indexOf(me) + 1;
@@ -880,9 +934,8 @@
       }
       if (hasImage) entry.Bildausschnitt = $('f-focus').value;
       const next = entries.slice();
-      if (old) next[editIndex] = entry;
-      else next.push(entry);
-      sortEntries(next);
+      /* Bestehende Meldung bleibt an ihrer Stelle, solange das Datum gleich bleibt */
+      placeEntry(next, entry, old ? editIndex : -1, !!old && HD.isoDate(old.Datum) === date);
       const direct = await A.saveFile(PATH, toCSV(next));
       entries = next;
       if (imgOf(entry)) await A.credits.set(imgOf(entry), $('f-credit').value);
@@ -1107,6 +1160,8 @@
       if (b.dataset.act === 'edit') openEditor(Number(b.dataset.i));
       if (b.dataset.act === 'del') remove(Number(b.dataset.i));
       if (b.dataset.act === 'dup') openEditor(Number(b.dataset.i), true);
+      if (b.dataset.act === 'up' || b.dataset.act === 'down') move(Number(b.dataset.i), b.dataset.act === 'up' ? -1 : 1);
+      if (b.dataset.act === 'draft' || b.dataset.act === 'publish') setDraft(Number(b.dataset.i), b.dataset.act === 'draft');
       if (b.dataset.act === 'new') openEditor(-1);
       if (b.dataset.act === 'clear') {
         $('nv-search').value = '';

@@ -244,7 +244,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .hero-img[style*="aspersdorf"]{background-position:68% center}
 /* Kirchturm: Spitze immer im Bild, unten darf beschnitten werden */
 .hero-img[style*="turm"]{background-position:center 20%}
-.hero-content{grid-column:1;grid-row:1;align-self:end;max-width:46rem;padding:clamp(3rem,8vh,5rem) 0 clamp(3rem,9vh,6rem);animation:fade-in .5s ease-out both}
+.hero-content{grid-column:1;grid-row:1;align-self:end;max-width:46rem;padding:clamp(2rem,6vh,3.5rem) 0 clamp(2rem,7vh,4rem);animation:fade-in .5s ease-out both}
 .hero-eyebrow{margin-bottom:1.3rem;font-size:1rem;font-weight:500;color:var(--nav-accent)}
 .hero-h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.3rem,3.4vw,4.2rem);line-height:1.05;letter-spacing:-.01em;color:var(--nav-fg);text-wrap:balance}
 .hero-sub{max-width:34rem;margin-top:1.6rem;font-size:1.12rem;line-height:1.65;color:var(--nav-fg-soft)}
@@ -259,7 +259,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 /* Kopfbereich der Unterseiten: Marine, Titel in Bodoni */
 .page-hero{
   position:relative;background:var(--nav-bg);color:var(--nav-fg);
-  padding:clamp(3.5rem,8vw,6rem) var(--edge) clamp(3rem,6vw,4.5rem);
+  padding:clamp(2.5rem,6vw,4rem) var(--edge) clamp(2rem,4vw,3rem);
 }
 .page-hero .inner{max-width:none;margin:0}
 .ph-tag{margin-bottom:.9rem;font-size:1rem;font-weight:500;color:var(--gold)}
@@ -273,9 +273,9 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 
 
 /* ══ GRUNDRASTER ══ */
-.section{padding:clamp(4rem,8vw,7rem) var(--pad)}
+.section{padding:clamp(2.4rem,5vw,4rem) var(--pad)}
 /* Seiten mit Untermenue: der Inhalt beginnt naeher am Seitenkopf */
-.section:has(> .inner > .with-sidebar){padding-top:clamp(2.5rem,5vw,4.5rem)}
+.section:has(> .inner > .with-sidebar){padding-top:clamp(1.5rem,3vw,2.8rem)}
 .inner{max-width:var(--max);margin:0 auto}
 
 .s-label{margin-bottom:.7rem;font-size:1rem;font-weight:500;color:var(--gold)}
@@ -315,7 +315,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 
 
 /* ══ SEITENMENÜ (Reiter einer Unterseite) ══ */
-.with-sidebar{display:grid;grid-template-columns:13.5rem minmax(0,1fr);gap:clamp(2.5rem,5vw,5rem);align-items:start;scroll-margin-top:1.5rem}
+.with-sidebar{display:grid;grid-template-columns:13.5rem minmax(0,1fr);gap:clamp(2rem,4vw,3.5rem);align-items:start;scroll-margin-top:1.5rem}
 .sidebar{
   position:sticky;top:calc(var(--nav-h) + 2rem);
   /* Lange Listen (Kirchenmusik) passen auch auf niedrige Laptop-Bildschirme */
@@ -338,7 +338,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .sidebar-toggle{display:none}
 
 /* Ablauf am Ende eines Bereichs: zurück und weiter */
-.pane-steps{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:4rem;padding-top:1.4rem;border-top:1px solid var(--line)}
+.pane-steps{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.4rem;padding-top:1.1rem;border-top:1px solid var(--line)}
 .pane-step{display:flex;flex-direction:column;gap:.25rem;padding:.4rem 0;text-decoration:none;color:var(--heading)}
 .pane-step.next{text-align:right;align-items:flex-end}
 .pane-step-dir{font-size:.88rem;color:var(--text-light)}
@@ -385,6 +385,20 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .person-card-wide img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--bg-soft)}
 .person-card-wide.compact{grid-template-columns:7.5rem minmax(0,1fr);gap:1.7rem;padding:1.5rem 0}
 .person-card-wide.no-img{grid-template-columns:1fr}
+/* Uebersicht vor den Personenkarten: jede Person ein Sprungziel */
+.people-index{display:grid;grid-template-columns:repeat(auto-fit,minmax(11.5rem,1fr));gap:1.1rem;max-width:52rem;margin-top:1.8rem}
+.people-index a{display:flex;flex-direction:column;color:inherit;text-decoration:none;border:1px solid var(--line);background:var(--surface);transition:border-color .2s,transform .2s,box-shadow .2s}
+.people-index a:hover{border-color:var(--heading);transform:translateY(-2px);box-shadow:0 10px 24px rgba(16,25,46,.12)}
+.people-index a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.people-index img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;background:var(--bg-soft)}
+.people-index span{display:flex;flex-direction:column;gap:.25rem;padding:.8rem .95rem 1rem;border-top:2px solid var(--gold)}
+.people-index b{font-family:var(--serif);font-size:1.15rem;font-weight:500;line-height:1.2;color:var(--heading)}
+.people-index small{font-size:.92rem;line-height:1.35;color:var(--text-mid)}
+.people-index+.people-stack{margin-top:1.2rem}
+.person-card-wide[hidden]{display:none}
+.people-index a.active{border-color:var(--heading);box-shadow:0 10px 24px rgba(16,25,46,.14)}
+.people-index a.active span{background:var(--gold-pale)}
+.person-card-wide[id]{scroll-margin-top:calc(var(--nav-h) + 1rem)}
 .person-body{min-width:0}
 .person-name{font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.2;color:var(--heading)}
 .person-role{margin:.3rem 0 .8rem;font-size:.98rem;font-weight:500;color:var(--gold)}
@@ -406,7 +420,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .organ-facts dd{font-size:.98rem;line-height:1.5;color:var(--text)}
 
 /* Zwischenüberschriften und Zitate innerhalb eines Reiters */
-.pane-sub{margin:3rem 0 .9rem;font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.2;color:var(--heading)}
+.pane-sub{margin:2rem 0 .8rem;font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.2;color:var(--heading)}
 .pane-facts{max-width:32rem}
 /* Kirchenmusik: online spenden (PayPal) unter den Kontodaten */
 .donate-online{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem 2rem;max-width:32rem;margin-top:1.4rem;padding:1.1rem 1.4rem;border-left:3px solid var(--gold);background:var(--bg-warm)}
@@ -455,7 +469,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .cd-order{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1.6rem;margin:1.8rem 0 .5rem}
 .cd-order p{font-size:.98rem;color:var(--text-mid)}
 .cd-order p a{color:var(--heading);text-decoration-color:var(--gold-l);text-underline-offset:.25em}
-.cd-group{margin-top:3rem;padding-bottom:.7rem;border-bottom:1px solid var(--blue);font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.2;color:var(--heading)}
+.cd-group{margin-top:2rem;padding-bottom:.7rem;border-bottom:1px solid var(--blue);font-family:var(--serif);font-size:1.6rem;font-weight:500;line-height:1.2;color:var(--heading)}
 /* eine CD je Zeile, auch am Desktop */
 .cd-list{display:grid;grid-template-columns:minmax(0,1fr)}
 .cd{display:grid;grid-template-columns:5.5rem minmax(0,1fr);gap:1.1rem;align-items:start;padding:1.3rem 0;border-bottom:1px solid var(--line)}
@@ -489,7 +503,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 /* Nächste Hochämter — wie ein Konzertprogramm */
 .hochamt-strip{
   display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:2rem clamp(2rem,5vw,5rem);align-items:start;
-  padding:clamp(4rem,8vw,6.5rem) var(--edge);background:var(--surface);
+  padding:clamp(2.4rem,5vw,4rem) var(--edge);background:var(--surface);
 }
 .hs-head{display:flex;flex-direction:column;align-items:flex-start;gap:1rem}
 .hs-tag{font-family:var(--serif);font-weight:500;font-size:clamp(2.1rem,3.6vw,2.9rem);line-height:1.1;letter-spacing:-.01em;color:var(--heading)}
@@ -515,7 +529,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 /* Startseite: weniger Abstand zwischen den Abschnitten */
 .home .section,.home .hochamt-strip,.home .herzgruft,.home .contact-strip{padding-top:clamp(2.5rem,4.5vw,4rem);padding-bottom:clamp(2.5rem,4.5vw,4rem)}
 /* Abschnittskopf: Überschrift links, Verweis rechts */
-.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.6rem 2rem;margin-bottom:2.2rem}
+.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.6rem 2rem;margin-bottom:1.5rem}
 .sec-head .s-title{margin-bottom:0}
 /* Kleinere zweite Zeile unter einem Abschnittstitel (Startseite: "Aktuelles / aus der Pfarre …") */
 .s-title-sub{display:block;margin-top:.45rem;font-size:clamp(1.15rem,1.6vw,1.4rem);line-height:1.3;letter-spacing:0;color:var(--text-mid)}
@@ -529,7 +543,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 /* Herzgruft: zweite Marine-Fläche */
 .herzgruft{
   display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(2.5rem,6vw,6rem);align-items:center;
-  padding:clamp(4rem,8vw,7rem) var(--edge);background:var(--blue-deep);color:#fff;
+  padding:clamp(2.4rem,5vw,4rem) var(--edge);background:var(--blue-deep);color:#fff;
 }
 .herzgruft-img{order:-1;aspect-ratio:16/10;background-color:var(--heading);background-size:cover;background-position:center}
 .herzgruft .s-label{color:var(--gold-l)}
@@ -589,7 +603,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .insta-error{grid-column:1/-1;padding:1.4rem 1.8rem;background:var(--bg-soft);font-size:1rem;color:var(--text-mid)}
 
 /* Zitat: groß, aufrecht, mit hängendem Anführungszeichen */
-.quote-band{padding:clamp(4.5rem,10vw,8rem) var(--edge);border-top:1px solid var(--line)}
+.quote-band{padding:clamp(2.8rem,6vw,4.5rem) var(--edge);border-top:1px solid var(--line)}
 .qt{max-width:21em;font-family:var(--serif);font-weight:500;font-size:clamp(1.9rem,4.2vw,3.3rem);line-height:1.18;letter-spacing:-.01em;color:var(--heading);text-indent:-.42em;text-wrap:balance}
 .qt::before{content:'\201E';color:var(--gold)}
 .qt::after{content:'\201C';color:var(--gold)}
@@ -652,6 +666,53 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .kal-type{margin-top:.3rem;font-size:.92rem;color:var(--text-light)}
 .kal-go{display:none}
 a.kal-row:hover .kal-name{color:var(--gold)}
+.kal-month{margin:1.8rem 0 0;padding-bottom:.55rem;border-bottom:2px solid var(--heading);font-family:var(--serif);font-size:1.9rem;font-weight:500;line-height:1.1;color:var(--heading)}
+#kal-list>.kal-month:first-child,.kal-archive-rows>.kal-month:first-child{margin-top:0}
+
+/* Naechstes Hochamt (musik.html): Farbe der Seite, dunkelblaue Linien, rechts die Vorschau */
+.nh-section[hidden]{display:none}
+.nh-section{scroll-margin-top:var(--nav-h)}
+.nh-board{display:grid;grid-template-columns:minmax(0,1fr) 22rem;margin:0;--nh-bg:#10192e;--nh-ink:#f4efe3;--nh-line:#d8b96e;--nh-soft:rgba(244,239,227,.8);background:var(--nh-bg);color:var(--nh-ink);border:1px solid var(--nh-line);box-shadow:inset 0 0 0 9px var(--nh-bg),inset 0 0 0 10px var(--nh-line)}
+.nh-board[hidden]{display:none}
+.nh-main{display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;padding:2.2rem 2rem 1.4rem 2.4rem}
+.nh-kicker{margin:0 0 .6rem;font-size:1.08rem;font-weight:600;letter-spacing:.02em;color:var(--nh-line)}
+.nh-date{display:flex;align-items:center;gap:1.2rem;margin-bottom:1rem}
+.nh-day{font-family:var(--serif);font-size:6.2rem;font-weight:300;line-height:.9;color:var(--nh-line);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.nh-md{display:flex;flex-direction:column;gap:.2rem;padding-left:1.2rem;border-left:1px solid var(--nh-line)}
+.nh-md b{font-size:1.75rem;font-weight:500}
+.nh-md span{font-size:1.2rem;color:var(--nh-soft)}
+.nh-type{margin:0;font-size:1.25rem;font-weight:500;color:var(--nh-soft)}
+.nh-piece{margin:0;font-family:var(--serif);font-size:2.2rem;font-weight:500;line-height:1.2;color:var(--nh-line)}
+.nh-who{list-style:none;display:flex;flex-direction:column;gap:.15rem;margin:.7rem 0 0;padding:0;font-size:1.12rem;line-height:1.45;color:var(--nh-ink)}
+.nh-who li span{display:inline-block;min-width:6.4rem;color:var(--nh-soft)}
+.nh-next{padding:2.2rem 2.2rem .6rem 0}
+.nh-next ul{list-style:none;margin:0;padding:0}
+.nh-next li+li{margin-top:.6rem}
+.nh-next a{display:grid;grid-template-columns:3.4rem minmax(0,1fr);gap:.9rem;align-items:center;padding:.65rem .8rem;border:1px solid var(--nh-line);text-decoration:none;color:inherit;transition:background .2s}
+.nh-next a:hover{background:rgba(255,255,255,.1)}
+.nh-slot-day{display:flex;flex-direction:column;align-items:center;color:var(--nh-line);font-family:var(--serif);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.nh-slot-day small{margin-top:.25rem;font-family:var(--sans);font-size:.85rem;font-weight:600;color:var(--nh-soft)}
+.nh-slot-txt{display:flex;flex-direction:column;gap:.15rem;min-width:0}
+.nh-slot-txt b{font-size:1.08rem;font-weight:600;line-height:1.3;color:var(--nh-line)}
+.nh-slot-when{font-size:.92rem;color:var(--nh-soft)}
+.nh-foot{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-between;gap:.8rem;padding:.4rem 2.4rem 2.4rem}
+.nh-foot .btn{font-size:1.05rem}
+.nh-foot .btn-dark{background:var(--nh-line);color:var(--nh-bg)}
+.nh-foot .btn-dark:hover{background:var(--nh-ink)}
+.nh-foot .btn-outline{border-color:var(--nh-line);color:var(--nh-ink)}
+.nh-foot .btn-outline:hover{background:var(--nh-line);color:var(--nh-bg)}
+@media(max-width:900px){
+  .nh-board{grid-template-columns:minmax(0,1fr)}
+  .nh-main{padding:1.7rem 1.4rem .8rem 1.6rem}
+  .nh-next{padding:0 1.4rem .6rem 1.6rem}
+  .nh-foot{padding:.4rem 1.6rem 1.8rem}
+}
+@media(max-width:700px){
+  .nh-day{font-size:4.8rem}
+  .nh-md b{font-size:1.45rem}
+  .nh-piece{font-size:1.7rem}
+  .kal-month{font-size:1.55rem}
+}
 
 /* Monat/Jahr als Aufklappmenü (Handy) */
 .kal-select-wrap{display:none;position:relative;margin:0 0 1.4rem}
@@ -758,6 +819,33 @@ a.kal-row:hover .kal-name{color:var(--gold)}
 .sakr-band-inline .sakr-chip:hover .sakr-chip-name{color:var(--gold);border-bottom-color:var(--gold)}
 .sakr-band-inline .sakr-chip:focus-visible{outline-color:var(--gold)}
 
+/* Sakramente: Kacheln mit Zeichen, Name und einer Zeile dazu; die gewaehlte Kachel ist marineblau (main.js: nur zeigen, was gedrueckt ist) */
+.sakr-register{display:grid;grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));gap:.9rem;margin:1.8rem 0 .5rem}
+.sakr-reg-item{display:flex;flex-direction:column;align-items:flex-start;gap:.3rem;padding:1.2rem 1.15rem 1.3rem;border:1px solid var(--line);border-top:3px solid var(--gold-l);background:var(--surface);color:inherit;font:inherit;text-align:left;cursor:pointer;transition:background-color .2s,border-color .2s,transform .2s var(--ease),box-shadow .2s}
+.sakr-reg-ico{width:2.6rem;height:2.6rem;margin-bottom:.55rem;color:var(--gold-text);transition:color .2s}
+.sakr-reg-name{font-family:var(--serif);font-size:1.3rem;font-weight:500;line-height:1.2;color:var(--heading);transition:color .2s}
+.sakr-reg-sub{font-size:.94rem;line-height:1.4;color:var(--text-mid);transition:color .2s}
+.sakr-reg-item:hover{border-color:var(--heading);border-top-color:var(--gold);transform:translateY(-2px);box-shadow:0 10px 24px rgba(16,25,46,.12)}
+.sakr-reg-item:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sakr-reg-item.active{background:var(--blue-deep);border-color:var(--blue-deep);border-top-color:var(--gold-l)}
+.sakr-reg-item.active .sakr-reg-name{color:#fff}
+.sakr-reg-item.active .sakr-reg-sub{color:rgba(255,255,255,.78)}
+.sakr-reg-item.active .sakr-reg-ico{color:var(--gold-l)}
+@media(max-width:520px){.sakr-register{grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}.sakr-reg-item{padding:1rem .9rem 1.1rem}.sakr-reg-name{font-size:1.15rem}}
+@media(prefers-reduced-motion:reduce){.sakr-reg-item{transition:none}.sakr-reg-item:hover{transform:none}}
+
+/* Text des gewaehlten Sakraments: Karte mit goldener Kante, grosse erste Zeile, "Gut zu wissen" als eigener Kasten */
+.sakr-register~.sakr-sec{margin-top:1.4rem;padding:2rem 2.4rem 2.2rem;border:1px solid var(--line);border-left:4px solid var(--gold);background:var(--surface);box-shadow:0 14px 34px rgba(16,25,46,.07);animation:sakr-ein .35s var(--ease) both}
+.sakr-register~.sakr-sec .sakr-sec-title{margin-bottom:1.3rem;font-size:clamp(1.8rem,3vw,2.3rem)}
+.sakr-register~.sakr-sec .sakr-sec-title::after{content:'';display:block;width:3rem;height:2px;margin-top:.8rem;background:var(--gold)}
+.sakr-register~.sakr-sec .bio-p{max-width:40rem;font-size:1.04rem;line-height:1.75;color:var(--text-mid)}
+.sakr-register~.sakr-sec .sakr-sec-title+.bio-p{font-family:var(--serif);font-size:1.28rem;line-height:1.6;color:var(--heading)}
+.sakr-register~.sakr-sec .sakr-facts{max-width:40rem;margin-top:1.6rem;padding:1.2rem 1.5rem 1.3rem;border:1px solid var(--line);border-top:2px solid var(--gold-l);background:var(--bg-soft)}
+.sakr-register~.sakr-sec .sakr-facts-title{margin-bottom:.6rem;font-family:var(--serif);font-size:1.15rem;font-weight:500}
+@keyframes sakr-ein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.sakr-register~.sakr-sec{padding:1.5rem 1.3rem 1.7rem}}
+@media(prefers-reduced-motion:reduce){.sakr-register~.sakr-sec{animation:none}}
+
 .sakr-sec{margin-top:2.6rem;padding-top:2rem;border-top:1px solid var(--line);scroll-margin-top:1.5rem}
 .sakr-sec-nr{display:none}
 .sakr-sec-title{margin-bottom:1rem;font-family:var(--serif);font-size:1.9rem;font-weight:500;line-height:1.15;color:var(--heading)}
@@ -840,7 +928,9 @@ html.nd-lock{overflow:hidden}
 .nd-video video{display:block;width:100%;max-height:70vh;background:#000}
 .nd-video figcaption{margin-top:.35rem;font-size:.85rem;opacity:.8}
 /* Bildergalerie wie auf Facebook (Anzahl der Kacheln: g-1 bis g-5) */
-.nd-gallery{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;max-width:34rem;margin:1.6rem 0 .4rem}
+.nd-gallery-h{margin:1.6rem 0 .5rem;font-size:1.02rem;font-weight:600;color:var(--heading)}
+.nd-media .nd-gallery-h{margin:.9rem 0 .4rem}
+.nd-gallery{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;max-width:34rem;margin:0 0 .4rem}
 .nd-g{position:relative;display:block;grid-column:span 3;aspect-ratio:1/1;overflow:hidden;background:var(--bg-warm);cursor:zoom-in}
 .nd-g img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s var(--ease),opacity .2s}
 .nd-g:hover img{transform:scale(1.03)}
@@ -870,6 +960,14 @@ html.nd-lock{overflow:hidden}
 .news-filter-reset{padding:.65rem 1rem;background:none;border:1px solid var(--line);border-radius:2px;font:inherit;font-size:.92rem;color:var(--heading);cursor:pointer}
 .news-filter-reset:hover{border-color:var(--gold)}
 .news-filter-count{margin:0 0 1rem;font-size:.9rem;color:var(--text-light)}
+/* Hochaemter-Archiv: Jahre als Auswahl-Chips in einer Leiste (statt grosser Jahreszahlen wie im Neuigkeiten-Archiv) */
+#kal-archive-list .news-years{align-items:center;gap:.5rem;margin-bottom:1.8rem;padding:.9rem 1.1rem;background:var(--bg-soft);border:1px solid var(--line)}
+#kal-archive-list .news-years::before{content:'Jahr:';margin-right:.5rem;font-size:.95rem;font-weight:600;color:var(--text-mid)}
+#kal-archive-list .news-year{margin:0;padding:.4rem 1rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-family:var(--sans);font-size:1.02rem;font-weight:600;line-height:1.3;color:var(--heading)}
+#kal-archive-list .news-year:hover{border-color:var(--heading)}
+#kal-archive-list .news-year.active{border-color:var(--heading);background:var(--heading);color:var(--bg)}
+#kal-archive-list .news-year-n{margin-left:.4rem;font-size:.82rem;font-weight:500;color:var(--text-mid);vertical-align:baseline}
+#kal-archive-list .news-year.active .news-year-n{color:inherit;opacity:.8}
 .news-year-head{margin:1.6rem 0 .8rem;padding-bottom:.4rem;border-bottom:2px solid var(--gold);font-family:var(--serif);font-size:1.6rem;font-weight:500;color:var(--heading)}
 .news-row{display:grid;grid-template-columns:9rem minmax(0,1fr);gap:1.6rem;align-items:center;padding:1.2rem 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
 .news-row-img{aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
@@ -976,6 +1074,9 @@ html.nd-lock{overflow:hidden}
 .hd-place{display:flex;align-items:flex-start;gap:.7rem;padding-top:1.2rem;border-top:1px solid var(--line);font-size:1.02rem;line-height:1.5;color:var(--text-mid)}
 .hd-place strong{display:block;font-weight:600;color:var(--heading)}
 .hd-addr{display:block}
+.hd-map{color:inherit;text-decoration:underline;text-decoration-color:var(--gold-l);text-decoration-thickness:1px;text-underline-offset:.2em}
+.hd-map:hover{text-decoration-color:currentColor}
+.hd-map:hover strong{color:var(--gold-text)}
 .hd-pin{flex:none;width:1.3rem;height:1.3rem;margin-top:.1rem;fill:none;stroke:var(--gold);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .hd-note{margin-top:1rem;padding:.8rem 1rem;border:1px solid var(--line);font-size:1rem;line-height:1.55;color:var(--text-mid)}
 .hd-note-label{display:block;margin-bottom:.15rem;font-size:.85rem;font-weight:600;letter-spacing:.04em;color:var(--gold-text)}
@@ -992,7 +1093,7 @@ html.nd-lock{overflow:hidden}
 .hd-page .section{padding-top:clamp(2rem,4vw,3rem);padding-bottom:clamp(2rem,4vw,3rem)}
 .hd-page .hd-nav{margin-top:2.5rem}
 .hd-when-part{white-space:nowrap}
-.hd-nav{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:4rem;padding-top:2rem;border-top:1px solid var(--line)}
+.hd-nav{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--line)}
 .hd-nav-link{display:flex;flex-direction:column;gap:.2rem;padding:1.1rem 1.3rem;border:1px solid var(--line);text-decoration:none;transition:border-color .2s}
 .hd-nav-link:hover{border-color:var(--heading)}
 .hd-next{text-align:right}
@@ -1446,7 +1547,7 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .sidebar-item.active{border-left:3px solid var(--gold);padding-left:calc(1rem - 2px);background:var(--gold-pale)}
   .with-sidebar{scroll-margin-top:0}
   .sakr-sec{scroll-margin-top:4.5rem}
-  .pane-steps{margin-top:3rem}
+  .pane-steps{margin-top:2rem}
 
   .aug-grid{grid-template-columns:1fr;gap:2rem}
   .aug-img{position:static;width:100%;max-width:24rem;margin:0 auto 1rem}
@@ -1617,6 +1718,11 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
 }
 :root[data-theme="dark"] .btn-gold,
 :root:not([data-theme="light"]):not(:has(body.adm)) .btn-gold{background:#d8b96e;color:#10192e}
+/* Spenden-Kaesten: --bg-warm ist im Dunkelmodus gleich dem Seitenhintergrund, darum eigene Flaeche und Rahmen */
+:root[data-theme="dark"] :is(.hd-thanks,.donate-online){background:rgba(255,255,255,.06);border:1px solid var(--line);border-left:3px solid var(--gold)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]):not(:has(body.adm)) :is(.hd-thanks,.donate-online){background:rgba(255,255,255,.06);border:1px solid var(--line);border-left:3px solid var(--gold)}
+}
 .modus-link{padding:0;border:0;background:none;color:rgba(255,255,255,.75);font:inherit;font-size:.95rem;cursor:pointer;transition:color .2s}
 .modus-link:hover{color:var(--gold-l)}
 .modus-link:focus-visible{outline:2px solid var(--gold-l);outline-offset:3px}
@@ -1825,3 +1931,133 @@ body.adm .suche-btn,body.adm .to-top{display:none!important}
 .zahlen.motion-in:not(.in){opacity:0}
 @media (max-width:900px){.zahlen-liste{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:420px){.zahlen-liste{grid-template-columns:1fr}}
+
+/* Handy: lange Namen neben dem Logo kuerzen (…), damit Lupe, Mond und X ganz sichtbar bleiben */
+@media (max-width:1120px){
+  nav{gap:.6rem}
+  .nav-logo-wrap{flex:0 1 auto;min-width:0}
+  .nav-logo-wrap>div{min-width:0}
+  nav .nav-logo-text,nav .nav-logo-sub{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .nav-right{flex:none;gap:0;margin-left:auto}
+  .hamburger{flex:none}
+  .suche-btn,.modus-btn{margin-right:0}
+}
+
+/* ---------- Seiten der Orgeln (orgel-rieger.html, orgel-reil.html) ---------- */
+.orgel-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);background:var(--nav-bg);color:var(--nav-fg);min-height:min(42rem,86vh);overflow:hidden}
+.orgel-hero-text{display:flex;flex-direction:column;justify-content:center;gap:1.1rem;padding:clamp(3rem,7vw,6rem) clamp(1.5rem,4vw,3.5rem) clamp(4.5rem,8vw,7rem) var(--edge)}
+.orgel-hero .hero-h1{font-size:clamp(2.6rem,5.4vw,4.4rem);line-height:1.04}
+.orgel-hero .hero-sub{max-width:34rem;margin:0}
+.orgel-hero .hero-actions{margin-top:.6rem}
+.orgel-hero-img{position:relative;min-height:20rem;background:var(--blue-deep)}
+.orgel-hero-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.orgel-hero-img::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,var(--nav-bg),rgba(16,25,46,0) 38%)}
+.orgel-zahlen-wrap{position:relative;z-index:2;margin:-3.2rem var(--edge) 0}
+.orgel-zahlen{margin:0;gap:1px;background:var(--line);border:1px solid var(--line);box-shadow:0 18px 50px rgba(16,25,46,.16)}
+.orgel-zahlen li{gap:.4rem;padding:1.5rem 1.5rem 1.4rem;border-top:3px solid var(--gold-l);background:var(--surface)}
+.orgel-zahlen .zahl-n{font-size:clamp(2.2rem,4vw,3.2rem);color:var(--heading)}
+.orgel-body{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:3rem clamp(2.5rem,6vw,5.5rem);align-items:start;padding:clamp(2.4rem,5vw,4rem) var(--edge)}
+.orgel-lead{margin-bottom:1.6rem;font-family:var(--serif);font-size:clamp(1.3rem,2.2vw,1.65rem);line-height:1.5;color:var(--heading)}
+.orgel-text .bio-p{margin-bottom:1.2rem;max-width:44rem}
+.orgel-fakten{position:sticky;top:calc(var(--nav-h) + 1.5rem);padding:1.6rem 1.7rem 1.4rem;background:var(--bg-soft);border-left:3px solid var(--gold-l)}
+.orgel-fakten-h{margin-bottom:.4rem;font-family:var(--serif);font-size:1.3rem;font-weight:500;color:var(--heading)}
+.orgel-fakten .organ-facts{margin:.5rem 0 0;border-top:0}
+.orgel-fakten .organ-facts div{grid-template-columns:1fr;gap:.1rem;padding:.7rem 0}
+.orgel-zeit{padding:clamp(2.2rem,4.5vw,3.5rem) var(--edge);background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.orgel-zeit-in{max-width:52rem}
+.orgel-zeit .s-title{margin-bottom:1.8rem}
+.orgel-weiter{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),30rem));gap:1.5rem 2rem;padding:clamp(2.2rem,4.5vw,3.5rem) var(--edge)}
+.orgel-weiter-karte{display:flex;flex-direction:column;gap:.5rem;padding:1.6rem 1.8rem;border:1px solid var(--line);border-top:3px solid var(--gold-l);color:inherit;text-decoration:none;transition:border-color .25s,background .25s}
+.orgel-weiter-karte:hover{background:var(--bg-soft);border-top-color:var(--gold)}
+.orgel-weiter-tag{font-size:.92rem;font-weight:600;color:var(--gold-text)}
+.orgel-weiter-titel{font-family:var(--serif);font-size:1.6rem;line-height:1.2;color:var(--heading)}
+.orgel-weiter-karte .link-arr{margin-top:.6rem;align-self:flex-start}
+@media (max-width:900px){
+  .orgel-hero{grid-template-columns:1fr}
+  .orgel-hero-text{padding:3rem var(--pad) 4.5rem}
+  .orgel-hero-img{order:-1;min-height:0;aspect-ratio:4/5;max-height:34rem}
+  .orgel-hero-img::after{background:linear-gradient(0deg,var(--nav-bg),rgba(16,25,46,0) 45%)}
+  .orgel-body{grid-template-columns:1fr}
+  .orgel-fakten{position:static}
+  .orgel-zahlen-wrap{margin:-2.4rem var(--pad) 0}
+  .orgel-weiter{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .orgel-hero-text>*{animation:rise .9s var(--ease) backwards}
+  .orgel-hero-text>:nth-child(2){animation-delay:.12s}
+  .orgel-hero-text>:nth-child(3){animation-delay:.28s}
+  .orgel-hero-text>:nth-child(4){animation-delay:.44s}
+  .orgel-hero-img img{animation:zoom-in 1.4s var(--ease) backwards}
+}
+
+.zahl-link{display:flex;flex-direction:column;gap:.5rem;color:inherit;text-decoration:none}
+.zahl-link .zahl-n{transition:color .25s}
+.zahl-link:hover .zahl-n,.zahl-link:focus-visible .zahl-n{color:var(--gold)}
+.zahl-link .link-arr{margin-top:.3rem;align-self:flex-start}
+
+/* Disposition der Rieger-Orgel */
+.orgel-dispo{padding:clamp(2.2rem,4.5vw,3.5rem) var(--edge) 1rem}
+.orgel-dispo .s-title{margin-bottom:1.8rem}
+.dispo-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2rem 1.8rem}
+.dispo-werk h3{margin-bottom:.7rem;padding-bottom:.55rem;border-bottom:2px solid var(--gold-l);font-family:var(--serif);font-size:1.18rem;font-weight:500;color:var(--heading)}
+.dispo-werk ul{list-style:none}
+.dispo-werk li{padding:.28rem 0;border-bottom:1px solid var(--line);font-size:.98rem;line-height:1.4;color:var(--text)}
+.dispo-werk sup,.dispo-note sup{font-size:.7em;color:var(--gold-text)}
+.dispo-note{margin-top:1.6rem;font-size:.95rem;color:var(--text-light)}
+@media (max-width:1100px){.dispo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){.dispo-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:420px){.dispo-grid{grid-template-columns:1fr}}
+
+.dispo-grid.dispo-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:640px){.dispo-grid.dispo-3{grid-template-columns:1fr}}
+
+
+/* ---------- Aspersdorf: Wochenblaetter (PDF) und Friedhofsgebuehren ---------- */
+.asp-wochen{max-width:44rem;margin-top:2rem}
+.asp-woche-now{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:1.1rem 1.4rem;align-items:center;padding:1.2rem 1.5rem;border:1px solid var(--heading);box-shadow:inset 0 0 0 5px var(--bg),inset 0 0 0 6px var(--line)}
+.asp-woche-icon{display:grid;place-items:center;width:3.2rem;height:4rem;border:2px solid var(--gold);font-size:.82rem;font-weight:700;letter-spacing:.06em;color:var(--gold-text)}
+.asp-woche-kicker{margin-bottom:.15rem;font-size:.9rem;font-weight:600;color:var(--gold-text)}
+.asp-woche-titel{font-family:var(--serif);font-size:1.35rem;font-weight:500;line-height:1.25;color:var(--heading)}
+.asp-woche-older{margin-top:.8rem}
+.asp-woche-older summary{cursor:pointer;padding:.5rem 0;font-weight:600;color:var(--heading)}
+.asp-woche-older summary span{margin-left:.3rem;font-size:.85rem;font-weight:500;color:var(--text-mid)}
+.asp-woche-older ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.asp-woche-older li{padding:.55rem 0;border-bottom:1px solid var(--line)}
+.asp-woche-older a{color:var(--heading);text-decoration-color:var(--gold-l);text-underline-offset:.2em}
+@media(max-width:600px){.asp-woche-now{grid-template-columns:auto minmax(0,1fr)}.asp-woche-now .btn{grid-column:1/-1;justify-content:center}}
+.fee-block{margin-top:2.2rem}
+.fee-block:first-child{margin-top:1.6rem}
+.fee-title{margin-bottom:.4rem;font-size:1.3rem}
+.fee-intro{margin-bottom:1.2rem}
+.fee-note{margin:.2rem 0 0;font-size:.85rem;color:var(--text-light)}
+
+
+/* ---------- Predigten und Ansprachen ---------- */
+.pd-list{max-width:52rem}
+.pd-item{display:grid;grid-template-columns:minmax(0,1fr);gap:1.2rem 2.4rem;padding:2.2rem 0;border-top:1px solid var(--line);scroll-margin-top:calc(var(--nav-h) + 1rem)}
+.pd-item:first-child{border-top-color:var(--heading);padding-top:1.4rem}
+.pd-item.has-img{grid-template-columns:13rem minmax(0,1fr);align-items:start}
+.pd-img{margin:0}
+.pd-img img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;background:var(--bg-soft);cursor:zoom-in}
+.pd-date{margin-bottom:.3rem;font-size:.95rem;font-weight:600;color:var(--gold-text)}
+.pd-title{margin:0 0 1rem;font-family:var(--serif);font-size:clamp(1.7rem,3vw,2.2rem);font-weight:500;line-height:1.2;color:var(--heading)}
+.pd-text p{margin:0 0 .9rem;font-size:1.05rem;line-height:1.75;color:var(--text-mid);max-width:42rem}
+.pd-text p:last-child{margin-bottom:0}
+@media(max-width:700px){.pd-item.has-img{grid-template-columns:1fr}.pd-img{max-width:15rem}}
+
+
+/* Runden: Kacheln mit Bild, Name und naechstem Termin; Klick fuehrt zur Seite der Runde */
+.rk-index{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:1.2rem}
+.rk-tile{display:flex;flex-direction:column;border:1px solid var(--line);background:var(--surface);color:inherit;text-decoration:none;transition:border-color .2s,box-shadow .2s,transform .2s var(--ease)}
+.rk-tile-img{display:block;aspect-ratio:4/3;overflow:hidden;background:var(--bg-warm)}
+.rk-tile-img img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.rk-tile.plakat .rk-tile-img{padding:.9rem}
+.rk-tile.plakat .rk-tile-img img{object-fit:contain;box-shadow:0 6px 18px rgba(16,25,46,.28)}
+.rk-tile-body{display:flex;flex-direction:column;gap:.2rem;flex:1;padding:.9rem 1.05rem 1.1rem;border-top:3px solid var(--gold-l);transition:background-color .2s}
+.rk-tile-body b{font-family:var(--serif);font-size:1.2rem;font-weight:500;line-height:1.25;color:var(--heading);transition:color .2s}
+.rk-tile-body small{font-size:.92rem;line-height:1.4;color:var(--text-mid);transition:color .2s}
+.rk-tile:hover{border-color:var(--heading);transform:translateY(-2px);box-shadow:0 10px 24px rgba(16,25,46,.12)}
+.rk-tile:hover .rk-tile-img img{transform:scale(1.04)}
+.rk-tile:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.rk-tile,.rk-tile-img img{transition:none}.rk-tile:hover{transform:none}}

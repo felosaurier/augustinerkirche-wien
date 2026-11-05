@@ -37,7 +37,7 @@ def main():
     vorher = nachher = 0
     erzeugt = 0
     for p in sorted((ROOT / 'assets' / 'img').rglob('*.webp')):
-        if p.stem.endswith('-m'):
+        if p.stem.endswith('-m') or 'hochaemter' in p.parts:     # Fotos der Hochaemter: nur eine kleine Fassung
             continue
         klein = p.with_name(p.stem + '-m.webp')
         rel = p.relative_to(ROOT).as_posix()

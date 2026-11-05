@@ -19,7 +19,7 @@
 
   async function loadAll() {
     const json = (path) => A.readJSON(path);
-    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga] = await Promise.allSettled([
+    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga, pa, wo, fh, pr] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -40,13 +40,18 @@
       json('data/sprueche.json'),
       json('data/wochenkalender.json'),
       /* fehlt die Datei noch, gibt es eben keine Alben */
-      json('data/galerie.json').catch(() => ({ alben: [] }))
+      json('data/galerie.json').catch(() => ({ alben: [] })),
+      json('data/pgr-aspersdorf.json'),
+      json('data/aspersdorf-wochen.json'),
+      json('data/friedhof.json'),
+      json('data/predigten.json')
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
       rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st),
-      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re), sp: val(sp), wk: val(wk), ga: val(ga)
+      tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re), sp: val(sp), wk: val(wk), ga: val(ga),
+      pa: val(pa), wo: val(wo), fh: val(fh), pr: val(pr)
     };
   }
 
@@ -71,19 +76,19 @@
   }
 
   /* Eine Zeile je Bereich: Name, Stand, Hinweis (flag, z. B. "2 ohne Foto") und Schnellzugriff */
-  function row({ href, ico, title, stat, addHref, addLabel, addIcon = 'plus', flag = '' }) {
+  function row({ href, ico, title, stat, flag = '' }) {
+    /* Rechts steht nur die Zahl ("23 Meldungen" -> 23); ein Punkt zeigt, wo etwas zu tun ist */
+    const n = (String(stat).match(/^(\d+)/) || [])[1] || '';
     return `<li class="adm-area${flag ? ' has-flag' : ''}">` +
-      `<span class="adm-area-ico">${icon(ico)}</span>` +
-      `<div class="adm-area-body"><a class="adm-area-title" href="${href}">${title}</a>` +
-        `<span class="adm-area-stat">${stat}</span>` +
-        (flag ? `<span class="adm-area-flag">${icon('alert')}${esc(flag)}</span>` : '') +
-      '</div>' +
-      (addHref ? `<a class="adm-area-add" href="${addHref}" title="${addLabel}">${icon(addIcon)}<span>${addLabel}</span></a>` : '') +
-    '</li>';
+      `<a class="adm-idx" href="${href}"${flag ? ` title="${esc(flag)}"` : ''}>${icon(ico)}` +
+        `<span class="adm-idx-name">${title}</span><span class="adm-idx-dots" aria-hidden="true"></span>` +
+        (flag ? `<span class="adm-idx-flag" role="img" aria-label="${esc(flag)}"></span>` : '') +
+        (n ? `<span class="adm-idx-n">${n}</span>` : '') +
+      '</a></li>';
   }
 
   /* Alle Bereiche, gruppiert wie die Seitenleiste (js/admin/admin.js, NAV) */
-  function renderAreas({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga }) {
+  function renderAreas({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga, pa, wo, fh, pr }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
@@ -93,6 +98,10 @@
     const live = (list) => (list || []).filter((h) => A.noticeActive(h)).length;
     const cdN = cd ? (cd.gruppen || []).reduce((n, g) => n + count(g.cds), 0) : null;
     const stale = staleRunden(rd).length;
+    /* Wochenblatt Aspersdorf: Hinweis, wenn das neueste schon laenger als eine Woche zurueckliegt */
+    const newestWeek = wo ? (wo.wochen || []).map((w) => w.datum).sort().pop() : '';
+    const weekOld = wo && (!newestWeek || newestWeek < A.isoOf(new Date(Date.now() - 8 * 86400000)))
+      ? (newestWeek ? `Letztes Blatt vom ${A.fmtShort(newestWeek)}` : 'Noch kein Wochenblatt') : '';
     const noPhoto = (sol || []).filter((p) => !p.image).length;
     const noCover = cd ? (cd.gruppen || []).reduce((n, g) => n + (g.cds || []).filter((c) => !c.cover).length, 0) : 0;
     const openLegal = re ? ['impressum', 'datenschutz'].reduce((n, k) => n + ((re[k] && re[k].abschnitte) || [])
@@ -150,6 +159,11 @@
           stat: pg ? plural(count(pg.mitglieder) + count(pg.weitere), 'Person', 'Personen') : none,
           addHref: 'pgr.html?neu=1', addLabel: 'Neue Person'
         }),
+        can('predigten') && row({
+          href: 'predigten.html', ico: 'quote', title: 'Predigten und Ansprachen',
+          stat: pr ? plural(count(pr.predigten), 'Beitrag', 'Beiträge') : none,
+          addHref: 'predigten.html?neu=1', addLabel: 'Neuer Beitrag'
+        }),
         can('mitbrueder') && row({
           href: 'personen.html?bereich=kloster', ico: 'user', title: 'Mitbrüder',
           stat: ps ? plural(people(['mitbrueder']), 'Mitbruder', 'Mitbrüder') : none,
@@ -190,6 +204,28 @@
           href: 'galerie.html', ico: 'image', title: 'Galerie',
           stat: ga ? plural(count(ga.alben), 'Album', 'Alben') : none,
           addHref: 'galerie.html?neu=1', addLabel: 'Neues Album'
+        })
+      ]],
+      ['Pfarre Aspersdorf', [
+        can('asp-personen') && row({
+          href: 'personen.html?bereich=aspersdorf', ico: 'user', title: 'Leitung',
+          stat: ps ? plural(people(['asp-leitung']), 'Person', 'Personen') : none,
+          addHref: 'personen.html?bereich=aspersdorf&neu=1', addLabel: 'Neue Person'
+        }),
+        can('asp-gremien') && row({
+          href: 'aspersdorf-gremien.html', ico: 'users', title: 'Pfarrgemeinderat &amp; Vermögensverwaltungsrat',
+          stat: pa ? plural(count(pa.mitglieder) + count(pa.vwr), 'Person', 'Personen') : none,
+          addHref: 'aspersdorf-gremien.html?neu=1', addLabel: 'Neue Person'
+        }),
+        can('asp-wochen') && row({
+          href: 'aspersdorf-wochen.html', ico: 'calendarWeek', title: 'Wochenblätter (PDF)', flag: weekOld,
+          stat: wo ? plural(count(wo.wochen), 'Wochenblatt', 'Wochenblätter') : none,
+          addHref: 'aspersdorf-wochen.html?neu=1', addLabel: 'Neues Wochenblatt'
+        }),
+        can('asp-friedhof') && row({
+          href: 'aspersdorf-friedhof.html', ico: 'book', title: 'Friedhofsgebühren',
+          stat: fh ? plural(count(fh.tabellen), 'Tabelle', 'Tabellen') : none,
+          addHref: 'aspersdorf-friedhof.html?neu=1', addLabel: 'Neue Tabelle'
         })
       ]],
       ['Website', [
@@ -309,8 +345,18 @@
       (A.isDev() ? '<p class="adm-log-all"><a href="aenderungen.html">Alle Änderungen von allen ansehen</a></p>' : '');
   }
 
-  function renderTodo({ ha, sol, rd, wk }) {
+  function renderTodo({ ha, sol, rd, wk, news }) {
     const items = [];
+    /* Entwuerfe warten auf Freigabe oder Fertigstellung */
+    const drafts = A.can('neuigkeiten') && news ? news.filter((e) => /^ja$/i.test(e.Entwurf || '')).length : 0;
+    if (drafts) {
+      items.push({
+        href: 'neuigkeiten.html', ico: 'news',
+        title: `${plural(drafts, 'Meldung ist', 'Meldungen sind')} noch ein Entwurf`,
+        sub: A.isAdmin() ? 'Auf der Website nicht sichtbar. Prüfen und freigeben?' : 'Auf der Website nicht sichtbar, bis ein Admin sie freigibt.',
+        go: 'Ansehen'
+      });
+    }
     /* Meldungen ohne Enddatum sind kein Fehler: sie gelten zwei Wochen (HD.newsUntil) */
     /* Runden mit Terminen, die alle vorbei sind */
     for (const r of A.canAnyRunde() ? staleRunden(rd) : []) {
@@ -355,7 +401,7 @@
     }
     /* Ohne Recht fuer diese Bereiche gibt es nichts, was offen sein koennte */
     const panel = $('ov-todo-h').closest('section');
-    panel.hidden = !(A.can('hochaemter') || A.can('solisten') || A.can('wochenkalender') || A.canAnyRunde());
+    panel.hidden = !(A.can('hochaemter') || A.can('solisten') || A.can('wochenkalender') || A.canAnyRunde() || drafts);
     $('ov-todo').innerHTML = items.length
       ? `<ul class="adm-todo">${items.map((it) =>
         `<li><a href="${it.href}">${icon(it.ico)}<span><span class="adm-todo-title">${esc(it.title)}</span>` +
@@ -363,11 +409,90 @@
       : `<p class="adm-allgood">${icon('checkCircle')}Alles vollständig für die nächsten ${SOON_DAYS / 7} Wochen.</p>`;
     if (!ha && A.can('hochaemter')) $('ov-todo').insertAdjacentHTML('afterbegin', '<p class="adm-muted">Die Hochämter konnten nicht geladen werden.</p>');
     $('ov-todo-n').textContent = items.length ? String(items.length) : '';
+    return panel.hidden ? null : items.length;
+  }
+
+  /* Auf einen Blick: vier Kacheln mit den wichtigsten Zahlen (nur, was die Person bearbeiten darf) */
+  function renderStats({ ha, news, sol, pt, rd }, open) {
+    const tiles = [];
+    const upcoming = ha ? HD.splitByDate(ha).upcoming : [];
+    if (ha && A.can('hochaemter')) {
+      const limit = HD.today();
+      limit.setDate(limit.getDate() + SOON_DAYS);
+      const soon = upcoming.filter((e) => e.dateObj <= limit).length;
+      tiles.push({ href: 'hochaemter.html', ico: 'calendar', label: `Nächste ${SOON_DAYS / 7} Wochen`, value: String(soon), sub: soon === 1 ? 'Hochamt oder Konzert' : 'Hochämter und Konzerte' });
+    }
+    if (news && A.can('neuigkeiten')) {
+      const hidden = news.filter((e) => A.newsHidden(e));
+      const drafts = hidden.filter((e) => /^ja$/i.test(e.Entwurf || '')).length;
+      const planned = hidden.length - drafts;
+      const extra = [drafts ? plural(drafts, 'Entwurf', 'Entwürfe') : '', planned ? `${planned} geplant` : ''].filter(Boolean).join(' · ');
+      tiles.unshift({ href: 'neuigkeiten.html', ico: 'news', label: 'Auf der Startseite', value: String(A.newsOnHome(news).size), sub: extra || `von ${plural(news.length, 'Meldung', 'Meldungen')}` });
+    }
+    if (sol && A.can('solisten')) {
+      const noPhoto = sol.filter((p) => !p.image).length;
+      tiles.push({ href: 'solisten.html', value: String(sol.length), label: 'Solisten', sub: noPhoto ? `${noPhoto} ohne Foto` : 'alle mit Foto' });
+    }
+    if (pt && A.can('paten')) {
+      tiles.push({ href: 'paten.html', value: String((pt.paten || []).length), label: 'Paten', sub: plural((pt.ehrenpaten || []).length, 'Ehrenpate', 'Ehrenpaten') });
+    }
+    const myRunden = (rd || []).filter((r) => A.canRunde(r.id));
+    if (rd && A.canAnyRunde()) {
+      tiles.push({ href: 'runden.html', value: String(myRunden.length), label: A.canAllRunden() ? 'Runden' : 'Meine Runden', sub: 'in St. Augustin' });
+    }
+    const box = $('ov-stats');
+    box.hidden = !tiles.length;
+    box.innerHTML = tiles.map((t) =>
+      `<a class="ov-stat" href="${t.href}"><span class="ov-stat-value">${esc(t.value)}</span>` +
+        `<span class="ov-stat-text"><b>${esc(t.label)}</b><span>${esc(t.sub)}</span></span></a>`).join('');
+  }
+
+  /* Anschlagtafel: das naechste Hochamt gross, darunter die drei danach.
+     Fehlende Angaben stehen gleich dabei. */
+  function renderBoard({ ha }) {
+    const box = $('ov-board');
+    if (!A.can('hochaemter') || !ha) {
+      box.hidden = true;
+      return;
+    }
+    const { upcoming } = HD.splitByDate(ha);
+    const next = upcoming[0];
+    box.hidden = false;
+    if (!next) {
+      box.innerHTML = '<div class="ov-board-main"><p class="ov-board-kicker">Nächstes Hochamt</p>' +
+        '<p class="ov-board-title">Noch kein Termin eingetragen</p>' +
+        `<a class="ov-board-btn" href="hochaemter.html?neu=1">${icon('plus')}Neues Hochamt</a></div>`;
+      return;
+    }
+    const days = Math.round((next.dateObj - HD.today()) / 86400000);
+    const when = days <= 0 ? 'heute' : days === 1 ? 'morgen' : `in ${days} Tagen`;
+    const wd = next.dateObj.toLocaleDateString('de-AT', { weekday: 'long' });
+    const miss = A.missingInfo(next);
+    const who = [['Zelebrant', next.celebrant], ['Dirigent', next.conductor], ['Organist', next.organist]].filter(([, v]) => v);
+    const later = upcoming.slice(1, 4).map((e) =>
+      `<li><a href="hochaemter.html?bearbeiten=${encodeURIComponent(e.id)}"><span class="ov-slot-day">${e.date.slice(8, 10)}</span>` +
+      `<span class="ov-slot-txt"><b>${esc(e.piece || e.type)}</b><span>${esc(HD.MONTHS_SHORT[e.dateObj.getMonth()])}, ${esc(e.time)}</span></span></a></li>`).join('');
+    box.innerHTML =
+      '<div class="ov-board-main">' +
+        `<p class="ov-board-kicker">Nächstes Hochamt, ${when}</p>` +
+        '<div class="ov-board-date">' +
+          `<span class="ov-board-day">${next.date.slice(8, 10)}</span>` +
+          `<span class="ov-board-md"><b>${esc(HD.MONTHS[next.dateObj.getMonth()])}</b><span>${esc(wd)}, ${esc(next.time)} Uhr</span></span>` +
+        '</div>' +
+        (next.piece && next.piece !== next.type
+          ? `<p class="ov-board-title">${esc(next.type)}</p><h2 class="ov-board-piece">${esc(next.piece)}</h2>`
+          : `<h2 class="ov-board-piece">${esc(next.type)}</h2>`) +
+        (who.length ? `<p class="ov-board-who">${who.map(([k, v]) => `<span>${esc(k)}: ${esc(v)}</span>`).join('')}</p>` : '') +
+        (miss.length ? `<p class="ov-board-miss">${icon('alert')}Es fehlt: ${esc(miss.join(', '))}</p>` : '') +
+        `<a class="ov-board-btn" href="hochaemter.html?bearbeiten=${encodeURIComponent(next.id)}">${icon('edit')}Bearbeiten</a>` +
+      '</div>' +
+      (later ? `<div class="ov-board-next"><p class="ov-board-kicker">Danach</p><ul>${later}</ul></div>` : '');
   }
 
   async function refresh() {
     const data = await loadAll();
-    renderTodo(data);
+    renderBoard(data);
+    renderStats(data, renderTodo(data));
     renderAreas(data);
     await renderLog();
   }

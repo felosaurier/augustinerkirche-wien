@@ -1,4 +1,3 @@
-/* HOMELAB-TEST-PAKET: Test-Mess-ID, Seite gilt als lokal. Der Cookie-Hinweis erscheint, gemessen wird nie. */
 /* ============================================================
    Augustinerkirche Wien — statistik.js
    Cookie-Hinweis und Besucherstatistik (Google Analytics 4).
@@ -21,7 +20,7 @@
 
   /* Mess-ID des Datenstreams in Google Analytics 4 (Verwaltung > Datenstreams),
      Form "G-ABC123DEF4". Leer lassen = keine Statistik, kein Cookie-Hinweis. */
-  const GA_ID = 'G-VORSCHAU01';
+  const GA_ID = '';
 
   /* Laufzeit des Analytics-Cookies in Tagen; die Datenschutzerklaerung nennt sechs Monate */
   const COOKIE_TAGE = 180;
@@ -34,7 +33,7 @@
   const win = window;
   const SELF = doc.currentScript ? doc.currentScript.src : '';
   const host = location.hostname;
-  const lokal = true;
+  const lokal = host === 'localhost' || host === '[::1]' || host.endsWith('.localhost') || /^127\.\d+\.\d+\.\d+$/.test(host);
 
   let choice = null;     /* true = Statistik erlaubt, false = abgelehnt, null = noch nicht gefragt */
   let gestartet = false; /* Analytics wurde auf dieser Seite schon geladen */

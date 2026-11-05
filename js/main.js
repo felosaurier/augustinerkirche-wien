@@ -74,7 +74,14 @@
     item.classList.add('open');
     if (btn) btn.setAttribute('aria-expanded', 'true');
     fitDropdown(item);
+    openAtScroll = window.scrollY;
   }
+
+  /* Scrollt man bei offenem Menue, schliesst es sich (sonst verdeckt es den Inhalt) */
+  let openAtScroll = 0;
+  window.addEventListener('scroll', () => {
+    if (Math.abs(window.scrollY - openAtScroll) > 12 && qs('.nav-item.open')) closeAllDropdowns();
+  }, { passive: true });
 
   let openMobileSection = null;
 
@@ -166,15 +173,18 @@
     return html + escHTML(text.slice(last));
   }
 
+  /* Startseite der Website: das Logo fuehrt auf Aspersdorf meist zur Seite Aspersdorf, die Startseite steht dann in data-home */
+  const homeOf = (logo) => (logo && (logo.dataset.home || logo.getAttribute('href'))) || 'index.html';
+
   /* Das Handy-Menue entsteht aus dem Laptop-Menue, damit beide immer dieselben
      Eintraege haben: oben drei Schnellzugriffe (Gottesdienste, Kalender, Kontakt), darunter die Bereiche zum Aufklappen. */
   function buildMobileMenu(menu) {
     const center = qs('.nav-center');
     const logo = qs('.nav-logo-wrap');
     if (!center || !logo) return;
-    const base = (logo.getAttribute('href') || 'index.html').replace(/index\.html$/, '');
+    const base = homeOf(logo).replace(/index\.html$/, '');
     const quick = [
-      ['Gottesdienste', `${base}pages/gottesdienste.html`],
+      ['Gottesdienste', `${base}pages/augustinerkirche.html#p-zeiten`],
       ['Kalender', `${base}pages/kalender.html`],
       ['Kontakt', `${base}pages/kontakt.html`]
     ];
@@ -554,18 +564,59 @@
     for (const el of targets) revealObserver.observe(el);
   }
 
+  /* ---------- Sakramente: nur zeigen, was gedrueckt ist ----------
+     Im Register (.sakr-register[data-nur-eines]) steht anfangs nur die Uebersicht. Ein Klick zeigt den Text dieses
+     Sakraments (.sakr-sec im selben Bereich), alle anderen bleiben verborgen; nochmal klicken schliesst. Ohne
+     Skript stehen alle Texte untereinander. Adresse mit #sakr-... oeffnet den Bereich und das Sakrament gleich. */
+  function initNurEines() {
+    const regs = qsa('.sakr-register[data-nur-eines]');
+    if (!regs.length) return;
+    const groups = regs.map((reg) => {
+      const secs = qsa('.sakr-sec', reg.parentElement);
+      const items = qsa('.sakr-reg-item[data-target]', reg);
+      const show = (id) => {
+        secs.forEach((sec) => { sec.hidden = sec.id !== id; });
+        items.forEach((it) => {
+          const on = it.dataset.target === id;
+          it.classList.toggle('active', on);
+          it.setAttribute('aria-expanded', String(on));
+        });
+        if (id) document.getElementById(id).scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+      };
+      show('');
+      reg.addEventListener('click', (e) => {
+        const it = e.target.closest('.sakr-reg-item[data-target]');
+        if (!it) return;
+        e.stopPropagation();
+        show(it.classList.contains('active') ? '' : it.dataset.target);
+      });
+      return { secs, show };
+    });
+    const fromHash = () => {
+      const id = safeDecode(location.hash.slice(1));
+      const group = groups.find((g) => g.secs.some((sec) => sec.id === id));
+      if (!group) return;
+      const pane = document.getElementById(id).closest('.tab-pane');
+      const sidebar = qs('.sidebar');
+      if (pane && sidebar) activatePane(sidebar, pane.id);
+      group.show(id);
+    };
+    fromHash();
+    window.addEventListener('hashchange', fromHash);
+  }
+
   /* ---------- Sakramente-Band: Sprung zu Bereich oder Abschnitt ---------- */
   function initSakrChips() {
     document.addEventListener('click', (e) => {
       /* Aspersdorf: Sprung zu einem Abschnitt innerhalb desselben Bereichs */
-      const jump = e.target.closest('.sakr-chip[data-target]');
+      const jump = e.target.closest('.sakr-chip[data-target], .sakr-reg-item[data-target]');
       if (jump) {
         const target = document.getElementById(jump.dataset.target);
         if (target) target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
         return;
       }
       /* Sakramente: den passenden Tab oeffnen */
-      const chip = e.target.closest('.sakr-chip[data-pane]');
+      const chip = e.target.closest('.sakr-chip[data-pane], .sakr-reg-item[data-pane]');
       const sidebar = chip && qs('.sidebar');
       if (!sidebar || !activatePane(sidebar, chip.dataset.pane)) return;
       history.replaceState(null, '', `${location.pathname}#${chip.dataset.pane}`);
@@ -641,7 +692,7 @@
       img.dataset.bn = '';
       const text = creditFor(img.currentSrc || img.getAttribute('src'));
       /* Vergroesserung und Fotoreihen: der Nachweis steht dort einmal in der Unterschrift (lightbox.js), nicht unter jedem Foto */
-      if (!text || img.closest('.mobile-menu, nav, footer, .lb-fig, .lb-strip, .nd-gallery, .news-row-img, .news-card-img')) continue;
+      if (!text || img.closest('.mobile-menu, nav, footer, .lb-fig, .lb-strip, .nd-gallery, .news-row-img, .news-card-img, .people-index, .rk-index')) continue;
       /* Zum Bild gehoerende Rahmen mitnehmen, damit der Text darunter steht */
       let box = img;
       for (let i = 0; i < 3; i++) {
@@ -1088,7 +1139,7 @@
     for (const sidebar of qsa('.sidebar')) if (applyLeiste(sidebar)) refreshSidebar(sidebar);
 
     const logo = qs('.nav-logo-wrap');
-    const base = ((logo && (logo.getAttribute('href'))) || 'index.html').replace(/index\.html$/, '');
+    const base = homeOf(logo).replace(/index\.html$/, '');
     let menuChanged = false;
     for (const [key, b] of Object.entries(bereiche)) {
       const m = /^([\w-]+\.html)#([\w-]+)$/.exec(key);
@@ -1125,10 +1176,11 @@
      Bereiche steigen sanft ein, sobald sie ins Bild kommen; Listen (Hochaemter, Meldungen, Karten)
      nacheinander. Nur auf der Startseite, nicht bei "reduzierte Bewegung" (Klassen: style.css, "Bewegung"). */
   function initHomeMotion() {
-    if (!qs('main.home') || reducedMotion.matches || !('IntersectionObserver' in window)) return;
+    const wurzel = qs('main.home, main.mot');
+    if (!wurzel || reducedMotion.matches || !('IntersectionObserver' in window)) return;
     const groups = [
       ['.hs-head', 'motion-in'], ['.hs-list', 'motion-stagger'], ['.sec-head', 'motion-in'], ['.news-grid', 'motion-stagger'],
-      ['.news-more', 'motion-in'], ['.zahlen-liste', 'motion-stagger'], ['.cards-2', 'motion-stagger'], ['.herzgruft > div:first-child', 'motion-in'], ['.herzgruft-img', 'motion-img']
+      ['.news-more', 'motion-in'], ['.zahlen-liste', 'motion-stagger'], ['.timeline', 'motion-stagger'], ['.orgel-text', 'motion-in'], ['.orgel-fakten', 'motion-in'], ['.orgel-weiter', 'motion-stagger'], ['.cards-2', 'motion-stagger'], ['.herzgruft > div:first-child', 'motion-in'], ['.herzgruft-img', 'motion-img']
     ];
     const io = new IntersectionObserver((entries) => {
       for (const en of entries) {
@@ -1157,7 +1209,7 @@
       move();
     }
     for (const [sel, cls] of groups) {
-      for (const el of qsa(`main.home ${sel}`)) {
+      for (const el of wurzel.querySelectorAll(sel)) {
         el.classList.add(cls);
         io.observe(el);
       }
@@ -1200,7 +1252,7 @@
   /* ---------- Nach oben, Startseite in der Fusszeile ---------- */
   function initWege() {
     const logo = qs('.nav-logo-wrap');
-    const home = (logo && logo.getAttribute('href')) || 'index.html';
+    const home = homeOf(logo);
     const links = qs('footer .f-links');
     if (links && !/(^|\/)index\.html$/.test(location.pathname) && location.pathname !== '/' && !qs('a[data-startseite]', links)) {
       links.insertAdjacentHTML('afterbegin', `<a data-startseite href="${escHTML(home)}">Startseite</a>`);
@@ -1264,7 +1316,7 @@
     if (!felder.length) return;
     /* data-seit: Jahre seit einem Jahr (immer aktuell); data-zaehlen: feste Zahl; data-plus: mit "+" */
     const ziel = (el) => (el.dataset.seit ? new Date().getFullYear() - Number(el.dataset.seit) : Number(el.dataset.zaehlen));
-    const text = (el, n) => `${n.toLocaleString('de-AT')}${'plus' in el.dataset && n >= ziel(el) ? '+' : ''}`;
+    const text = (el, n) => `${'jahr' in el.dataset ? String(n) : n.toLocaleString('de-AT')}${'plus' in el.dataset && n >= ziel(el) ? '+' : ''}`;
     for (const el of felder) el.textContent = text(el, ziel(el));
     if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
     const io = new IntersectionObserver((entries) => {
@@ -1348,6 +1400,7 @@
     initSidebarTabs();
     initNavigation();
     initSakrChips();
+    initNurEines();
     initMail();
     initHeroShow();
     initCredits();

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Aspersdorf: Wochenblätter — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-aspersdorf-wochen.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Wochenblätter <em>Aspersdorf</em></h1>
+      <p class="ph-sub">Die Gottesdienste der Woche als PDF. Das neueste Blatt steht oben bei <a href="../pages/aspersdorf.html#p-gottesdienste" target="_blank" rel="noopener">Pfarre Aspersdorf → Gottesdienste &amp; Kalender</a>, ältere darunter.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="aw-new" data-icon="plus">Neues Wochenblatt</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <p class="adm-count" id="aw-count" role="status"></p>
+  <div id="aw-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog" id="aw-dlg" aria-labelledby="aw-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="aw-dlg-tag">Hinzufügen</div>
+      <h2 class="adm-dlg-title" id="aw-dlg-title">Neues Wochenblatt</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="aw-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Woche</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="f-datum">Woche beginnt am<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="date" id="f-datum" required/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-titel">Titel <span class="adm-opt">optional</span></label>
+          <input class="adm-input" type="text" id="f-titel" maxlength="120" placeholder="Gottesdienste der Woche vom …" aria-describedby="f-titel-hint"/>
+          <span class="adm-hint" id="f-titel-hint">Ohne Titel steht „Gottesdienste der Woche vom …“ mit dem Datum.</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>PDF</legend>
+      <div class="adm-field">
+        <label class="adm-drop" id="aw-drop">
+          <span data-icon="upload"></span>
+          <span class="adm-drop-main">PDF hierher ziehen oder <u>auswählen</u></span>
+          <span class="adm-hint">Höchstens 15 MB</span>
+          <input type="file" id="f-file" accept="application/pdf,.pdf" aria-describedby="aw-fileinfo"/>
+        </label>
+        <span class="adm-hint" id="aw-fileinfo"></span>
+        <a class="adm-act" id="aw-open" href="#" target="_blank" rel="noopener" data-icon="external" hidden>Aktuelles PDF ansehen</a>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="aw-delete" data-icon="trash">Entfernen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="aw-form" class="btn btn-dark" id="aw-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

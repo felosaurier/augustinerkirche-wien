@@ -72,7 +72,7 @@
         "zeile": "Die Bibelrunde",
         "titel": "Bibelpur",
         "betonung": "pur",
-        "untertitel": "Gemeinsames Lesen und Besprechen biblischer Texte — offen für alle, unabhängig von Vorwissen."
+        "untertitel": "Gemeinsames Lesen und Besprechen biblischer Texte — offen für alle, unabhängig von Vorwissen"
       },
       "einleitung": [
         "Bibelpur ist die Bibelrunde der Pfarre St. Augustin. In regelmäßigen Treffen werden biblische Texte gemeinsam gelesen, ausgelegt und im Gespräch auf das eigene Leben bezogen — ganz ohne Vorwissen vorauszusetzen.",
@@ -110,7 +110,7 @@
         {
           "label": "Zeit",
           "wert": "19:30 Uhr",
-          "zusatz": "18:30 Uhr Hl. Messe"
+          "zusatz": "18:30 Uhr Hl. Messe in der Loretokapelle"
         },
         {
           "label": "Ort",
@@ -343,7 +343,7 @@
       },
       "einleitung": [
         "Der Ökumenekreis Innere Stadt versammelt Gläubige unterschiedlicher christlicher Konfessionen aus dem ersten Wiener Gemeindebezirk zu regelmäßigem Gebet und Gespräch.",
-        "Besondere Bedeutung hat die Gebetswoche für die Einheit der Christen im Januar, zu der der Kreis traditionell ökumenische Gottesdienste mitgestaltet. Auskunft über aktuelle Termine erteilt die Pfarrkanzlei der Augustinerkirche."
+        "Besondere Bedeutung hat die Gebetswoche für die Einheit der Christen im Jänner, zu der der Kreis traditionell ökumenische Gottesdienste mitgestaltet. Auskunft über aktuelle Termine erteilt die Pfarrkanzlei der Augustinerkirche."
       ],
       "schwerpunkt": null,
       "text": [],
@@ -361,7 +361,7 @@
         },
         {
           "label": "Höhepunkt",
-          "wert": "Gebetswoche für die Einheit der Christen im Januar",
+          "wert": "Gebetswoche für die Einheit der Christen im Jänner",
           "zusatz": ""
         },
         {

@@ -3,7 +3,8 @@
    Personen pflegen (admin/personen.html), Quelle ist
    data/personen.json mit vier Gruppen, aufgeteilt auf zwei Bereiche
    der Verwaltung: ?bereich=kloster (Mitbrueder, Chronik) und
-   ?bereich=musik (Leitung, Gastdirigenten, Organisten; dazu Homepage). Je Person Name, Aufgabe, Foto, Fotonachweis und
+   ?bereich=musik (Leitung, Gastdirigenten, Organisten; dazu Homepage) und
+   ?bereich=aspersdorf (Leitung der Pfarre Aspersdorf). Je Person Name, Aufgabe, Foto, Fotonachweis und
    Text; Reihenfolge mit Pfeilen, Wechsel der Gruppe im Fenster.
    Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
@@ -17,18 +18,23 @@
     mitbrueder: { label: 'Mitbrüder', page: 'pages/augustiner.html#p-wien', dir: 'patres' },
     leitung: { label: 'Leitung', page: 'pages/musik.html#p-leitung', dir: 'dirigenten' },
     gastdirigenten: { label: 'Gastdirigenten', page: 'pages/musik.html#p-gastdirigenten', dir: 'dirigenten' },
-    organisten: { label: 'Organisten', page: 'pages/musik.html#p-organisten', dir: 'organisten' }
+    organisten: { label: 'Organisten', page: 'pages/musik.html#p-organisten', dir: 'organisten' },
+    'asp-leitung': { label: 'Leitung', page: 'pages/aspersdorf.html#p-leitung', dir: 'aspersdorf' }
   };
 
   const AREAS = {
     kloster: { groups: ['mitbrueder'], title: 'Mitbrüder <em>pflegen</em>',
       sub: 'Die Mitbrüder des Wiener Augustinerklosters, wie sie unter Chronik → Die Augustiner in Wien erscheinen.' },
+    aspersdorf: { groups: ['asp-leitung'], title: 'Leitung Aspersdorf <em>pflegen</em>',
+      sub: 'Pfarrmoderator, Pfarrvikar und weitere Verantwortliche der Pfarre Aspersdorf, wie sie unter Pfarre Aspersdorf → Leitung erscheinen.' },
     musik: { groups: ['leitung', 'gastdirigenten', 'organisten'], title: 'Leitung &amp; Organisten <em>pflegen</em>',
       sub: 'Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto und Text. Die Solisten haben einen eigenen Bereich.' }
   };
   const area = AREAS[A.personenBereich()];
 
   let data = {};
+  /* Stand der Seite Pfarre Aspersdorf → Leitung: fehlt die Gruppe in der Datei, wird er als Vorschlag gezeigt und mit dem ersten Speichern uebernommen */
+  const VORGABE = { 'asp-leitung': [{"name": "Mag. Eduard Schipfer", "rolle": "Pfarrmoderator", "bild": "", "bildtext": "", "breite": 0, "hoehe": 0, "text": ["Pfarrmoderator des Pfarrverbands Klein Maria Dreieichen. Seit 1. Mai 2021 gehört die Pfarre Aspersdorf gemeinsam mit Groß, Hollabrunn und Oberfellabrunn zu diesem Pfarrverband.", "Kontakt: [[mail:ta.ehcrikehcsilohtak|refpihcs.draude]], Kirchenplatz 5, 2020 Hollabrunn"]}, {"name": "P. Mag. Dominic Sadrawetz OSA", "rolle": "Pfarrvikar mit Schwerpunkt Aspersdorf", "bild": "", "bildtext": "", "breite": 0, "hoehe": 0, "text": ["Betreut als Pfarrvikar die Pfarre Aspersdorf, die er von 2002 bis 2021 als Moderator geleitet hat.", "P. Dominic gehört dem Augustinerorden an und lebt im Augustinerkloster an der Wiener Hofburg; als Prior leitet er die Augustinerklöster in Wien und in Zwiesel im Bayerischen Wald. Er ist außerdem Mitglied des Ritterordens vom Heiligen Grab zu Jerusalem.", "Sprechstunden im Pfarrhaus, Hauptstraße 2 (unterhalb der Pfarrkirche): mittwochs 19:00 bis 19:30 Uhr und nach Vereinbarung.", "Kontakt: [+43 (0)2952 30198](tel:+43295230198), [[mail:ta.frodsrepsa|cinimod.p]]", "Pfarramt: [[mail:ta.frodsrepsa|errafp]], Pfarre St. Georg, Hauptstraße 2, 2020 Aspersdorf"]}] };
   let group = area.groups[0];
   let editGroup = '';
   let editIndex = -1;
@@ -86,6 +92,12 @@
   async function load() {
     try {
       data = (await A.readJSON(PATH));
+      for (const [g, list] of Object.entries(VORGABE)) {
+        if (area.groups.includes(g) && !Array.isArray(data[g])) {
+          data[g] = JSON.parse(JSON.stringify(list));
+          A.toast('Die Leitung der Pfarre Aspersdorf ist hier vorbefüllt. Mit „Speichern“ bei einer Person wird sie übernommen.');
+        }
+      }
     } catch (e) {
       $('ps-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Personen konnten nicht geladen werden (${esc(e.message)}).</div></div>`;
       return;

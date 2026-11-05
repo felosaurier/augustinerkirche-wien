@@ -26,6 +26,13 @@ FOOT = re.compile(r'<footer>.*?</footer>', re.S)
 # Seiten mit eigenem Ziel fuer "Kontakt" in der Fusszeile (Pfad mit / ab Projektordner)
 KONTAKT = {'pages/aspersdorf.html': 'aspersdorf.html#p-leitung'}
 
+# Seiten mit eigener Titelzeile (Vorlage in tools/vorlagen/)
+EIGENE_NAV = {'pages/aspersdorf.html': 'nav-aspersdorf.html'}
+
+# Ziel des Logos: die Titelseite des Bereichs, in dem die Seite liegt (Startseite: sie selbst; alles andere: Augustinerkirche)
+LOGO = {'index.html': 'index.html', 'pages/musik.html': 'musik.html', 'pages/hochamt.html': 'musik.html', 'pages/orgel-rieger.html': 'musik.html', 'pages/orgel-reil.html': 'musik.html',
+        'pages/augustiner.html': 'augustiner.html', 'pages/aspersdorf.html': 'aspersdorf.html'}
+
 
 def seiten():
     liste = [ROOT / 'index.html'] + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
@@ -54,8 +61,9 @@ def zerlegen(text, r, pg, kontakt):
     return re.sub(r'\b(href|src|data-href)="([^"]*)"', attr, text)
 
 
-def fuellen(vorlage, r, pg, kontakt):
-    return vorlage.replace('{R}', r).replace('{P}', pg).replace('{KONTAKT}', pg + kontakt)
+def fuellen(vorlage, r, pg, kontakt, logo='augustinerkirche.html'):
+    ziel = logo if logo == 'index.html' and not r else pg + logo
+    return vorlage.replace('{R}', r).replace('{P}', pg).replace('{KONTAKT}', pg + kontakt).replace('{LOGO}', ziel)
 
 
 def vorlagen_erzeugen():
@@ -63,6 +71,8 @@ def vorlagen_erzeugen():
     s = quelle.read_text(encoding='utf-8')
     rel, r, pg = wege(quelle)
     nav = zerlegen(NAV.search(s).group(0), r, pg, 'kontakt.html')
+    nav = re.sub(r'(<a class="nav-logo-wrap" href=")[^"]*(")', r'{LOGO}', nav)
+    nav = nav.replace('data-home="../index.html"', 'data-home="{R}index.html"')
     foot = zerlegen(FOOT.search(s).group(0), r, pg, 'kontakt.html')
     foot = foot.replace('href="{P}kontakt.html"', 'href="{KONTAKT}"')
     VORLAGEN.mkdir(exist_ok=True)
@@ -76,6 +86,7 @@ def main():
         vorlagen_erzeugen()
         return
     nav_v = (VORLAGEN / 'nav.html').read_text(encoding='utf-8').rstrip('\n')
+    eigene = {rel: (VORLAGEN / name).read_text(encoding='utf-8').rstrip('\n') for rel, name in EIGENE_NAV.items()}
     foot_v = (VORLAGEN / 'footer.html').read_text(encoding='utf-8').rstrip('\n')
     nur_pruefen = '--pruefen' in sys.argv
     abweichend = 0
@@ -86,7 +97,7 @@ def main():
         s = roh.replace('\r\n', '\n')
         kontakt = KONTAKT.get(rel, 'kontakt.html')
         # Index: Link zur eigenen Seite bleibt, das Ziel steht nach {P}
-        neu = NAV.sub(lambda m: fuellen(nav_v, r, pg, kontakt), s, count=1)
+        neu = NAV.sub(lambda m: fuellen(eigene.get(rel, nav_v), r, pg, kontakt, LOGO.get(rel, 'augustinerkirche.html')), s, count=1)
         neu = FOOT.sub(lambda m: fuellen(foot_v, r, pg, kontakt), neu, count=1)
         if neu != s:
             abweichend += 1

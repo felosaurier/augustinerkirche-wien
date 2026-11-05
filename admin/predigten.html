@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Predigten und Ansprachen — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-predigten.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Predigten und Ansprachen <em>pflegen</em></h1>
+      <p class="ph-sub">Mit Titel, Datum, höchstens einem Foto und einem Text. Sie erscheinen auf <a href="../pages/augustinerkirche.html#p-predigten" target="_blank" rel="noopener">Predigten und Ansprachen</a> in der Reihenfolge dieser Liste: Neue Beiträge werden nach Datum eingereiht, mit den Pfeilen lassen sie sich verschieben, mit dem Auge als Entwurf verbergen.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="pd-new" data-icon="plus">Neuer Beitrag</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-search" data-icon="search">
+      <input type="search" id="pd-search" placeholder="Suchen: Titel oder Text …" aria-label="Predigten durchsuchen" autocomplete="off"/>
+    </div>
+  </div>
+  <p class="adm-count" id="pd-count" role="status"></p>
+
+  <div id="pd-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog" id="pd-dlg" aria-labelledby="pd-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="pd-dlg-tag">Hinzufügen</div>
+      <h2 class="adm-dlg-title" id="pd-dlg-title">Neuer Beitrag</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="pd-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Beitrag</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-titel">Titel<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-titel" required maxlength="160" placeholder="z. B. Predigt zum Christkönigssonntag"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-datum">Datum<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="date" id="f-datum" required/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-text">Text<span class="adm-req">Pflichtfeld</span></label>
+          <textarea class="adm-input" id="f-text" rows="14" required aria-describedby="f-text-hint"></textarea>
+          <span class="adm-hint" id="f-text-hint">Ein Absatz pro Zeile. Mit der Leiste darüber lässt sich der Text formatieren (fett, kursiv, größer, Link …).</span>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-check"><input type="checkbox" id="f-draft"/> Entwurf: auf der Website nicht sichtbar</label>
+          <span class="adm-hint">Ein Entwurf bleibt verborgen, bis das Häkchen entfernt wird (oder in der Liste das Auge angeklickt wird).</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Foto <span class="adm-opt">höchstens eines</span></legend>
+      <div class="adm-image">
+        <div class="adm-image-prev" id="pd-prev"></div>
+        <div class="adm-field">
+          <label class="adm-drop" id="pd-drop">
+            <span data-icon="image"></span>
+            <span class="adm-drop-main">Foto hierher ziehen oder <u>auswählen</u></span>
+            <span class="adm-hint">Optional. Wird auf höchstens 1200 Pixel verkleinert</span>
+            <input type="file" id="f-file" accept="image/*" aria-describedby="pd-imginfo"/>
+          </label>
+          <span class="adm-hint" id="pd-imginfo"></span>
+          <div class="adm-field">
+            <label class="adm-label" for="f-bildtext">Bildbeschreibung</label>
+            <input class="adm-input" type="text" id="f-bildtext" maxlength="160" placeholder="z. B. P. Matthias bei der Predigt" aria-describedby="f-bildtext-hint"/>
+            <span class="adm-hint" id="f-bildtext-hint">Für Screenreader und wenn das Bild nicht lädt.</span>
+          </div>
+          <div class="adm-field adm-credit">
+            <label class="adm-label" for="f-credit">Bildnachweis</label>
+            <input class="adm-input" type="text" id="f-credit" placeholder="z. B. © Augustiner Wien, Foto: Max Muster" aria-describedby="f-credit-hint"/>
+            <span class="adm-hint" id="f-credit-hint">Steht auf der Website klein unter dem Bild.</span>
+          </div>
+          <div><button type="button" class="adm-act danger" id="pd-img-remove" data-icon="close" hidden>Foto entfernen</button></div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="pd-delete" data-icon="trash">Entfernen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="pd-form" class="btn btn-dark" id="pd-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

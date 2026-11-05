@@ -16,7 +16,14 @@
      Aufnahmen ([data-inhalt="galerie"])
    - data/rundgang.json: Rundgang durch die Kirche ([data-inhalt="rundgang"])
    - data/pgr.json: Pfarrgemeinderat ([data-inhalt="pgr-mitglieder"],
-     [data-inhalt="pgr-weitere"])
+     [data-inhalt="pgr-weitere"]); mit data-quelle="pgr-aspersdorf.json" auch
+     Pfarrgemeinderat und Vermoegensverwaltungsrat von Aspersdorf ([data-inhalt="pgr-vwr"])
+   - data/predigten.json: Predigten und Ansprachen ([data-inhalt="predigten"]),
+     je Eintrag Datum, Titel, ein Foto und ein formatierter Text
+   - data/aspersdorf-wochen.json: Wochenblaetter (PDF) der Pfarre Aspersdorf
+     ([data-inhalt="asp-wochen"])
+   - data/friedhof.json: Gebuehrentabellen des Pfarrfriedhofs Aspersdorf
+     ([data-inhalt="friedhof"])
    - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
      ([data-inhalt="paten"], [data-inhalt="ehrenpaten"]), Moeglichkeiten
      der Unterstuetzung ([data-inhalt="stufen"]) und PayPal-Link
@@ -100,20 +107,27 @@
     return `<div class="rk-img${b.art === 'plakat' ? ' plakat' : ''}"><img src="${esc(src)}" alt="" width="${HD.num(b.breite, 800)}" height="${HD.num(b.hoehe, 600)}" loading="lazy" decoding="async"/></div>`;
   }
 
+  /* Uebersicht der Runden als Kacheln mit Bild, Name und naechstem Termin; ein Klick fuehrt direkt zur Seite der Runde.
+     Plakate stehen ganz im Bild, Fotos fuellen es. */
   async function rundenListe() {
     const hosts = qsa('[data-inhalt="runden"]');
     if (!hosts.length) return;
     const { runden } = await load('runden.json');
+    const shown = runden.filter((r) => r.sichtbar !== false);
     for (const el of hosts) {
       let spare = 0;
-      el.innerHTML = runden.filter((r) => r.sichtbar !== false).map((r) =>
-        `<a class="rk" href="${esc(rundeHref(r))}">${cardImg(r.bild && r.bild.pfad ? r.bild : KIRCHE[spare++ % KIRCHE.length])}` +
-        '<div class="rk-body">' +
-          `<h3 class="rk-title">${esc(r.titel)}</h3>` +
-          (r.kurztext ? `<p class="rk-text">${HD.formatText(r.kurztext)}</p>` : '') +
-          nextHTML(nextDate(r)) +
-        '</div></a>'
-      ).join('');
+      el.classList.remove('rk-grid');
+      el.innerHTML = '<div class="rk-index">' + shown.map((r) => {
+        const b = r.bild && r.bild.pfad ? r.bild : KIRCHE[spare++ % KIRCHE.length];
+        const src = url(b.pfad);
+        const n = nextDate(r);
+        const dt = n && HD.dateFromIso(n.iso);
+        return `<a class="rk-tile${b.art === 'plakat' ? ' plakat' : ''}" href="${esc(rundeHref(r))}">` +
+          `<span class="rk-tile-img">${src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async"/>` : ''}</span>` +
+          `<span class="rk-tile-body"><b>${esc(r.titel)}</b>` +
+          (dt ? `<small>Nächster Termin: ${HD.WEEKDAYS_SHORT[dt.getDay()]}, ${dt.getDate()}. ${HD.MONTHS_SHORT[dt.getMonth()]}</small>` : '') +
+          '</span></a>';
+      }).join('') + '</div>';
     }
   }
 
@@ -157,10 +171,12 @@
     const r = runden.find((x) => x.id === id);
     const hero = main.querySelector('.page-hero .inner');
     const layout = main.querySelector('.runde-layout');
-    const back = `<div class="runde-back"><a class="link-arr" href="${esc(url('pages/gottesdienste.html#p-runden'))}">Zurück zu Runden in St. Augustin</a></div>`;
+    const backHref = esc(url('pages/augustinerkirche.html#p-runden'));
+    const back = `<div class="runde-back"><a class="btn btn-outline" href="${backHref}">Zurück zu den Runden</a></div>`;
+    const backTop = `<a class="hd-back" href="${backHref}"><span aria-hidden="true">&larr;</span> Zurück</a>`;
     if (!r) {
       if (main.dataset.runde) return;   /* feste Seite: Inhalt aus dem HTML behalten */
-      hero.innerHTML = '<div class="ph-tag">Runden in St. Augustin</div><h1 class="ph-title">Nicht gefunden</h1>';
+      hero.innerHTML = backTop + '<div class="ph-tag">Runden in St. Augustin</div><h1 class="ph-title">Nicht gefunden</h1>';
       layout.className = 'runde-layout runde-single';
       layout.innerHTML = `<div class="runde-main"><p class="bio-p">Diese Runde gibt es nicht oder nicht mehr.</p>${back}</div>`;
       return;
@@ -168,7 +184,7 @@
     const k = r.kopf || {};
     const title = k.titel || r.titel;
     document.title = `${title} — Augustinerkirche Wien`;
-    hero.innerHTML = (k.zeile ? `<div class="ph-tag">${esc(k.zeile)}</div>` : '') +
+    hero.innerHTML = backTop + (k.zeile ? `<div class="ph-tag">${esc(k.zeile)}</div>` : '') +
       `<h1 class="ph-title">${titleHTML(title, k.betonung)}</h1>` +
       (k.untertitel ? `<p class="ph-sub">${rich(k.untertitel)}</p>` : '');
 
@@ -209,19 +225,57 @@
     if (!hosts.length) return;
     const data = await load('personen.json');
     for (const el of hosts) {
+      /* Gruppe fehlt in der Datei (z. B. noch nicht auf dem Server): Inhalt aus dem HTML bleibt */
+      if (!(el.dataset.personen in data)) continue;
       const compact = el.dataset.kompakt !== undefined ? ' compact' : '';
-      el.innerHTML = (data[el.dataset.personen] || []).map((p) => {
+      const list = data[el.dataset.personen] || [];
+      el.innerHTML = list.map((p, i) => {
         const src = url(p.bild);
         const size = p.breite && p.hoehe ? ` width="${HD.num(p.breite, 400)}" height="${HD.num(p.hoehe, 500)}"` : '';
         /* Mit Homepage ist der Name ein Link (neues Fenster), wie bei den Solisten */
         const home = /^https?:\/\//i.test(String(p.homepage || '').trim()) && HD.safeUrl(p.homepage.trim());
-        return `<div class="person-card-wide${compact}${src ? '' : ' no-img'}">` +
+        return `<div class="person-card-wide${compact}${src ? '' : ' no-img'}" id="person-${esc(el.dataset.personen)}-${i + 1}">` +
           (src ? `<img src="${esc(src)}" alt="${esc(p.bildtext || p.name)}" loading="lazy"${size} decoding="async"/>` : '') +
           `<div class="person-body"><div class="person-name">${home ? `<a href="${esc(home)}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</div>` +
           (p.rolle ? `<div class="person-role">${esc(p.rolle)}</div>` : '') +
           (p.text || []).filter(Boolean).map((t) => `<p class="person-bio">${rich(t)}</p>`).join('') +
           '</div></div>';
       }).join('');
+      /* Uebersicht vor der ersten Person (data-uebersicht), damit man nicht durch alle Karten scrollen muss */
+      const alt = el.previousElementSibling;
+      if (alt && alt.classList.contains('people-index')) alt.remove();
+      if (el.dataset.uebersicht !== undefined && list.length > 1) {
+        el.insertAdjacentHTML('beforebegin', '<div class="people-index" role="navigation" aria-label="Übersicht">' + list.map((p, i) => {
+          const src = url(p.bild);
+          return `<a href="#person-${esc(el.dataset.personen)}-${i + 1}">` +
+            (src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async"/>` : '') +
+            `<span><b>${esc(p.name)}</b>${p.rolle ? `<small>${esc(p.rolle)}</small>` : ''}</span></a>`;
+        }).join('') + '</div>');
+        /* Am Anfang nur die Vorschau: die Karte einer Person erscheint erst auf Klick (nochmal klicken schliesst sie) */
+        const index = el.previousElementSibling;
+        const links = [...index.children];
+        const cards = [...el.children];
+        const show = (i) => {
+          cards.forEach((c, j) => { c.hidden = j !== i; });
+          links.forEach((l, j) => {
+            l.classList.toggle('active', j === i);
+            l.setAttribute('aria-expanded', String(j === i));
+          });
+        };
+        show(-1);
+        links.forEach((l, i) => l.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          if (l.classList.contains('active')) {
+            show(-1);
+            return;
+          }
+          show(i);
+          cards[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }));
+        /* Adresse mit #person-…: gleich diese Karte zeigen */
+        const wanted = cards.findIndex((c) => c.id === decodeURIComponent(location.hash.slice(1)));
+        if (wanted >= 0) show(wanted);
+      }
     }
   }
 
@@ -405,10 +459,88 @@
   async function pgr() {
     const hosts = qsa('[data-inhalt^="pgr-"]');
     if (!hosts.length) return;
-    const data = await load('pgr.json');
     for (const el of hosts) {
+      const data = await load(el.dataset.quelle || 'pgr.json');
       const list = data[el.dataset.inhalt.slice(4)] || [];
       el.innerHTML = list.map(pgrItem).join('');
+    }
+  }
+
+  /* ---------- Aspersdorf: Wochenblaetter (PDF) ---------- */
+  const longDate = (iso) => {
+    const d = HD.dateFromIso(iso);
+    return d ? `${d.getDate()}. ${HD.MONTHS[d.getMonth()]} ${d.getFullYear()}` : '';
+  };
+  async function aspWochen() {
+    const hosts = qsa('[data-inhalt="asp-wochen"]');
+    if (!hosts.length) return;
+    const data = await load('aspersdorf-wochen.json');
+    const list = (data.wochen || []).filter((w) => w && url(w.datei))
+      .sort((a, b) => String(b.datum).localeCompare(String(a.datum)));
+    const name = (w) => w.titel || (w.datum ? `Gottesdienste der Woche vom ${longDate(w.datum)}` : 'Wochenblatt');
+    for (const el of hosts) {
+      if (!list.length) {
+        el.hidden = true;
+        continue;
+      }
+      const [now, ...older] = list;
+      el.innerHTML =
+        '<div class="asp-woche-now">' +
+          '<div class="asp-woche-icon" aria-hidden="true">PDF</div>' +
+          `<div class="asp-woche-text"><div class="asp-woche-kicker">Aktuelles Wochenblatt</div><div class="asp-woche-titel">${esc(name(now))}</div></div>` +
+          `<a class="btn btn-dark" href="${esc(url(now.datei))}" target="_blank" rel="noopener">Wochenblatt öffnen</a>` +
+        '</div>' +
+        (older.length
+          ? `<details class="asp-woche-older"><summary>Frühere Wochen <span>${older.length}</span></summary><ul>` +
+            older.map((w) => `<li><a href="${esc(url(w.datei))}" target="_blank" rel="noopener">${esc(name(w))}</a></li>`).join('') + '</ul></details>'
+          : '');
+      el.hidden = false;
+    }
+  }
+
+  /* ---------- Predigten und Ansprachen ---------- */
+  async function predigten() {
+    const hosts = qsa('[data-inhalt="predigten"]');
+    if (!hosts.length) return;
+    /* Reihenfolge der Datei (in der Verwaltung festgelegt), ohne Entwuerfe */
+    const list = ((await load('predigten.json')).predigten || []).filter((p) => p && p.titel && !p.entwurf);
+    for (const el of hosts) {
+      if (!list.length) continue;
+      el.innerHTML = list.map((p, i) => {
+        const src = p.bild && url(p.bild);
+        const size = p.breite && p.hoehe ? ` width="${HD.num(p.breite, 800)}" height="${HD.num(p.hoehe, 600)}"` : '';
+        const img = src
+          ? `<figure class="pd-img"><a href="${esc(src)}" data-lightbox title="Bild vergrößern"><img src="${esc(src)}" alt="${esc(p.bildtext || p.titel)}"${size} loading="lazy" decoding="async"/></a></figure>`
+          : '';
+        const paras = String(p.text || '').split(/\n+/).map((t) => t.trim()).filter(Boolean).map((t) => `<p>${rich(t)}</p>`).join('');
+        return `<article class="pd-item${src ? ' has-img' : ''}" id="pd-${i + 1}">${img}` +
+          '<div class="pd-body">' +
+            (p.datum ? `<div class="pd-date">${esc(longDate(p.datum))}</div>` : '') +
+            `<h2 class="pd-title">${esc(p.titel)}</h2>` +
+            `<div class="pd-text">${paras}</div>` +
+          '</div></article>';
+      }).join('');
+    }
+  }
+
+  /* ---------- Aspersdorf: Friedhofsgebuehren ---------- */
+  async function friedhof() {
+    const hosts = qsa('[data-inhalt="friedhof"]');
+    if (!hosts.length) return;
+    const tabellen = ((await load('friedhof.json')).tabellen || []).filter((t) => t && t.titel);
+    /* Ohne Eintraege in der Datei bleibt der Inhalt aus dem HTML */
+    if (!tabellen.length) return;
+    for (const el of hosts) {
+      el.innerHTML = tabellen.map((t) =>
+        '<section class="fee-block">' +
+          (t.stand ? `<div class="s-label">${esc(t.stand)}</div>` : '') +
+          `<h3 class="card-title fee-title">${esc(t.titel)}</h3>` +
+          (t.einleitung ? `<p class="s-text fee-intro">${esc(t.einleitung)}</p>` : '') +
+          '<table class="fee-table">' + (t.zeilen || []).map((z) => (String(z.betrag || '').trim()
+            ? `<tr><td>${esc(z.text)}</td><td>${esc(z.betrag)}</td></tr>`
+            : `<tr><th colspan="2">${esc(z.text)}</th></tr>`)).join('') + '</table>' +
+          (t.hinweis ? `<p class="fee-note">${esc(t.hinweis)}</p>` : '') +
+        '</section>').join('');
     }
   }
 
@@ -525,7 +657,7 @@
     /* Impressum zuerst: es enthaelt die Oeffnungszeiten der Pfarrkanzlei, die kontakt() danach eintraegt */
     await rechtliches().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
-    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, cds, galerie, rundgang]) {
+    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, predigten, aspWochen, friedhof, cds, galerie, rundgang]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     }
   });

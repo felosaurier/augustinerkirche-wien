@@ -209,7 +209,7 @@ pages/
   pfarre.html                 Pfarre, Pfarrer, Pfarrkanzlei, Pfarrgemeinderat, Seelsorger
   kalender.html               Kalender: alle Termine von St. Augustin, als Monat oder Wochenüberblick (#woche)
   gottesdienste.html          Liturgiezeiten, Runden
-  sakramente.html             Sakramente
+  sakramente.html             leitet zu gottesdienste.html#p-sakramente weiter
   musik.html                  Kirchenmusik: Hochämter, Ensembles, Orgeln
   hochamt.html                Detailseite eines Hochamts
   chronik.html                Geschichte der Kirche, Herzgruft, Führungen, Rundgang

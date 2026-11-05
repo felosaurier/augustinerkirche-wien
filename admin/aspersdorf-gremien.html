@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Aspersdorf: Gremien — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-pgr.js" defer></script>
+</head>
+<body class="adm" data-pgr="aspersdorf">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Gremien Aspersdorf <em>pflegen</em></h1>
+      <p class="ph-sub">Pfarrgemeinderat und Vermögensverwaltungsrat der Pfarre Aspersdorf, wie sie unter <a href="../pages/aspersdorf.html#p-leitung" target="_blank" rel="noopener">Pfarre Aspersdorf → Leitung</a> erscheinen, in der Reihenfolge dieser Listen.</p>
+    </div>
+    <div class="adm-head-actions">
+      <button type="button" class="btn btn-gold" id="pg-new" data-icon="plus">Neue Person</button>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <div class="adm-toolbar">
+    <div class="adm-search" data-icon="search">
+      <input type="search" id="pg-search" placeholder="Suchen: Name, Funktion, Aufgabe …" aria-label="Gremien durchsuchen" autocomplete="off"/>
+    </div>
+  </div>
+  <p class="adm-count" id="pg-count" role="status"></p>
+
+  <div id="pg-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog" id="pg-dlg" aria-labelledby="pg-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="pg-dlg-tag">Neue Person</div>
+      <h2 class="adm-dlg-title" id="pg-dlg-title">Neue Person</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="pg-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Person</legend>
+      <div class="adm-grid">
+        <div class="adm-field full">
+          <label class="adm-label" for="f-name">Name mit Titel<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="f-name" required placeholder="z. B. Mag. Maria Muster"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-rolle">Funktion</label>
+          <input class="adm-input" type="text" id="f-rolle" list="dl-pg-rolle" placeholder="z. B. Gewähltes Mitglied"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-beruf">Beruf</label>
+          <input class="adm-input" type="text" id="f-beruf" placeholder="z. B. Lehrerin"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="f-aufgaben">Aufgaben und Fachausschüsse</label>
+          <textarea class="adm-input" id="f-aufgaben" rows="4" aria-describedby="f-aufgaben-hint" placeholder="Leitet den Fachausschuss Liturgie&#10;Mitglied im Fachausschuss Caritas"></textarea>
+          <span class="adm-hint" id="f-aufgaben-hint">Eine Aufgabe pro Zeile.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-email">E-Mail</label>
+          <input class="adm-input" type="email" id="f-email" placeholder="name@beispiel.at" aria-describedby="f-email-hint"/>
+          <span class="adm-hint" id="f-email-hint">Optional. Auf der Website vor Adress-Sammlern geschützt.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-telefon">Telefon</label>
+          <input class="adm-input" type="tel" id="f-telefon" placeholder="+43 (0)1 533 70 99"/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="f-group">Gremium</label>
+          <select class="adm-input" id="f-group">
+            <option value="mitglieder">Pfarrgemeinderat</option>
+            <option value="vwr">Vermögensverwaltungsrat</option>
+          </select>
+        </div>
+        <div class="adm-field" id="pg-pos-field">
+          <label class="adm-label" for="f-pos">Stelle in der Liste</label>
+          <select class="adm-input" id="f-pos">
+            <option value="ende">Am Ende anfügen</option>
+            <option value="anfang">Ganz oben einfügen</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Foto</legend>
+      <div class="adm-image">
+        <div class="adm-image-prev" id="pg-prev"></div>
+        <div class="adm-field">
+          <label class="adm-drop" id="pg-drop">
+            <span data-icon="image"></span>
+            <span class="adm-drop-main">Foto hierher ziehen oder <u>auswählen</u></span>
+            <span class="adm-hint">Optional. Hochformat passt am besten; wird auf höchstens 800 Pixel verkleinert</span>
+            <input type="file" id="f-file" accept="image/*" aria-describedby="pg-imginfo"/>
+          </label>
+          <span class="adm-hint" id="pg-imginfo"></span>
+          <div class="adm-field adm-credit">
+            <label class="adm-label" for="f-credit">Bildnachweis</label>
+            <input class="adm-input" type="text" id="f-credit" placeholder="z. B. © Augustiner Wien, Foto: Max Muster" aria-describedby="f-credit-hint"/>
+            <span class="adm-hint" id="f-credit-hint">Steht auf der Website klein unter dem Bild.</span>
+          </div>
+          <div><button type="button" class="adm-act danger" id="pg-img-remove" data-icon="close" hidden>Foto entfernen</button></div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="pg-delete" data-icon="trash">Entfernen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="pg-form" class="btn btn-dark" id="pg-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-pg-rolle">
+  <option value="Pfarrmoderator, Vorsitzender"></option>
+  <option value="Pfarrvikar"></option>
+  <option value="Mitglied, Schriftführer"></option>
+  <option value="Rechnungsprüfer"></option>
+  <option value="Pfarrer, Vorsitzender"></option>
+  <option value="Stellvertretende Vorsitzende"></option>
+  <option value="Stellvertretender Vorsitzender"></option>
+  <option value="Gewähltes Mitglied"></option>
+  <option value="Bestelltes Mitglied"></option>
+  <option value="Amtliches Mitglied"></option>
+  <option value="Ersatzmitglied"></option>
+</datalist>
+
+</body>
+</html>

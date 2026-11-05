@@ -68,6 +68,9 @@ body.adm.has-side{padding-left:var(--adm-side)}
 .adm-side-nav a[aria-current="page"]{background:rgba(216,185,110,.16);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 var(--gold-l)}
 .adm-side-nav a[aria-current="page"] svg.i{opacity:1}
 .adm-side-nav a:focus-visible{outline-offset:-2px}
+.adm-side-hits[hidden]{display:none}
+.adm-side-nav a.adm-hit{flex-direction:column;align-items:flex-start;justify-content:center;gap:.1rem}
+.adm-hit small{font-size:.82rem;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .adm-side-none{margin:.8rem .6rem;font-size:1rem;color:rgba(255,255,255,.7)}
 
 /* Unten: Projektordner und angemeldete Person */
@@ -252,6 +255,9 @@ body.adm.has-side{padding-left:var(--adm-side)}
 .adm-row-actions{display:flex;gap:.2rem;padding:0 1rem 0 0}
 .adm-chip{display:inline-flex;align-items:center;gap:.35rem;margin-top:.45rem;padding:.2rem .6rem;background:var(--gold-pale);border:1px solid #ead9ad;
   font-size:.88rem;color:#6b5019;line-height:1.4}
+.adm-chips{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin-top:.45rem}
+.adm-chips:empty{display:none}
+.adm-chips .adm-chip{margin-top:0}
 .adm-chip svg.i{width:.95rem;height:.95rem}
 .adm-chip.past{background:var(--bg-warm);border-color:var(--line);color:var(--text-light)}
 .adm-badge{display:inline-block;font-size:.88rem;padding:.2rem .6rem;border:1px solid var(--line);color:var(--text-light);font-weight:600;white-space:nowrap}
@@ -414,6 +420,12 @@ select.adm-input{-webkit-appearance:none;appearance:none;padding-right:2.6rem;cu
 .adm-quick{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.1rem}
 .adm-quick .adm-act{min-height:38px;padding:0 .7rem;border-color:var(--line);font-size:.9rem}
 .adm-pages{border:0;margin:0;padding:0;min-width:0}
+.adm-pub{display:flex;flex-direction:column;gap:.5rem;padding:1rem 1.2rem 1.1rem;background:var(--gold-pale);border:1px solid #ead9ad;border-left:3px solid var(--gold);border-radius:2px}
+.adm-pub legend.adm-label{float:left;width:100%;margin:0 0 .5rem;font-size:1.02rem;font-weight:600;color:var(--text)}
+.adm-pub legend+*{clear:both}
+.adm-pub .adm-label{margin-top:.4rem}
+.adm-pub .adm-input[type="date"]{max-width:14rem;background:#fff}
+.adm-pub .adm-hint{margin-top:.3rem}
 .adm-pages-list{display:flex;flex-wrap:wrap;gap:0 1.4rem}
 .adm-counter{font-size:.88rem;color:var(--text-light);text-align:right}
 .adm-counter.over{color:#8a5a00}
@@ -797,6 +809,8 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-ph{display:grid;grid-template-columns:6rem minmax(0,1fr) auto;gap:1rem;align-items:start;padding:.8rem;border:1px solid var(--line);background:var(--white)}
 .adm-ph .adm-thumb{width:6rem;aspect-ratio:4/3}
 .adm-ph .adm-thumb img{width:100%;height:100%;object-fit:cover}
+.adm-ph.dragging{opacity:.45}
+.adm-ph.drop-over{border-color:var(--gold);box-shadow:0 -3px 0 var(--gold)}
 .adm-ph-fields{display:grid;gap:.25rem}
 .adm-ph-fields .adm-label{margin-top:.2rem}
 .adm-ph-act{display:flex;flex-direction:column;gap:.3rem}
@@ -1044,41 +1058,6 @@ html{scroll-padding-top:1.5rem}
 .ov-count{display:inline-grid;place-items:center;min-width:1.7rem;height:1.7rem;margin-left:.4rem;padding:0 .45rem;vertical-align:.2em;
   border-radius:1rem;background:var(--gold-pale);border:1px solid #ead9ad;font-family:var(--sans);font-size:.9rem;font-weight:700;color:#6b5019}
 .ov-count:empty{display:none}
-.ov-areas{margin-top:.6rem}
-.ov-areas>.adm-panel-title{margin-bottom:.9rem}
-
-/* ══ ALLE BEREICHE: eine Zeile je Bereich, Gruppen wie die Seitenleiste ══ */
-.adm-areagroups{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,26rem),1fr));gap:1.4rem 1.6rem;align-items:start}
-.adm-areagroup-h{margin:0 0 .5rem;font-family:var(--sans);font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-text)}
-.adm-areas{list-style:none;background:var(--white);border:1px solid var(--line)}
-.adm-area{position:relative;display:grid;grid-template-columns:2.4rem minmax(0,1fr) auto;align-items:center;gap:.9rem;padding:.7rem .75rem .7rem .9rem;border-top:1px solid var(--line);transition:background .2s}
-.adm-area:first-child{border-top:0}
-.adm-area:hover{background:var(--bg-soft)}
-.adm-area:has(.adm-area-title:focus-visible){outline:2px solid var(--gold);outline-offset:-2px}
-.adm-area-ico{width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center;background:var(--gold-pale);color:var(--gold)}
-.adm-area-ico svg.i{width:1.15rem;height:1.15rem}
-.adm-area-body{min-width:0;display:flex;flex-direction:column}
-.adm-area-title{font-family:var(--serif);font-size:1.2rem;font-weight:500;line-height:1.2;color:var(--black);text-decoration:none}
-.adm-area-title::after{content:'';position:absolute;inset:0;z-index:1}
-.adm-area-title:focus-visible{outline:none}
-.adm-area:hover .adm-area-title{color:var(--gold)}
-.adm-area-stat{font-size:.93rem;color:var(--text-mid)}
-.adm-area-flag{display:flex;align-items:flex-start;gap:.35rem;margin-top:.15rem;font-size:.9rem;font-weight:600;color:#6b5019}
-.adm-area-flag svg.i{width:.95rem;height:.95rem;margin-top:.15rem;color:var(--gold)}
-.adm-area.has-flag .adm-area-ico{background:#f3e3bd}
-.adm-area-add{position:relative;z-index:2;display:inline-flex;align-items:center;gap:.45rem;min-height:40px;padding:0 .8rem;border:1px solid var(--line);background:var(--white);
-  font-size:.9rem;color:var(--text-mid);text-decoration:none;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
-.adm-area-add:hover,.adm-area-add:focus-visible{background:var(--blue);border-color:var(--blue);color:#fff}
-.adm-area-add:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.adm-area-add svg.i{width:1rem;height:1rem}
-@media(max-width:640px){
-  /* Handy: Schnellzugriff nur als Symbol (Beschriftung als Tooltip und fuer Vorlesen) */
-  .adm-area{grid-template-columns:2.2rem minmax(0,1fr) auto;gap:.75rem;padding:.65rem .6rem .65rem .75rem}
-  .adm-area-ico{width:2.2rem;height:2.2rem}
-  .adm-area-add{width:44px;min-height:44px;padding:0;justify-content:center}
-  .adm-area-add span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-}
-@media(prefers-reduced-motion:reduce){.adm-area{transition:none}}
 
 /* ══ WOCHENKALENDER: Wochenwahl ══ */
 /* Oben: beide Pfeile zusammen vorne (stehen so immer an derselben Stelle, egal wie lang die Woche geschrieben ist),
@@ -1120,3 +1099,209 @@ html{scroll-padding-top:1.5rem}
   .adm-folder-txt{flex:1 1 100%}
   .adm-folder .btn{flex:1 1 100%;width:100%}
 }
+
+/* Uebersicht: Bereiche als Symbol-Kacheln (wie ein Startbildschirm) */
+
+/* Uebersicht: Anschlagtafel (naechstes Hochamt) */
+.ov-top{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:1.4rem;align-items:stretch;margin-bottom:1.4rem}
+.ov-top>.adm-panel{margin:0}
+.ov-top:has(.ov-board[hidden]){grid-template-columns:minmax(0,1fr)}
+.ov-board{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 15rem;background:var(--blue);color:#f4efe3;outline:1px solid rgba(216,185,110,.55);outline-offset:-9px}
+.ov-board[hidden]{display:none}
+.ov-board-main{display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;padding:2rem 2rem 1.9rem 2.2rem}
+.ov-board-kicker{margin:0 0 .5rem;font-size:.95rem;font-weight:600;letter-spacing:.02em;color:var(--gold-l)}
+.ov-board-date{display:flex;align-items:center;gap:1.1rem;margin-bottom:.9rem}
+.ov-board-day{font-family:var(--serif);font-size:5.6rem;font-weight:300;line-height:.9;color:var(--gold-l);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ov-board-md{display:flex;flex-direction:column;gap:.15rem;padding-left:1.1rem;border-left:1px solid rgba(216,185,110,.5)}
+.ov-board-md b{font-size:1.5rem;font-weight:500;color:#fff}
+.ov-board-md span{font-size:1.02rem;color:rgba(244,239,227,.8)}
+.ov-board-title{margin:0;font-size:1.1rem;font-weight:500;line-height:1.45;color:rgba(244,239,227,.88)}
+.ov-board-piece{margin:0;font-family:var(--serif);font-size:1.9rem;font-weight:500;line-height:1.2;color:#fff}
+.ov-board-who{display:flex;flex-wrap:wrap;gap:.2rem 1.2rem;margin:.5rem 0 0;font-size:.95rem;color:rgba(244,239,227,.7)}
+.ov-board-miss{display:flex;align-items:center;gap:.45rem;margin:.7rem 0 0;padding:.4rem .75rem;background:rgba(216,185,110,.16);border-left:3px solid var(--gold-l);font-size:.96rem;font-weight:600;color:#fff}
+.ov-board-miss svg.i{width:1rem;height:1rem;color:var(--gold-l)}
+.ov-board-btn{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;margin-top:1.1rem;padding:0 1.2rem;background:var(--gold-l);color:#1b2a4a;font-weight:600;text-decoration:none;transition:background .2s}
+.ov-board-btn:hover{background:#fff}
+.ov-board-btn:focus-visible,.ov-board-next a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.ov-board-btn svg.i{width:1.05rem;height:1.05rem}
+.ov-board-next{padding:2rem 1.9rem 1.9rem 0}
+.ov-board-next ul{list-style:none;margin:0;padding:0}
+.ov-board-next li+li{margin-top:.55rem}
+.ov-board-next a{display:grid;grid-template-columns:2.7rem minmax(0,1fr);gap:.75rem;align-items:center;padding:.45rem .55rem;border:1px solid rgba(216,185,110,.35);text-decoration:none;color:inherit;transition:background .2s,border-color .2s}
+.ov-board-next a:hover{background:rgba(255,255,255,.07);border-color:var(--gold-l)}
+.ov-slot-day{font-family:var(--serif);font-size:1.7rem;font-weight:400;line-height:1;text-align:center;color:var(--gold-l);font-variant-numeric:tabular-nums}
+.ov-slot-txt{display:flex;flex-direction:column;min-width:0}
+.ov-slot-txt b{font-size:.96rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-slot-txt span{font-size:.86rem;color:rgba(244,239,227,.72)}
+@media(max-width:1600px){.ov-top{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){
+  .ov-board{grid-template-columns:minmax(0,1fr)}
+  .ov-board-main{padding:1.6rem 1.3rem 1.2rem 1.5rem}
+  .ov-board-next{padding:0 1.3rem 1.6rem 1.5rem}
+  .ov-board-day{font-size:4.4rem}
+}
+
+/* Uebersicht: Zahlen als ruhiger Streifen */
+.ov-stats{display:flex;flex-wrap:wrap;gap:.6rem 2.2rem;margin:0 0 1.4rem;padding:.2rem .2rem 1.2rem;border-bottom:1px solid var(--line)}
+.ov-stats[hidden]{display:none}
+.ov-stat{display:flex;align-items:center;gap:.8rem;text-decoration:none;color:inherit}
+.ov-stat-value{font-family:var(--serif);font-size:2.3rem;font-weight:300;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.ov-stat-text{display:flex;flex-direction:column;line-height:1.3}
+.ov-stat-text b{font-weight:600;color:var(--black)}
+.ov-stat-text span{font-size:.92rem;color:var(--text-mid)}
+.ov-stat:hover .ov-stat-text b{color:var(--gold)}
+.ov-stat:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+
+/* Bereiche: dichter, damit weniger Platz noetig ist */
+
+
+/* Uebersicht: Zahlen als gleichmaessiger Streifen mit Trennlinien */
+.ov-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:0;padding:0;background:var(--white);border:1px solid var(--line)}
+.ov-stat{padding:1rem 1.3rem;border-left:1px solid var(--line);transition:background .2s}
+.ov-stat:first-child{border-left:0}
+.ov-stat:hover{background:var(--bg-soft)}
+
+/* Uebersicht: jede Gruppe als eigene Karte, Kacheln ohne eigenen Rahmen */
+
+/* Bereiche: alle Kacheln und Gruppenkarten gleich gross */
+
+/* Bereiche: Kacheln fuellen die Karte gleichmaessig, zwei Karten nebeneinander */
+
+.ov-stats{gap:1px;background:var(--line);grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr))}
+.ov-stat,.ov-stat:first-child{background:var(--white);border-left:0}
+.ov-stat:hover{background:var(--bg-soft)}
+.ov-stats{display:flex;flex-wrap:wrap}
+.ov-stat{flex:1 1 9.5rem}
+
+/* Uebersicht: Register der Bereiche, wie ein Inhaltsverzeichnis: Name, Punkte, Zahl */
+.ov-areas{margin-top:2.2rem}
+.ov-areas-h{display:flex;align-items:center;gap:1rem;margin:0 0 1.4rem;font-family:var(--serif);font-size:1.6rem;font-weight:500;color:var(--black)}
+.ov-areas-h::after{content:'';flex:1;height:1px;background:var(--line)}
+.adm-areagroups{columns:17.5rem 3;column-gap:3rem}
+.adm-areagroup{break-inside:avoid;margin:0 0 2rem}
+.adm-areagroup-h{margin:0 0 .3rem;padding-bottom:.55rem;border-bottom:2px solid var(--gold);font-family:var(--serif);font-size:1.3rem;font-weight:500;color:var(--black)}
+.adm-areas{list-style:none;margin:0;padding:0}
+.adm-area{border-bottom:1px solid var(--line)}
+.adm-idx{display:flex;align-items:center;gap:.7rem;min-height:48px;padding:.2rem .3rem;text-decoration:none;color:var(--black);font-weight:500;transition:background .2s,padding .2s}
+.adm-idx svg.i{flex:none;width:1.15rem;height:1.15rem;color:var(--gold)}
+.adm-idx-name{min-width:0}
+.adm-idx-dots{flex:1;min-width:1rem;align-self:flex-end;margin-bottom:.9rem;border-bottom:2px dotted #cfc6ae}
+.adm-idx-n{flex:none;min-width:1.6rem;font-size:.95rem;font-weight:600;text-align:right;color:var(--gold-text);font-variant-numeric:tabular-nums}
+.adm-idx:hover{background:var(--gold-pale);padding-left:.7rem}
+.adm-idx:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.adm-idx-flag{flex:none;width:.7rem;height:.7rem;border-radius:50%;background:#c4452d}
+.adm-area.has-flag .adm-idx-n{color:#8a3a14}
+@media(prefers-reduced-motion:reduce){.adm-idx{transition:none}}
+
+/* ══ HANDY UND SCHMALE FENSTER ══
+   Alle Knoepfe, Schalter und Felder mindestens 44 px hoch (nicht nur bei Touch-Geraeten:
+   auch ein schmales Browserfenster am Computer soll sich gut bedienen lassen).
+   Eingabefelder 16 px, damit iPhones beim Antippen nicht hineinzoomen. */
+@media (max-width:760px), (pointer:coarse){
+  .btn,.btn-sm,.adm-act,.adm-list-add,.adm-seg-btn,.rt-tool,.fmt-btn,.adm-jump a,
+  .adm-quick .adm-act,.adm-rows-compact .adm-act,.week-filter-btn,.adm-dlg-close{min-height:44px!important}
+  .fmt-btn,.adm-act.icon,.rt-tool{min-width:44px}
+  .ds-swatch{width:44px;height:44px}
+  .adm-fold>summary,.adm-more summary,summary{min-height:44px}
+  .adm-check,.zg-rg .adm-check{min-height:44px}
+  input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]):not([type=color]),select,textarea{font-size:16px}
+  input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]):not([type=color]):not([type=search]),select{min-height:48px}
+  .adm-quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem}
+  .adm-quick .adm-act{justify-content:center}
+  .adm-main{padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right))}
+  .adm-dlg-foot{padding-bottom:calc(.8rem + env(safe-area-inset-bottom))}
+  /* Fuss des Fensters: Speichern gross und volle Breite, die zweite Aktion daneben */
+  .adm-dlg-foot .btn{flex:1 1 9rem}
+}
+@media (max-width:760px){
+  /* Listenzeilen: Aktionen unter dem Text in gleich breiten Knoepfen */
+  .adm-row-actions{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:.4rem;padding:0 .8rem .8rem}
+  .adm-row-actions .adm-act{justify-content:center;border-color:var(--line)}
+  .adm-head-actions{display:grid;grid-template-columns:1fr;gap:.5rem;width:100%}
+  .adm-head-actions .btn{width:100%;justify-content:center}
+  /* Tabellen duerfen seitlich wischen, ohne die Seite zu verbreitern */
+  .adm-nv-wrap{max-width:100%;-webkit-overflow-scrolling:touch}
+  .adm-nv select.adm-input{min-width:11rem}
+}
+@media (max-width:760px), (pointer:coarse){
+  .adm-folder .btn{min-height:44px!important}
+  .fp-days .adm-check{min-height:44px}
+  .adm-side-link{height:44px}
+  .adm-side-nav a{min-height:48px}
+}
+
+/* Menue & Leiste am Handy: jede Zeile als kleine Karte statt einer breiten Tabelle */
+@media (max-width:760px){
+  .adm-nv thead{display:none}
+  .adm-nv,.adm-nv tbody{display:block}
+  .adm-nv tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 .8rem;padding:.8rem 0;border-bottom:1px solid var(--line)}
+  .adm-nv th,.adm-nv td{display:block;width:auto!important;padding:0;border:0}
+  .adm-nv tbody th{grid-column:1/-1;font-weight:600}
+  .adm-nv td:nth-child(2) .adm-check::after{content:'In der Leiste'}
+  .adm-nv td:nth-child(3) .adm-check::after{content:'Im Menü oben'}
+  .adm-nv td:nth-child(n+4){grid-column:1/-1;padding-top:.2rem;font-size:.9rem}
+  .adm-nv select.adm-input{width:100%;min-width:0}
+}
+@media (max-width:760px){.adm-nv td:nth-child(n+4) .adm-muted{display:none}.adm-nv td:nth-child(n+4):not(:has(select)){display:none}}
+
+/* Listen am Handy: kleineres Bild, Text laenger nutzbar, Kurztext auf zwei Zeilen */
+@media (max-width:760px){
+  .adm-row-open.has-thumb{grid-template-columns:4.2rem minmax(0,1fr);gap:.8rem;align-items:start}
+  .adm-row-open.has-thumb .adm-thumb{width:4.2rem}
+  .adm-row-people{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .adm-row-title{font-size:1.2rem}
+}
+@media (max-width:760px){
+  .adm-row-open .adm-badge{grid-column:2;justify-self:start}
+}
+@media (max-width:760px), (pointer:coarse){
+  input[type=color]{width:44px;height:44px}
+  .adm-head .adm-more summary{min-height:44px}
+}
+
+/* Entwurf gefunden (automatisch zwischengespeichert) und Hinweise vor dem Speichern */
+.adm-draft{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.7rem 1.2rem;margin:0 0 1.2rem;padding:.9rem 1.1rem;background:var(--gold-pale);border:1px solid #ead9ad;border-left:3px solid var(--gold)}
+.adm-draft>div:first-child{display:flex;flex-direction:column;gap:.2rem;min-width:0;flex:1 1 16rem}
+.adm-draft b{display:flex;align-items:center;gap:.45rem;font-weight:600;color:var(--text)}
+.adm-draft b svg.i{color:var(--gold)}
+.adm-draft span{font-size:.95rem;color:var(--text-mid)}
+.adm-draft-act{display:flex;flex-wrap:wrap;gap:.5rem}
+.adm-warnlist{margin:.6rem 0 0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.45rem}
+.adm-warnlist li{line-height:1.45}
+.adm-approval{margin:.5rem 0 0;padding:.6rem .8rem;background:var(--gold-pale);border-left:3px solid var(--gold);font-size:.95rem;color:var(--text-mid)}
+.adm-approval[hidden]{display:none}
+.adm-extra{margin-top:1.1rem;padding-top:1rem;border-top:1px dashed var(--line)}
+
+
+/* ══ ZUGAENGE: Dialog "Neuer Zugang" in vier Schritten ══ */
+#zg-dlg.adm-dialog{width:min(940px,calc(100vw - 2rem))}
+#zg-dlg .adm-dlg-body{counter-reset:zg-step}
+#zg-dlg .adm-fs{counter-increment:zg-step;padding:1.6rem 0 .8rem}
+#zg-dlg .adm-fs>legend{gap:.75rem;font-family:var(--serif);font-size:1.25rem;font-weight:500;color:var(--black)}
+#zg-dlg .adm-fs>legend::before{content:counter(zg-step);display:grid;place-items:center;flex:none;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--blue-deep);color:var(--gold-l);font-family:var(--sans);font-size:.95rem;font-weight:600}
+/* Rolle: drei Karten untereinander, die gewaehlte mit goldener Kante */
+#zg-dlg .adm-choice{grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}
+#zg-dlg .adm-choice label{align-items:flex-start;gap:.8rem;padding:1rem 1.1rem 1.1rem;border-radius:2px}
+#zg-dlg .adm-choice label:has(input:checked){box-shadow:inset 4px 0 var(--gold)}
+#zg-dlg .adm-choice b{margin-bottom:.1rem;font-family:var(--serif);font-size:1.15rem;font-weight:500}
+/* Rechte: je Bereich eine Karte */
+#zg-dlg .zg-rights-tools{margin-bottom:1rem}
+#zg-dlg .zg-rg{margin-bottom:.8rem;padding:.8rem 1.2rem 1rem;border:1px solid var(--line);background:var(--bg-soft)}
+#zg-dlg .zg-rg-all{margin-bottom:.4rem;padding-bottom:.45rem;border-bottom:1px solid var(--line)}
+#zg-dlg .zg-rg-title{font-family:var(--serif);font-size:1.12rem;font-weight:500;color:var(--black)}
+#zg-dlg .zg-rg-sub{margin-left:.6rem}
+#zg-dlg .zg-rg-all+.zg-rg-grid{margin-left:0}
+#zg-dlg .zg-rg>.zg-rg-title{margin-bottom:.35rem;padding-bottom:.45rem;border-bottom:1px solid var(--line)}
+#zg-dlg .zg-rg-hint{margin-left:0}
+#zg-dlg .zg-runden{margin-left:0}
+#zg-dlg .adm-extra{margin-top:.4rem;padding:.9rem 1.2rem 1rem;border:1px dashed var(--line)}
+#zg-dlg .zg-rg-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:860px){#zg-dlg .adm-choice{grid-template-columns:1fr}#zg-dlg .zg-rg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#zg-dlg .zg-rg-grid{grid-template-columns:1fr}}
+/* Passwort */
+#zg-dlg .adm-strength{gap:5px;margin-top:.5rem}
+#zg-dlg .adm-strength span{height:6px}
+/* Liste der Zugaenge */
+#zg-list .adm-row-open.adm-acc{grid-template-columns:4rem minmax(0,1fr) auto}
+#zg-list .adm-avatar{background:var(--blue-deep);color:var(--gold-l)}
+#zg-list .adm-row-meta code{padding:.05rem .4rem;background:var(--bg-soft);border:1px solid var(--line);font-size:.88rem}

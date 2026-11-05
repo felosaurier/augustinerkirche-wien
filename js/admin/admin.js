@@ -141,12 +141,17 @@
     { key: 'galerie', label: 'Galerie (Fotos, Videos, Aufnahmen)', group: 'Kirchenmusik', page: 'galerie.html' },
     { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
     { key: 'repertoire', label: 'Repertoire', group: 'Kirchenmusik', page: 'repertoire.html' },
+    { key: 'asp-personen', label: 'Aspersdorf: Leitung', group: 'Pfarre Aspersdorf', page: 'personen.html' },
+    { key: 'asp-gremien', label: 'Aspersdorf: Pfarrgemeinderat & Vermögensverwaltungsrat', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gremien.html' },
+    { key: 'asp-wochen', label: 'Aspersdorf: Wochenblätter (PDF)', group: 'Pfarre Aspersdorf', page: 'aspersdorf-wochen.html' },
+    { key: 'asp-friedhof', label: 'Aspersdorf: Friedhofsgebühren', group: 'Pfarre Aspersdorf', page: 'aspersdorf-friedhof.html' },
     { key: 'gottesdienste', label: 'Regelmäßige Termine', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
     { key: 'wochenkalender', label: 'Wochenkalender', group: 'Pfarre & Kloster', page: 'wochenkalender.html' },
     { key: 'kontakt', label: 'Pfarrkanzlei & Kontakt', group: 'Pfarre & Kloster', page: 'kontakt.html' },
     { key: 'rundgang', label: 'Kirchenrundgang', group: 'Pfarre & Kloster', page: 'rundgang.html' },
     { key: 'pgr', label: 'Pfarrgemeinderat', group: 'Pfarre & Kloster', page: 'pgr.html' },
-    { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' }
+    { key: 'predigten', label: 'Predigten und Ansprachen', group: 'Pfarre & Kloster', page: 'predigten.html' },
+    { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' },
   ];
   /* "Runden" gehoert zu Pfarre & Kloster, steht aber wegen der Einzelauswahl getrennt */
   const RUNDEN_KEY = 'runden';
@@ -185,7 +190,7 @@
     if (page === 'runden.html') return RUNDEN_KEY;
     /* Spenden & Moeglichkeiten liegen in derselben Datei wie die Paten */
     if (page === 'spenden.html') return 'paten';
-    if (page === 'personen.html') return personenBereich() === 'kloster' ? 'mitbrueder' : 'musik-personen';
+    if (page === 'personen.html') return personenKey(personenBereich());
     const a = AREAS.find((x) => x.page === page);
     return a ? a.key : '';
   }
@@ -888,7 +893,8 @@
     }
     if (isText) lastText.set(path, after);
     /* Neues Bild in assets/img: dazu eine kleine Fassung fuers Handy (<name>-m.webp, Liste data/bilder-klein.json) */
-    if (/^assets\/img\/.+\.webp$/.test(path) && !/-m\.webp$/.test(path) && blob.type === 'image/webp') await makeSmall(path, blob);
+    /* Fotos der Hochaemter gibt es nur in einer (kleinen) Fassung */
+    if (/^assets\/img\/.+\.webp$/.test(path) && !/-m\.webp$/.test(path) && !path.startsWith('assets/img/hochaemter/') && blob.type === 'image/webp') await makeSmall(path, blob);
     noteChange(path, isText ? describeChange(path, before, after) : [`Datei gespeichert: ${fileName(path)}`]);
     return direct;
   }
@@ -1045,11 +1051,12 @@
     [/^data\/solisten\.json$/, 'Solisten'], [/^data\/paten\.json$/, 'Paten'], [/^data\/cds\.json$/, 'CDs'], [/^data\/galerie\.json$/, 'Galerie'],
     [/^data\/personen\.json$/, 'Personen'], [/^data\/repertoire\.json$/, 'Repertoire'],
     [/^data\/gottesdienste\.json$/, 'Regelmäßige Termine'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
-    [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'],
+    [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'], [/^data\/predigten\.json$/, 'Predigten und Ansprachen'],
+    [/^data\/pgr-aspersdorf\.json$/, 'Aspersdorf: Gremien'], [/^data\/aspersdorf-wochen\.json$/, 'Aspersdorf: Wochenblätter'], [/^data\/friedhof\.json$/, 'Aspersdorf: Friedhofsgebühren'],
     [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
     [/^data\/sprueche\.json$/, 'Sprüche'], [/^data\/themen\.json$/, 'Farben & Logo'], [/^data\/navigation\.json$/, 'Menü & Leiste'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
     [/^admin\/zugaenge\.json$/, 'Zugänge'], [/^admin\/mitteilungen\.json$/, 'Mitteilungen'],
-    [/^assets\/img\/startseite\//, 'Startseite'], [/^assets\/img\/news\//, 'Neuigkeiten'], [/^assets\//, 'Dateien']
+    [/^assets\/img\/startseite\//, 'Startseite'], [/^assets\/img\/news\//, 'Neuigkeiten'], [/^assets\/img\/predigten\//, 'Predigten und Ansprachen'], [/^assets\/pdf\/aspersdorf\//, 'Aspersdorf: Wochenblätter'], [/^assets\//, 'Dateien']
   ];
   const areaOf = (path) => (AREA_FILES.find(([re]) => re.test(path)) || [null, fileName(path)])[1];
 
@@ -1923,6 +1930,7 @@
     if (kind === 'png') return b.length >= 8 && b[0] === 0x89 && at(1, 'PNG') && b[4] === 0x0d && b[5] === 0x0a && b[6] === 0x1a && b[7] === 0x0a;
     if (kind === 'jpg') return b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
     if (kind === 'webp') return b.length >= 12 && at(0, 'RIFF') && at(8, 'WEBP');
+    if (kind === 'pdf') return b.length >= 5 && at(0, '%PDF-');
     if (kind === 'mp3') return b.length >= 3 && (at(0, 'ID3') || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0));
     if (kind === 'mp4') return b.length >= 8 && at(4, 'ftyp');
     if (kind === 'webm') return b.length >= 4 && b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3;
@@ -2011,7 +2019,7 @@
   }
 
   /* Neuigkeiten (data/news.csv): Spalten ueber die Ueberschrift finden,
-     damit die Reihenfolge egal ist; neueste Meldung zuerst */
+     damit die Reihenfolge der Spalten egal ist */
   const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext', 'Bildausschnitt', 'Seiten', 'Bericht', 'Entwurf', 'Ab'];
   function parseNews(text) {
     const rows = HD.parseCSV(text);
@@ -2022,8 +2030,8 @@
       const o = {};
       NEWS_HEAD.forEach((h, k) => { o[h] = idx[k] >= 0 ? (r[idx[k]] || '').trim() : ''; });
       return o;
-    }).filter((o) => o.Titel && HD.isoDate(o.Datum))
-      .sort((a, b) => HD.isoDate(b.Datum).localeCompare(HD.isoDate(a.Datum)));
+    }).filter((o) => o.Titel && HD.isoDate(o.Datum));
+    /* Reihenfolge der Tabelle = Reihenfolge auf der Website (mit Pfeilen verschiebbar) */
   }
 
   /* Welche Meldungen stehen auf der Startseite? Zuerst die neuesten, deren
@@ -2077,6 +2085,7 @@
       ['kontakt.html', 'Pfarrkanzlei & Kontakt', 'phone', 'Öffnungszeiten Telefon E-Mail Adresse Straße Kanzlei'],
       ['rundgang.html', 'Kirchenrundgang', 'image', 'Chronik Bilder Fotos Führung Geschichte'],
       ['pgr.html', 'Pfarrgemeinderat', 'users', 'PGR Mitglieder'],
+      ['predigten.html', 'Predigten und Ansprachen', 'quote', 'Predigt Ansprache Rede Text Foto Gottesdienst'],
       ['personen.html?bereich=kloster', 'Mitbrüder', 'user', 'Patres Brüder Kloster Konvent']
     ] },
     { label: 'Kirchenmusik', items: [
@@ -2087,6 +2096,12 @@
       ['spenden.html', 'Spenden & Möglichkeiten', 'heart', 'Patenschaft Spenden PayPal Beträge Preise Förderer Stifter'],
       ['cds.html', 'CDs', 'disc', 'Aufnahmen Hörproben Cover'],
       ['galerie.html', 'Galerie', 'image', 'Fotos Videos YouTube Aufnahmen Alben MP3']
+    ] },
+    { label: 'Pfarre Aspersdorf', items: [
+      ['personen.html?bereich=aspersdorf', 'Leitung', 'user', 'Aspersdorf Pfarrmoderator Pfarrvikar Pfarrer Leitung'],
+      ['aspersdorf-gremien.html', 'Pfarrgemeinderat & Vermögensverwaltungsrat', 'users', 'Aspersdorf PGR Vermögensverwaltungsrat VWR Mitglieder Gremien'],
+      ['aspersdorf-wochen.html', 'Wochenblätter (PDF)', 'calendarWeek', 'Aspersdorf Woche Gottesdienste Kalender PDF Pfarrblatt hochladen'],
+      ['aspersdorf-friedhof.html', 'Friedhofsgebühren', 'book', 'Aspersdorf Friedhof Gebühren Gräber Tabellen Preise']
     ] },
     { label: 'Website', items: [
       ['startseite.html', 'Titelfotos', 'image', 'Startseite Fotos Vollbild Einstellungen'],
@@ -2106,7 +2121,7 @@
   function allowedNav() {
     const ok = (href) => {
       const [page, query] = href.split('?');
-      if (page === 'personen.html') return can(new URLSearchParams(query).get('bereich') === 'kloster' ? 'mitbrueder' : 'musik-personen');
+      if (page === 'personen.html') return can(personenKey(new URLSearchParams(query).get('bereich')));
       if (page === 'zugaenge.html') return isAdmin();
       if (page === 'aenderungen.html' || page === 'mitteilungen.html') return isDev();
       return allowed(rightOfPage(page));
@@ -2117,7 +2132,12 @@
   function personenBereich() {
     const q = new URLSearchParams(location.search);
     if (q.get('bereich') === 'kloster' || q.get('gruppe') === 'mitbrueder') return 'kloster';
+    if (q.get('bereich') === 'aspersdorf' || q.get('gruppe') === 'asp-leitung') return 'aspersdorf';
     return 'musik';
+  }
+  /* Schluessel des Rechts fuer den Bereich der Personen-Seite */
+  function personenKey(bereich) {
+    return bereich === 'kloster' ? 'mitbrueder' : bereich === 'aspersdorf' ? 'asp-personen' : 'musik-personen';
   }
   /* Ist ein Eintrag (Adresse mit optionalem ?bereich=) die aktuelle Seite? */
   function isHere(href) {
@@ -2780,7 +2800,7 @@
     start: (fn) => starters.push(fn),
     guard: (fn) => guards.push(fn),
     /* Anmeldung und Zugaenge */
-    session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, isDev, adminRole, roleOf, ROLES, personenBereich, needsApproval, confirmWarnings, appInstall: { can: () => !!install.event, run: installApp, standalone, onChange: (fn) => install.listeners.push(fn) },
+    session, login, logout, startSession, lockLeft, cryptoReady, isAdmin, isDev, adminRole, roleOf, ROLES, personenBereich, personenKey, needsApproval, confirmWarnings, appInstall: { can: () => !!install.event, run: installApp, standalone, onChange: (fn) => install.listeners.push(fn) },
     AREAS, RUNDEN_KEY, rightsOf, can, canRunde, canAllRunden, canAnyRunde,
     parseAccounts, accountsJSON, makeAccount, checkDevCode, checkPassword, normUser, stampOf,
     pwLevel, pwProblem, suggestPassword, MIN_PW, ACCOUNTS,

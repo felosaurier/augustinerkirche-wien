@@ -18,10 +18,7 @@
   const PAGES = [
     ['augustiner.html', 'Augustiner'],
     ['musik.html', 'Kirchenmusik'],
-    ['chronik.html', 'Chronik'],
-    ['pfarre.html', 'Pfarre St. Augustin'],
-    ['gottesdienste.html', 'Gottesdienste'],
-    ['sakramente.html', 'Sakramente'],
+    ['augustinerkirche.html', 'Augustinerkirche'],
     ['aspersdorf.html', 'Aspersdorf']
   ];
   const notFound = (e) => !!e && (e.status === 404 || e.name === 'NotFoundError');

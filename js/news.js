@@ -73,8 +73,9 @@
         photos: []
       };
     }).filter(Boolean);
-    /* Neueste zuerst; am selben Tag bleibt die Reihenfolge der Tabelle */
-    return out.sort((a, b) => b.iso.localeCompare(a.iso) || a.order - b.order);
+    /* Reihenfolge der Tabelle: die Verwaltung legt sie fest (neue Meldungen nach
+       Datum eingereiht, danach mit den Pfeilen verschiebbar) */
+    return out;
   }
 
   /* Startseite: zuerst die neuesten Meldungen, deren "Bis"-Datum
@@ -204,9 +205,9 @@
         rows.innerHTML = '<p class="s-text">Keine Meldung gefunden. Bitte die Filter ändern.</p>';
         return;
       }
-      /* Nach Jahren gruppiert (die Liste ist schon neueste zuerst) */
+      /* Nach Jahren gruppiert, neuestes Jahr zuerst; im Jahr die Reihenfolge der Tabelle */
       let html = '', last = null;
-      for (const e of list) {
+      for (const e of list.slice().sort((a, b) => b.dateObj.getFullYear() - a.dateObj.getFullYear())) {
         const y = e.dateObj.getFullYear();
         if (y !== last) { html += `<h2 class="news-year-head">${y}</h2>`; last = y; }
         html += rowHTML(e);
@@ -278,7 +279,8 @@
   function galleryHTML(list, title) {
     if (!list.length) return '';
     const shown = Math.min(list.length, 5);
-    return `<div class="nd-gallery g-${shown}" role="group" aria-label="${esc(`${photoCount(list.length)} zu „${title}“`)}">` +
+    return '<p class="nd-gallery-h">Bildergalerie:</p>' +
+      `<div class="nd-gallery g-${shown}" role="group" aria-label="${esc(`${photoCount(list.length)} zu „${title}“`)}">` +
       list.map((p, i) => {
         const src = url(p.src);
         if (!src) return '';
@@ -366,10 +368,12 @@
       actionsHTML(e) +
       (previewing ? '' : `<div class="nd-share"><button type="button" class="nd-share-btn" data-share="${esc(e.id)}">${SHARE}Meldung teilen</button><span class="nd-share-note" role="status"></span></div>`);
 
-    content.scrollTop = 0;
-    media.scrollTop = 0;
     document.documentElement.classList.add('nd-lock');
     if (!dialog.open) dialog.showModal();
+    /* Jede Meldung beginnt oben: je nach Ansicht scrollt die Spalte, das ganze
+       Layout (eine Spalte, Handy) oder das Fenster selbst; erst nach dem
+       Oeffnen setzen, sonst merkt sich der Browser die alte Stelle */
+    for (const el of [dialog, qs('.nd-layout', dialog), content, media]) el.scrollTop = 0;
   }
 
   /* Vorschau in der Verwaltung (admin/neuigkeiten.html): Meldung mit dem Stand des

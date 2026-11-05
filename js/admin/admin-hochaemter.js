@@ -349,7 +349,8 @@
         continue;
       }
       try {
-        const conv = await A.toWebp(file);
+        /* Nur eine Fassung, und die klein: laengste Seite 1280 px, WebP mit maessiger Qualitaet */
+        const conv = await A.toWebp(file, { maxSize: 1280, quality: 0.78 });
         let w = 0;
         let h = 0;
         try {
@@ -612,7 +613,7 @@
     host.innerHTML = '<div class="adm-banner" id="archiv">' +
       `<span class="adm-folder-ico">${icon('archive')}</span>` +
       `<div class="adm-banner-txt"><strong>Jahreswechsel: ${plural(old.length, 'Termin', 'Termine')} aus ${years.join(', ')} ins Archiv</strong>` +
-      'Sie stehen noch in der laufenden Tabelle. Im Archiv bleiben sie unter „Vergangene Hochämter“ sichtbar, die laufende Tabelle wird wieder übersichtlich.</div>' +
+      'Sie stehen noch in der laufenden Tabelle. Im Archiv bleiben sie im „Hochämter-Archiv“ sichtbar, die laufende Tabelle wird wieder übersichtlich.</div>' +
       `<button type="button" class="btn btn-dark" id="ha-archive-btn">${icon('archive')}Ins Archiv verschieben</button></div>`;
     $('ha-archive-btn').addEventListener('click', archiveOld);
   }
@@ -629,7 +630,7 @@
     const ok = await A.confirmBox({
       title: 'Ins Archiv verschieben?',
       html: [...byYear].map(([y, l]) => `<strong>${plural(l.length, 'Termin', 'Termine')} aus ${y}</strong> nach <code>${ARCHIVE_DIR}hochaemter-${y}.csv</code>`).join('<br>') +
-        '<br><br>Auf der Website bleibt alles sichtbar, unter „Vergangene Hochämter“.',
+        '<br><br>Auf der Website bleibt alles sichtbar, im „Hochämter-Archiv“.',
       ok: 'Verschieben'
     });
     if (!ok) return;
