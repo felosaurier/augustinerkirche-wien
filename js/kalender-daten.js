@@ -253,7 +253,8 @@
   /* Ab wann ein Termin des Tages als vorbei gilt (HH:MM, '' = erst mit dem Tag): mit Ende ab dem Ende,
      sonst ab dem Beginn; "anschl." erst, wenn der nächste Termin mit Uhrzeit danach begonnen hat */
   function endsAt(it, its) {
-    if (it.time) return it.ende || it.time;
+    /* Ende vor dem Beginn = nach Mitternacht: am Tag selbst erst mit dem Tagesende vorbei */
+    if (it.time) return it.ende ? (it.ende < it.time ? '24:00' : it.ende) : it.time;
     if (!it.sort) return '';
     const after = it.sort.slice(0, 5);
     const next = its.find((x) => x.time && x.time > after);

@@ -22,7 +22,7 @@
   const PATH = 'data/wochenkalender.json';
   const BASE = '../';
   const GROUP = { hochamt: 'Hochamt', gottesdienst: 'Gottesdienst', tagzeit: 'Tagzeitenliturgie', veranstaltung: 'Veranstaltung', konzert: 'Konzert', runde: 'Runden', ohne: 'Termin' };
-  const FROM = { plan: 'Regelmäßige Termine', hochamt: 'Hochämter', runde: 'Runden', termin: 'Termine' };
+  const FROM = { plan: 'Gottesdienstzeiten', hochamt: 'Hochämter', runde: 'Runden', termin: 'Veranstaltungen' };
 
   let tage = [];          /* data/wochenkalender.json */
   let items = [];         /* alle Termine des Kalenders samt Wochenkalender */

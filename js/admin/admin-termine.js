@@ -109,6 +109,7 @@
     $('f-bis').value = t ? t.bis || '' : '';
     $('f-time').value = t ? t.zeit || '' : '';
     $('f-end').value = t ? t.ende || '' : '';
+    if (nextDayHint) nextDayHint();
     $('f-art').value = t ? t.art || 'Sonstiges' : 'Ausflug';
     $('f-ort').value = t ? t.ort || '' : '';
     $('f-title').value = t ? t.titel : '';
@@ -127,6 +128,7 @@
     return row.querySelector('input');
   }
 
+  let nextDayHint = null;
   function openEditor(i, copyOf) {
     const t = i >= 0 ? termine[i] : null;
     editIndex = i;
@@ -139,6 +141,7 @@
       /* Kopie: neues Datum waehlen lassen */
       $('f-date').value = '';
       $('f-bis').value = '';
+      if (nextDayHint) nextDayHint();
     }
     $('tm-dlg-tag').textContent = t ? 'Bearbeiten' : copyOf ? 'Kopie' : 'Neuer Termin';
     $('tm-dlg-title').textContent = t ? t.titel : copyOf ? `${copyOf.titel} (neues Datum)` : 'Neuer Termin';
@@ -169,7 +172,7 @@
     if (!datum) errors.push([$('f-date'), 'Bitte das Datum wählen.']);
     if (datum && bis && bis < datum) errors.push([$('f-bis'), 'Das Enddatum liegt vor dem Datum.']);
     if (ende && !zeit) errors.push([$('f-time'), 'Bitte auch den Beginn eintragen.']);
-    else if (ende && !bis && ende <= zeit) errors.push([$('f-end'), 'Das Ende liegt vor dem Beginn.']);
+    else if (ende && !bis && A.endCheck(zeit, ende)) errors.push([$('f-end'), A.endCheck(zeit, ende)]);
     if (!clean($('f-art').value)) errors.push([$('f-art'), 'Bitte eine Art wählen oder eintragen.']);
     if (!titel) errors.push([$('f-title'), 'Bitte einen Titel eintragen.']);
     if (link === null) errors.push([$('f-link'), 'Diese Adresse sieht nicht richtig aus, z. B. www.beispiel.at oder pages/kalender.html.']);
@@ -248,6 +251,8 @@
   A.start(async () => {
     $('tm-new').addEventListener('click', () => openEditor(-1));
     $('tm-form').addEventListener('submit', save);
+    nextDayHint = A.wireNextDay($('f-time'), $('f-end'), $('f-end-next'), () => !HD.isoDate($('f-bis').value));
+    $('f-bis').addEventListener('change', nextDayHint);
     $('f-more-add').addEventListener('click', () => addMore().focus());
     $('f-more').addEventListener('click', (ev) => {
       const del = ev.target.closest('[data-more-del]');

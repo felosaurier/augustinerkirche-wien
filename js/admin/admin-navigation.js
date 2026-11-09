@@ -162,8 +162,8 @@
       saved = bereiche;
       render();
       setState(direct ? 'Gespeichert.' : 'Übernommen, bitte unten herunterladen.');
-      A.toast(direct ? 'Menü und Leiste gespeichert.' : 'Übernommen. Bitte unten die Datei herunterladen.');
-      A.log('Menü und Leiste geändert');
+      A.toast(direct ? 'Menü gespeichert.' : 'Übernommen. Bitte unten die Datei herunterladen.');
+      A.log('Menü der Website geändert');
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
     }

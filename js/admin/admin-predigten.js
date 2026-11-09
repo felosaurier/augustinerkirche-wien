@@ -374,7 +374,7 @@
     const p = list[i];
     const ok = await A.confirmBox({
       title: 'Beitrag entfernen?',
-      html: `<strong>${esc(p.titel)}</strong><br>${esc(longDate(p.datum))}<br><br>Der Beitrag verschwindet von der Seite Predigten und Ansprachen.${p.bild ? ' Das Foto wird gelöscht.' : ''}`,
+      html: `<strong>${esc(p.titel)}</strong><br>${esc(longDate(p.datum))}<br><br>Der Beitrag verschwindet von der Seite „Predigten und Ansprachen“.${p.bild ? ' Das Foto wird gelöscht.' : ''}`,
       ok: 'Entfernen', danger: true
     });
     if (!ok) return;

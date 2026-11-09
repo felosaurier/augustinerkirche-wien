@@ -676,7 +676,12 @@ a.kal-row:hover .kal-name{color:var(--gold)}
 /* Naechstes Hochamt (musik.html): Farbe der Seite, dunkelblaue Linien, rechts die Vorschau */
 .nh-section[hidden]{display:none}
 .nh-section{scroll-margin-top:var(--nav-h)}
-.nh-board{display:grid;grid-template-columns:minmax(0,1fr) 22rem;margin:0;--nh-bg:#10192e;--nh-ink:#f4efe3;--nh-line:#d8b96e;--nh-soft:rgba(244,239,227,.8);background:var(--nh-bg);color:var(--nh-ink);border:1px solid var(--nh-line);box-shadow:inset 0 0 0 9px var(--nh-bg),inset 0 0 0 10px var(--nh-line)}
+.nh-board{display:grid;grid-template-columns:minmax(0,1fr) 22rem;margin:0;--nh-bg:#10192e;--nh-ink:#f4efe3;--nh-line:#d8b96e;--nh-soft:rgba(244,239,227,.8);background:var(--nh-bg);color:var(--nh-ink);border:1px solid var(--nh-line);position:relative}
+/* Innerer Goldrahmen als eigene Ebene, damit er sich beim Auftritt zeichnen kann */
+.nh-board::before{content:'';position:absolute;inset:9px;pointer-events:none;
+  /* vier Striche: oben (von links), rechts (von oben), unten (von rechts), links (von unten) */
+  background:linear-gradient(var(--nh-line),var(--nh-line)) left top/100% 1px no-repeat,linear-gradient(var(--nh-line),var(--nh-line)) right top/1px 100% no-repeat,
+    linear-gradient(var(--nh-line),var(--nh-line)) right bottom/100% 1px no-repeat,linear-gradient(var(--nh-line),var(--nh-line)) left bottom/1px 100% no-repeat}
 .nh-board[hidden]{display:none}
 .nh-main{display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;padding:2.2rem 2rem 1.4rem 2.4rem}
 .nh-kicker{margin:0 0 .6rem;font-size:1.08rem;font-weight:600;letter-spacing:.02em;color:var(--nh-line)}
@@ -2204,3 +2209,53 @@ body{line-height:1.55}
    Menue und Knoepfe nach dem Laden ein Stueck zur Seite */
 body:not(.adm) .nav-right:not(:has(.suche-btn))::before{content:'';flex:none;width:2.75rem;height:2.75rem;margin-right:.4rem}
 @media (max-width:1120px){body:not(.adm) .nav-right:not(:has(.suche-btn))::before{margin-right:0}}
+
+/* ══ Naechstes Hochamt: Auftritt (js/hochaemter.js playNext) ══
+   Die Tafel blendet ein, der Goldrahmen zeichnet sich (oben quer, dann die Seiten hinunter), der Tag zaehlt hoch,
+   der Werktitel steigt auf und ein Goldglanz zieht einmal darueber, die Vorschau gleitet nacheinander herein. */
+@keyframes nh-up{from{opacity:0;transform:translateY(18px)}}
+@keyframes nh-left{from{opacity:0;transform:translateX(-16px)}}
+@keyframes nh-right{from{opacity:0;transform:translateX(28px)}}
+@keyframes nh-board{from{opacity:0;transform:translateY(24px) scale(.985)}}
+/* Rahmen wie mit dem Stift rundherum gezogen: oben, rechts hinunter, unten zurueck, links hinauf */
+@keyframes nh-frame{
+  0%{background-size:0 1px,1px 0,0 1px,1px 0}
+  30%{background-size:100% 1px,1px 0,0 1px,1px 0}
+  50%{background-size:100% 1px,1px 100%,0 1px,1px 0}
+  80%{background-size:100% 1px,1px 100%,100% 1px,1px 0}
+  100%{background-size:100% 1px,1px 100%,100% 1px,1px 100%}
+}
+/* Glanz zieht in 1,4 s ueber den Titel, dann Pause bis zum naechsten Durchgang */
+@keyframes nh-shine{0%{background-position:100% 0}28%,100%{background-position:0 0}}
+@media (prefers-reduced-motion:no-preference){
+  .nh-board.nh-wait:not(.nh-play){opacity:0}
+  .nh-play{animation:nh-board .7s var(--ease) backwards}
+  .nh-play::before{animation:nh-frame 2s .2s linear backwards}
+  .nh-play .nh-main>.nh-kicker{animation:nh-up .6s .3s var(--ease) backwards}
+  .nh-play .nh-day{animation:nh-up .8s .35s var(--ease) backwards}
+  .nh-play .nh-md{animation:nh-left .7s .6s var(--ease) backwards}
+  .nh-play .nh-type{animation:nh-up .6s .75s var(--ease) backwards}
+  .nh-play .nh-piece{animation:nh-up .7s .85s var(--ease) backwards}
+  .nh-play .nh-who li{animation:nh-up .55s 1s var(--ease) backwards}
+  .nh-play .nh-who li:nth-child(2){animation-delay:1.07s}
+  .nh-play .nh-who li:nth-child(3){animation-delay:1.14s}
+  .nh-play .nh-who li:nth-child(4){animation-delay:1.21s}
+  .nh-play .nh-who li:nth-child(n+5){animation-delay:1.28s}
+  .nh-play .nh-next .nh-kicker{animation:nh-up .6s .45s var(--ease) backwards}
+  .nh-play .nh-next li{animation:nh-right .7s .6s var(--ease) backwards}
+  .nh-play .nh-next li:nth-child(2){animation-delay:.72s}
+  .nh-play .nh-next li:nth-child(3){animation-delay:.84s}
+  .nh-play .nh-next li:nth-child(n+4){animation-delay:.96s}
+  .nh-play .nh-foot .btn{animation:nh-up .6s 1.35s var(--ease) backwards}
+  .nh-play .nh-foot .btn+.btn{animation-delay:1.45s}
+  /* Goldglanz ueber dem Werktitel, immer wieder (alle 5 s); nur wo Text als Maske geht, sonst bleibt er einfach golden */
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    .nh-board .nh-piece{background:linear-gradient(110deg,var(--nh-line) 0 42%,#fff6dc 50%,var(--nh-line) 58% 100%) 0 0/300% 100% no-repeat;
+      -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+      animation:nh-shine 5s 1.5s ease-in-out infinite}
+    .nh-play .nh-piece{animation:nh-up .7s .85s var(--ease) backwards,nh-shine 5s 1.5s ease-in-out infinite}
+  }
+}
+
+/* Countdown "in … Tagen": feste Ziffernbreite, damit der Text beim Zaehlen nicht wackelt */
+.nh-count,.nh-time{font-variant-numeric:tabular-nums}

@@ -127,30 +127,30 @@
      Reihenfolge, sonst nur die einzeln genannten Runden bearbeiten. */
   const AREAS = [
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Aktuelles', page: 'neuigkeiten.html' },
-    { key: 'termine', label: 'Termine (Ausflüge, Feste …)', group: 'Aktuelles', page: 'termine.html' },
-    { key: 'startseite', label: 'Titelfotos der Hauptseiten', group: 'Einstellungen', page: 'startseite.html' },
-    { key: 'hinweise', label: 'Hinweisbanner (oben auf der Website)', group: 'Einstellungen', page: 'hinweise.html' },
-    { key: 'sprueche', label: 'Sprüche (Zitate unten auf den Seiten)', group: 'Einstellungen', page: 'sprueche.html' },
-    { key: 'design', label: 'Farben & Logo der Hauptseiten', group: 'Einstellungen', page: 'design.html' },
-    { key: 'navigation', label: 'Menü & Leiste', group: 'Einstellungen', page: 'navigation.html' },
-    { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Einstellungen', page: 'rechtliches.html' },
-    { key: 'hochaemter', label: 'Hochämter', group: 'Kirchenmusik', page: 'hochaemter.html' },
+    { key: 'termine', label: 'Veranstaltungen (Ausflüge, Feste …)', group: 'Aktuelles', page: 'termine.html' },
+    { key: 'startseite', label: 'Titelfotos', group: 'Website', page: 'startseite.html' },
+    { key: 'hinweise', label: 'Wichtiger Hinweis (oben auf der Website)', group: 'Website', page: 'hinweise.html' },
+    { key: 'sprueche', label: 'Zitate (unten auf den Seiten)', group: 'Website', page: 'sprueche.html' },
+    { key: 'design', label: 'Kopfzeile (Farbe, Logo, Name)', group: 'Website', page: 'design.html' },
+    { key: 'navigation', label: 'Menü der Website', group: 'Website', page: 'navigation.html' },
+    { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Website', page: 'rechtliches.html' },
+    { key: 'hochaemter', label: 'Hochämter', group: 'Aktuelles', page: 'hochaemter.html' },
     { key: 'solisten', label: 'Solisten', group: 'Kirchenmusik', page: 'solisten.html' },
-    { key: 'paten', label: 'Paten, Spenden & Möglichkeiten', group: 'Kirchenmusik', page: 'paten.html' },
+    { key: 'paten', label: 'Paten & Spendenmöglichkeiten', group: 'Kirchenmusik', page: 'paten.html' },
     { key: 'cds', label: 'CDs', group: 'Kirchenmusik', page: 'cds.html' },
     { key: 'galerie', label: 'Galerie (Fotos, Videos, Aufnahmen)', group: 'Kirchenmusik', page: 'galerie.html' },
     { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
     { key: 'repertoire', label: 'Repertoire', group: 'Kirchenmusik', page: 'repertoire.html' },
-    { key: 'asp-personen', label: 'Aspersdorf: Leitung', group: 'Pfarre Aspersdorf', page: 'personen.html' },
+    { key: 'asp-personen', label: 'Aspersdorf: Pfarrer & Leitung', group: 'Pfarre Aspersdorf', page: 'personen.html' },
     { key: 'asp-gremien', label: 'Aspersdorf: Pfarrgemeinderat & Vermögensverwaltungsrat', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gremien.html' },
     { key: 'asp-wochen', label: 'Aspersdorf: Wochenblätter (PDF)', group: 'Pfarre Aspersdorf', page: 'aspersdorf-wochen.html' },
     { key: 'asp-friedhof', label: 'Aspersdorf: Friedhofsgebühren', group: 'Pfarre Aspersdorf', page: 'aspersdorf-friedhof.html' },
-    { key: 'gottesdienste', label: 'Regelmäßige Termine', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
+    { key: 'gottesdienste', label: 'Gottesdienstzeiten', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
     { key: 'wochenkalender', label: 'Wochenkalender', group: 'Pfarre & Kloster', page: 'wochenkalender.html' },
     { key: 'kontakt', label: 'Pfarrkanzlei & Kontakt', group: 'Pfarre & Kloster', page: 'kontakt.html' },
     { key: 'rundgang', label: 'Kirchenrundgang', group: 'Pfarre & Kloster', page: 'rundgang.html' },
     { key: 'pgr', label: 'Pfarrgemeinderat', group: 'Pfarre & Kloster', page: 'pgr.html' },
-    { key: 'predigten', label: 'Predigten und Ansprachen', group: 'Pfarre & Kloster', page: 'predigten.html' },
+    { key: 'predigten', label: 'Predigten & Ansprachen', group: 'Pfarre & Kloster', page: 'predigten.html' },
     { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' },
   ];
   /* "Runden" gehoert zu Pfarre & Kloster, steht aber wegen der Einzelauswahl getrennt */
@@ -217,6 +217,28 @@
   /* ---------- Datum ---------- */
   const isoOf = (dt) => `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
   const isoToday = () => isoOf(new Date());
+  /* Ende nach Mitternacht (z. B. Christmette 23:00 bis 00:15): liegt das Ende vor dem Beginn, endet der Termin
+     am naechsten Tag. Damit Tippfehler auffallen, hoechstens 12 Stunden; Ende gleich Beginn ist ein Fehler.
+     endCheck liefert den Fehlertext oder ''; Zeiten als "HH:MM" */
+  const hmMin = (t) => +t.slice(0, 2) * 60 + +t.slice(3, 5);
+  function endCheck(start, end) {
+    if (!start || !end) return '';
+    const d = hmMin(end) - hmMin(start);
+    if (d > 0) return '';
+    if (d === 0) return 'Das Ende muss nach dem Beginn liegen.';
+    if (d + 1440 > 720) return 'Das Ende liegt vor dem Beginn. Endet der Termin erst nach Mitternacht, darf er höchstens 12 Stunden dauern.';
+    return '';
+  }
+  const endsNextDay = (start, end) => !!(start && end && hmMin(end) < hmMin(start) && !endCheck(start, end));
+  /* Hinweis "endet am nächsten Tag" neben dem Ende ein- und ausblenden; liefert die Funktion zum Auffrischen
+     (nach dem Fuellen des Formulars aufrufen). aktiv(): darf der Hinweis gerade gelten (z. B. ohne Enddatum) */
+  function wireNextDay(startEl, endEl, hintEl, aktiv = () => true) {
+    const upd = () => {
+      if (hintEl) hintEl.hidden = !(aktiv() && endsNextDay(HD.isoTime(startEl.value), HD.isoTime(endEl.value)));
+    };
+    for (const el of [startEl, endEl]) for (const ev of ['input', 'change']) el.addEventListener(ev, upd);
+    return upd;
+  }
   function fmtDate(iso) {
     const dt = HD.dateFromIso(iso);
     return `${HD.WEEKDAYS[dt.getDay()]}, ${dt.getDate()}. ${HD.MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
@@ -1083,17 +1105,17 @@
   const PROTOCOL_MAX = 2000;
   const KEY_PROTOCOL_ERR = 'aug-protokoll-fehler';
   const AREA_FILES = [
-    [/^data\/startseite\.json$/, 'Startseite'], [/^data\/hinweise\.json$/, 'Hinweisbanner'],
-    [/^data\/news\.csv$/, 'Neuigkeiten'], [/^data\/termine\.json$/, 'Termine'],
+    [/^data\/startseite\.json$/, 'Startseite'], [/^data\/hinweise\.json$/, 'Wichtiger Hinweis'],
+    [/^data\/news\.csv$/, 'Neuigkeiten'], [/^data\/termine\.json$/, 'Veranstaltungen'],
     [/^data\/(archiv\/)?hochaemter.*\.csv$/, 'Hochämter'], [/^data\/hochamt-fotos(\.json|\/.+\.json)$/, 'Hochämter'],
     [/^data\/solisten\.json$/, 'Solisten'], [/^data\/paten\.json$/, 'Paten'], [/^data\/cds\.json$/, 'CDs'], [/^data\/galerie\.json$/, 'Galerie'],
     [/^data\/personen\.json$/, 'Personen'], [/^data\/repertoire\.json$/, 'Repertoire'],
-    [/^data\/gottesdienste\.json$/, 'Regelmäßige Termine'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
-    [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'], [/^data\/predigten\.json$/, 'Predigten und Ansprachen'],
+    [/^data\/gottesdienste\.json$/, 'Gottesdienstzeiten'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
+    [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'], [/^data\/predigten\.json$/, 'Predigten & Ansprachen'],
     [/^data\/pgr-aspersdorf\.json$/, 'Aspersdorf: Gremien'], [/^data\/aspersdorf-wochen\.json$/, 'Aspersdorf: Wochenblätter'], [/^data\/friedhof\.json$/, 'Aspersdorf: Friedhofsgebühren'],
     [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
-    [/^data\/sprueche\.json$/, 'Sprüche'], [/^data\/themen\.json$/, 'Farben & Logo'], [/^data\/navigation\.json$/, 'Menü & Leiste'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
-    [/^admin\/zugaenge\.json$/, 'Zugänge'], [/^admin\/mitteilungen\.json$/, 'Mitteilungen'],
+    [/^data\/sprueche\.json$/, 'Zitate'], [/^data\/themen\.json$/, 'Kopfzeile'], [/^data\/navigation\.json$/, 'Menü der Website'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
+    [/^admin\/zugaenge\.json$/, 'Benutzer & Passwörter'], [/^admin\/mitteilungen\.json$/, 'Nachricht an alle'],
     [/^assets\/img\/startseite\//, 'Startseite'], [/^assets\/img\/news\//, 'Neuigkeiten'], [/^assets\/img\/predigten\//, 'Predigten und Ansprachen'], [/^assets\/pdf\/aspersdorf\//, 'Aspersdorf: Wochenblätter'], [/^assets\//, 'Dateien']
   ];
   const areaOf = (path) => (AREA_FILES.find(([re]) => re.test(path)) || [null, fileName(path)])[1];
@@ -1101,7 +1123,7 @@
   /* Werte fuer die Anzeige: kurz, Leerraum zusammengezogen; geheime Felder nie im Klartext */
   const SECRET = /^(hash|salt|code|codeHash|codeSalt|passwort|password)$/i;
   const SKIP = /^(salt|codeSalt|iter|__.*)$/;
-  const LABELS = { sprueche: 'Sprüche', themen: 'Themen', hash: 'Passwort', code: 'Entwickler-Code', codeHash: 'Entwickler-Code', bilder: 'Fotos', frueher: 'Frühere Fotos', sekunden: 'Wechselzeit (Sekunden)', ausschnitt: 'Bildausschnitt' };
+  const LABELS = { sprueche: 'Zitate', themen: 'Themen', hash: 'Passwort', code: 'Entwickler-Code', codeHash: 'Entwickler-Code', bilder: 'Fotos', frueher: 'Frühere Fotos', sekunden: 'Wechselzeit (Sekunden)', ausschnitt: 'Bildausschnitt' };
   const MAX_DETAILS = 60;
   function fmtValue(v) {
     if (v === undefined || v === null || v === '') return '(leer)';
@@ -2120,17 +2142,17 @@
     { items: [['uebersicht.html', 'Übersicht', 'home', 'Start Noch offen Zuletzt geändert']] },
     { label: 'Aktuelles', items: [
       ['neuigkeiten.html', 'Neuigkeiten', 'news', 'Meldungen Plakat News'],
-      ['termine.html', 'Termine', 'calendar', 'Ausflüge Feste Veranstaltungen'],
+      ['termine.html', 'Veranstaltungen', 'calendar', 'Termine Ausflüge Feste'],
       ['hochaemter.html', 'Hochämter', 'music', 'Messen Werke Dirigent Organist Zelebrant']
     ] },
     { label: 'Pfarre & Kloster', items: [
-      ['gottesdienste.html', 'Regelmäßige Termine', 'clock', 'Gottesdienste Messen Wochenplan Ferien Pausen Vesper Laudes'],
+      ['gottesdienste.html', 'Gottesdienstzeiten', 'clock', 'Regelmäßige Termine Gottesdienste Messen Kanzleistunden Wochenplan Ferien Pausen Vesper Laudes'],
       ['wochenkalender.html', 'Wochenkalender', 'calendarWeek', 'Woche Zelebrant Heilige Druck'],
       ['runden.html', 'Runden', 'users', 'Gruppen Angebote Kreise Bibelrunde'],
       ['kontakt.html', 'Pfarrkanzlei & Kontakt', 'phone', 'Öffnungszeiten Telefon E-Mail Adresse Straße Kanzlei'],
       ['rundgang.html', 'Kirchenrundgang', 'image', 'Chronik Bilder Fotos Führung Geschichte'],
       ['pgr.html', 'Pfarrgemeinderat', 'users', 'PGR Mitglieder'],
-      ['predigten.html', 'Predigten und Ansprachen', 'quote', 'Predigt Ansprache Rede Text Foto Gottesdienst'],
+      ['predigten.html', 'Predigten & Ansprachen', 'quote', 'Predigt Ansprache Rede Text Foto Gottesdienst'],
       ['personen.html?bereich=kloster', 'Mitbrüder', 'user', 'Patres Brüder Kloster Konvent']
     ] },
     { label: 'Kirchenmusik', items: [
@@ -2138,28 +2160,28 @@
       ['repertoire.html', 'Repertoire', 'book', 'Komponisten Werke Messen Chor'],
       ['personen.html?bereich=musik', 'Leitung & Organisten', 'user', 'Dirigent Chorleiter Organist Orgel Gastdirigenten'],
       ['paten.html', 'Paten & Ehrenpaten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender'],
-      ['spenden.html', 'Spenden & Möglichkeiten', 'heart', 'Patenschaft Spenden PayPal Beträge Preise Förderer Stifter'],
+      ['spenden.html', 'Spendenmöglichkeiten', 'heart', 'Patenschaft Spenden PayPal Beträge Preise Förderer Stifter'],
       ['cds.html', 'CDs', 'disc', 'Aufnahmen Hörproben Cover'],
       ['galerie.html', 'Galerie', 'image', 'Fotos Videos YouTube Aufnahmen Alben MP3']
     ] },
     { label: 'Pfarre Aspersdorf', items: [
-      ['personen.html?bereich=aspersdorf', 'Leitung', 'user', 'Aspersdorf Pfarrmoderator Pfarrvikar Pfarrer Leitung'],
+      ['personen.html?bereich=aspersdorf', 'Pfarrer & Leitung', 'user', 'Aspersdorf Pfarrmoderator Pfarrvikar Pfarrer Leitung'],
       ['aspersdorf-gremien.html', 'Pfarrgemeinderat & Vermögensverwaltungsrat', 'users', 'Aspersdorf PGR Vermögensverwaltungsrat VWR Mitglieder Gremien'],
       ['aspersdorf-wochen.html', 'Wochenblätter (PDF)', 'calendarWeek', 'Aspersdorf Woche Gottesdienste Kalender PDF Pfarrblatt hochladen'],
       ['aspersdorf-friedhof.html', 'Friedhofsgebühren', 'book', 'Aspersdorf Friedhof Gebühren Gräber Tabellen Preise']
     ] },
     { label: 'Website', items: [
       ['startseite.html', 'Titelfotos', 'image', 'Startseite Fotos Vollbild Einstellungen'],
-      ['hinweise.html', 'Hinweisbanner', 'alert', 'Banner Hinweis Einstellungen'],
-      ['sprueche.html', 'Sprüche', 'quote', 'Zitate Einstellungen'],
-      ['design.html', 'Farben & Logo', 'palette', 'Design Thema Titelzeile Einstellungen'],
-      ['navigation.html', 'Menü & Leiste', 'menu', 'Navigation Seitenleiste Bereiche ausblenden einblenden Einstellungen'],
+      ['hinweise.html', 'Wichtiger Hinweis', 'alert', 'Hinweisbanner Banner Einstellungen'],
+      ['sprueche.html', 'Zitate', 'quote', 'Sprüche Einstellungen'],
+      ['design.html', 'Kopfzeile', 'palette', 'Farben Logo Name Design Thema Titelzeile Einstellungen'],
+      ['navigation.html', 'Menü der Website', 'menu', 'Navigation Seitenleiste Bereiche ausblenden einblenden Einstellungen'],
       ['rechtliches.html', 'Impressum & Datenschutz', 'shield', 'Rechtliches Einstellungen']
     ] },
     { label: 'Verwaltung', items: [
-      ['zugaenge.html', 'Zugänge', 'key', 'Benutzer Passwort Rollen Rechte'],
-      ['aenderungen.html', 'Änderungen', 'history', 'Protokoll Wer wann was'],
-      ['mitteilungen.html', 'Mitteilungen', 'info', 'Wartung Hinweis an alle']
+      ['zugaenge.html', 'Benutzer & Passwörter', 'key', 'Zugänge Benutzer Passwort Rollen Rechte'],
+      ['aenderungen.html', 'Protokoll', 'history', 'Änderungen Wer wann was'],
+      ['mitteilungen.html', 'Nachricht an alle', 'info', 'Mitteilungen Wartung Hinweis']
     ] }
   ];
   /* Nur das zeigen, was die angemeldete Person bearbeiten darf */
@@ -2993,7 +3015,7 @@
     noticeHTML, noticeActive, showNotices,
     listEditor, checkBlankRows, isBlankRow, toWebp, magicOk, checkVideo, wireDrop, log, recentLog, readProtocol, protocolError, PROTOCOL, missingInfo, NEWS_HEAD, NEWS_HOME, parseNews, newsOnHome, newsExpired, newsHidden,
     /* Datum */
-    isoToday, isoOf, fmtDate, fmtShort, initials
+    isoToday, isoOf, fmtDate, fmtShort, initials, endCheck, endsNextDay, wireNextDay
   };
 })(window, document);
 

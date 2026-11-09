@@ -58,12 +58,67 @@
     }).join('');
   }
 
+  /* Auftritt der Tafel "Naechstes Hochamt", sobald sie ins Bild kommt (css/style.css, "Auftritt"):
+     Rahmen zeichnet sich, der Tag zaehlt hoch, Titel mit Goldglanz, Vorschau gleitet von rechts herein.
+     Nicht bei "reduzierte Bewegung"; ohne IntersectionObserver steht die Tafel einfach da. */
+  function playNext(board, next, days) {
+    const day = next.dateObj.getDate();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    board.classList.add('nh-wait');
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((en) => en.isIntersecting)) return;
+      io.disconnect();
+      board.classList.add('nh-play');
+      /* Zahl laeuft in rund einer Sekunde von "von" nach "bis" (langsamer werdend) */
+      const zaehlen = (el, von, bis, fmt) => {
+        if (!el || von === bis) return;
+        const t0 = performance.now();
+        el.setAttribute('aria-hidden', 'true');
+        el.textContent = fmt(von);
+        const step = (t) => {
+          const k = Math.min(1, Math.max(0, (t - t0 - 350) / 1000));
+          el.textContent = fmt(Math.round(von + (bis - von) * (1 - Math.pow(1 - k, 3))));
+          if (k < 1) requestAnimationFrame(step);
+          else el.removeAttribute('aria-hidden');
+        };
+        requestAnimationFrame(step);
+      };
+      /* Tag zaehlt hoch, der Countdown "in … Tagen" zaehlt herunter */
+      zaehlen(qs('.nh-day', board), 1, day, HD.pad);
+      if (days > 1) zaehlen(qs('.nh-count', board), days + 30, days, String);
+      /* Die Uhrzeit zaehlt von 00:00 hoch (Monat und Wochentag bleiben ruhig) */
+      const hm = /^(\d{1,2}):(\d{2})$/.exec(String(next.time || '').trim());
+      if (hm) zaehlen(qs('.nh-time', board), 0, Number(hm[1]) * 60 + Number(hm[2]), (n) => `${HD.pad(Math.floor(n / 60))}:${HD.pad(n % 60)}`);
+    }, { threshold: 0.2 });
+    io.observe(board);
+  }
+
   /* Das naechste Hochamt gross, rechts die vier danach als Vorschau */
-  function renderNext(entries, boardEl) {
+  /* Ein Hochamt bleibt bis 2 Stunden nach Beginn "das naechste"; ohne lesbare Uhrzeit bis Mitternacht */
+  const NACH_BEGINN = 2 * 3600000;
+  function endOf(e) {
+    const hm = /^(\d{1,2})[:.](\d{2})/.exec(String(e.time || '').trim());
+    const d = new Date(e.dateObj);
+    if (hm) return d.getTime() + (Number(hm[1]) * 60 + Number(hm[2])) * 60000 + NACH_BEGINN;
+    d.setDate(d.getDate() + 1);
+    return d.getTime();
+  }
+  let nextTimer = 0;
+  function renderNext(all, boardEl) {
+    const jetzt = Date.now();
+    const entries = all.filter((e) => endOf(e) > jetzt);
     const next = entries[0];
-    if (!boardEl || !next) return;
+    if (!boardEl) return;
+    /* Bleibt die Seite offen: zur rechten Zeit auf das naechste Hochamt umschalten (hoechstens einen Tag voraus) */
+    clearTimeout(nextTimer);
+    if (next && endOf(next) - jetzt < 86400000) nextTimer = setTimeout(() => renderNext(all, boardEl), endOf(next) - jetzt + 1000);
+    if (!next) {
+      const sec = qs('#nh-section');
+      if (sec) sec.hidden = true;
+      return;
+    }
     const days = Math.round((next.dateObj - HD.today()) / 86400000);
-    const when = days <= 0 ? 'heute' : days === 1 ? 'morgen' : `in ${days} Tagen`;
+    const when = days <= 0 ? 'heute' : days === 1 ? 'morgen' : `in <span class="nh-count">${days}</span> Tagen`;
     const wd = next.dateObj.toLocaleDateString('de-AT', { weekday: 'long' });
     const who = [['Zelebrant', next.celebrant], ['Dirigent', next.conductor], ['Chor', next.choir], ['Orchester', next.orchestra], ['Organist', next.organist]].filter(([, v]) => v);
     const href = (e) => `hochamt.html?id=${encodeURIComponent(e.id)}`;
@@ -76,7 +131,7 @@
         `<p class="nh-kicker">Nächstes Hochamt, ${when}</p>` +
         '<div class="nh-date">' +
           `<span class="nh-day">${HD.pad(next.dateObj.getDate())}</span>` +
-          `<span class="nh-md"><b>${HD.MONTHS[next.dateObj.getMonth()]}</b><span>${HD.esc(wd)}, ${HD.esc(next.time)} Uhr</span></span>` +
+          `<span class="nh-md"><b class="nh-month">${HD.MONTHS[next.dateObj.getMonth()]}</b><span><span class="nh-wd">${HD.esc(wd)}</span>, <span class="nh-time">${HD.esc(next.time)}</span> Uhr</span></span>` +
         '</div>' +
         (next.piece && next.piece !== next.type
           ? `<p class="nh-type">${HD.esc(next.type)}</p><h3 class="nh-piece">${HD.esc(next.piece)}</h3>`
@@ -90,6 +145,7 @@
       '</div>';
     const section = qs('#nh-section');
     if (section) section.hidden = false;
+    playNext(boardEl, next, days);
     const more = qs('[data-nh-more]', boardEl);
     if (more) {
       more.addEventListener('click', (ev) => {

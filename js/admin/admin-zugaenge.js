@@ -59,7 +59,10 @@
     let n = 0;
     const box = (name, value, label, checked, group = '') =>
       `<label class="adm-check"><input type="checkbox" name="${name}" value="${esc(value)}"${group ? ` data-gruppe="${esc(group)}"` : ''}${n++ === 0 ? ' id="zg-recht-first"' : ''}${checked ? ' checked' : ''}/>${esc(label)}</label>`;
-    const groups = [...new Set(A.AREAS.map((a) => a.group))];
+    /* Gruppen in der Reihenfolge der Seitenleiste */
+    const ORDER = ['Aktuelles', 'Pfarre & Kloster', 'Kirchenmusik', 'Pfarre Aspersdorf', 'Website'];
+    const rank = (g) => (ORDER.includes(g) ? ORDER.indexOf(g) : ORDER.length);
+    const groups = [...new Set(A.AREAS.map((a) => a.group))].sort((a, b) => rank(a) - rank(b));
     const allRunden = sel.bereiche.has(A.RUNDEN_KEY);
     /* Je Gruppe ein Kaestchen fuer alle Bereiche darin (Kirchenmusik ganz statt jeden einzeln) */
     return groups.map((g) => {

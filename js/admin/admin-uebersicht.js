@@ -115,7 +115,7 @@
           addHref: 'neuigkeiten.html?neu=1', addLabel: 'Neue Meldung'
         }),
         can('termine') && row({
-          href: 'termine.html', ico: 'calendar', title: 'Termine',
+          href: 'termine.html', ico: 'calendar', title: 'Veranstaltungen',
           stat: tm ? plural(count(tm.termine), 'eigener Termin', 'eigene Termine') : none,
           addHref: 'termine.html?neu=1', addLabel: 'Neuer Termin'
         }),
@@ -127,7 +127,7 @@
       ]],
       ['Pfarre & Kloster', [
         can('gottesdienste') && row({
-          href: 'gottesdienste.html', ico: 'clock', title: 'Regelmäßige Termine',
+          href: 'gottesdienste.html', ico: 'clock', title: 'Gottesdienstzeiten',
           stat: gd ? plural(count(gd.termine), 'Termin pro Woche', 'Termine pro Woche') : none,
           addHref: 'gottesdienste.html?neu=1', addLabel: 'Neuer Termin'
         }),
@@ -160,7 +160,7 @@
           addHref: 'pgr.html?neu=1', addLabel: 'Neue Person'
         }),
         can('predigten') && row({
-          href: 'predigten.html', ico: 'quote', title: 'Predigten und Ansprachen',
+          href: 'predigten.html', ico: 'quote', title: 'Predigten &amp; Ansprachen',
           stat: pr ? plural(count(pr.predigten), 'Beitrag', 'Beiträge') : none,
           addHref: 'predigten.html?neu=1', addLabel: 'Neuer Beitrag'
         }),
@@ -192,7 +192,7 @@
           addHref: 'paten.html?neu=1', addLabel: 'Neuer Pate'
         }),
         can('paten') && row({
-          href: 'spenden.html', ico: 'heart', title: 'Spenden &amp; Möglichkeiten',
+          href: 'spenden.html', ico: 'heart', title: 'Spendenmöglichkeiten',
           stat: pt ? `${plural(count(pt.stufen), 'Möglichkeit', 'Möglichkeiten')}${pt.paypal ? ' · PayPal' : ''}` : none
         }),
         can('cds') && row({
@@ -208,7 +208,7 @@
       ]],
       ['Pfarre Aspersdorf', [
         can('asp-personen') && row({
-          href: 'personen.html?bereich=aspersdorf', ico: 'user', title: 'Leitung',
+          href: 'personen.html?bereich=aspersdorf', ico: 'user', title: 'Pfarrer &amp; Leitung',
           stat: ps ? plural(people(['asp-leitung']), 'Person', 'Personen') : none,
           addHref: 'personen.html?bereich=aspersdorf&neu=1', addLabel: 'Neue Person'
         }),
@@ -235,21 +235,21 @@
           addHref: 'startseite.html?neu=1', addLabel: 'Fotos hinzufügen'
         }),
         can('hinweise') && row({
-          href: 'hinweise.html', ico: 'alert', title: 'Hinweisbanner',
+          href: 'hinweise.html', ico: 'alert', title: 'Wichtiger Hinweis',
           stat: hw ? (live(hw.hinweise) ? `${plural(live(hw.hinweise), 'Hinweis', 'Hinweise')} sichtbar` : 'Gerade kein Hinweis sichtbar') : none,
           addHref: 'hinweise.html?neu=1', addLabel: 'Neuer Hinweis'
         }),
         can('sprueche') && row({
-          href: 'sprueche.html', ico: 'quote', title: 'Sprüche',
-          stat: sp ? plural(count(sp.sprueche), 'Spruch', 'Sprüche') : none,
+          href: 'sprueche.html', ico: 'quote', title: 'Zitate',
+          stat: sp ? plural(count(sp.sprueche), 'Zitat', 'Zitate') : none,
           addHref: 'sprueche.html', addLabel: 'Bearbeiten', addIcon: 'edit'
         }),
         can('design') && row({
-          href: 'design.html', ico: 'palette', title: 'Farben &amp; Logo',
+          href: 'design.html', ico: 'palette', title: 'Kopfzeile',
           stat: 'Titelzeile je Hauptseite', addHref: 'design.html', addLabel: 'Bearbeiten', addIcon: 'edit'
         }),
         can('navigation') && row({
-          href: 'navigation.html', ico: 'menu', title: 'Menü &amp; Leiste',
+          href: 'navigation.html', ico: 'menu', title: 'Menü der Website',
           stat: 'Bereiche in Leiste und Menü', addHref: 'navigation.html', addLabel: 'Bearbeiten', addIcon: 'edit'
         }),
         can('rechtliches') && row({
@@ -261,16 +261,16 @@
       ]],
       ['Verwaltung', [
         A.isAdmin() && row({
-          href: 'zugaenge.html', ico: 'key', title: 'Zugänge',
+          href: 'zugaenge.html', ico: 'key', title: 'Benutzer &amp; Passwörter',
           stat: acc ? plural(acc.length, 'Zugang', 'Zugänge') : none,
           addHref: 'zugaenge.html?neu=1', addLabel: 'Neuer Zugang'
         }),
         A.isDev() && row({
-          href: 'aenderungen.html', ico: 'history', title: 'Änderungen',
+          href: 'aenderungen.html', ico: 'history', title: 'Protokoll',
           stat: 'Wer hat wann was geändert', addHref: 'aenderungen.html', addLabel: 'Ansehen', addIcon: 'eye'
         }),
         A.isDev() && row({
-          href: 'mitteilungen.html', ico: 'info', title: 'Mitteilungen',
+          href: 'mitteilungen.html', ico: 'info', title: 'Nachricht an alle',
           stat: mt ? (live(mt.mitteilungen) ? `${plural(live(mt.mitteilungen), 'Mitteilung', 'Mitteilungen')} aktiv` : 'Gerade keine aktiv') : 'Gerade keine aktiv',
           addHref: 'mitteilungen.html?neu=1', addLabel: 'Neue Mitteilung'
         })

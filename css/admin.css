@@ -1350,3 +1350,13 @@ html{scroll-padding-top:1.5rem}
 .adm-zoom img{display:block;max-width:calc(100vw - 2rem);max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);width:auto;height:auto;object-fit:contain;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .adm-zoom-x{position:fixed;top:.8rem;right:.8rem;width:2.75rem;height:2.75rem;border:none;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:1.6rem;line-height:1;cursor:pointer}
 .adm-zoom-x:hover,.adm-zoom-x:focus-visible{background:rgba(255,255,255,.3)}
+
+/* Listen ohne Bild oder Datum links (z. B. Friedhofsgebuehren, Wochenblaetter): der Titel bekommt die ganze
+   Breite, statt in der schmalen Bildspalte umzubrechen */
+.adm-row-open:has(> .adm-row-body:first-child){grid-template-columns:minmax(0,1fr) auto}
+
+/* Hinweis neben dem Ende: der Termin endet erst nach Mitternacht */
+.adm-next-day{align-self:center;font-size:.85rem;font-weight:600;color:var(--gold-d,#8a6a1f);white-space:nowrap}
+.adm-next-day[hidden]{display:none}
+.adm-times{flex-wrap:wrap}
+.adm-times .adm-next-day{flex:1 0 100%;color:var(--gold-d,#8a6a1f);font-size:.85rem}

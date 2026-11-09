@@ -67,7 +67,7 @@
     if (!mine) {
       $('rd-list').innerHTML = all
         ? `<div class="adm-empty"><p class="adm-empty-title">Noch keine Runden</p><p>Lege die erste Runde an.</p><button type="button" class="btn btn-gold" data-act="new">${icon('plus')}Neue Runde</button></div>`
-        : '<div class="adm-empty"><p class="adm-empty-title">Keine Runde gefunden</p><p>Die Runden, für die du freigeschaltet bist, gibt es nicht mehr. Ein Admin kann das unter „Zugänge“ ändern.</p></div>';
+        : '<div class="adm-empty"><p class="adm-empty-title">Keine Runde gefunden</p><p>Die Runden, für die du freigeschaltet bist, gibt es nicht mehr. Ein Admin kann das unter „Benutzer & Passwörter“ ändern.</p></div>';
       return;
     }
     $('rd-list').innerHTML = '<ul class="adm-rows">' + runden.map((r, i) => {

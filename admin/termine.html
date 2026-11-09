@@ -11,7 +11,7 @@
 <link rel="icon" href="../favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
-<title>Termine — Verwaltung Augustinerkirche Wien</title>
+<title>Veranstaltungen — Verwaltung Augustinerkirche Wien</title>
 <link rel="stylesheet" href="../css/style.css"/>
 <link rel="stylesheet" href="../css/admin.css"/>
 <script src="../js/hochaemter-data.js"></script>
@@ -26,7 +26,7 @@
   <div class="adm-head-in">
     <div>
       <div class="ph-tag">Verwaltung</div>
-      <h1 class="ph-title">Termine <em>pflegen</em></h1>
+      <h1 class="ph-title">Veranstaltungen <em>pflegen</em></h1>
       <p class="ph-sub">Ausflüge, Feste, Vorträge und andere Termine für den <a href="../pages/kalender.html" target="_blank" rel="noopener">Kalender</a>. Hochämter und Konzerte kommen automatisch aus Kirchenmusik → Hochämter, die Termine der Runden aus Pfarre &amp; Kloster → Runden.</p>
     </div>
     <div class="adm-head-actions">
@@ -80,8 +80,9 @@
           <span class="adm-hint" id="f-time-hint">Leer lassen, wenn es keine feste Uhrzeit gibt.</span>
         </div>
         <div class="adm-field">
-          <label class="adm-label" for="f-end">Ende</label>
-          <input class="adm-input" type="time" id="f-end"/>
+          <label class="adm-label" for="f-end">Ende <span class="adm-opt">vor dem Beginn = am nächsten Tag</span></label>
+          <input class="adm-input" type="time" id="f-end" aria-describedby="f-end-next"/>
+          <span class="adm-next-day" id="f-end-next" hidden>endet am nächsten Tag</span>
         </div>
         <div class="adm-field full" role="group" aria-labelledby="f-more-l">
           <span class="adm-label" id="f-more-l">Weitere Tage <span class="adm-opt">derselbe Termin an anderen Tagen, z. B. jede Firmvorbereitung</span></span>

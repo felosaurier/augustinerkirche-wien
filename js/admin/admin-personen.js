@@ -25,7 +25,7 @@
   const AREAS = {
     kloster: { groups: ['mitbrueder'], title: 'Mitbrüder <em>pflegen</em>',
       sub: 'Die Mitbrüder des Wiener Augustinerklosters, wie sie unter Chronik → Die Augustiner in Wien erscheinen.' },
-    aspersdorf: { groups: ['asp-leitung'], title: 'Leitung Aspersdorf <em>pflegen</em>',
+    aspersdorf: { groups: ['asp-leitung'], title: 'Pfarrer & Leitung <em>Aspersdorf</em>',
       sub: 'Pfarrmoderator, Pfarrvikar und weitere Verantwortliche der Pfarre Aspersdorf, wie sie unter Pfarre Aspersdorf → Leitung erscheinen.' },
     musik: { groups: ['leitung', 'gastdirigenten', 'organisten'], title: 'Leitung &amp; Organisten <em>pflegen</em>',
       sub: 'Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto und Text. Die Solisten haben einen eigenen Bereich.' }

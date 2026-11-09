@@ -24,7 +24,7 @@
       d = await A.readJSON(PATH);
     } catch (e) {
       if (!(e && (e.status === 404 || e.name === 'NotFoundError'))) {
-        A.toast(`Die Sprüche konnten nicht geladen werden (${e.message}).`, 'err');
+        A.toast(`Die Zitate konnten nicht geladen werden (${e.message}).`, 'err');
         return;
       }
     }
@@ -45,7 +45,7 @@
     const inputs = Array.from(form.querySelectorAll('#sp-list .adm-list-row'));
     const errors = [];
     rows.forEach((r, i) => {
-      if (!clean(r.text) && clean(r.quelle)) errors.push([inputs[i].querySelector('[data-key="text"]'), 'Bitte den Spruch eintragen oder die Zeile entfernen.']);
+      if (!clean(r.text) && clean(r.quelle)) errors.push([inputs[i].querySelector('[data-key="text"]'), 'Bitte das Zitat eintragen oder die Zeile entfernen.']);
     });
     if (errors.length) {
       A.showErrors(form, errors);
@@ -63,8 +63,8 @@
       snap = A.snapshot(form);
       $('sp-state').textContent = direct ? 'Gespeichert.' : 'Übernommen, bitte unten herunterladen.';
       $('sp-state').classList.toggle('is-dirty', $('sp-state').textContent === 'Noch nicht gespeichert');
-      A.toast(direct ? `${next.sprueche.length === 1 ? 'Ein Spruch' : `${next.sprueche.length} Sprüche`} gespeichert.` : 'Übernommen. Bitte unten die Datei herunterladen.');
-      A.log('Sprüche geändert');
+      A.toast(direct ? `${next.sprueche.length === 1 ? 'Ein Zitat' : `${next.sprueche.length} Zitate`} gespeichert.` : 'Übernommen. Bitte unten die Datei herunterladen.');
+      A.log('Zitate geändert');
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
     } finally {
@@ -75,10 +75,10 @@
   A.start(async () => {
     list = A.listEditor($('sp-list'), {
       fields: [
-        { key: 'text', label: 'Spruch', placeholder: 'z. B. Wer singt, betet doppelt.' },
+        { key: 'text', label: 'Zitat', placeholder: 'z. B. Wer singt, betet doppelt.' },
         { key: 'quelle', label: 'Quelle', placeholder: 'z. B. Hl. Augustinus, Predigt 336' }
       ],
-      addLabel: 'Weiterer Spruch', rowLabel: 'Spruch'
+      addLabel: 'Weiteres Zitat', rowLabel: 'Zitat'
     });
     $('sp-form').addEventListener('submit', save);
     $('sp-form').addEventListener('input', () => {

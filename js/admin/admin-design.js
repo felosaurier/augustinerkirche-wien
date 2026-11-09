@@ -130,7 +130,7 @@
       snap = JSON.stringify(data);
       state();
       A.toast(direct ? `Gespeichert: ${changed.join(', ')}.` : 'Übernommen. Bitte unten die Datei herunterladen.');
-      A.log(`Farben & Logo geändert: ${changed.join(', ')}`);
+      A.log(`Kopfzeile geändert: ${changed.join(', ')}`);
     } catch (err) {
       A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
     } finally {

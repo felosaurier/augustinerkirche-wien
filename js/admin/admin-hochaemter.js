@@ -687,6 +687,7 @@
     F('note').value = split.note;
     F('end').value = entry.end !== undefined ? entry.end : split.end;
     lastTime = F('time').value;
+    if (nextDayHint) nextDayHint();
     F('extra').value = HD.list(entry.extra).join('\n');
     const solo = HD.list(entry.soloists).map(splitSoloist);
     soloists.set(solo.length ? solo : [{}]);
@@ -718,12 +719,14 @@
 
   /* Beginn verschoben: Ende rueckt um gleich viel mit (Dauer bleibt) */
   let lastTime = '';
+  let nextDayHint = null;
   function shiftEnd() {
     const now = HD.isoTime(F('time').value);
     const before = HD.isoTime(lastTime);
     const end = HD.isoTime(F('end').value);
     if (now && before && end) F('end').value = hhmm(minutes(end) + minutes(now) - minutes(before) + 24 * 60);
     if (now) lastTime = now;
+    if (nextDayHint) nextDayHint();
   }
 
   /* Kopie eine Woche spaeter (bzw. die naechste freie Woche) */
@@ -773,7 +776,8 @@
     if (!HD.isoDate(e.date)) errors.push([F('date'), 'Bitte ein Datum wählen.']);
     if (!e.piece) errors.push([F('piece'), 'Bitte das Werk eintragen. Es erscheint als Titel.']);
     const end = HD.isoTime(F('end').value);
-    if (end && minutes(end) <= minutes(e.time)) errors.push([F('end'), 'Das Ende muss nach dem Beginn liegen.']);
+    const endErr = A.endCheck(HD.isoTime(e.time), end);
+    if (endErr) errors.push([F('end'), endErr]);
     const clash = e.date && entries.find((x, i) => i !== editIndex && keyOf(x) === keyOf(e));
     if (clash) {
       errors.push([F('time'), `Am ${A.fmtShort(e.date)} um ${e.time} Uhr gibt es schon einen Termin („${clash.piece || clash.type}“). Bitte eine andere Uhrzeit wählen.`]);
@@ -969,6 +973,7 @@
     F('date').setAttribute('aria-describedby', 'f-date-day');
     F('date').addEventListener('input', updateDay);
     F('time').addEventListener('change', shiftEnd);
+    nextDayHint = A.wireNextDay(F('time'), F('end'), $('f-end-next'));
 
     $('ha-new').addEventListener('click', openNew);
     $('ha-form').addEventListener('submit', save);

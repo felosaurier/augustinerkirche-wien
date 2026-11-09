@@ -22,7 +22,11 @@
   /* Zeitstempel fuer datetime=""; '' bei ungueltigem Datum (toISOString wuerde werfen) */
   const isoOrEmpty = (t) => { const d = new Date(t); return Number.isNaN(d.getTime()) ? '' : d.toISOString(); };
   const arr = (v) => (Array.isArray(v) ? v : []);
-  const areasOf = (e) => (arr(e.bereiche).length ? e.bereiche : ['–']);
+  /* Fruehere Namen der Bereiche (bis November 2026): alte Eintraege erscheinen unter dem heutigen Namen */
+  const ALT = { 'Termine': 'Veranstaltungen', 'Regelmäßige Termine': 'Gottesdienstzeiten', 'Hinweisbanner': 'Wichtiger Hinweis', 'Sprüche': 'Zitate',
+    'Farben & Logo': 'Kopfzeile', 'Menü & Leiste': 'Menü der Website', 'Zugänge': 'Benutzer & Passwörter', 'Mitteilungen': 'Nachricht an alle',
+    'Predigten und Ansprachen': 'Predigten & Ansprachen' };
+  const areasOf = (e) => (arr(e.bereiche).length ? [...new Set(e.bereiche.map((b) => ALT[b] || b))] : ['–']);
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
   async function load() {
