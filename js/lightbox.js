@@ -6,7 +6,10 @@
    Galerie: Links mit demselben data-gallery (z. B. die Fotos eines Berichts)
    lassen sich durchblaettern (Pfeile, Pfeiltasten, Wischen am Handy); darunter
    stehen Zaehler, Bildunterschrift (data-caption) und Bildnachweis, ganz unten
-   eine Leiste mit allen Fotos der Galerie zum Antippen.
+   eine Leiste mit allen Fotos der Galerie zum Antippen (mit den kleinen Vorschaubildern,
+   data-thumb oder das Bild im Link). Die Grossfassung wird erst beim Oeffnen geladen; bis
+   sie da ist, steht das Vorschaubild. Naechstes und voriges Foto werden schon vorgeladen.
+   Tasten: Pfeile, Pos1/Ende, Escape.
    Ohne JavaScript oeffnet der Link das Bild einfach in einem neuen Tab.
    ============================================================ */
 (function () {
@@ -55,6 +58,8 @@
       if (gallery.length < 2) return;
       if (ev.key === 'ArrowLeft') step(-1);
       else if (ev.key === 'ArrowRight') step(1);
+      else if (ev.key === 'Home') go(0);
+      else if (ev.key === 'End') go(gallery.length - 1);
       else return;
       ev.preventDefault();
     });
@@ -89,14 +94,47 @@
     if (box && box.open) box.close();
   }
 
-  /* Bild der Galerie zeigen (bzw. das einzelne Bild) samt Zaehler und Unterschrift */
-  function show(src, alt, caption) {
+  /* Vorschaubild zu einem Link der Galerie (klein, schon geladen) */
+  const thumbOf = (a) => a.dataset.thumb || ((a.querySelector('img') || {}).currentSrc) || ((a.querySelector('img') || {}).src) || a.href;
+  /* Grossfassungen der Nachbarn schon laden, damit das Blaettern sofort wirkt */
+  const preloaded = new Set();
+  function preload(i) {
+    const a = gallery[(i + gallery.length) % gallery.length];
+    if (!a || preloaded.has(a.href)) return;
+    preloaded.add(a.href);
+    const im = new Image();
+    im.decoding = 'async';
+    im.src = a.href;
+  }
+  let showing = 0;
+  /* Bild der Galerie zeigen (bzw. das einzelne Bild) samt Zaehler und Unterschrift;
+     thumb: kleines Bild, das sofort steht, bis die Grossfassung geladen ist */
+  function show(src, alt, caption, thumb, creditText) {
     img.alt = alt || '';
-    img.src = src;
+    const ticket = ++showing;
+    if (thumb && thumb !== src) {
+      img.src = thumb;
+      box.classList.add('lb-loading');
+      const full = new Image();
+      full.decoding = 'async';
+      full.onload = full.onerror = () => {
+        if (ticket !== showing) return;
+        img.src = src;
+        box.classList.remove('lb-loading');
+      };
+      full.src = src;
+    } else {
+      box.classList.remove('lb-loading');
+      img.src = src;
+    }
+    if (gallery.length > 1) {
+      preload(index + 1);
+      preload(index - 1);
+    }
     const many = gallery.length > 1;
     box.querySelector('.lb-prev').hidden = !many;
     box.querySelector('.lb-next').hidden = !many;
-    const credit = window.AugCredit ? window.AugCredit(src) : '';
+    const credit = creditText || (window.AugCredit ? window.AugCredit(src) : '');
     const parts = [many ? `${index + 1} / ${gallery.length}` : '', caption || '', credit || ''].filter(Boolean);
     cap.textContent = parts.join(' · ');
     cap.hidden = !parts.length;
@@ -124,7 +162,7 @@
       b.dataset.i = String(i);
       b.setAttribute('aria-label', `Foto ${i + 1} von ${gallery.length}`);
       const t = document.createElement('img');
-      t.src = a.href;
+      t.src = thumbOf(a);
       t.alt = '';
       t.loading = 'lazy';
       t.decoding = 'async';
@@ -137,18 +175,18 @@
     index = (i + gallery.length) % gallery.length;
     const a = gallery[index];
     const pic = a.querySelector('img');
-    show(a.href, (pic && pic.alt) || '', a.dataset.caption || '');
+    show(a.href, (pic && pic.alt) || '', a.dataset.caption || '', thumbOf(a), a.dataset.credit || (pic && pic.dataset.credit) || '');
   }
   function step(dir) {
     if (gallery.length < 2) return;
     go(index + dir);
   }
 
-  function open(src, alt, trigger, caption) {
+  function open(src, alt, trigger, caption, thumb, credit) {
     if (!box) build();
     lastTrigger = trigger || null;
     buildStrip();
-    show(src, alt, caption);
+    show(src, alt, caption, thumb, credit);
     document.documentElement.classList.add('nd-lock');
     if (!box.open) box.showModal();
   }
@@ -169,15 +207,18 @@
       const pic = a.querySelector('img');
       const name = a.dataset.gallery;
       const scope = a.closest('dialog,main') || document;
-      gallery = name ? [...scope.querySelectorAll('a[data-lightbox][data-gallery]')].filter((x) => x.dataset.gallery === name) : [];
-      index = Math.max(0, gallery.indexOf(a));
-      open(a.href, (pic && pic.alt) || a.getAttribute('title') || '', a, a.dataset.caption || '');
+      /* Dasselbe Foto kann zweimal auf der Seite stehen (z. B. Spalte und Fotogitter): nur einmal zaehlen */
+      const seen = new Set();
+      gallery = name ? [...scope.querySelectorAll('a[data-lightbox][data-gallery]')]
+        .filter((x) => x.dataset.gallery === name && !seen.has(x.href) && seen.add(x.href)) : [];
+      index = Math.max(0, gallery.findIndex((x) => x.href === a.href));
+      open(a.href, (pic && pic.alt) || a.getAttribute('title') || '', a, a.dataset.caption || '', name ? thumbOf(a) : '', a.dataset.credit || (pic && pic.dataset.credit) || '');
       return;
     }
     const img = ev.target.closest('img');
     if (zoomable(img)) {
       gallery = [];
-      open(img.currentSrc || img.src, img.alt, img);
+      open(img.currentSrc || img.src, img.alt, img, '', '', img.dataset.credit || '');
     }
   });
 })();

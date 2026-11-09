@@ -35,6 +35,8 @@
   let uid = 0;
   const nextUid = () => `u${++uid}`;
 
+  let savedImages = [];   /* Bilder des gespeicherten Stands: was davon fehlt, wird beim Speichern geloescht */
+  const imagesOf = (list) => list.flatMap((s) => (s.bloecke || []).filter((b) => b && b.art === 'bild' && b.bild).map((b) => b.bild));
   let secs = [];          /* Abschnitte; Bausteine mit _uid, neue Bilder mit _blob/_url */
   let fest = new Map();   /* Abschnitt-ID -> [{nr, name, vorschau}] feste Bausteine aus dem HTML */
   let fromHtml = false;
@@ -233,6 +235,7 @@
     }
     fromHtml = !saved;
     secs = withUids(saved || fromPage);
+    savedImages = imagesOf(secs);
     $('sx-note').innerHTML = fromHtml
       ? `<div class="adm-alert">${icon('info')}<div>Diese Seite wurde hier noch nie gespeichert. Angezeigt wird der jetzige Stand der Website. Erst nach dem Speichern kommt die Seite aus der Verwaltung.</div></div>`
       : '';
@@ -402,7 +405,7 @@
       case 'sec-del': {
         const ok = await A.confirmBox({
           title: 'Abschnitt entfernen?',
-          html: `<strong>${esc(secs[i].titel || 'Neuer Abschnitt')}</strong><br><br>Der Abschnitt verschwindet nach dem Speichern von der Seite ${esc(SEITE.name)}. Bilder bleiben im Ordner erhalten.`,
+          html: `<strong>${esc(secs[i].titel || 'Neuer Abschnitt')}</strong><br><br>Der Abschnitt verschwindet nach dem Speichern von der Seite ${esc(SEITE.name)}. Hier hochgeladene Bilder des Abschnitts werden dann mitgelöscht, sofern sie nicht noch anderswo verwendet werden.`,
           ok: 'Entfernen', danger: true
         });
         if (!ok) return;
@@ -495,6 +498,11 @@
         }
       }
       if (Object.keys(credits).length) await A.credits.save(credits);
+      /* Entfernte oder ersetzte Bilder wirklich loeschen (nur eigene, hier hochgeladene: assets/img/<seite>/) */
+      const nowImgs = imagesOf(secs);
+      const gone = savedImages.filter((x) => !nowImgs.includes(x) && x.startsWith(IMG_DIR));
+      savedImages = nowImgs;
+      if (gone.length) await A.media.remove(gone);
       fromHtml = false;
       $('sx-note').innerHTML = '';
       render();

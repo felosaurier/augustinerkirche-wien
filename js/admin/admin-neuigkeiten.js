@@ -5,15 +5,14 @@
    samt Plakat oder Foto:
    - Bild per Ziehen und Ablegen oder Auswahl; WebP bleibt, andere
      Formate werden in voller Groesse in WebP umgewandelt
-   - das Bild kommt in den Jahresordner assets/img/news/JAHR/
+   - jede Meldung hat einen eigenen Ordner assets/img/news/JAHR/<Kennung>/ fuer Bild und
+     Fotos (Videos: assets/video/news/JAHR/<Kennung>/); was entfernt oder ersetzt wird und
+     nirgends mehr vorkommt, wird beim Speichern wirklich geloescht, samt leerem Ordner
    - Vorschau der Karte, wie sie auf der Startseite erscheint
-   - Fotos als Bildergalerie im Fenster der Meldung (data/news-fotos.json,
-     Kennung der Meldung -> [{bild, alt, breite, hoehe}]): bei der Kategorie
-     "Bericht" bis zu 30, sonst bis zu 5; jede Meldung bekommt dafuer einen
-     eigenen Ordner assets/img/news/JAHR/<Datum>-<Titel>/ (foto-1.webp …).
-     Ohne eigenes Bild zeigt die Karte das erste Foto.
-   - Videos (MP4/WebM) in data/news-videos.json, Kennung -> [{datei, titel}],
-     Dateien in assets/video/news/JAHR/; erscheinen unter der Galerie
+   - Fotos als Bildergalerie (bei "Bericht" bis zu 30, sonst bis zu 5) und Videos (MP4/WebM):
+     Uebersicht data/neuigkeiten/index.json, je Meldung data/neuigkeiten/<Kennung>.json mit
+     Beschreibung und Bildnachweis je Foto. Ohne eigenes Bild zeigt die Karte das erste Foto.
+   - Bildnachweis des Bildes (Plakat/Foto der Karte) in der Spalte "Bildnachweis" der Tabelle
    - Schaltflaeche im Fenster: Ziel aus Listen waehlen (Hochamt oder
      Konzert, Runde, Seite der Website, andere Website) statt Adresse;
      liegt am Enddatum ein Termin, wird er zum Verknuepfen vorgeschlagen
@@ -36,14 +35,29 @@
   let snap = '';
   let infos = null;
 
-  /* Bildergalerie der Meldung */
-  const PHOTOS_PATH = 'data/news-fotos.json';
+  /* Bildergalerie und Videos der Meldung (Aufbau siehe "Fenster: Fotos" unten) */
+  const INDEX_PATH = 'data/neuigkeiten/index.json';
+  const DETAIL_DIR = 'data/neuigkeiten/';
+  const LEGACY_PHOTOS = 'data/news-fotos.json';
+  const LEGACY_VIDEOS = 'data/news-videos.json';
   const MAX_REPORT = 30;   /* Kategorie "Bericht" */
   const MAX_PHOTOS = 5;    /* alle anderen Meldungen */
-  let photoMap = {};       /* Kennung der Meldung -> Liste der Fotos */
-  let photos = [];         /* Fotos im Fenster {key, path, url, ext, w, h, alt, credit, fresh} */
+  let newsIndex = {};      /* Kennung -> {fotos, videos, titelbild} */
+  let legacy = null;       /* alte Sammeldateien, solange nicht uebernommen */
+  let indexBroken = false;
+  let detailBroken = false;
+  let photos = [];         /* Fotos im Fenster {key, path, thumb, url, ext, w, h, alt, credit, fresh} */
+  let vids = [];           /* Videos im Fenster {key, path, titel, file}; file nur bei neu gewaehlten */
+  let savedDetail = { fotos: [], videos: [] };
+  let removedMedia = [];   /* Dateien (Fotos, Videos, Bild), die beim Speichern geloescht werden */
+  let photosLoading = false;
+  let photosReady = Promise.resolve();
+  let uploading = Promise.resolve();
+  let mediaChain = Promise.resolve();
+  let dialogToken = 0;
   let photoSeq = 0;
-  let photoDir = '';       /* Ordner der Fotos dieser Meldung */
+  let vidSeq = 0;
+  let photoDir = '';       /* eigener Ordner dieser Meldung */
 
   /* | trennt in der Tabelle mehrere Eintraege einer Zelle */
   const clean = (s) => String(s || '').replace(/\|/g, '/').replace(/\s+/g, ' ').trim();
@@ -293,8 +307,8 @@
     return expired ? 'expired' : 'archive';
   }
   function rowHTML(e, i, home, searching) {
-    const gallery = photoMap[newsId(e)] || [];
-    const src = A.imageUrl(imgOf(e) || (gallery[0] && gallery[0].bild));
+    const info = newsIndex[newsId(e)];
+    const src = A.imageUrl(imgOf(e) || (info && info.titelbild));
     const thumb = src
       ? `<span class="adm-thumb${e.Plakat ? '' : ' photo'}"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"/></span>`
       : '<span class="adm-thumb none"><img src="../assets/logo-gold.png" alt=""/></span>';
@@ -315,7 +329,8 @@
           `<span class="adm-row-people">${esc(e.Kurztext)}</span>` +
           '<span class="adm-chips">' +
           (src ? '' : `<span class="adm-chip">${icon('image')}Ohne Bild: die Karte zeigt das Logo</span>`) +
-          (gallery.length ? `<span class="adm-chip">${icon('image')}${plural(gallery.length, 'Foto', 'Fotos')} in der Galerie</span>` : '') +
+          (info && info.fotos ? `<span class="adm-chip">${icon('image')}${plural(info.fotos, 'Foto', 'Fotos')} in der Galerie</span>` : '') +
+          (info && info.videos ? `<span class="adm-chip">${plural(info.videos, 'Video', 'Videos')}</span>` : '') +
           (e.Seiten ? `<span class="adm-chip">Nur auf: ${esc(HD.newsPages(e.Seiten).map((k) => HD.NEWS_PAGES.find(([x]) => x === k)[1]).join(', '))}</span>` : '') +
           '</span>' +
         `</span>${badge}` +
@@ -447,34 +462,76 @@
     renderPreview();
   }
 
-  /* ---------- Fenster: Fotos (Bildergalerie) ---------- */
+  /* ---------- Fenster: Fotos (Bildergalerie) und Videos ----------
+     Geteilte Ablage (tools/daten-teilen.py):
+       data/neuigkeiten/index.json      {meldungen: {Kennung: {fotos, videos, titelbild}}}  (fuer Karten und Listen)
+       data/neuigkeiten/<Kennung>.json  {kennung, fotos: [{bild, vorschau, alt, nachweis, breite, hoehe}],
+                                         videos: [{datei, titel}]}  (erst beim Oeffnen der Meldung)
+     Jede Meldung hat einen eigenen Ordner assets/img/news/JAHR/<Kennung>/ (Plakat, Fotos foto-N.webp mit
+     Vorschau foto-N-v.webp) und fuer Videos assets/video/news/JAHR/<Kennung>/. Entfernte Dateien
+     verschwinden beim Speichern, eine geloeschte Meldung nimmt alles mit (Admin.media.remove).
+     Gibt es nur die alten Sammeldateien (data/news-fotos.json, data/news-videos.json), werden sie
+     beim ersten Speichern uebernommen und danach entfernt. */
   const isReport = () => $('f-report').checked;
   const photoLimit = () => (isReport() ? MAX_REPORT : MAX_PHOTOS);
   const notFound = (e) => !!e && (e.status === 404 || e.name === 'NotFoundError');
+  const detailPath = (id) => `${DETAIL_DIR}${id}.json`;
+  const OWN_DIR = /^assets\/(img|video)\/news\/\d{4}\/\d{4}-\d{2}-\d{2}-[a-z0-9-]+\/$/;
 
-  async function loadPhotos() {
+  async function loadIndex() {
+    indexBroken = false;
     try {
-      photoMap = (await A.readJSON(PHOTOS_PATH)).bilder || {};
+      newsIndex = (await A.readJSON(INDEX_PATH)).meldungen || {};
+      legacy = null;
+      return;
     } catch (e) {
-      photoMap = {};
-      if (!notFound(e)) A.toast('Die Fotos der Neuigkeiten konnten nicht geladen werden.', 'err');
+      newsIndex = {};
+      if (!notFound(e)) {
+        indexBroken = true;
+        A.toast('Die Übersicht der Fotos und Videos konnte nicht geladen werden. Fotos lassen sich erst nach dem Neuladen wieder speichern.', 'err');
+        return;
+      }
+    }
+    /* Noch die alten Sammeldateien? */
+    legacy = { fotos: {}, videos: {} };
+    try { legacy.fotos = (await A.readJSON(LEGACY_PHOTOS)).bilder || {}; } catch (e) { if (!notFound(e)) indexBroken = true; }
+    try { legacy.videos = (await A.readJSON(LEGACY_VIDEOS)).videos || {}; } catch (e) { if (!notFound(e)) indexBroken = true; }
+    for (const id of new Set([...Object.keys(legacy.fotos), ...Object.keys(legacy.videos)])) {
+      const f = legacy.fotos[id] || [];
+      const v = legacy.videos[id] || [];
+      if (f.length || v.length) newsIndex[id] = { fotos: f.length, videos: v.length, titelbild: f[0] ? (f[0].vorschau || f[0].bild) : '' };
+    }
+  }
+  /* Fotos und Videos einer Meldung */
+  async function loadDetail(id) {
+    if (!id) return { fotos: [], videos: [] };
+    if (legacy) return { fotos: (legacy.fotos[id] || []).slice(), videos: (legacy.videos[id] || []).map((v) => ({ datei: v.datei, titel: v.titel })) };
+    if (!newsIndex[id]) return { fotos: [], videos: [] };
+    try {
+      const d = await A.readJSON(detailPath(id));
+      return { fotos: d.fotos || [], videos: d.videos || [] };
+    } catch (e) {
+      if (notFound(e)) return { fotos: [], videos: [] };
+      throw e;
     }
   }
   function renderPhotos() {
     const limit = photoLimit();
-    $('nv-photos').innerHTML = photos.map((p, i) =>
+    $('nv-photos').innerHTML = photosLoading ? `<p class="adm-hint">${icon('image')} Fotos werden geladen …</p>` : photos.map((p, i) =>
       `<div class="adm-ph" data-k="${p.key}">` +
-        `<span class="adm-thumb" data-ph-grip title="Zum Verschieben ziehen" style="cursor:grab"><img src="${esc(p.url)}" alt=""/></span>` +
+        `<span class="adm-thumb photo" data-ph-grip title="Zum Verschieben ziehen" style="cursor:grab"><img src="${esc(p.url)}" alt="" loading="lazy" decoding="async"/></span>` +
         '<div class="adm-ph-fields">' +
           `<label class="adm-label" for="ph-alt-${p.key}">Beschreibung <span class="adm-opt">${i === 0 ? 'erstes Foto, ' : ''}steht unter dem Foto</span></label>` +
-          `<input class="adm-input" type="text" id="ph-alt-${p.key}" data-ph="alt" value="${esc(p.alt)}" placeholder="z. B. Gemeinsames Mittagessen im Klostergarten"/>` +
+          `<input class="adm-input" type="text" id="ph-alt-${p.key}" data-ph="alt" value="${esc(p.alt)}" maxlength="200" placeholder="z. B. Gemeinsames Mittagessen im Klostergarten"/>` +
           `<label class="adm-label" for="ph-cr-${p.key}">Bildnachweis</label>` +
-          `<input class="adm-input" type="text" id="ph-cr-${p.key}" data-ph="credit" value="${esc(p.credit)}" placeholder="z. B. © Augustiner Wien, Foto: Max Muster"/>` +
+          `<input class="adm-input" type="text" id="ph-cr-${p.key}" data-ph="credit" value="${esc(p.credit)}" maxlength="200" placeholder="z. B. © Augustiner Wien, Foto: Max Muster"/>` +
+          (i === 0 && photos.length > 1 ? '<button type="button" class="adm-act adm-ph-credit-all" data-ph-credit-all>Diesen Bildnachweis für alle Fotos übernehmen</button>' : '') +
         '</div>' +
         '<div class="adm-ph-act">' +
-          `<button type="button" class="adm-act icon" data-ph-act="up" aria-label="Nach vorne"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
-          `<button type="button" class="adm-act icon" data-ph-act="down" aria-label="Nach hinten"${i === photos.length - 1 ? ' disabled' : ''}>${icon('down')}</button>` +
-          `<button type="button" class="adm-act icon danger" data-ph-act="del" aria-label="Foto entfernen">${icon('trash')}</button>` +
+          `<span class="adm-ph-no" aria-hidden="true">${i + 1}</span>` +
+          `<button type="button" class="adm-act icon" data-ph-act="up" aria-label="Foto ${i + 1} nach vorne"${i === 0 ? ' disabled' : ''}>${icon('up')}</button>` +
+          `<button type="button" class="adm-act icon" data-ph-act="down" aria-label="Foto ${i + 1} nach hinten"${i === photos.length - 1 ? ' disabled' : ''}>${icon('down')}</button>` +
+          `<button type="button" class="adm-act icon danger" data-ph-act="del" aria-label="Foto ${i + 1} entfernen">${icon('trash')}</button>` +
         '</div></div>'
     ).join('');
     const over = photos.length > limit;
@@ -482,25 +539,61 @@
     count.textContent = `${plural(photos.length, 'Foto', 'Fotos')} von höchstens ${limit}` +
       (over ? `: bitte ${photos.length - limit} entfernen oder „Als Bericht kennzeichnen“ ankreuzen` : '');
     count.classList.toggle('over', over);
-    $('nv-photo-drop').hidden = photos.length >= limit;
+    $('nv-photo-drop').hidden = photosLoading || photos.length >= limit;
   }
-  /* Ordner der Fotos: bei vorhandenen Fotos deren Ordner, sonst nach Datum und Titel */
+  /* Eigener Ordner der Meldung: schon vorhandene Fotos, Videos oder Plakat geben ihn vor,
+     sonst neu nach Datum und Titel (assets/img/news/JAHR/<Kennung>/) */
   function folderFor() {
     if (photoDir) return photoDir;
+    const known = [...photos.map((p) => p.path), ...vids.map((v) => v.path.replace(/^assets\/video\//, 'assets/img/')), (!removeImage && current) || '']
+      .map((p) => A.dirName(p)).find((d) => OWN_DIR.test(d) && d.startsWith('assets/img/'));
+    if (known) {
+      photoDir = known;
+      return photoDir;
+    }
     const iso = HD.isoDate($('f-date').value) || A.isoToday();
     photoDir = `assets/img/news/${iso.slice(0, 4)}/${iso}-${HD.slug($('f-title').value, 50) || 'meldung'}/`;
     return photoDir;
   }
-  /* Freier Name im Ordner: foto-1.webp, foto-2.webp … */
+  const videoFolder = () => folderFor().replace(/^assets\/img\//, 'assets/video/');
+  const thumbOf = (path) => path.replace(/\.(webp|jpe?g|png)$/i, '-v.webp');
+  /* Freier Name im Ordner: foto-1.webp, foto-2.webp … (auch gegenueber entfernten, noch nicht geloeschten) */
   async function freePhotoPath(dir, ext) {
-    const taken = new Set(photos.map((p) => p.path));
+    const taken = new Set([...photos.map((p) => p.path), ...removedMedia]);
     for (let n = 1; ; n++) {
       const path = `${dir}foto-${n}.${ext}`;
       if (!taken.has(path) && !(A.folder.state === 'ok' && await A.folder.exists(path))) return path;
     }
   }
-  async function addPhotos(files) {
+  /* Vorschau (laengste Seite 640 px); null, wenn der Browser kein WebP erzeugen kann */
+  async function makeThumb(blob) {
+    const bmp = await createImageBitmap(blob);
+    const scale = Math.min(1, 640 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(bmp.width * scale));
+    c.height = Math.max(1, Math.round(bmp.height * scale));
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bmp, 0, 0, c.width, c.height);
+    const size = { w: bmp.width, h: bmp.height };
+    if (bmp.close) bmp.close();
+    const out = await new Promise((r) => c.toBlob(r, 'image/webp', 0.76));
+    return { thumb: out && out.type === 'image/webp' ? out : null, ...size };
+  }
+  function progress(done, total, name) {
+    const box = $('nv-ph-progress');
+    if (!box) return;
+    box.hidden = total === 0;
+    if (!total) return;
+    box.querySelector('.adm-progress-text').textContent = done < total
+      ? `Foto ${done + 1} von ${total} wird verarbeitet: ${name}` : `${total} ${total === 1 ? 'Foto' : 'Fotos'} verarbeitet`;
+    box.querySelector('progress').value = done;
+    box.querySelector('progress').max = total;
+  }
+  /* Viele Fotos nacheinander (der Browser friert nicht ein), je Foto Grossfassung und Vorschau */
+  function addPhotos(files) {
     let list = Array.from(files || []);
+    $('nv-photo-file').value = '';
     const free = photoLimit() - photos.length;
     if (list.length > free) {
       A.toast(free > 0
@@ -508,81 +601,179 @@
         : `Es sind schon ${photoLimit()} Fotos da${isReport() ? '' : '. Als Bericht sind bis zu 30 möglich'}.`, 'err');
       list = list.slice(0, Math.max(0, free));
     }
-    for (const file of list) {
-      if (!file.type.startsWith('image/')) {
-        A.toast(`„${file.name}“ ist keine Bilddatei.`, 'err');
-        continue;
-      }
-      try {
-        const conv = await A.toWebp(file);
-        let w = 0;
-        let h = 0;
+    if (!list.length) return uploading;
+    uploading = uploading.then(() => runUpload(list));
+    return uploading;
+  }
+  async function runUpload(list) {
+    const token = dialogToken;
+    const failed = [];
+    let added = 0;
+    $('nv-save').disabled = true;
+    try {
+      await photosReady;
+      for (let i = 0; i < list.length; i++) {
+        const file = list[i];
+        if (token !== dialogToken) return;
+        progress(i, list.length, file.name);
+        await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+        if (!file.type.startsWith('image/') && !/\.(jpe?g|png|webp|gif|heic|avif)$/i.test(file.name)) {
+          failed.push(`${file.name} (keine Bilddatei)`);
+          continue;
+        }
+        const written = [];
         try {
-          const bmp = await createImageBitmap(conv.blob);
-          w = bmp.width;
-          h = bmp.height;
-          if (bmp.close) bmp.close();
-        } catch { /* Groesse unbekannt */ }
-        const path = await freePhotoPath(folderFor(), conv.ext);
-        await A.saveFile(path, conv.blob);
-        photos.push({ key: `n${++photoSeq}`, path, url: URL.createObjectURL(conv.blob), ext: conv.ext, w, h, alt: '', credit: '', fresh: true, size: conv.blob.size });
-        renderPhotos();
-        renderPreview();
-      } catch {
-        /* Meldung hat toWebp schon gezeigt */
+          const big = await A.toWebp(file, { maxSize: 1920, quality: 0.82, silent: true });
+          const { thumb, w, h } = await makeThumb(big.blob);
+          const path = await freePhotoPath(folderFor(), big.ext);
+          await A.saveFile(path, big.blob);
+          written.push(path);
+          let vorschau = '';
+          if (thumb && thumb.size < big.blob.size) {
+            vorschau = thumbOf(path);
+            await A.saveFile(vorschau, thumb);
+            written.push(vorschau);
+          }
+          if (token !== dialogToken) {
+            for (const p of written) await A.discardFile(p);
+            return;
+          }
+          photos.push({ key: `n${++photoSeq}`, path, thumb: vorschau, url: URL.createObjectURL(thumb || big.blob), ext: big.ext, w, h, alt: '', credit: '', fresh: true, size: big.blob.size });
+          added++;
+          renderPhotos();
+          renderPreview();
+        } catch (e) {
+          for (const p of written) await A.discardFile(p).catch(() => {});
+          failed.push(`${file.name}${e && e.message ? ` (${e.message})` : ''}`);
+        }
       }
+      progress(list.length, list.length, '');
+    } finally {
+      if (token === dialogToken) $('nv-save').disabled = false;
+      setTimeout(() => progress(0, 0, ''), 2500);
     }
-    if (list.length && A.folder.state !== 'ok') A.toast('Fotos bereit. Bitte unten herunterladen.');
-    $('nv-photo-file').value = '';
-    renderPhotos();
-    renderPreview();
+    if (added) A.toast(A.folder.state === 'ok' ? `${plural(added, 'Foto', 'Fotos')} hinzugefügt. Zum Übernehmen bitte speichern.` : `${plural(added, 'Foto', 'Fotos')} bereit. Nach dem Speichern bitte unten herunterladen.`);
+    if (failed.length) A.toast(`${failed.length === 1 ? 'Eine Datei ließ' : `${failed.length} Dateien ließen`} sich nicht verarbeiten: ${failed.slice(0, 4).join(', ')}${failed.length > 4 ? ' …' : ''}`, 'err');
   }
   /* Fotos, die in diesem Fenster neu dazukamen und nicht uebernommen wurden, wieder loeschen */
   async function discardFresh(list) {
     for (const p of list) {
       if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
-      if (p.fresh) await A.discardFile(p.path);
+      if (!p.fresh) continue;
+      await A.discardFile(p.path);
+      if (p.thumb) await A.discardFile(p.thumb);
     }
   }
-  function setPhotos(key) {
+  /* Fotos und Videos einer Meldung ins Fenster holen (Detail-Datei erst jetzt) */
+  function setMedia(id) {
     for (const p of photos) if (p.url.startsWith('blob:')) URL.revokeObjectURL(p.url);
-    photos = ((key && photoMap[key]) || []).map((b) => ({
-      key: `p${++photoSeq}`, path: b.bild, url: A.imageUrl(b.bild), ext: 'webp',
-      w: b.breite || 0, h: b.hoehe || 0, alt: b.alt || '', credit: A.credits.get(b.bild)
-    }));
-    photoDir = photos.length ? photos[0].path.replace(/[^/]+$/, '') : '';
+    photos = [];
+    vids = [];
+    removedMedia = [];
+    savedDetail = { fotos: [], videos: [] };
+    photoDir = '';
+    photosLoading = !!id && !!newsIndex[id];
+    const token = ++dialogToken;
     renderPhotos();
+    renderVideos();
+    photosReady = (async () => {
+      let d = { fotos: [], videos: [] };
+      try {
+        d = await loadDetail(id);
+      } catch (e) {
+        detailBroken = true;
+        A.toast(`Fotos und Videos dieser Meldung konnten nicht geladen werden (${e.message}). Bitte die Seite neu laden.`, 'err');
+      }
+      if (token !== dialogToken) return;
+      const untouched = dirtyState() === snap;
+      photos = d.fotos.filter((b) => b && b.bild).map((b) => ({
+        key: `p${++photoSeq}`, path: b.bild, thumb: b.vorschau || '', url: A.imageUrl(b.vorschau || b.bild), ext: 'webp',
+        w: b.breite || 0, h: b.hoehe || 0, alt: b.alt || '', credit: b.nachweis !== undefined ? b.nachweis : A.credits.get(b.bild)
+      }));
+      vids = d.videos.filter((v) => v && v.datei).map((v) => ({ key: `v${++vidSeq}`, path: v.datei, titel: v.titel || '', file: null }));
+      savedDetail = detailOf();
+      photosLoading = false;
+      renderPhotos();
+      renderVideos();
+      renderPreview();
+      if (untouched) snap = dirtyState();
+      if (!$('nv-list').querySelector('.adm-alert')) render();
+    })();
+    return photosReady;
   }
-  /* Liste dieser Meldung speichern; oldKey: bisherige Kennung (Titel oder Datum geaendert) */
-  async function savePhotos(oldKey, key) {
-    const list = photos.map((p) => ({ bild: p.path, alt: p.alt.replace(/\s+/g, ' ').trim(), breite: p.w, hoehe: p.h }));
-    const next = { ...photoMap };
-    if (oldKey && oldKey !== key) delete next[oldKey];
-    if (list.length) next[key] = list;
-    else delete next[key];
-    if (JSON.stringify(next) !== JSON.stringify(photoMap)) {
-      const sorted = Object.fromEntries(Object.keys(next).sort().map((k) => [k, next[k]]));
-      await A.saveJSON(PHOTOS_PATH, { bilder: sorted });
-      photoMap = sorted;
+  /* Stand fuer die Detail-Datei; Bildnachweis steht beim Foto */
+  const detailOf = () => ({
+    fotos: photos.map((p) => ({
+      bild: p.path, ...(p.thumb ? { vorschau: p.thumb } : {}), alt: clean(p.alt),
+      ...(clean(p.credit) ? { nachweis: clean(p.credit) } : {}), breite: p.w, hoehe: p.h
+    })),
+    videos: vids.map((v) => ({ datei: v.path, titel: clean(v.titel) || 'Video' }))
+  });
+  const indexEntry = (d) => ({ fotos: d.fotos.length, videos: d.videos.length, titelbild: d.fotos[0] ? (d.fotos[0].vorschau || d.fotos[0].bild) : '' });
+  async function writeIndex(next) {
+    const sorted = Object.fromEntries(Object.keys(next).sort().map((k) => [k, next[k]]));
+    await A.saveJSON(INDEX_PATH, { meldungen: sorted });
+    newsIndex = sorted;
+  }
+  /* Alte Sammeldateien in die geteilte Ablage uebernehmen, dann entfernen */
+  async function migrateLegacy() {
+    if (!legacy) return;
+    const next = {};
+    for (const id of new Set([...Object.keys(legacy.fotos), ...Object.keys(legacy.videos)])) {
+      const fotos = (legacy.fotos[id] || []).filter((b) => b && b.bild).map((b) => {
+        const c = A.credits.get(b.bild);
+        return { ...b, ...(c && b.nachweis === undefined ? { nachweis: c } : {}) };
+      });
+      const videos = (legacy.videos[id] || []).filter((v) => v && v.datei);
+      if (!fotos.length && !videos.length) continue;
+      await A.saveJSON(detailPath(id), { kennung: id, fotos, videos });
+      next[id] = indexEntry({ fotos, videos });
     }
-    if (photos.length) await A.credits.save(Object.fromEntries(photos.map((p) => [p.path, p.credit])));
-    for (const p of photos) p.fresh = false;   /* uebernommen: bleibt auch beim Schliessen */
+    await writeIndex(next);
+    await A.discardFile(LEGACY_PHOTOS);
+    await A.discardFile(LEGACY_VIDEOS);
+    legacy = null;
+    A.log('Fotos und Videos der Neuigkeiten in die geteilte Ablage übernommen (data/neuigkeiten/)');
+  }
+  /* Detail und Uebersicht speichern (in einer Kette, damit sich zwei Speichervorgaenge nicht ueberschreiben) */
+  function saveMedia(oldId, id) {
+    mediaChain = mediaChain.catch(() => {}).then(() => saveMediaNow(oldId, id));
+    return mediaChain;
+  }
+  async function saveMediaNow(oldId, id) {
+    await photosReady;
+    await uploading;
+    if (indexBroken || detailBroken) throw new Error('Fotos und Videos ließen sich vorher nicht laden, deshalb wurden sie nicht gespeichert. Bitte die Seite neu laden.');
+    await migrateLegacy();
+    /* neue Videos jetzt in den Ordner der Meldung schreiben */
+    for (const v of vids) {
+      if (v.file) {
+        await A.saveFile(v.path, v.file);
+        v.file = null;
+      }
+    }
+    const d = detailOf();
+    const moved = !!oldId && oldId !== id;
+    const has = d.fotos.length || d.videos.length;
+    if (JSON.stringify(d) !== JSON.stringify(savedDetail) || moved) {
+      if (has) await A.saveJSON(detailPath(id), { kennung: id, ...d });
+      else if (newsIndex[id]) await A.discardFile(detailPath(id));
+      if (moved && newsIndex[oldId]) await A.discardFile(detailPath(oldId));
+      const next = { ...newsIndex };
+      if (moved) delete next[oldId];
+      if (has) next[id] = indexEntry(d);
+      else delete next[id];
+      if (JSON.stringify(next) !== JSON.stringify(newsIndex)) await writeIndex(next);
+    }
+    /* Nachweise alter Art (data/bildnachweise.json) dieser Fotos dort entfernen: sie stehen jetzt beim Foto */
+    const oldCredits = Object.fromEntries(photos.filter((p) => A.credits.get(p.path)).map((p) => [p.path, '']));
+    if (Object.keys(oldCredits).length) await A.credits.save(oldCredits);
+    for (const p of photos) p.fresh = false;
+    savedDetail = d;
+    return d;
   }
 
-  /* ---------- Fenster: Videos (data/news-videos.json: {videos: {Kennung: [{datei, titel}]}}) ---------- */
-  const VIDEOS_PATH = 'data/news-videos.json';
-  let videoMap = {};
-  let vids = [];           /* {key, path, titel, file}; file nur bei neu gewaehlten, noch nicht geschriebenen */
-  let vidSeq = 0;
-
-  async function loadVideos() {
-    try {
-      videoMap = (await A.readJSON(VIDEOS_PATH)).videos || {};
-    } catch (e) {
-      videoMap = {};
-      if (!notFound(e)) A.toast('Die Videos der Neuigkeiten konnten nicht geladen werden.', 'err');
-    }
-  }
+  /* ---------- Videos ---------- */
   function renderVideos() {
     $('nv-videos').innerHTML = vids.map((v) =>
       `<div class="adm-ph" data-k="${v.key}">` +
@@ -595,34 +786,13 @@
     for (const picked of Array.from(files || [])) {
       const ok = await A.checkVideo(picked);
       if (!ok) continue;
-      const year = (HD.isoDate($('f-date').value) || A.isoToday()).slice(0, 4);
-      const base = `assets/video/news/${year}/${HD.slug(ok.file.name.replace(/\.[^.]+$/, ''), 50) || 'video'}`;
+      const base = `${videoFolder()}${HD.slug(ok.file.name.replace(/\.[^.]+$/, ''), 50) || 'video'}`;
       let path = `${base}.${ok.ext}`;
-      for (let n = 2; vids.some((v) => v.path === path) || (A.folder.state === 'ok' && await A.folder.exists(path)); n++) path = `${base}-${n}.${ok.ext}`;
+      for (let n = 2; vids.some((v) => v.path === path) || removedMedia.includes(path) || (A.folder.state === 'ok' && await A.folder.exists(path)); n++) path = `${base}-${n}.${ok.ext}`;
       vids.push({ key: `v${++vidSeq}`, path, titel: ok.file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '), file: ok.file });
     }
     $('nv-video-file').value = '';
     renderVideos();
-  }
-  function setVideos(key) {
-    vids = ((key && videoMap[key]) || []).map((v) => ({ key: `v${++vidSeq}`, path: v.datei, titel: v.titel || '', file: null }));
-    renderVideos();
-  }
-  async function saveVideos(oldKey, key) {
-    for (const v of vids) {
-      if (v.file) {
-        await A.saveFile(v.path, v.file);
-        v.file = null;
-      }
-    }
-    const next = { ...videoMap };
-    if (oldKey && oldKey !== key) delete next[oldKey];
-    if (vids.length) next[key] = vids.map((v) => ({ datei: v.path, titel: clean(v.titel) || 'Video' }));
-    else delete next[key];
-    if (JSON.stringify(next) !== JSON.stringify(videoMap)) {
-      await A.saveJSON(VIDEOS_PATH, { videos: Object.fromEntries(Object.keys(next).sort().map((k) => [k, next[k]])) });
-      videoMap = next;
-    }
   }
 
   /* ---------- Vorschau des Fensters (wie auf der Website, js/news.js) ---------- */
@@ -810,11 +980,10 @@
     removeImage = false;
     current = e ? imgOf(e) : '';
     $('f-focus').value = e ? A.focusPos(e.Bildausschnitt) : '';
-    $('f-credit').value = A.credits.get(current);
+    $('f-credit').value = (e && e.Bildnachweis) || A.credits.get(current);
     document.querySelector(`input[name="kind"][value="${e && !e.Plakat && e.Vorschaubild ? 'photo' : 'poster'}"]`).checked = true;
     delete $('f-filename').dataset.touched;
-    setPhotos(e && !copy ? newsId(e) : '');
-    setVideos(e && !copy ? newsId(e) : '');
+    setMedia(e && !copy ? newsId(e) : '');
     renderImage();
     renderPreview();
     updateCounter();
@@ -842,14 +1011,14 @@
   let isCopy = false;   /* Kopie: gilt als geaendert, bis sie gespeichert ist */
   const isDirty = () => isCopy || dirtyState() !== snap || !!image || removeImage;
 
-  /* Freier Dateiname im Jahresordner (name.webp, name-2.webp …);
-     die eigene Datei einer bearbeiteten Meldung darf ersetzt werden */
-  async function freeImagePath(year, name, ext, old) {
-    const dir = `assets/img/news/${year}/`;
+  /* Freier Dateiname im Ordner der Meldung (name.webp, name-2.webp …); die eigene Datei
+     einer bearbeiteten Meldung darf ersetzt werden (keine Kopie: die teilt ihr Bild evtl.) */
+  async function freeImagePath(name, ext, old) {
+    const dir = folderFor();
     let path = `${dir}${name}.${ext}`;
-    if (A.folder.state !== 'ok') return path;
-    const isOwn = (p) => old && (old.Plakat === p || old.Vorschaubild === p);
-    for (let n = 2; !isOwn(path) && await A.folder.exists(path); n++) path = `${dir}${name}-${n}.${ext}`;
+    const isOwn = (p) => !isCopy && old && (old.Plakat === p || old.Vorschaubild === p);
+    const taken = (p) => photos.some((x) => x.path === p || x.thumb === p) || removedMedia.includes(p);
+    for (let n = 2; !isOwn(path) && (taken(path) || (A.folder.state === 'ok' && await A.folder.exists(path))); n++) path = `${dir}${name}-${n}.${ext}`;
     return path;
   }
 
@@ -914,7 +1083,8 @@
       Seiten: pages.length === HD.NEWS_PAGES.length ? '' : pages.join(', '),
       Bericht: $('f-report').checked ? 'ja' : '',
       Entwurf: $('f-draft').checked || A.needsApproval() ? 'ja' : '',
-      Ab: HD.isoDate($('f-ab').value) ? isoToDe(HD.isoDate($('f-ab').value)) : ''
+      Ab: HD.isoDate($('f-ab').value) ? isoToDe(HD.isoDate($('f-ab').value)) : '',
+      Bildnachweis: ''
     };
     /* Bisheriges Bild behalten (Art kann sich geaendert haben) */
     if (!image && !removeImage && current) {
@@ -927,20 +1097,32 @@
     try {
       let imgPath = '';
       if (image) {
-        imgPath = await freeImagePath(date.slice(0, 4), fileSlug($('f-filename').value || title), image.ext, old);
+        imgPath = await freeImagePath(fileSlug($('f-filename').value || title), image.ext, old);
         entry.Plakat = poster ? imgPath : '';
         entry.Vorschaubild = poster ? '' : imgPath;
         await A.saveFile(imgPath, image.blob);
       }
-      if (hasImage) entry.Bildausschnitt = $('f-focus').value;
+      if (hasImage) {
+        entry.Bildausschnitt = $('f-focus').value;
+        entry.Bildnachweis = clean($('f-credit').value);
+      }
+      /* Ersetztes oder entferntes Bild wird beim Speichern geloescht (falls nirgends sonst verwendet) */
+      if (current && (removeImage || (imgPath && imgPath !== current))) removedMedia.push(current);
       const next = entries.slice();
       /* Bestehende Meldung bleibt an ihrer Stelle, solange das Datum gleich bleibt */
       placeEntry(next, entry, old ? editIndex : -1, !!old && HD.isoDate(old.Datum) === date);
       const direct = await A.saveFile(PATH, toCSV(next));
       entries = next;
-      if (imgOf(entry)) await A.credits.set(imgOf(entry), $('f-credit').value);
-      await savePhotos(old ? newsId(old) : '', newsId(entry));
-      await saveVideos(old ? newsId(old) : '', newsId(entry));
+      /* Der Nachweis steht jetzt in der Tabelle; einen alten in data/bildnachweise.json entfernen */
+      if (imgOf(entry) && A.credits.get(imgOf(entry))) await A.credits.set(imgOf(entry), '');
+      const d = await saveMedia(old && !isCopy ? newsId(old) : '', newsId(entry));
+      /* Entferntes wirklich loeschen; ist nichts mehr in der Meldung, auch ihr Ordner */
+      const gone = removedMedia.slice();
+      removedMedia = [];
+      const empty = !imgOf(entry) && !d.fotos.length && !d.videos.length;
+      const dirs = empty ? [...new Set([photoDir, ...gone.map((f) => A.dirName(f))].filter((x) => x && OWN_DIR.test(x))
+        .flatMap((x) => [x.replace(/^assets\/video\//, 'assets/img/'), x.replace(/^assets\/img\//, 'assets/video/')]))] : [];
+      if (gone.length || dirs.length) await A.media.remove(gone, { ownDirs: dirs });
       isCopy = false;
       $('nv-dlg').close();
       render();
@@ -959,35 +1141,41 @@
 
   async function remove(i) {
     const e = entries[i];
-    const gallery = photoMap[newsId(e)] || [];
+    const id = newsId(e);
+    const info = newsIndex[id] || { fotos: 0, videos: 0 };
+    const parts = [imgOf(e) ? 'das Bild' : '', info.fotos ? plural(info.fotos, 'Foto', 'Fotos') : '', info.videos ? plural(info.videos, 'Video', 'Videos') : ''].filter(Boolean);
+    const what = parts.length > 1 ? `${parts.slice(0, -1).join(', ')} und ${parts[parts.length - 1]}` : parts[0];
     const ok = await A.confirmBox({
       title: 'Meldung löschen?',
-      html: `<strong>${esc(e.Titel)}</strong> (${esc(e.Datum)})<br><br>Die Meldung verschwindet von der Website. Das Bild bleibt im Ordner erhalten.` +
-        (gallery.length ? ` Die ${plural(gallery.length, 'Foto', 'Fotos')} der Galerie werden mit gelöscht.` : ''),
+      html: `<strong>${esc(e.Titel)}</strong> (${esc(e.Datum)})<br><br>Die Meldung verschwindet von der Website.` +
+        (what ? ` Dazu werden ${esc(what)} gelöscht, samt Vorschaubildern, Bildnachweisen und Ordner (nur was nicht noch anderswo verwendet wird).` : ''),
       ok: 'Löschen', danger: true
     });
     if (!ok) return false;
+    if (indexBroken) {
+      A.toast('Fotos und Videos ließen sich vorher nicht laden. Bitte die Seite neu laden und noch einmal löschen.', 'err');
+      return false;
+    }
     try {
+      const d = await loadDetail(id);
       const next = entries.filter((x) => x !== e);
       const direct = await A.saveFile(PATH, toCSV(next));
       entries = next;
-      /* Galerie: eigener Ordner der Meldung, die Fotos werden sonst nirgends verwendet */
-      if (gallery.length) {
-        const rest = { ...photoMap };
-        delete rest[newsId(e)];
-        await A.saveJSON(PHOTOS_PATH, { bilder: rest });
-        photoMap = rest;
-        for (const b of gallery) await A.discardFile(b.bild);
-        await A.credits.save(Object.fromEntries(gallery.map((b) => [b.bild, ''])));
-      }
-      const clips = videoMap[newsId(e)] || [];
-      if (clips.length) {
-        const rest = { ...videoMap };
-        delete rest[newsId(e)];
-        await A.saveJSON(VIDEOS_PATH, { videos: rest });
-        videoMap = rest;
-        for (const c of clips) await A.discardFile(c.datei);
-      }
+      /* Daten zuerst: Detail-Datei und Eintrag in der Uebersicht */
+      mediaChain = mediaChain.catch(() => {}).then(async () => {
+        await migrateLegacy();
+        if (newsIndex[id]) {
+          await A.discardFile(detailPath(id));
+          const rest = { ...newsIndex };
+          delete rest[id];
+          await writeIndex(rest);
+        }
+      });
+      await mediaChain;
+      /* dann die Dateien: Bild, Fotos, Videos und die eigenen Ordner der Meldung */
+      const files = [imgOf(e), ...d.fotos.map((x) => x && x.bild), ...d.videos.map((v) => v && v.datei)].filter(Boolean);
+      const dirs = [...new Set(files.map((f) => A.dirName(f)).filter((x) => OWN_DIR.test(x)))];
+      await A.media.remove(files, { ownDirs: dirs });
       render();
       A.toast(direct ? `Gelöscht: „${e.Titel}“.` : 'Gelöscht. Bitte unten die Datei herunterladen.');
       A.log(`Meldung gelöscht: ${e.Titel}`);
@@ -1122,7 +1310,9 @@
       const i = photos.findIndex((x) => x.key === k.dataset.k);
       const act = b.dataset.phAct;
       if (act === 'del') {
-        discardFresh([photos[i]]);
+        /* neu: gleich weg; schon gespeichert: beim Speichern loeschen */
+        if (photos[i].fresh) discardFresh([photos[i]]);
+        else removedMedia.push(photos[i].path);
         photos.splice(i, 1);
       } else {
         const j = i + (act === 'up' ? -1 : 1);
@@ -1142,14 +1332,26 @@
     $('nv-videos').addEventListener('click', (ev) => {
       const k = ev.target.closest('[data-vd-act]') && ev.target.closest('.adm-ph');
       if (!k) return;
+      const v = vids.find((x) => x.key === k.dataset.k);
+      if (v && !v.file) removedMedia.push(v.path);
       vids = vids.filter((x) => x.key !== k.dataset.k);
       renderVideos();
     });
     $('nv-dlg').addEventListener('close', () => {
+      dialogToken++;   /* laufendes Hochladen bricht ab und raeumt seine Dateien weg */
       vids = [];
       discardFresh(photos.filter((p) => p.fresh));
       photos = [];
+      removedMedia = [];
       photoDir = '';
+      $('nv-save').disabled = false;
+    });
+    /* Bildnachweis des ersten Fotos fuer alle */
+    $('nv-photos').addEventListener('click', (ev) => {
+      if (!ev.target.closest('[data-ph-credit-all]') || !photos.length) return;
+      for (const p of photos) p.credit = photos[0].credit;
+      renderPhotos();
+      A.toast(`Bildnachweis für alle ${photos.length} Fotos übernommen.`);
     });
     $('nv-delete').addEventListener('click', async () => {
       if (editIndex >= 0 && await remove(editIndex)) $('nv-dlg').close();
@@ -1179,9 +1381,9 @@
       }, 120);
     });
     A.guard(() => $('nv-dlg').open && isDirty());
-    A.folder.on((state) => { if (state === 'ok') { load(); loadTargets(); loadPhotos(); loadVideos(); } });
+    A.folder.on((state) => { if (state === 'ok') { load(); loadTargets(); loadIndex(); } });
 
-    await Promise.all([load(), loadTargets(), loadPhotos(), loadVideos()]);
+    await Promise.all([load(), loadTargets(), loadIndex()]);
     /* jetzt auch mit den Fotos der Galerie (eine Fehlermeldung beim Laden bleibt stehen) */
     if (!$('nv-list').querySelector('.adm-alert')) render();
     /* Direkt oeffnen: ?neu=1 oder ?bearbeiten=<Kennung der Meldung> */

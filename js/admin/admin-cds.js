@@ -251,6 +251,12 @@
       const targetTitle = next.gruppen[g].titel;
       const direct = await persist(next);
       if (cd.cover) await A.credits.set(cd.cover.pfad, $('f-credit').value);
+      /* Ersetztes Cover und entfernte Hoerproben wirklich loeschen (wenn nirgends sonst verwendet) */
+      if (old) {
+        const now = new Set([cd.cover && cd.cover.pfad, ...cd.hoerproben.map((h) => h.datei)].filter(Boolean));
+        const gone = [old.cover && old.cover.pfad, ...(old.hoerproben || []).map((h) => h.datei)].filter((x) => x && !now.has(x));
+        if (gone.length) await A.media.remove(gone);
+      }
       $('cd-dlg').close();
       query = '';
       $('cd-search').value = '';
@@ -269,7 +275,7 @@
     const c = data.gruppen[g].cds[i];
     const ok = await A.confirmBox({
       title: 'CD löschen?',
-      html: `<strong>${esc(c.titel)}</strong><br><br>Die CD verschwindet von der Seite Kirchenmusik → CDs. Cover und Hörproben bleiben im Ordner erhalten.`,
+      html: `<strong>${esc(c.titel)}</strong><br><br>Die CD verschwindet von der Seite Kirchenmusik → CDs. Cover und Hörproben werden mitgelöscht, sofern sie nicht noch anderswo verwendet werden.`,
       ok: 'Löschen', danger: true
     });
     if (!ok) return;
@@ -277,6 +283,7 @@
       const next = copy();
       next.gruppen[g].cds.splice(i, 1);
       const direct = await persist(next);
+      await A.media.remove([c.cover && c.cover.pfad, ...(c.hoerproben || []).map((h) => h.datei)].filter(Boolean));
       if ($('cd-dlg').open) $('cd-dlg').close();
       render();
       A.toast(direct ? `Gelöscht: ${c.titel}.` : 'Gelöscht. Bitte unten die Datei herunterladen.');

@@ -521,12 +521,20 @@
       /* ein PUT auf einen Pfad ausserhalb der freigegebenen Ordner endet bei nginx in 404 */
       404: verb === 'PUT' || verb === 'MKCOL' ? verboten : 'Die Datei gibt es auf dem Server nicht.',
       413: 'Die Datei ist dem Server zu groß (client_max_body_size).',
+      429: 'Zu viele Anfragen in kurzer Zeit. Bitte einen Moment warten und noch einmal versuchen.',
       507: 'Auf dem Server ist kein Speicherplatz mehr frei.'
     }[res.status] || `Der Server antwortet mit HTTP ${res.status}.`;
     return Object.assign(new Error(`${was} (${verb} ${path})`), { status: res.status, name: res.status === 401 || res.status === 403 ? 'NotAllowedError' : 'Error' });
   }
   async function serverPut(path, body) {
-    const put = () => fetch(serverUrl(path), { method: 'PUT', body, headers: body.type ? { 'Content-Type': body.type } : {} });
+    /* Bremst der Server (429, z. B. bei vielen Fotos auf einmal), kurz warten und noch einmal */
+    const put = async () => {
+      for (let i = 0; ; i++) {
+        const r = await fetch(serverUrl(path), { method: 'PUT', body, headers: body.type ? { 'Content-Type': body.type } : {} });
+        if (r.status !== 429 || i >= 4) return r;
+        await new Promise((ok) => setTimeout(ok, 800 * (i + 1)));
+      }
+    };
     let res = await put();
     if (res.status === 409) {
       /* Der Ordner fehlt (Apache/WebDAV legt ihn nicht von selbst an): anlegen, dann noch einmal */
@@ -856,11 +864,36 @@
   function imageUrl(path) {
     return localImages.get(path) || HD.safeUrl(path, '../');
   }
+  /* Warteschlange je Datei: Schreiben und Loeschen derselben Datei laufen streng nacheinander,
+     auch wenn viele Fotos auf einmal hochgeladen werden oder zwei Ablaeufe gleichzeitig speichern.
+     Ein Fehler haelt die Schlange nicht an (der Aufrufer bekommt ihn trotzdem).
+     Atomar ist jeder einzelne Schreibvorgang schon: lokal schreibt der Browser (createWritable) in
+     eine Zwischendatei und tauscht sie erst beim Schliessen aus; auf dem Server legen nginx und
+     Apache (WebDAV-PUT) die Datei ebenfalls erst vollstaendig an und benennen sie dann um. */
+  const queues = new Map();
+  function serial(path, fn) {
+    const run = (queues.get(path) || Promise.resolve()).then(fn);
+    const tail = run.catch(() => { /* naechster Auftrag laeuft trotzdem */ });
+    queues.set(path, tail);
+    tail.then(() => { if (queues.get(path) === tail) queues.delete(path); });
+    return run;
+  }
   /* Speichert eine Datei im Projektordner; ohne Ordner wird sie zum
      Herunterladen vorgemerkt. Liefert true, wenn direkt gespeichert. */
-  async function saveFile(path, data) {
+  function saveFile(path, data) {
+    return serial(path, () => saveFileNow(path, data));
+  }
+  async function saveFileNow(path, data) {
     if (GUARDED.test(path) && readState.get(path) === 'fehler') {
       throw new Error(`„${path}“ ließ sich vorher nicht lesen. Speichern würde den Rest der Datei überschreiben, deshalb wird nichts geändert. Bitte die Seite neu laden oder die Datei prüfen.`);
+    }
+    /* Nie eine kaputte oder leere JSON-Datei schreiben */
+    if (typeof data === 'string' && path.endsWith('.json')) {
+      try {
+        if (JSON.parse(data) == null) throw new Error('leer');
+      } catch (e) {
+        throw Object.assign(new Error(`„${path}“ wurde nicht gespeichert: der Inhalt ist kein gültiges JSON.`), { cause: e });
+      }
     }
     let blob = data instanceof Blob ? data : new Blob([data], { type: typeFor(path) });
     /* Eine Datei von der Festplatte (Auswahl, Ordner) zuerst in den Arbeitsspeicher holen: so wird
@@ -894,7 +927,9 @@
     if (isText) lastText.set(path, after);
     /* Neues Bild in assets/img: dazu eine kleine Fassung fuers Handy (<name>-m.webp, Liste data/bilder-klein.json) */
     /* Fotos der Hochaemter gibt es nur in einer (kleinen) Fassung */
-    if (/^assets\/img\/.+\.webp$/.test(path) && !/-m\.webp$/.test(path) && !path.startsWith('assets/img/hochaemter/') && blob.type === 'image/webp') await makeSmall(path, blob);
+    /* Fotos von Hochaemtern und Berichten (foto-N.webp) haben ihre eigene Vorschau (-v.webp) */
+    if (/^assets\/img\/.+\.webp$/.test(path) && !/-[mv]\.webp$/.test(path) && !path.startsWith('assets/img/hochaemter/')
+      && !/^assets\/img\/news\/\d{4}\/[^/]+\/foto-\d+\.webp$/.test(path) && blob.type === 'image/webp') await makeSmall(path, blob);
     noteChange(path, isText ? describeChange(path, before, after) : [`Datei gespeichert: ${fileName(path)}`]);
     return direct;
   }
@@ -941,7 +976,10 @@
   const saveJSON = (path, data) => saveFile(path, JSON.stringify(data, null, 2) + '\n');
   /* Eine eben erst geschriebene Datei wieder verwerfen (z. B. Foto, das doch nicht
      uebernommen wird): aus dem Ordner loeschen bzw. aus der Download-Leiste nehmen */
-  async function discardFile(path) {
+  function discardFile(path) {
+    return serial(path, () => discardFileNow(path));
+  }
+  async function discardFileNow(path) {
     /* Eben erst gespeichert und noch nicht protokolliert: dann taucht die Datei im Protokoll gar nicht auf */
     const queued = changeQueue.findIndex((c) => c.datei === path);
     if (queued >= 0) changeQueue.splice(queued, 1);
@@ -1047,7 +1085,7 @@
   const AREA_FILES = [
     [/^data\/startseite\.json$/, 'Startseite'], [/^data\/hinweise\.json$/, 'Hinweisbanner'],
     [/^data\/news\.csv$/, 'Neuigkeiten'], [/^data\/termine\.json$/, 'Termine'],
-    [/^data\/(archiv\/)?hochaemter.*\.csv$/, 'Hochämter'], [/^data\/hochamt-fotos\.json$/, 'Hochämter'],
+    [/^data\/(archiv\/)?hochaemter.*\.csv$/, 'Hochämter'], [/^data\/hochamt-fotos(\.json|\/.+\.json)$/, 'Hochämter'],
     [/^data\/solisten\.json$/, 'Solisten'], [/^data\/paten\.json$/, 'Paten'], [/^data\/cds\.json$/, 'CDs'], [/^data\/galerie\.json$/, 'Galerie'],
     [/^data\/personen\.json$/, 'Personen'], [/^data\/repertoire\.json$/, 'Repertoire'],
     [/^data\/gottesdienste\.json$/, 'Regelmäßige Termine'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
@@ -1963,7 +2001,14 @@
     return { file, ext: ext.toLowerCase() };
   }
 
+  /* Groessere Bilddateien nimmt die Verwaltung nicht an: das Umrechnen wuerde den Browser lange
+     blockieren (und so grosse Dateien sind fast immer ein Versehen, z. B. ein RAW-Foto) */
+  const MAX_IMAGE_MB = 60;
   async function toWebp(file, opts = {}) {
+    if (file && file.size > MAX_IMAGE_MB * 1024 * 1024) {
+      if (!opts.silent) toast(`„${file.name}“ ist größer als ${MAX_IMAGE_MB} MB. Bitte das Bild vorher verkleinern.`, 'err');
+      throw new Error(`größer als ${MAX_IMAGE_MB} MB`);
+    }
     file = await stableFile(file);
     const ext = (file.name.split('.').pop() || '').toLowerCase();
     const isWebp = file.type === 'image/webp' || ext === 'webp';
@@ -2000,12 +2045,12 @@
     if (isWebp || ['jpg', 'jpeg', 'png'].includes(ext)) {
       const kind = isWebp ? 'webp' : ext === 'png' ? 'png' : 'jpg';
       if (!(await magicOk(file, kind))) {
-        toast(`„${file.name}“ ist keine gültige ${kind === 'jpg' ? 'JPG' : kind.toUpperCase()}-Bilddatei (Dateiinhalt und Endung passen nicht zusammen). Bitte das Bild neu als JPG, PNG oder WebP speichern.`, 'err');
+        if (!opts.silent) toast(`„${file.name}“ ist keine gültige ${kind === 'jpg' ? 'JPG' : kind.toUpperCase()}-Bilddatei (Dateiinhalt und Endung passen nicht zusammen). Bitte das Bild neu als JPG, PNG oder WebP speichern.`, 'err');
         throw new Error('Dateiinhalt passt nicht zur Endung');
       }
       return { blob: file, ext: kind };
     }
-    toast('Dieses Bildformat kann der Browser nicht umwandeln. Bitte als JPG, PNG oder WebP speichern und noch einmal wählen.', 'err');
+    if (!opts.silent) toast('Dieses Bildformat kann der Browser nicht umwandeln. Bitte als JPG, PNG oder WebP speichern und noch einmal wählen.', 'err');
     throw new Error('Bildformat nicht unterstützt');
   }
   /* Ablageflaeche: Ziehen und Ablegen hervorheben (das Dateifeld liegt darueber) */
@@ -2020,7 +2065,7 @@
 
   /* Neuigkeiten (data/news.csv): Spalten ueber die Ueberschrift finden,
      damit die Reihenfolge der Spalten egal ist */
-  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext', 'Bildausschnitt', 'Seiten', 'Bericht', 'Entwurf', 'Ab'];
+  const NEWS_HEAD = ['Datum', 'Bis', 'Kategorie', 'Titel', 'Kurztext', 'Infos', 'Details', 'Vorschaubild', 'Plakat', 'Link', 'Linktext', 'Weiterer Link', 'Weiterer Linktext', 'Bildausschnitt', 'Seiten', 'Bericht', 'Entwurf', 'Ab', 'Bildnachweis'];
   function parseNews(text) {
     const rows = HD.parseCSV(text);
     if (!rows.length) return [];
@@ -2795,6 +2840,142 @@
     PATH: CREDITS
   };
 
+  /* ---------- Medien wirklich loeschen ----------
+     "Loeschen heisst loeschen": media.remove(pfade) loescht hochgeladene Dateien samt allem, was
+     dazugehoert: kleine Fassungen (-m.webp fuers Handy, -v.webp als Vorschau), Bildnachweis,
+     Eintrag in data/bilder-klein.json und danach leer gewordene Ordner. Geloescht wird nur, was
+     nirgends mehr vorkommt (in keiner Datendatei, Seite, CSS oder Skript): so bleibt z. B. das
+     Plakat, das eine kopierte Meldung noch verwendet, oder ein Titelfoto, das ein anderes Thema
+     wiederverwendet. Aufrufer speichern zuerst ihre Daten (ohne die Datei), dann media.remove.
+     ownDirs: Ordner, die allein diesem Eintrag gehoeren (z. B. assets/img/hochaemter/<Kennung>/);
+     sie verschwinden ganz, sobald nichts darin mehr verwendet wird (auch auf dem Server). */
+  const MEDIA_ROOT = /^assets\/(img|audio|video|pdf|programme)\/.+[^/]$/;
+  const OWN_DIR = [
+    /^assets\/img\/hochaemter\/\d{4}-\d{2}-\d{2}-\d{4}\/$/,
+    /^assets\/(img|video)\/news\/\d{4}\/\d{4}-\d{2}-\d{2}-[a-z0-9-]+\/$/,
+    /^assets\/(img|audio|video)\/galerie\/[a-z0-9-]+\/$/
+  ];
+  const variantsOf = (p) => (/\.(webp|jpe?g|png)$/i.test(p)
+    ? [p, p.replace(/\.(webp|jpe?g|png)$/i, '-m.webp'), p.replace(/\.(webp|jpe?g|png)$/i, '-v.webp')] : [p]);
+  /* Dateien, in denen Bildpfade stehen koennen. Lokal wird der Ordner durchsucht; auf dem Server
+     (keine Ordnerliste) gilt diese Liste plus die Detail-Dateien aus den Uebersichten. */
+  const SCAN_FIXED = [
+    'index.html', 'offline.html', 'css/style.css', 'site.webmanifest',
+    ...['archiv', 'aspersdorf', 'augustiner', 'augustinerkirche', 'chronik', 'datenschutz', 'gottesdienste', 'hochamt', 'impressum',
+      'kalender', 'kontakt', 'musik', 'orgel-reil', 'orgel-rieger', 'pfarre', 'predigten', 'sakramente'].map((n) => `pages/${n}.html`),
+    ...['bibelpur', 'fensterblick', 'fusswallfahrt', 'glaube-konkret', 'ministranten', 'oekumenekreis', 'runde', 'senioren'].map((n) => `pages/runden/${n}.html`),
+    ...['aspersdorf-wochen.json', 'cds.json', 'friedhof.json', 'galerie.json', 'gottesdienste.json', 'hinweise.json', 'hochaemter.csv', 'kontakt.json',
+      'navigation.json', 'news.csv', 'paten.json', 'personen.json', 'pgr-aspersdorf.json', 'pgr.json', 'rechtliches.json', 'repertoire.json', 'runden.json',
+      'rundgang.json', 'solisten.json', 'sprueche.json', 'startseite-aspersdorf.json', 'startseite-augustiner.json', 'startseite-augustinerkirche.json',
+      'startseite-kirchenmusik.json', 'startseite.json', 'termine.json', 'themen.json', 'wochenkalender.json',
+      'hochamt-fotos.json', 'news-fotos.json', 'news-videos.json', 'predigten.json', 'seite-augustiner.json', 'seite-aspersdorf.json'].map((n) => `data/${n}`)
+  ];
+  const SCAN_SKIP = /^data\/(bildnachweise|bilder-klein)\.json$|\.(webp|png|jpe?g|gif|svg|ico|mp3|mp4|webm|pdf|woff2?)$/i;
+  async function scanTexts() {
+    const files = new Set(SCAN_FIXED);
+    if (!folder.server && folder.handle) {
+      /* lokal: alles in data/, pages/, css/, js/ und die Seiten in der Wurzel */
+      const walk = async (dir, prefix, deep) => {
+        for await (const [name, h] of dir.entries()) {
+          if (h.kind === 'directory') { if (deep) await walk(h, `${prefix}${name}/`, deep); } else files.add(prefix + name);
+        }
+      };
+      for (const [sub, deep] of [['data', true], ['pages', true], ['css', false], ['js', false]]) {
+        try { await walk(await folder.handle.getDirectoryHandle(sub), `${sub}/`, deep); } catch { /* fehlt */ }
+      }
+      try { for await (const [name, h] of folder.handle.entries()) if (h.kind === 'file' && /\.(html|webmanifest)$/.test(name)) files.add(name); } catch { /* egal */ }
+    } else {
+      /* Server: Detail-Dateien ueber die Uebersichten finden */
+      const idx = [['data/hochamt-fotos/index.json', 'hochaemter', 'data/hochamt-fotos/'], ['data/neuigkeiten/index.json', 'meldungen', 'data/neuigkeiten/']];
+      for (const [path, key, dir] of idx) {
+        files.add(path);
+        try { for (const k of Object.keys((JSON.parse(await folder.read(path)) || {})[key] || {})) files.add(`${dir}${k}.json`); } catch { /* fehlt */ }
+      }
+      files.add('data/predigten/index.json');
+      try { for (const p of (JSON.parse(await folder.read('data/predigten/index.json')).predigten || [])) if (p && p.id) files.add(`data/predigten/${p.id}.json`); } catch { /* fehlt */ }
+    }
+    const texts = [];
+    for (const path of files) {
+      if (SCAN_SKIP.test(path)) continue;
+      try { texts.push(await (await folder.readBlob(path)).text()); } catch { /* gibt es nicht */ }
+    }
+    /* Pfade koennen in Texten auch URL-kodiert oder mit ../ davor stehen: der Pfad selbst genuegt */
+    return texts.join('\n');
+  }
+  /* Leeren Ordner (und darueber leer gewordene) entfernen, nie hoeher als assets/<art>/<bereich>/ */
+  async function pruneDirs(dirs) {
+    if (folder.server || !folder.handle) return;
+    const todo = [...new Set(dirs)].sort((a, b) => b.length - a.length);
+    for (let dir of todo) {
+      while (dir.split('/').filter(Boolean).length > 3) {
+        const parts = dir.split('/').filter(Boolean);
+        let parent = folder.handle;
+        try {
+          for (const p of parts.slice(0, -1)) parent = await parent.getDirectoryHandle(p);
+          const me = await parent.getDirectoryHandle(parts[parts.length - 1]);
+          let empty = true;
+          for await (const _ of me.keys()) { empty = false; break; }   // eslint-disable-line no-unused-vars
+          if (!empty) break;
+          await parent.removeEntry(parts[parts.length - 1]);
+          noteChange(dir, [`Leerer Ordner entfernt: ${dir}`]);
+        } catch {
+          break;
+        }
+        dir = `${parts.slice(0, -1).join('/')}/`;
+      }
+    }
+  }
+  /* Server: ein eigener Ordner eines Eintrags wird per DELETE entfernt (nginx/Apache loeschen ihn samt Inhalt) */
+  async function removeServerDir(dir) {
+    if (!folder.server || !OWN_DIR.some((re) => re.test(dir))) return;
+    try {
+      const res = await fetch(serverUrl(dir), { method: 'DELETE' });
+      if (res.ok) noteChange(dir, [`Ordner entfernt: ${dir}`]);
+    } catch { /* bleibt stehen, schadet nicht */ }
+  }
+  /* paths: Dateien (Bilder, Videos, Audio, PDF); opts.ownDirs: Ordner, die diesem Eintrag allein gehoeren.
+     Liefert {removed, kept}: kept sind Dateien, die noch anderswo verwendet werden. */
+  async function removeMedia(paths, opts = {}) {
+    const list = [...new Set((paths || []).filter((p) => typeof p === 'string' && MEDIA_ROOT.test(p)))];
+    const ownDirs = (opts.ownDirs || []).filter((d) => OWN_DIR.some((re) => re.test(d)));
+    if (!list.length && !ownDirs.length) return { removed: [], kept: [] };
+    /* Ohne Projektordner: nur aus der Download-Leiste nehmen */
+    if (folder.state !== 'ok') {
+      for (const p of list) for (const v of variantsOf(p)) if (pending.has(v)) await discardFile(v);
+      return { removed: list, kept: [] };
+    }
+    let text = '';
+    try {
+      text = await scanTexts();
+    } catch {
+      return { removed: [], kept: list };   /* im Zweifel nichts loeschen */
+    }
+    const kept = list.filter((p) => text.includes(p));
+    const removed = list.filter((p) => !kept.includes(p));
+    for (const p of removed) {
+      for (const v of variantsOf(p)) {
+        if (v === p || await folder.exists(v)) await discardFile(v);
+      }
+    }
+    if (removed.length) {
+      await saveCredits(Object.fromEntries(removed.map((p) => [p, ''])));
+      /* Liste der kleinen Fassungen bereinigen */
+      smallChain = smallChain.then(async () => {
+        let data;
+        try { data = await readJSON(SMALL_LIST); } catch { return; }
+        const rest = (data.bilder || []).filter((b) => !removed.includes(b));
+        if (rest.length !== (data.bilder || []).length) await saveFile(SMALL_LIST, JSON.stringify({ ...data, bilder: rest }, null, 2) + '\n');
+      }).catch(() => { /* nur eine Liste */ });
+      await smallChain;
+    }
+    /* Ordner: lokal jeden leer gewordenen entfernen, auf dem Server die eigenen Ordner,
+       wenn nichts darin weiter verwendet wird */
+    await pruneDirs([...removed.map(dirName), ...ownDirs]);
+    for (const dir of ownDirs) if (!kept.some((p) => p.startsWith(dir)) && !text.includes(dir)) await removeServerDir(dir);
+    return { removed, kept };
+  }
+  const media = { remove: removeMedia, variantsOf, OWN_DIR };
+
   w.Admin = {
     HD, $, esc, icon, ready,
     start: (fn) => starters.push(fn),
@@ -2805,7 +2986,7 @@
     parseAccounts, accountsJSON, makeAccount, checkDevCode, checkPassword, normUser, stampOf,
     pwLevel, pwProblem, suggestPassword, MIN_PW, ACCOUNTS,
     /* Dateien */
-    folder, readText, readJSON, markUnreadable, fetchText, saveFile, saveJSON, discardFile, hasUnsaved, imageUrl, fileName, dirName, stableFile, stableImage: stableFile, focusPos: HD.focusPos,
+    folder, readText, readJSON, markUnreadable, fetchText, saveFile, saveJSON, discardFile, media, hasUnsaved, imageUrl, fileName, dirName, stableFile, stableImage: stableFile, focusPos: HD.focusPos,
     credits,
     /* Oberflaeche */
     toast, confirmBox, choiceBox, passwordBox, openDialog, requestClose, setError, showErrors, clearErrors, snapshot,

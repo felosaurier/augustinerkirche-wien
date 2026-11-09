@@ -39,6 +39,27 @@ cd /root && rm -rf {{ORDNER}} && tar xzf {{PAKET}}
 cp -a {{ORDNER}}/site/. /var/www/augustinerkirche/
 <!--[verwaltung-anfang]-->
 chown -R www-data:www-data /var/www/augustinerkirche/admin
+
+### Geteilte Ablage und echtes Löschen (ab November 2026)
+
+Fotos und Videos der Neuigkeiten stehen jetzt in `data/neuigkeiten/` (statt `news-fotos.json` und `news-videos.json`), die Predigten in `data/predigten/` (statt `predigten.json`), Bildnachweise von Fotos beim Foto bzw. als Spalte „Bildnachweis“ in `news.csv`. Die Verwaltung löscht entfernte Dateien wirklich und auch die eigenen Ordner eines gelöschten Eintrags (DELETE auf `assets/img/news/JAHR/<Kennung>/` usw.). Beides braucht die neue `nginx-verwaltung.conf` bzw. `apache-verwaltung.conf`.
+
+Liegen auf dem Server noch die alten Dateien, übernimmt die Verwaltung sie beim ersten Speichern von selbst. Alles auf einmal (mit Vorschaubildern) im Container:
+
+```bash
+cd /var/www/augustinerkirche && python3 tools/daten-teilen.py && chown -R www-data:www-data data assets/img/news
+```
+
+### Fotos der Hochämter in geteilter Ablage (ab November 2026)
+
+Die Fotos der Hochämter stehen nicht mehr in einer Datei `data/hochamt-fotos.json`, sondern in `data/hochamt-fotos/` (`index.json` und je Hochamt `<Kennung>.json`), mit Vorschaubildern `foto-N-v.webp`. Dafür braucht der Server die neue Konfiguration (`nginx-verwaltung.conf` bzw. `apache-verwaltung.conf`: Schreiben und Löschen in `data/hochamt-fotos/`), sonst schlägt das Speichern von Fotos fehl. Danach `nginx -t && systemctl reload nginx` (bzw. `apache2ctl configtest && systemctl reload apache2`).
+
+Liegt auf dem Server noch die alte Datei, übernimmt die Verwaltung sie beim ersten Speichern eines Hochamts von selbst. Mit Vorschaubildern für alle bisherigen Fotos geht es im Container (braucht `python3-pil`):
+
+```bash
+cd /var/www/augustinerkirche && python3 tools/hochamt-fotos-teilen.py && chown -R www-data:www-data data assets/img/hochaemter
+```
+(`tools/hochamt-fotos-teilen.py` dafür vorher in den Container kopieren.)
 <!--[verwaltung-ende]-->
 ```
 

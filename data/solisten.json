@@ -2,7 +2,7 @@
   {
     "name": "Martin Achrainer",
     "surname": "Achrainer",
-    "voice": "Bariton",
+    "voice": "Bass",
     "image": "assets/img/personen/solisten/achrainer-martin.webp",
     "deceased": false,
     "homepage": "https://www.martinachrainer.com/"
@@ -10,7 +10,7 @@
   {
     "name": "Alexander Aigner",
     "surname": "Aigner",
-    "voice": "Bariton",
+    "voice": "Bass",
     "image": "assets/img/personen/solisten/aigner-alexander.webp",
     "deceased": false,
     "homepage": "https://www.instagram.com/alexander.aigner.baritone/"
@@ -18,7 +18,7 @@
   {
     "name": "Taisiya Albani",
     "surname": "Albani",
-    "voice": "Mezzosopran",
+    "voice": "Alt",
     "image": "assets/img/personen/solisten/albani-taisiya.webp",
     "deceased": false,
     "homepage": "https://www.estherschollum.at/artists/taisiya-albani/"
@@ -66,7 +66,7 @@
   {
     "name": "Christiane Döcker",
     "surname": "Döcker",
-    "voice": "Mezzosopran",
+    "voice": "Alt",
     "image": "assets/img/personen/solisten/doecker-christiane.webp",
     "deceased": false,
     "homepage": "https://www.christianedoecker.at/"
@@ -130,7 +130,7 @@
   {
     "name": "Yasushi Hirano",
     "surname": "Hirano",
-    "voice": "Bassbariton",
+    "voice": "Bass",
     "image": "assets/img/personen/solisten/hirano-yasushi.webp",
     "deceased": false,
     "homepage": "https://www.proscenium.at/kuenstler/yasushi_hirano.php"
@@ -162,7 +162,7 @@
   {
     "name": "Megan Kahts",
     "surname": "Kahts",
-    "voice": "Mezzosopran",
+    "voice": "Alt",
     "image": "assets/img/personen/solisten/kahts-megan.webp",
     "deceased": false,
     "homepage": "https://megankahts.com/de/"
@@ -226,7 +226,7 @@
   {
     "name": "Georg Lehner",
     "surname": "Lehner",
-    "voice": "Bariton",
+    "voice": "Bass",
     "image": "assets/img/personen/solisten/lehner-georg.webp",
     "deceased": false,
     "homepage": "https://www.richard-wagner-konservatorium.at/abteilungen/theorie-und-sologesang/georg-lehner/"
@@ -234,7 +234,7 @@
   {
     "name": "Sarah Raphaela Mair",
     "surname": "Mair",
-    "voice": "Mezzosopran",
+    "voice": "Alt",
     "image": "assets/img/personen/solisten/mair-sarah-raphaela.webp",
     "deceased": false,
     "homepage": "https://sarah-raphaela-mair.com/"
@@ -250,7 +250,7 @@
   {
     "name": "Stephanie Maitland",
     "surname": "Maitland",
-    "voice": "Mezzosopran",
+    "voice": "Alt",
     "image": "assets/img/personen/solisten/maitland-stephanie.webp",
     "deceased": false,
     "homepage": "https://www.wiener-staatsoper.at/ensemble/detail/stephanie-maitland/"
@@ -258,7 +258,7 @@
   {
     "name": "Jorge Alberto Martinez",
     "surname": "Martinez",
-    "voice": "Bariton",
+    "voice": "Bass",
     "image": "assets/img/personen/solisten/martinez-jorge-alberto.webp",
     "deceased": false,
     "homepage": "https://www.jorgealbertomartinez.com/"
@@ -288,6 +288,14 @@
     "homepage": "https://jakobnistler.com/"
   },
   {
+    "name": "Michael Nowak",
+    "surname": "Nowak",
+    "voice": "Tenor",
+    "image": "assets/img/personen/solisten/nowak-michael.webp",
+    "deceased": false,
+    "homepage": "https://www.judithgraf-michaelnowak.com/michael-nowak"
+  },
+  {
     "name": "Felix Pacher",
     "surname": "Pacher",
     "voice": "Bass",
@@ -298,7 +306,7 @@
   {
     "name": "KS Annely Peebo",
     "surname": "Peebo",
-    "voice": "Mezzosopran",
+    "voice": "Alt",
     "image": "assets/img/personen/solisten/peebo-ks-annely.webp",
     "deceased": false,
     "homepage": "https://www.annelypeebo.com/"
@@ -338,7 +346,7 @@
   {
     "name": "Klemens Sander",
     "surname": "Sander",
-    "voice": "Bariton",
+    "voice": "Bass",
     "image": "assets/img/personen/solisten/sander-klemens.webp",
     "deceased": false,
     "homepage": "https://www.klemenssander.at/ks/"
@@ -354,7 +362,7 @@
   {
     "name": "Maximilian Schnabel",
     "surname": "Schnabel",
-    "voice": "Bariton",
+    "voice": "Bass",
     "image": "assets/img/personen/solisten/schnabel-maximilian.webp",
     "deceased": false,
     "homepage": "https://www.maximilianschnabel.com/vita/"
@@ -362,7 +370,7 @@
   {
     "name": "Cornelia Sonnleithner",
     "surname": "Sonnleithner",
-    "voice": "Mezzosopran",
+    "voice": "Alt",
     "image": "assets/img/personen/solisten/sonnleithner-cornelia.webp",
     "deceased": false,
     "homepage": "https://www.corneliasonnleithner.com/"

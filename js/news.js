@@ -7,10 +7,12 @@
      fuellen nur noch auf, wenn es weniger als 4 aktive gibt
    - Archiv (#news-archive): alle Meldungen, auch die der Startseite, nach Jahren
    - Klick auf eine Meldung oeffnet ein Fenster mit allen Infos
-   - Fotos einer Meldung (data/news-fotos.json, z. B. ein Bericht) stehen im
-     Fenster als Bildergalerie wie auf Facebook (bis zu 5 Kacheln, auf der
-     letzten "+N"); ein Klick oeffnet sie gross zum Durchblaettern (lightbox.js).
-     Ohne eigenes Bild zeigt die Karte das erste Foto.
+   - Fotos und Videos einer Meldung (z. B. ein Bericht): fuer Karten und Liste nur die kleine
+     Uebersicht data/neuigkeiten/index.json (Anzahl, Titelbild), alles andere aus
+     data/neuigkeiten/<Kennung>.json erst beim Oeffnen. Im Fenster als Bildergalerie wie auf
+     Facebook (bis zu 5 Kacheln mit Vorschaubildern, auf der letzten "+N"); ein Klick oeffnet sie
+     gross zum Durchblaettern (lightbox.js). Ohne eigenes Bild zeigt die Karte das erste Foto.
+     Fehlt die Uebersicht noch, gelten die alten Dateien news-fotos.json und news-videos.json.
    Aufruf mit ?news=ID oeffnet die Meldung direkt (teilbarer Link).
    Benoetigt js/hochaemter-data.js (CSV-Parser und Hilfen).
    ============================================================ */
@@ -24,7 +26,8 @@
   const KEYS = {
     datum: 'date', bis: 'until', kategorie: 'cat', titel: 'title', kurztext: 'teaser', infos: 'infos',
     details: 'details', vorschaubild: 'thumb', plakat: 'poster', link: 'link', linktext: 'linktext',
-    weitererlink: 'link2', weitererlinktext: 'linktext2', bildausschnitt: 'focus', seiten: 'pages', bericht: 'report', entwurf: 'draft', ab: 'from'
+    weitererlink: 'link2', weitererlinktext: 'linktext2', bildausschnitt: 'focus', seiten: 'pages', bericht: 'report', entwurf: 'draft', ab: 'from',
+    bildnachweis: 'credit'
   };
   const CLOSE_ICON = '<svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>';
 
@@ -32,6 +35,7 @@
   let entries = [];
   let dialog = null;
   let lastTrigger = null;
+  let legacyMedia = null;   /* alte Sammeldateien, solange es keine Uebersicht gibt */
 
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
   const { esc } = HD;
@@ -70,7 +74,9 @@
         focus: /^\d{1,3}% \d{1,3}%$/.test(o.focus || '') ? o.focus : '',
         pages: o.pages || '',
         report: /^ja$/i.test(o.report || '') || /^bericht$/i.test(o.cat || ''),
-        photos: []
+        credit: o.credit || '',
+        /* Fotos und Videos: Anzahl und Titelbild aus der Uebersicht, die Listen erst beim Oeffnen */
+        nPhotos: 0, nVideos: 0, cover: '', photos: null, videos: null
       };
     }).filter(Boolean);
     /* Reihenfolge der Tabelle: die Verwaltung legt sie fest (neue Meldungen nach
@@ -100,7 +106,7 @@
   function thumbHTML(e, cls) {
     const klein = (p) => (window.AugBild && p ? window.AugBild.klein(p) : p);
     const own = url(klein(e.thumb || e.poster));
-    const src = own || (e.photos[0] ? url(klein(e.photos[0].src)) : '');
+    const src = own || (e.cover ? url(e.cover) : '');
     if (src) {
       const pos = own && e.focus ? ` style="object-position:${e.focus}"` : '';
       return `<img class="${cls}${own && e.poster ? '' : ' news-thumb-photo'}" src="${esc(src)}" alt="" width="640" height="480" loading="lazy" decoding="async"${pos}/>`;
@@ -117,7 +123,7 @@
     return `<a class="news-card" href="${esc(pageUrl(e.id))}" data-id="${esc(e.id)}">` +
       `<div class="news-card-img">${thumbHTML(e, 'news-thumb')}` +
         (e.cat || e.report ? `<span class="news-card-cat">${e.report ? DOC : ''}${esc(e.cat || 'Bericht')}</span>` : '') +
-        (e.photos.length > 1 ? `<span class="news-card-photos">${CAMERA}${photoCount(e.photos.length)}</span>` : '') +
+        (e.nPhotos > 1 ? `<span class="news-card-photos">${CAMERA}${photoCount(e.nPhotos)}</span>` : '') +
       '</div>' +
       '<div class="news-card-body">' +
         `<h3 class="news-card-title">${esc(e.title)}</h3>` +
@@ -145,9 +151,9 @@
     return `<a class="news-row" href="${esc(pageUrl(e.id))}" data-id="${esc(e.id)}">` +
       `<div class="news-row-img">${thumbHTML(e, 'news-thumb')}</div>` +
       '<div class="news-row-main">' +
-        (e.cat || e.photos.length > 1 ? '<div class="news-row-meta">' +
+        (e.cat || e.nPhotos > 1 ? '<div class="news-row-meta">' +
           (e.cat ? `<span class="news-row-cat">${esc(e.cat)}</span>` : '') +
-          (e.photos.length > 1 ? `<span class="news-row-photos">${photoCount(e.photos.length)}</span>` : '') + '</div>' : '') +
+          (e.nPhotos > 1 ? `<span class="news-row-photos">${photoCount(e.nPhotos)}</span>` : '') + '</div>' : '') +
         `<h3 class="news-row-title">${esc(e.title)}</h3>` +
         `<p class="news-row-text">${HD.formatText(e.teaser)}</p>` +
       '</div>' +
@@ -170,7 +176,7 @@
     const months = [...monthN.keys()].sort((a, b) => a - b);
 
     el.innerHTML =
-      '<form class="news-filter" role="search" aria-label="Archiv filtern" onsubmit="return false">' +
+      '<form class="news-filter" role="search" aria-label="Archiv filtern"">' +
         '<div class="news-filter-field news-filter-q"><label for="nf-q">Suche</label>' +
           '<input type="search" id="nf-q" class="news-filter-input" placeholder="Titel oder Text" autocomplete="off"/></div>' +
         '<div class="news-filter-field"><label for="nf-cat">Kategorie</label>' +
@@ -188,6 +194,8 @@
     const rows = qs('#news-rows', el);
     const q = qs('#nf-q', el), cat = qs('#nf-cat', el), year = qs('#nf-year', el), month = qs('#nf-month', el);
     const rep = qs('#nf-report', el), reset = qs('#nf-reset', el), count = qs('#nf-count', el);
+    /* Enter im Suchfeld soll filtern, nicht die Seite neu laden (ein onsubmit im HTML verbietet die CSP) */
+    qs('.news-filter', el).addEventListener('submit', (ev) => ev.preventDefault());
     const fold = (t) => String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
     const apply = () => {
@@ -284,10 +292,13 @@
       list.map((p, i) => {
         const src = url(p.src);
         if (!src) return '';
+        const thumb = (p.thumb && url(p.thumb)) || src;
         const more = i === 4 && list.length > 5 ? `<span class="nd-g-more" aria-hidden="true">+${list.length - 5}</span>` : '';
         const label = HD.plainText(p.alt) || `Foto ${i + 1} von ${list.length}`;
-        return `<a class="nd-g" href="${esc(src)}" data-lightbox data-gallery="news" data-caption="${esc(HD.plainText(p.alt))}"${i >= 5 ? ' hidden' : ''} title="${esc(label)}">` +
-          `<img src="${esc(src)}" alt="${esc(label)}" loading="lazy" decoding="async" data-bn=""/>${more}</a>`;
+        /* In den Kacheln die Vorschau; die Grossfassung laedt erst die Vergroesserung */
+        return `<a class="nd-g" href="${esc(src)}" data-lightbox data-gallery="news" data-thumb="${esc(thumb)}" data-caption="${esc(HD.plainText(p.alt))}"` +
+          `${p.credit ? ` data-credit="${esc(p.credit)}"` : ''}${i >= 5 ? ' hidden' : ''} title="${esc(label)}">` +
+          `<img src="${esc(i < 5 ? thumb : src)}" alt="${esc(label)}" loading="lazy" decoding="async" data-bn=""/>${more}</a>`;
       }).join('') + '</div>';
   }
 
@@ -304,12 +315,13 @@
 
   function mediaHTML(e) {
     const poster = url(e.poster);
+    const credit = e.credit ? ` data-credit="${esc(e.credit)}"` : '';
     if (poster) {
-      return `<a href="${esc(poster)}" target="_blank" rel="noopener" title="Plakat in voller Größe öffnen" data-lightbox>` +
-        `<img src="${esc(poster)}" alt="Plakat: ${esc(e.title)}" decoding="async"/></a>`;
+      return `<a href="${esc(poster)}" target="_blank" rel="noopener" title="Plakat in voller Größe öffnen" data-lightbox${credit}>` +
+        `<img src="${esc(poster)}" alt="Plakat: ${esc(e.title)}" decoding="async"${credit}/></a>`;
     }
     const thumb = url(e.thumb);
-    if (thumb) return `<img src="${esc(thumb)}" alt="" decoding="async"/>`;
+    if (thumb) return `<img src="${esc(thumb)}" alt="" decoding="async"${credit}/>`;
     return `<span class="news-noimg nd-noimg"><img src="${esc(base)}assets/logo-gold.png" alt="" width="96" height="96"/></span>`;
   }
 
@@ -329,9 +341,30 @@
     '</div>';
   }
 
-  function open(id, trigger) {
+  /* Fotos und Videos einer Meldung erst beim Oeffnen laden (einmal je Meldung) */
+  async function loadMedia(e) {
+    if (e.photos) return;
+    e.photos = [];
+    e.videos = [];
+    if (!e.nPhotos && !e.nVideos) return;
+    try {
+      const d = legacyMedia ? legacyMedia(e.id) : await HD.fetchJSON(`${base}data/neuigkeiten/${encodeURIComponent(e.id)}.json`);
+      e.photos = (Array.isArray(d.fotos) ? d.fotos : [])
+        .filter((p) => p && typeof p.bild === 'string')
+        .map((p) => ({ src: p.bild, thumb: typeof p.vorschau === 'string' ? p.vorschau : '', alt: String(p.alt || ''), credit: String(p.nachweis || '') }));
+      e.videos = (Array.isArray(d.videos) ? d.videos : [])
+        .filter((v) => v && typeof v.datei === 'string')
+        .map((v) => ({ src: v.datei, titel: String(v.titel || '') }));
+    } catch {
+      /* ohne Galerie weiter */
+    }
+  }
+  async function open(id, trigger) {
     const e = entries.find((x) => x.id === id);
     if (!e) return;
+    if (trigger) trigger.setAttribute('aria-busy', 'true');
+    await loadMedia(e);
+    if (trigger) trigger.removeAttribute('aria-busy');
     show(e, trigger);
     history.replaceState(null, '', pageUrl(id));
   }
@@ -385,7 +418,7 @@
       previewing = true;
       show({
         cat: '', teaser: '', infos: [], details: [], thumb: '', poster: '', link: '', linktext: '',
-        link2: '', linktext2: '', focus: '', photos: [], ...e
+        link2: '', linktext2: '', focus: '', credit: '', photos: [], videos: [], ...e
       }, trigger);
       /* Links der Vorschau oeffnen in einem neuen Tab, damit das Formular erhalten bleibt */
       for (const a of dialog.querySelectorAll('.nd-content a[href]:not([data-lightbox]), .nd-media a[href]:not([data-lightbox])')) {
@@ -421,27 +454,33 @@
       host.innerHTML = '<p class="s-text">Die Neuigkeiten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.</p>';
       return;
     }
-    /* Fotos der Meldungen; fehlt die Datei, gibt es eben keine Galerie */
+    /* Uebersicht der Fotos und Videos (Anzahl, Titelbild); fehlt sie, die alten Sammeldateien */
     try {
-      const map = (await HD.fetchJSON(`${base}data/news-fotos.json`)).bilder || {};
+      const index = (await HD.fetchJSON(`${base}data/neuigkeiten/index.json`)).meldungen || {};
       for (const e of entries) {
-        e.photos = (Array.isArray(map[e.id]) ? map[e.id] : [])
-          .filter((p) => p && typeof p.bild === 'string')
-          .map((p) => ({ src: p.bild, alt: String(p.alt || '') }));
+        const x = index[e.id] || {};
+        e.nPhotos = Number(x.fotos) || 0;
+        e.nVideos = Number(x.videos) || 0;
+        e.cover = typeof x.titelbild === 'string' ? x.titelbild : '';
       }
     } catch {
-      /* ohne Galerie weiter */
-    }
-    /* Videos der Meldungen; fehlt die Datei, gibt es eben keine */
-    try {
-      const vmap = (await HD.fetchJSON(`${base}data/news-videos.json`)).videos || {};
-      for (const e of entries) {
-        e.videos = (Array.isArray(vmap[e.id]) ? vmap[e.id] : [])
-          .filter((v) => v && typeof v.datei === 'string')
-          .map((v) => ({ src: v.datei, titel: String(v.titel || '') }));
+      try {
+        const [f, v] = await Promise.all([
+          HD.fetchJSON(`${base}data/news-fotos.json`).catch(() => ({})),
+          HD.fetchJSON(`${base}data/news-videos.json`).catch(() => ({}))
+        ]);
+        const fm = f.bilder || {};
+        const vm = v.videos || {};
+        legacyMedia = (id) => ({ fotos: fm[id] || [], videos: vm[id] || [] });
+        for (const e of entries) {
+          const list = Array.isArray(fm[e.id]) ? fm[e.id] : [];
+          e.nPhotos = list.length;
+          e.nVideos = Array.isArray(vm[e.id]) ? vm[e.id].length : 0;
+          e.cover = list[0] && typeof list[0].bild === 'string' ? (window.AugBild ? window.AugBild.vorschau(list[0].bild) : list[0].bild) : '';
+        }
+      } catch {
+        /* ohne Fotos weiter */
       }
-    } catch {
-      /* ohne Videos weiter */
     }
     if (grid) renderLatest(grid);
     if (archive) renderArchive(archive);

@@ -616,7 +616,7 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 
 /* Alle Aenderungen (Entwickler): Filter und Tabelle */
 .adm-main-wide{max-width:min(1500px,100%)}
-.ae-filter{display:grid;grid-template-columns:minmax(14rem,2fr) repeat(3,minmax(10rem,1fr));gap:.8rem 1rem;align-items:end;padding:1rem 1.2rem}
+.ae-filter{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:.8rem 1rem;align-items:end;padding:1rem 1.2rem}
 .ae-filter .adm-field{margin:0}
 .ae-wrap{overflow-x:auto;border:1px solid var(--line);background:var(--white)}
 .ae-table{width:100%;border-collapse:collapse;font-size:.95rem;line-height:1.45}
@@ -634,7 +634,7 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .ae-details li{padding:.12rem 0}
 .ae-files{margin-top:.3rem}
 .ae-more{margin-top:1rem}
-@media(max-width:900px){.ae-filter{grid-template-columns:1fr 1fr}.ae-q{grid-column:1/-1}}
+@media(max-width:1180px){.ae-filter{grid-template-columns:1fr 1fr}.ae-q{grid-column:1/-1}}
 @media(max-width:520px){.ae-filter{grid-template-columns:1fr}}
 .adm-steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:.9rem}
 .adm-steps li{counter-increment:s;display:grid;grid-template-columns:2.2rem minmax(0,1fr);gap:.8rem;align-items:start;font-size:1rem;line-height:1.55;color:var(--text-mid)}
@@ -808,7 +808,15 @@ body.has-pending .adm-toasts{bottom:calc(var(--adm-pending-h,6rem) + 1rem)}
 .adm-ph-list{display:flex;flex-direction:column;gap:.8rem;margin-bottom:.9rem}
 .adm-ph{display:grid;grid-template-columns:6rem minmax(0,1fr) auto;gap:1rem;align-items:start;padding:.8rem;border:1px solid var(--line);background:var(--white)}
 .adm-ph .adm-thumb{width:6rem;aspect-ratio:4/3}
-.adm-ph .adm-thumb img{width:100%;height:100%;object-fit:cover}
+.adm-ph .adm-thumb img{width:100%;height:100%;object-fit:contain}
+.adm-ph-no{display:grid;place-items:center;min-height:24px;font-size:.85rem;font-weight:600;color:var(--text-mid)}
+.adm-ph-all{margin-top:.6rem}
+.adm-row-photos{display:inline-flex;align-items:center;gap:.3rem}
+.adm-row-photos svg{width:15px;height:15px}
+/* Fortschritt beim Hochladen vieler Fotos */
+.adm-progress{display:grid;gap:.35rem;margin:0 0 .9rem;padding:.7rem .85rem;border:1px solid var(--line);background:var(--bg-soft);font-size:.92rem;color:var(--text-mid)}
+.adm-progress-text{overflow-wrap:anywhere}
+.adm-progress progress{width:100%;height:8px;accent-color:var(--gold)}
 .adm-ph.dragging{opacity:.45}
 .adm-ph.drop-over{border-color:var(--gold);box-shadow:0 -3px 0 var(--gold)}
 .adm-ph-fields{display:grid;gap:.25rem}
@@ -1305,3 +1313,35 @@ html{scroll-padding-top:1.5rem}
 #zg-list .adm-row-open.adm-acc{grid-template-columns:4rem minmax(0,1fr) auto}
 #zg-list .adm-avatar{background:var(--blue-deep);color:var(--gold-l)}
 #zg-list .adm-row-meta code{padding:.05rem .4rem;background:var(--bg-soft);border:1px solid var(--line);font-size:.88rem}
+
+/* ══ KOMPAKT (November 2026) ══
+   Weniger Scrollen bei gleichem Aussehen: nur Leerraeume sind kleiner, Klickflaechen bleiben mindestens
+   40 px (am Handy 44 px) hoch. Alles in diesem Block; zum Zuruecknehmen einfach entfernen. */
+.adm-main{padding:1.3rem 1.6rem 3rem}
+.adm-head-in{padding:.8rem 1.6rem .75rem}
+.adm-panel{padding:1.2rem 1.4rem;margin-bottom:1.1rem}
+.adm-row-open{min-height:64px;padding:.65rem 1rem;gap:1rem}
+.adm-grid{gap:.8rem 1.2rem}
+.adm-fs{padding:1rem 0 .4rem}
+.adm-field{gap:.25rem}
+.adm-dlg-head{padding:1rem 1.6rem .8rem}
+.adm-dlg-body{padding:.2rem 1.6rem 1.1rem}
+.adm-dlg-foot{padding:.7rem 1.6rem}
+/* Fotolisten (Hochaemter, Berichte): kompakte Zeilen; am Laptop zwei Spalten nebeneinander,
+   so brauchen 20 bis 30 Fotos nur halb so viel Hoehe */
+.adm-ph-list{gap:.55rem}
+.adm-ph{padding:.55rem;gap:.8rem}
+.adm-ph .adm-thumb{width:5rem}
+.adm-ph-fields{gap:.15rem}
+@media(min-width:1100px){
+  .adm-ph-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  .adm-ph-list>.adm-hint{grid-column:1/-1}
+}
+@media(max-width:700px){
+  .adm-main{padding:.9rem 1rem 2.5rem}
+  .adm-head-in{padding:.7rem 1rem .6rem}
+  .adm-panel{padding:1rem .9rem}
+  .adm-row-open{padding:.55rem .75rem;gap:.75rem}
+  .adm-dlg-head{padding:.8rem 1rem .6rem}
+  .adm-dlg-body{padding:.1rem 1rem 1rem}
+}

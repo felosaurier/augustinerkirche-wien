@@ -239,6 +239,7 @@
       }
       const direct = await persist(next);
       await A.credits.set(entry.bild, $('f-credit').value);
+      if (old && old.bild && old.bild !== entry.bild) await A.media.remove([old.bild]);
       $('rg-dlg').close();
       render();
       flash(pos);
@@ -255,7 +256,7 @@
     const b = list[i];
     const ok = await A.confirmBox({
       title: 'Bild aus dem Rundgang entfernen?',
-      html: `<strong>${esc(b.titel)}</strong><br><br>Das Bild verschwindet von der Seite Chronik → Rundgang. Die Bilddatei bleibt im Ordner erhalten.`,
+      html: `<strong>${esc(b.titel)}</strong><br><br>Das Bild verschwindet von der Seite Chronik → Rundgang. Die Bilddatei wird mitgelöscht, sofern sie nicht noch anderswo verwendet wird.`,
       ok: 'Entfernen', danger: true
     });
     if (!ok) return;
@@ -263,6 +264,7 @@
       const next = list.slice();
       next.splice(i, 1);
       const direct = await persist(next);
+      if (b.bild) await A.media.remove([b.bild]);
       if ($('rg-dlg').open) $('rg-dlg').close();
       render();
       A.toast(direct ? `Entfernt: ${b.titel}.` : 'Entfernt. Bitte unten die Datei herunterladen.');

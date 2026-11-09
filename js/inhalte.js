@@ -373,8 +373,10 @@
       (fotos.length ? `<div class="gallery gal-photos">${fotos.map((f, i) => {
         const cap = HD.plainText(f.alt);
         const plus = i === GAL_SHOWN - 1 && more > 0 ? `<span class="gal-more" aria-hidden="true">+${more}</span>` : '';
-        return `<div class="g-item"${i >= GAL_SHOWN ? ' hidden' : ''}><a href="${esc(url(f.bild))}" data-lightbox data-gallery="galerie-${n}" data-caption="${esc(cap)}" title="${esc(cap || 'Foto vergrößern')}">` +
-          `<img src="${esc(url(f.bild))}" alt="${esc(cap || `Foto ${i + 1}: ${a.titel}`)}" width="${HD.num(f.breite, 900)}" height="${HD.num(f.hoehe, 600)}" loading="lazy" decoding="async"/>${plus}</a></div>`;
+        /* Im Gitter die kleine Fassung (900 px), die grosse erst in der Vergroesserung */
+        const thumb = url(window.AugBild && window.AugBild.vorschau ? window.AugBild.vorschau(f.bild) : f.bild) || url(f.bild);
+        return `<div class="g-item"${i >= GAL_SHOWN ? ' hidden' : ''}><a href="${esc(url(f.bild))}" data-lightbox data-gallery="galerie-${n}" data-thumb="${esc(thumb)}" data-caption="${esc(cap)}" title="${esc(cap || 'Foto vergrößern')}">` +
+          `<img src="${esc(thumb)}" alt="${esc(cap || `Foto ${i + 1}: ${a.titel}`)}" width="${HD.num(f.breite, 900)}" height="${HD.num(f.hoehe, 600)}" loading="lazy" decoding="async"/>${plus}</a></div>`;
       }).join('')}</div>` : '') +
       (videos.length ? `<div class="gal-videos">${videos.map((v) =>
         `<div class="gal-video"><button type="button" class="gal-video-load" data-yt="${esc(v.id)}" data-title="${esc(v.titel || a.titel)}">` +
@@ -395,6 +397,8 @@
     const heute = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
     const alben = ((await load('galerie.json')).alben || []).filter((a) => a && a.titel && !(a.sichtbar && a.sichtbar > heute));
     if (!alben.length) return;
+    /* Liste der kleinen Fassungen abwarten (hoechstens kurz) */
+    if (window.AugBild) await Promise.race([window.AugBild.ready, new Promise((r) => setTimeout(r, 400))]);
     host.innerHTML = alben.map(albumHTML).join('');
     wireVideos(host);
   }
@@ -499,27 +503,82 @@
   }
 
   /* ---------- Predigten und Ansprachen ---------- */
+  /* Predigten: data/predigten/index.json (Datum, Titel, Auszug, Foto, Nachweis) fuer die Liste,
+     der volle Text je Beitrag in data/predigten/<id>.json, geladen erst beim Aufklappen.
+     Fehlt die Uebersicht noch, gilt die alte Sammeldatei data/predigten.json. */
+  async function sermonIndex() {
+    try {
+      return { list: (await load('predigten/index.json')).predigten || [], legacy: false };
+    } catch {
+      return { list: (await load('predigten.json')).predigten || [], legacy: true };
+    }
+  }
+  async function sermonText(p, legacy) {
+    if (legacy) return String(p.text || '');
+    if (!/^[a-z0-9-]+$/.test(String(p.id || ''))) return '';
+    return String((await load(`predigten/${p.id}.json`)).text || '');
+  }
+  const sermonHTML = (text) => String(text || '').split(/\n+/).map((t) => t.trim()).filter(Boolean).map((t) => `<p>${rich(t)}</p>`).join('');
   async function predigten() {
     const hosts = qsa('[data-inhalt="predigten"]');
     if (!hosts.length) return;
     /* Reihenfolge der Datei (in der Verwaltung festgelegt), ohne Entwuerfe */
-    const list = ((await load('predigten.json')).predigten || []).filter((p) => p && p.titel && !p.entwurf);
+    const { list: all, legacy } = await sermonIndex();
+    const list = all.filter((p) => p && p.titel && !p.entwurf);
     for (const el of hosts) {
       if (!list.length) continue;
       el.innerHTML = list.map((p, i) => {
         const src = p.bild && url(p.bild);
         const size = p.breite && p.hoehe ? ` width="${HD.num(p.breite, 800)}" height="${HD.num(p.hoehe, 600)}"` : '';
-        const img = src
-          ? `<figure class="pd-img"><a href="${esc(src)}" data-lightbox title="Bild vergrößern"><img src="${esc(src)}" alt="${esc(p.bildtext || p.titel)}"${size} loading="lazy" decoding="async"/></a></figure>`
-          : '';
-        const paras = String(p.text || '').split(/\n+/).map((t) => t.trim()).filter(Boolean).map((t) => `<p>${rich(t)}</p>`).join('');
-        return `<article class="pd-item${src ? ' has-img' : ''}" id="pd-${i + 1}">${img}` +
-          '<div class="pd-body">' +
-            (p.datum ? `<div class="pd-date">${esc(longDate(p.datum))}</div>` : '') +
+        const credit = p.nachweis ? ` data-credit="${esc(p.nachweis)}"` : '';
+        /* Bildnachweis setzt main.js direkt unter das Bild */
+        const fig = (cls) => `<figure class="${cls}"><img src="${esc(src)}" alt="${esc(p.bildtext || p.titel)}"${size}${credit} loading="lazy" decoding="async"/></figure>`;
+        const img = src ? fig('pd-img') : '';
+        /* Aufgeklappt: Hochformat links vom Text (Text umfliesst es), Querformat oben */
+        const hoch = p.breite && p.hoehe ? (Number(p.hoehe) > Number(p.breite) ? ' pd-hoch' : ' pd-quer') : '';
+        const excerpt = legacy ? HD.plainText(String(p.text || '').split(/\n+/).join(' ')) : HD.plainText(p.auszug || '');
+        return `<article class="pd-item${src ? ' has-img' : ''}${hoch}" id="pd-${i + 1}" data-i="${i}"><details>` +
+          `<summary class="pd-sum">${img}` +
+          '<span class="pd-body">' +
+            (p.datum ? `<span class="pd-date">${esc(longDate(p.datum))}</span>` : '') +
             `<h2 class="pd-title">${esc(p.titel)}</h2>` +
-            `<div class="pd-text">${paras}</div>` +
-          '</div></article>';
+            (excerpt ? `<span class="pd-excerpt">${esc(excerpt)}</span>` : '') +
+            '<span class="pd-more"></span>' +
+          '</span></summary>' +
+          `<div class="pd-text">${src ? fig('pd-img-open') : ''}<div class="pd-paras" aria-live="polite">${legacy ? sermonHTML(p.text) : '<p class="pd-loading">Der Text wird geladen …</p>'}</div>` +
+          '<button type="button" class="btn btn-outline pd-back" data-pd-back>&larr; Zurück zur Übersicht</button></div>' +
+        '</details></article>';
       }).join('');
+      /* Text erst beim Aufklappen holen (einmal) */
+      const fill = async (item) => {
+        const box = item.querySelector('.pd-paras');
+        if (!box || box.dataset.ok) return;
+        box.dataset.ok = '1';
+        try {
+          box.innerHTML = sermonHTML(await sermonText(list[Number(item.dataset.i)], legacy)) || '<p>Kein Text vorhanden.</p>';
+        } catch {
+          delete box.dataset.ok;
+          box.innerHTML = '<p>Der Text konnte nicht geladen werden. Bitte später noch einmal versuchen.</p>';
+        }
+      };
+      el.addEventListener('toggle', (ev) => {
+        const det = ev.target;
+        if (det.tagName === 'DETAILS' && det.open) fill(det.closest('.pd-item'));
+      }, true);
+      /* Format erkennen, wenn die Datei keine Masse nennt */
+      for (const im of el.querySelectorAll('.pd-item:not(.pd-hoch):not(.pd-quer) .pd-img img')) {
+        const set = () => im.closest('.pd-item').classList.add(im.naturalHeight > im.naturalWidth ? 'pd-hoch' : 'pd-quer');
+        if (im.complete && im.naturalWidth) set(); else im.addEventListener('load', set, { once: true });
+      }
+      el.addEventListener('click', (ev) => {
+        const back = ev.target.closest('[data-pd-back]');
+        if (!back) return;
+        const item = back.closest('.pd-item');
+        item.querySelector('details').open = false;
+        item.scrollIntoView({ block: 'start' });
+      });
+      const target = /^#pd-\d+$/.test(location.hash) && el.querySelector(location.hash + ' details');
+      if (target) target.open = true;
     }
   }
 

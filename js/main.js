@@ -647,7 +647,9 @@
      data/bildnachweise.json ordnet Bildern (Pfad ab der Website-Wurzel) ihren
      Nachweis zu, z. B. "© Augustiner Wien, Foto: …". Er steht klein unter dem
      Bild; bei Titelfotos (Hintergrundbild) unten in der Ecke. Gilt auch fuer
-     Bilder, die spaeter nachgeladen werden (Personen, Runden, Neuigkeiten). */
+     Bilder, die spaeter nachgeladen werden (Personen, Runden, Neuigkeiten).
+     Fotos, deren Daten den Nachweis selbst tragen (Hochaemter, Berichte, Predigten, Plakate der
+     Meldungen), bringen ihn als data-credit am Bild bzw. am Link der Vergroesserung mit. */
   const siteRoot = (() => {
     const s = qs('script[src$="js/main.js"]');
     return s ? new URL('..', s.src).pathname : '/';
@@ -690,7 +692,8 @@
     if (!credits) return;
     for (const img of qsa('img:not([data-bn])')) {
       img.dataset.bn = '';
-      const text = creditFor(img.currentSrc || img.getAttribute('src'));
+      /* Nachweis direkt am Bild (Fotos von Hochaemtern, Berichten, Predigten, Plakate), sonst aus der Datei */
+      const text = img.dataset.credit || creditFor(img.currentSrc || img.getAttribute('src'));
       /* Vergroesserung und Fotoreihen: der Nachweis steht dort einmal in der Unterschrift (lightbox.js), nicht unter jedem Foto */
       if (!text || img.closest('.mobile-menu, nav, footer, .lb-fig, .lb-strip, .nd-gallery, .news-row-img, .news-card-img, .people-index, .rk-index')) continue;
       /* Zum Bild gehoerende Rahmen mitnehmen, damit der Text darunter steht */
@@ -729,10 +732,9 @@
   async function initCredits() {
     try {
       const res = await fetch(`${siteRoot}data/bildnachweise.json`);
-      if (!res.ok) return;
-      credits = (await res.json()).bilder || {};
+      credits = res.ok ? (await res.json()).bilder || {} : {};
     } catch {
-      return;
+      credits = {};   /* die Nachweise direkt an den Bildern gelten trotzdem */
     }
     applyCredits();
     if (heroCredit) heroCredit();

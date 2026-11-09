@@ -166,7 +166,7 @@
       else next.push(entry);
       const direct = await persist(next);
       /* Ersetztes PDF unter altem Namen aufraeumen */
-      if (old && picked && old.datei !== entry.datei) await A.discardFile(old.datei);
+      if (old && picked && old.datei !== entry.datei) await A.media.remove([old.datei]);
       $('aw-dlg').close();
       render();
       flash(entry.datei);
@@ -190,7 +190,7 @@
     try {
       const next = wochen.filter((_, k) => k !== i);
       const direct = await persist(next);
-      await A.discardFile(w.datei);
+      await A.media.remove([w.datei]);
       if ($('aw-dlg').open) $('aw-dlg').close();
       render();
       A.toast(direct ? `Entfernt: ${label(w)}.` : 'Entfernt. Bitte unten die Datei herunterladen.');

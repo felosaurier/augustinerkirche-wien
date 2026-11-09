@@ -408,6 +408,9 @@
       else next.push(r);
       await store(next, `Runde ${old ? 'gespeichert' : 'angelegt'}: ${titel}.`);
       if (r.bild && r.bild.pfad) await A.credits.set(r.bild.pfad, $('f-credit').value);
+      /* Ersetztes oder entferntes Bild wirklich loeschen (Admin.media.remove prueft, ob es noch verwendet wird) */
+      const oldImg = old && old.bild && old.bild.pfad;
+      if (oldImg && oldImg !== (r.bild && r.bild.pfad)) await A.media.remove([oldImg]);
       $('rd-dlg').close();
       flash(id);
     } catch (err) {
@@ -426,12 +429,14 @@
     const ok = await A.confirmBox({
       title: 'Runde löschen?',
       html: `<strong>${esc(r.titel)}</strong><br><br>Die Runde verschwindet aus der Übersicht.` +
-        (r.seite ? ' Ihre bisherige Seite bleibt als Datei erhalten, ist aber nicht mehr verlinkt.' : ''),
+        (r.seite ? ' Ihre bisherige Seite bleibt als Datei erhalten, ist aber nicht mehr verlinkt.' : '') +
+        (r.bild && r.bild.pfad ? ' Das Bild wird mitgelöscht, sofern es nicht noch anderswo verwendet wird.' : ''),
       ok: 'Löschen', danger: true
     });
     if (!ok) return false;
     try {
       await store(runden.filter((x) => x !== r), `Runde gelöscht: ${r.titel}.`);
+      if (r.bild && r.bild.pfad) await A.media.remove([r.bild.pfad]);
       return true;
     } catch (err) {
       A.toast(`Löschen nicht möglich: ${err.message}`, 'err');

@@ -47,7 +47,10 @@
       "bildtext": "",
       "breite": 0,
       "hoehe": 0,
-      "text": []
+      "text": [
+        "Frater Johannes wurde 1998 in Ehenbichl in Tirol geboren. Er trat nach beruflichen Stationen in der Einrichtungsberatung und beim Militärordinariat der Republik Österreich 2024 in unseren Orden ein und legte 2025 seine Erstprofess ab.",
+        "Frater Johannes studiert derzeit Katholische Fachtheologie an der Universität Wien und ist als Sakristan und Zeremoniär für die Vor- und Nachbereitung und den Ablauf der Liturgien sowie für die Ministrantenausbildung in St. Augustin verantwortlich."
+      ]
     }
   ],
   "leitung": [
@@ -115,14 +118,15 @@
   ],
   "asp-leitung": [
     {
-      "name": "Mag. Eduard Schipfer",
-      "rolle": "Pfarrmoderator",
+      "name": "Dr. Michael Wagner",
+      "rolle": "Pfarrprovisor",
       "bild": "",
       "bildtext": "",
       "breite": 0,
       "hoehe": 0,
       "text": [
-        "Pfarrmoderator des Pfarrverbands Klein Maria Dreieichen. Seit 1. Mai 2021 gehört die Pfarre Aspersdorf gemeinsam mit Groß, Hollabrunn und Oberfellabrunn zu diesem Pfarrverband.",
+        "Pfarrprovisor der Pfarren des Pfarrverbands Klein Maria Dreieichen.",
+        "Seit 1. Mai 2021 gehört die Pfarre Aspersdorf gemeinsam mit Groß, Hollabrunn und Oberfellabrunn zu diesem Pfarrverband.",
         "Kontakt: [[mail:ta.ehcrikehcsilohtak|refpihcs.draude]], Kirchenplatz 5, 2020 Hollabrunn"
       ]
     },

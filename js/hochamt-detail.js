@@ -8,9 +8,10 @@
    Orchester, Solisten, Organist, Dirigent), Ort, Hinweis, Bitte um Spende.
    Ist eine Meldung (data/news.csv) mit diesem Termin verknuepft
    (Link pages/hochamt.html?id=…), erscheint ihr Plakat daneben.
-   Fotos des Termins (data/hochamt-fotos.json, gepflegt in der Verwaltung)
-   erscheinen neben dem Programm, wo sonst das Plakat steht; gibt es ein
-   Plakat, stehen sie unter dem Programm. Sie lassen sich vergroessern.
+   Fotos des Termins (data/hochamt-fotos/, gepflegt in der Verwaltung):
+   bis 4 Fotos in der Spalte neben dem Programm (unter dem Plakat), ab 5 als
+   Fotogitter unter dem Programm (nur Vorschaubilder, die Grossfassung erst in
+   der Vergroesserung). Alle Fotos lassen sich vergroessern und durchblaettern.
    ============================================================ */
 (function () {
   'use strict';
@@ -190,42 +191,87 @@
     }
   }
 
-  /* Fotos dieses Termins zeigen: immer in der Spalte neben dem Programm, unter dem Plakat (falls es eines gibt) */
+  /* Fotos dieses Termins: zuerst die kleine Uebersicht (data/hochamt-fotos/index.json), nur wenn
+     der Termin dort Fotos hat, seine Detail-Datei. Fehlt die Uebersicht noch, gilt die alte
+     Sammeldatei data/hochamt-fotos.json. */
+  async function loadPhotos(id) {
+    const json = async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
+      return res.json();
+    };
+    try {
+      const index = (await json('../data/hochamt-fotos/index.json')).hochaemter || {};
+      if (!index[id]) return [];
+      return (await json(`../data/hochamt-fotos/${encodeURIComponent(id)}.json`)).bilder || [];
+    } catch (e) {
+      if (e && e.status !== 404) return [];
+      try {
+        return ((await json('../data/hochamt-fotos.json')).bilder || {})[id] || [];
+      } catch {
+        return [];
+      }
+    }
+  }
+  /* Ein Foto als Link zur Grossfassung (Vergroesserung mit Blaettern, lightbox.js); im Gitter steht
+     nur das kleine Vorschaubild. Breite und Hoehe stehen fest, damit beim Laden nichts springt.
+     big: in der Spalte neben dem Programm darf der Browser auf scharfen Bildschirmen die Grossfassung nehmen. */
+  function photoLink(b, title, cls, big = false) {
+    const cap = String(b.alt || '').trim();
+    const w = HD.num(b.breite, 0);
+    const h = HD.num(b.hoehe, 0);
+    const r = w && h ? (w / h).toFixed(4) : '1.3333';
+    const tw = w && h ? Math.round(640 * Math.min(1, w / h)) : 640;
+    const th = w && h ? Math.round(640 * Math.min(1, h / w)) : 480;
+    const credit = String(b.nachweis || '').trim();
+    return `<a class="${cls}" href="${HD.esc(b.src)}" data-lightbox data-gallery="hochamt" data-thumb="${HD.esc(b.thumb)}"` +
+      (cap ? ` data-caption="${HD.esc(cap)}"` : '') + (credit ? ` data-credit="${HD.esc(credit)}"` : '') + ` style="--r:${r}" title="Foto vergrößern">` +
+      `<img src="${HD.esc(b.thumb)}"${big && b.thumb !== b.src && w ? ` srcset="${HD.esc(b.thumb)} ${tw}w, ${HD.esc(b.src)} ${w}w" sizes="(max-width: 900px) 92vw, 19rem"` : ''}` +
+      ` alt="${HD.esc(cap || `Foto: ${title}`)}" width="${tw}" height="${th}" loading="lazy" decoding="async"/></a>`;
+  }
   async function showPhotos(id) {
     const aside = qs('#hd-poster');
-    const body = qs('#hd-body');
-    if (!aside || !body || !id) return;
-    let list;
-    try {
-      const res = await fetch('../data/hochamt-fotos.json');
-      if (!res.ok) return;
-      list = ((await res.json()).bilder || {})[id];
-    } catch {
-      return;
-    }
-    const shown = (Array.isArray(list) ? list : []).map((b) => ({ ...b, src: HD.safeUrl(b.bild, '../') })).filter((b) => b.src);
+    const layout = qs('#hd-layout');
+    if (!aside || !layout || !id) return;
+    const list = await loadPhotos(id);
+    const shown = (Array.isArray(list) ? list : []).map((b) => ({
+      ...b, src: HD.safeUrl(b && b.bild, '../'), thumb: HD.safeUrl((b && b.vorschau) || (b && b.bild), '../')
+    })).filter((b) => b.src);
     if (!shown.length) return;
     const title = qs('#hd-title').textContent;
-    const figures = shown.map((b) => {
-      const cap = String(b.alt || '').trim();
-      const dim = b.breite && b.hoehe ? ` width="${HD.num(b.breite, 900)}" height="${HD.num(b.hoehe, 600)}"` : '';
-      return `<figure class="hd-photo"><img src="${HD.esc(b.src)}" alt="${HD.esc(cap || `Foto: ${title}`)}"${dim} loading="lazy" decoding="async"/>` +
-        (cap ? `<figcaption>${HD.esc(cap)}</figcaption>` : '') + '</figure>';
-    }).join('');
+    const n = shown.length;
+    /* Wenige Fotos stehen in der Spalte neben dem Programm (unter dem Plakat, falls es eines gibt).
+       Ab 5 Fotos: dort das erste mit Hinweis, alle als Fotogitter unter dem Programm. */
+    const MANY = 5;
     const host = document.createElement('div');
     host.className = 'hd-aside-photos';
-    host.innerHTML = figures;
+    if (n < MANY) {
+      host.innerHTML = shown.map((b) => {
+        const cap = String(b.alt || '').trim();
+        return `<figure class="hd-photo">${photoLink(b, title, 'hd-photo-link', true)}${cap ? `<figcaption>${HD.esc(cap)}</figcaption>` : ''}</figure>`;
+      }).join('');
+    } else {
+      host.innerHTML = `<figure class="hd-photo">${photoLink(shown[0], title, 'hd-photo-link', true)}</figure>` +
+        `<a class="link-arr hd-photos-jump" href="#hd-fotos">Alle ${n} Fotos ansehen</a>`;
+      const sec = document.createElement('section');
+      sec.className = 'hd-photos-wrap';
+      sec.id = 'hd-fotos';
+      sec.setAttribute('aria-labelledby', 'hd-fotos-h');
+      sec.innerHTML = `<h2 class="s-title hd-photos-title" id="hd-fotos-h">Fotos <span class="hd-photos-n">${n}</span></h2>` +
+        `<div class="hd-gallery">${shown.map((b) => photoLink(b, title, 'hd-gal-item')).join('')}</div>`;
+      layout.after(sec);
+    }
     aside.append(host);
     aside.classList.add('has-photos');
     aside.setAttribute('aria-label', 'Plakat und Fotos');
     aside.hidden = false;
-    qs('#hd-layout').classList.add('has-poster');
+    layout.classList.add('has-poster');
   }
 
   /* Plakat der verknuepften Meldung neben dem Programm zeigen */
   const NEWS_KEYS = {
     datum: 'date', titel: 'title', plakat: 'poster', vorschaubild: 'thumb', link: 'link',
-    weitererlink: 'link2', weitererlinktext: 'linktext2', entwurf: 'draft', ab: 'from'
+    weitererlink: 'link2', weitererlinktext: 'linktext2', entwurf: 'draft', ab: 'from', bildnachweis: 'credit'
   };
   async function showPoster(id) {
     const aside = qs('#hd-poster');
@@ -246,7 +292,8 @@
     const src = n && HD.safeUrl(n.poster || n.thumb, '../');
     if (!src) return false;
     const newsId = `${HD.isoDate(n.date)}-${HD.slug(n.title)}`;
-    const img = `<img src="${HD.esc(src)}" alt="${HD.esc(`Plakat: ${n.title}`)}" loading="lazy" decoding="async"/>`;
+    const credit = n.credit ? ` data-credit="${HD.esc(n.credit)}"` : '';
+    const img = `<img src="${HD.esc(src)}" alt="${HD.esc(`Plakat: ${n.title}`)}" loading="lazy" decoding="async"${credit}/>`;
     /* Eigener Block, damit die Fotos darunter nicht ueberschrieben werden */
     let host = aside.querySelector('.hd-aside-poster');
     if (!host) {
@@ -255,7 +302,7 @@
       aside.prepend(host);
     }
     host.innerHTML = n.poster
-      ? `<a href="${HD.esc(src)}" target="_blank" rel="noopener" title="Plakat in voller Größe öffnen" data-lightbox>${img}</a><div class="runde-side-cap">Plakat vergrößern</div>`
+      ? `<a href="${HD.esc(src)}" target="_blank" rel="noopener" title="Plakat in voller Größe öffnen" data-lightbox${credit}>${img}</a><div class="runde-side-cap">Plakat vergrößern</div>`
       : img;
     /* Zweite Schaltflaeche der Meldung, z. B. Kartenverkauf */
     const link2 = HD.safeUrl(n.link2, '../');
@@ -275,6 +322,9 @@
     if (entries.some((e) => e.id === id)) return entries;
     const year = parseInt(id.slice(0, 4), 10);
     if (!year) return entries;
+    /* Nur Jahre nachladen, die es im Archiv gibt (sonst eine unnoetige 404-Anfrage) */
+    const years = await HD.archiveYears('../data/archiv/');
+    if (Array.isArray(years) && years.length && !years.some((y) => Number(y && y.jahr) === year)) return entries;
     try {
       const older = await HD.loadYear('../data/archiv/', year);
       return older.concat(entries).sort(HD.byDateTime);

@@ -318,6 +318,253 @@
           "art": "hochamt"
         }
       ]
+    },
+    {
+      "datum": "2026-11-01",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Augustinerkirche",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "11:00",
+          "name": "Allerheiligen-Pontifikalamt",
+          "zelebrant": "S. Exz. Diözesanbischof Dr. Alois Schwarz (St. Pölten)",
+          "musik": "L. v. Beethoven: Große Messe C-Dur",
+          "ort": "Augustinerkirche",
+          "art": "hochamt"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-02",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Allerseelen-Requiem",
+          "zelebrant": "Regionalvikar P. Mag. Dominic Sadrawetz OSA",
+          "musik": "G. Fauré: Requiem",
+          "ort": "Augustinerkirche",
+          "art": "hochamt"
+        },
+        {
+          "zeit": "08:00",
+          "name": "Heilige Seelenmesse",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "09:00",
+          "name": "Heilige Seelenmesse",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-03",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Dominic",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "19:30",
+          "name": "Chorprobe",
+          "zusatz": "Keine Teilnahme für Außenstehende möglich!",
+          "ort": "Augustinus-Saal",
+          "art": "veranstaltung"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-04",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "13:00",
+          "name": "Begräbnis",
+          "zusatz": "von + Regina Frischmann",
+          "zelebrant": "P. Matthias",
+          "ort": "Zentralfriedhof, Halle 1",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-05",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Nikolaus",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-06",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "17:00",
+          "name": "Heilige Seelenmesse",
+          "zusatz": "für + Martina Ortner",
+          "zelebrant": "P. Matthias",
+          "musik": "Franz Schubert: \"Deutsche Messe\"",
+          "ort": "Augustinerkirche",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "08:00",
+          "name": "Heilige Seelenmesse",
+          "zusatz": "Ordensallerseelen",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-07",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Hl. Messe (Vorabendmesse)",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-08",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "11:00",
+          "name": "Hochamt mit Dekanatsfirmung",
+          "zelebrant": "Dechant P. Mag. Matthias Schlögl OSA",
+          "musik": "W. A. Mozart: Spatzenmesse",
+          "ort": "Augustinerkirche",
+          "art": "hochamt"
+        },
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Augustinerkirche",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-09",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-13",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "08:00",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zusatz": "mit den neuen Kommunionhelfer/innen",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "13:30",
+          "name": "Kommunionhelfer/innen-Kurs",
+          "zelebrant": "P. Matthias",
+          "ort": "Augustinus-Saal",
+          "art": "veranstaltung"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-14",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Hl. Messe (Vorabendmesse)",
+          "zelebrant": "P. Matthias",
+          "ort": "Loretokapelle",
+          "art": "gottesdienst"
+        }
+      ]
+    },
+    {
+      "datum": "2026-11-15",
+      "tag": "",
+      "heilige": [],
+      "termine": [
+        {
+          "zeit": "18:30",
+          "name": "Heilige Messe",
+          "zelebrant": "P. Nikolaus",
+          "ort": "Augustinerkirche",
+          "art": "gottesdienst"
+        },
+        {
+          "zeit": "11:00",
+          "name": "Hochamt",
+          "zelebrant": "P. MMag. Nikolaus Schachtner OSA",
+          "musik": "J. v. Eybler: Leopoldimesse",
+          "ort": "Augustinerkirche",
+          "art": "hochamt"
+        }
+      ]
     }
   ]
 }

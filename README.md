@@ -53,7 +53,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | Bereich | Was du dort machst |
 |---|---|
 | **Übersicht** | Begrüßung mit Schnellzugriff (Neue Meldung, Neues Hochamt, Neuer Termin); „Noch offen“ (fehlende Angaben der nächsten sechs Wochen, Jahreswechsel, Runden ohne Termine, Wochenkalender nicht für die nächste Woche eingetragen) darunter **alle Bereiche** als kompakte Liste in den Gruppen der Seitenleiste, eine Zeile je Bereich mit Stand, Hinweis (z. B. „14 ohne Foto“, „Nur bis … eingetragen“, „3 Stellen noch offen“) und Schnellzugriff. Ganz unten „Zuletzt geändert“: nur die eigenen Änderungen, nach Tagen gruppiert (Heute, Gestern …), je Eintrag aufklappbar, was sich genau geändert hat; mit Projektordner oder Server von allen Geräten (aus `admin/protokoll.json`), sonst von diesem Gerät. Die frühere Seite `inhalte.html` leitet hierher weiter |
-| **Hochämter** | Fotos je Termin (mehrere, mit Beschreibung und Bildnachweis; erscheinen neben dem Programm, wo sonst das Plakat steht; gibt es ein Plakat, stehen sie darunter); Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
+| **Hochämter** | Fotos je Termin (auch 20–30 auf einmal, nacheinander verarbeitet mit Fortschrittsanzeige; je Foto Großfassung und Vorschaubild; mit Beschreibung und Bildnachweis; bis 4 Fotos neben dem Programm, ab 5 als Fotogitter darunter; ein entferntes Foto bzw. ein gelöschtes Hochamt nimmt seine Dateien mit); Termine nach Monaten, Suche, kommende und vergangene; bearbeiten im Fenster mit Vorschlägen aus bisherigen Einträgen, kopieren (eine Woche später), löschen; Excel-Tabelle herunterladen oder einlesen; Jahreswechsel per Knopf |
 | **Titelfotos** (Einstellungen) | Titelfotos im Vollbild-Start der Hauptseiten, oben das Thema wählen (Startseite, Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf; Fotos der anderen Themen lassen sich wieder verwenden): Fotos hinzufügen, ersetzen, entfernen, Reihenfolge per Pfeil, Ausschnitt ziehen, Bildnachweis. Bei mehreren Fotos wechseln sie nacheinander (Wechselzeit einstellbar; ein Klick aufs Foto zeigt Pfeile links und rechts zum Blättern und pausiert den Wechsel; bei „reduzierte Bewegung“ im System bleibt das erste Foto stehen) |
 | **Neuigkeiten** | Meldungen mit Plakat oder Foto (Ziehen und Ablegen), Vorschau der Karte wie auf der Startseite, Hinweis ob Startseite oder Archiv; dazu eine Bildergalerie (Kategorie „Bericht“ bis 30 Fotos, sonst bis 5) mit Beschreibung und Bildnachweis je Foto |
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender; derselbe Termin an mehreren Tagen auf einmal (Weitere Tage) |
@@ -141,7 +141,7 @@ Alle Meldungen stehen in **[`data/news.csv`](data/news.csv)** — ebenfalls eine
 - **Startseite:** zeigt immer **4 Meldungen** (am Laptop nebeneinander, auf kleineren Bildschirmen 2 × 2, am Handy untereinander): zuerst die neuesten, deren Enddatum („Bis“) noch nicht vorbei ist; gibt es weniger als 4 davon, wird unten mit den neuesten abgelaufenen aufgefüllt (in der Verwaltung als „Startseite · abgelaufen“ markiert). Darunter führt „Alle Meldungen“ ins Archiv. Ein Klick öffnet ein Fenster mit Plakat, Infos und Details. Das Datum einer Meldung steht nirgends auf der Website (weder Startseite noch Archiv noch Fenster); gespeichert bleibt es für die Reihenfolge und das Jahr im Archiv.
 - **Archiv** (`pages/archiv.html`): ältere und abgelaufene Meldungen wandern **automatisch** dorthin und sind **nach Jahren** geordnet.
 - Jede Meldung hat einen eigenen Link, z. B. `index.html?news=…`, der das Fenster direkt öffnet.
-- **Bericht mit Fotos (wie auf Facebook):** Kategorie „Bericht“ wählen und bis zu **30 Fotos** hineinziehen (andere Meldungen bis zu 5). Im Fenster stehen sie als Galerie unter dem Text (bis zu 5 Kacheln, auf der letzten „+N“); ein Klick öffnet sie groß zum Durchblättern (Pfeile, Pfeiltasten, Wischen, unten eine Leiste mit allen Fotos zum Antippen) mit Beschreibung und Bildnachweis. Ohne Plakat ist das Fenster schmal und einspaltig wie ein Facebook-Beitrag, ohne eigenes Bild zeigt die Karte das erste Foto und „12 Fotos“. Die Fotos liegen in einem **eigenen Ordner je Meldung**: `assets/img/news/JAHR/<Datum>-<Titel>/foto-1.webp` …, die Liste in `data/news-fotos.json`. Wird die Meldung gelöscht, werden ihre Fotos mitgelöscht. In der Verwaltung zeigt der Knopf **„Vorschau“** das Fenster der Meldung so, wie es auf der Website erscheint, mit dem Stand des Formulars (auch ungespeichert).
+- **Bericht mit Fotos (wie auf Facebook):** Kategorie „Bericht“ wählen und bis zu **30 Fotos** hineinziehen (andere Meldungen bis zu 5). Im Fenster stehen sie als Galerie unter dem Text (bis zu 5 Kacheln, auf der letzten „+N“); ein Klick öffnet sie groß zum Durchblättern (Pfeile, Pfeiltasten, Wischen, unten eine Leiste mit allen Fotos zum Antippen) mit Beschreibung und Bildnachweis. Ohne Plakat ist das Fenster schmal und einspaltig wie ein Facebook-Beitrag, ohne eigenes Bild zeigt die Karte das erste Foto und „12 Fotos“. Die Fotos liegen in einem **eigenen Ordner je Meldung**: `assets/img/news/JAHR/<Kennung>/foto-1.webp` (dazu das Vorschaubild `foto-1-v.webp`), auch ein neues Plakat kommt dorthin; die Liste steht in `data/neuigkeiten/<Kennung>.json`, die Übersicht für Karten und Archiv in `data/neuigkeiten/index.json`. Beim Bildnachweis eines Fotos übernimmt ein Knopf ihn für alle Fotos. **Löschen heißt löschen:** ein entferntes Foto, Video oder Bild verschwindet beim Speichern samt Vorschau, Nachweis und leerem Ordner; wird die Meldung gelöscht, geht alles mit (außer einer Datei, die noch anderswo verwendet wird, z. B. das Plakat einer kopierten Meldung). In der Verwaltung zeigt der Knopf **„Vorschau“** das Fenster der Meldung so, wie es auf der Website erscheint, mit dem Stand des Formulars (auch ungespeichert).
 - **Neues Plakat:** Bild als WebP in den **Jahresordner** legen, passend zum Datum der Meldung: Plakate von 2026 nach `assets/img/news/2026/`, Plakate von 2027 nach `assets/img/news/2027/` usw. Dann eine Zeile in `news.csv` ergänzen und dort den Pfad eintragen, z. B. `assets/img/news/2026/bibelpur-2026-27.webp`. Ein Bild reicht, die Vorschau wird automatisch zugeschnitten.
 
 ## Cookies und Besucherstatistik
@@ -223,6 +223,11 @@ pages/
   runden/                     Detailseiten je Pfarrgruppe; runde.html?id=… für neu angelegte Runden
 tools/
   paket.py                    Baut das Paket für nginx/Apache (siehe „Auf einen Webserver stellen“)
+  daten-teilen.py             Einmalig: Fotos/Videos der Neuigkeiten, Predigten und Bildnachweise in die geteilte Ablage
+                              übernehmen (data/neuigkeiten/, data/predigten/, Nachweis beim Foto bzw. Spalte in news.csv)
+  hochamt-fotos-teilen.py     Einmalig: alte data/hochamt-fotos.json in die geteilte Ablage data/hochamt-fotos/ übernehmen,
+                              fehlende Vorschaubilder erzeugen; --reste zeigt (--reste --loeschen entfernt) nicht mehr
+                              verwendete Bilddateien in assets/img/hochaemter/
   server/                     Vorlagen: nginx.conf, apache.conf, ANLEITUNG.md
 admin/                        Verwaltung (nur mit Anmeldung)
   index.html                  Anmeldung und Ersteinrichtung
@@ -322,8 +327,16 @@ data/
   startseite-augustinerkirche.json, startseite-kirchenmusik.json, startseite-augustiner.json, startseite-aspersdorf.json
                               Titelfotos der Hauptseiten Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf (gleicher Aufbau)
   personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten
-  hochamt-fotos.json          Fotos je Hochamt (Kennung → Bilder), Bilder in assets/img/hochaemter/<Kennung>/
-  news-fotos.json             Bildergalerie je Meldung (Kennung → Bilder), Bilder in assets/img/news/JAHR/<Datum>-<Titel>/
+  hochamt-fotos/              Fotos der Hochämter, geteilt: index.json (Übersicht: Kennung → Anzahl, Titelbild) und je Hochamt
+                              <Kennung>.json (alle Fotos mit Vorschau, Beschreibung, Maßen); Bilder in assets/img/hochaemter/<Kennung>/
+                              als foto-N.webp (Großfassung, max. 1920 px) und foto-N-v.webp (Vorschau, 640 px)
+  neuigkeiten/                Fotos und Videos der Meldungen, geteilt: index.json (Kennung → Anzahl Fotos/Videos, Titelbild)
+                              und je Meldung <Kennung>.json (Fotos mit Vorschau, Beschreibung, Bildnachweis; Videos);
+                              Dateien im eigenen Ordner der Meldung assets/img/news/JAHR/<Kennung>/ (Videos: assets/video/news/…)
+  predigten/                  Predigten und Ansprachen, geteilt: index.json (Reihenfolge, Datum, Titel, Auszug, Foto,
+                              Bildnachweis) und je Beitrag <id>.json mit dem Text (wird erst beim Aufklappen geladen)
+  bildnachweise.json          Bildnachweise der übrigen Bilder (Titelfotos, Personen, Seiten …); Fotos von Meldungen,
+                              Hochämtern und Predigten tragen ihren Nachweis selbst, Plakate in news.csv (Spalte Bildnachweis)
   kontakt.json                Adresse, Telefon, E-Mail, Öffnungszeiten der Pfarrkanzlei
   repertoire.json             Repertoire des Chores
   rechtliches.json            Impressum und Datenschutzerklärung (Abschnitte mit Text)

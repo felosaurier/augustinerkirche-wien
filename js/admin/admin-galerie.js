@@ -183,6 +183,8 @@
   }
 
   /* Ordner des Albums: der Ordner der vorhandenen Fotos, sonst nach Titel (und Datum) */
+  /* Alle Dateien eines Albums (Fotos, Aufnahmen, eigene Videodateien) */
+  const filesOf = (a) => [...(a.fotos || []).map((f) => f && f.bild), ...(a.audio || []).map((h) => h && h.datei), ...(a.videos || []).map((v) => v && v.datei)].filter(Boolean);
   function folderFor(titel, datum) {
     const own = photos.find((p) => p.path && p.path.startsWith(IMG_DIR));
     if (own) return own.path.replace(/[^/]+$/, '');
@@ -329,6 +331,12 @@
       else next.unshift(album);
       const direct = await persist(next);
       if (photos.length) await A.credits.save(Object.fromEntries(photos.map((p) => [p.path, clean(p.credit)])));
+      /* Entfernte Fotos, Aufnahmen und Videodateien wirklich loeschen (wenn nirgends sonst verwendet) */
+      if (old) {
+        const gone = filesOf(old).filter((x) => !filesOf(album).includes(x));
+        const dirs = album.fotos.length ? [] : filesOf(old).map((x) => A.dirName(x)).filter((d) => d.startsWith(IMG_DIR));
+        if (gone.length || dirs.length) await A.media.remove(gone, { ownDirs: dirs });
+      }
       $('ga-dlg').close();
       query = '';
       $('ga-search').value = '';
@@ -374,7 +382,7 @@
     const a = alben[i];
     const ok = await A.confirmBox({
       title: 'Album löschen?',
-      html: `<strong>${esc(a.titel)}</strong><br><br>Das Album verschwindet von der Seite Kirchenmusik → Galerie. Fotos und Aufnahmen bleiben im Ordner erhalten.`,
+      html: `<strong>${esc(a.titel)}</strong><br><br>Das Album verschwindet von der Seite Kirchenmusik → Galerie. Seine Fotos, Aufnahmen und Videodateien werden mitgelöscht, sofern sie nicht noch anderswo verwendet werden.`,
       ok: 'Löschen', danger: true
     });
     if (!ok) return;
@@ -382,6 +390,7 @@
       const next = alben.slice();
       next.splice(i, 1);
       const direct = await persist(next);
+      await A.media.remove(filesOf(a), { ownDirs: [...new Set(filesOf(a).map((x) => A.dirName(x)).filter((d) => d.startsWith(IMG_DIR)))] });
       if ($('ga-dlg').open) $('ga-dlg').close();
       render();
       A.toast(direct ? `Gelöscht: ${a.titel}.` : 'Gelöscht. Bitte unten die Datei herunterladen.');

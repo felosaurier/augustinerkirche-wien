@@ -52,7 +52,9 @@ TEST_MESS_ID = 'G-VORSCHAU01'
 # Inhalte, die auf dem Server gepflegt werden: kommen mit --update nicht ins Paket
 INHALTE = ('data/', 'assets/img/', 'assets/audio/', 'assets/video/', 'assets/pdf/', 'assets/programme/', 'admin/zugaenge.json', 'admin/mitteilungen.json', 'admin/protokoll.json')
 # Dateien, die erst beim ersten Speichern in der Verwaltung entstehen; bis dahin gilt das HTML
-ENTSTEHEN = ('data/galerie.json', 'data/navigation.json', 'data/news-videos.json', 'data/bilder-klein.json')
+ENTSTEHEN = ('data/galerie.json', 'data/navigation.json', 'data/news-videos.json', 'data/bilder-klein.json',
+             # alte Sammeldateien: nur noch als Rueckfall gelesen, bis sie in die geteilte Ablage uebernommen sind
+             'data/news-fotos.json', 'data/predigten.json', 'data/hochamt-fotos.json')
 
 
 def fehler(text):

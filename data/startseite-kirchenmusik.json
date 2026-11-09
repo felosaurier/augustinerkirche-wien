@@ -2,11 +2,11 @@
   "sekunden": 4,
   "bilder": [
     {
-      "titel": "Blick auf die Orgelempore",
-      "bild": "assets/img/startseite/blick-auf-die-orgelempore.webp",
-      "breite": 1500,
+      "titel": "Hochamt in St. Augustin",
+      "bild": "assets/img/startseite/hochamt-in-st-augustin-2.webp",
+      "breite": 1333,
       "hoehe": 2000,
-      "ausschnitt": "50% 0%"
+      "ausschnitt": "50% 27%"
     },
     {
       "titel": "KMD Peter Tiefengraber",
@@ -14,6 +14,13 @@
       "breite": 2000,
       "hoehe": 1333,
       "ausschnitt": "25% 50%"
+    },
+    {
+      "titel": "Blick auf die Orgelempore",
+      "bild": "assets/img/startseite/blick-auf-die-orgelempore.webp",
+      "breite": 1500,
+      "hoehe": 2000,
+      "ausschnitt": "50% 0%"
     },
     {
       "titel": "Robert Kardinal Prevost OSA (heute Papst Leo XIV.) in Wien",
@@ -98,13 +105,6 @@
       "breite": 1200,
       "hoehe": 1600,
       "ausschnitt": "50% 75%"
-    },
-    {
-      "titel": "Hochamt in St. Augustin",
-      "bild": "assets/img/startseite/hochamt-in-st-augustin-2.webp",
-      "breite": 1333,
-      "hoehe": 2000,
-      "ausschnitt": "50% 27%"
     }
   ],
   "frueher": [

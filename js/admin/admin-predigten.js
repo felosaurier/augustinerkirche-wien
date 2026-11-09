@@ -1,9 +1,13 @@
 /* ============================================================
    Augustinerkirche Wien — admin-predigten.js
-   Predigten und Ansprachen pflegen (admin/predigten.html). Quelle ist
-   data/predigten.json: {predigten: [{datum, titel, text, bild, breite,
-   hoehe, bildtext, entwurf}]}. Je Beitrag hoechstens ein Foto (assets/img/predigten/),
+   Predigten und Ansprachen pflegen (admin/predigten.html). Geteilte Ablage:
+   data/predigten/index.json: {predigten: [{id, datum, titel, auszug, bild, breite, hoehe,
+   bildtext, nachweis, entwurf}]} (Reihenfolge = Website) und je Beitrag
+   data/predigten/<id>.json: {id, text}. Je Beitrag hoechstens ein Foto (assets/img/predigten/),
    der Text mit den Formatierungszeichen der Website (Leiste ueber dem Feld).
+   Ein ersetztes oder entferntes Foto und ein geloeschter Beitrag verschwinden wirklich
+   (Admin.media.remove). Gibt es nur die alte Sammeldatei data/predigten.json, wird sie beim
+   ersten Speichern uebernommen und danach entfernt.
    Erscheint auf pages/augustinerkirche.html#p-predigten in der Reihenfolge der
    Datei: neue Beitraege nach Datum eingereiht, danach mit Pfeilen verschiebbar;
    ein Entwurf (entwurf: true) ist auf der Website verborgen.
@@ -14,10 +18,16 @@
 
   const A = window.Admin;
   const { HD, $, esc, icon } = A;
-  const PATH = 'data/predigten.json';
+  const INDEX = 'data/predigten/index.json';
+  const LEGACY = 'data/predigten.json';
+  const textPath = (id) => `data/predigten/${id}.json`;
   const IMG_DIR = 'assets/img/predigten/';
 
-  let list = [];
+  let list = [];          /* Eintraege der Uebersicht (bei der alten Datei samt text) */
+  let legacy = false;     /* noch die alte Sammeldatei */
+  let texts = new Map();  /* id -> geladener Text */
+  let textReady = Promise.resolve();
+  let editText = '';      /* Text beim Oeffnen (fuer "geaendert?") */
   let query = '';
   let edit = -1;          /* Index in list oder -1 = neu */
   let snap = '';
@@ -43,23 +53,73 @@
   /* Text ohne Formatierungszeichen, fuer die Vorschau in der Liste */
   const plain = (t) => String(t || '').replace(/\[\/?(?:groß|klein)\]/g, '').replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[*_~]{1,2}/g, '').replace(/\s+/g, ' ').trim();
 
+  /* Auszug fuer Liste und Website (ohne Formatierungszeichen) */
+  const excerptOf = (text) => HD.plainText(String(text || '').split(/\n+/).join(' ')).slice(0, 400);
+  const newId = (datum, titel) => {
+    const base = `${datum}-${HD.slug(titel, 50) || 'predigt'}`;
+    let id = base;
+    for (let n = 2; list.some((p) => p.id === id); n++) id = `${base}-${n}`;
+    return id;
+  };
+
   /* ---------- Laden und Liste ---------- */
+  const notFound = (e) => !!e && (e.status === 404 || e.name === 'NotFoundError');
   async function load() {
+    texts = new Map();
     try {
-      const d = await A.readJSON(PATH);
+      const d = await A.readJSON(INDEX);
       if (!d || !Array.isArray(d.predigten)) throw new Error('unerwarteter Inhalt');
       list = d.predigten.slice();
+      legacy = false;
     } catch (e) {
-      $('pd-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Datei <code>${PATH}</code> konnte nicht geladen werden (${esc(e.message)}).</div></div>`;
-      return;
+      try {
+        if (!notFound(e)) throw e;
+        const d = await A.readJSON(LEGACY);
+        if (!d || !Array.isArray(d.predigten)) throw new Error('unerwarteter Inhalt');
+        list = d.predigten.slice();
+        legacy = true;
+      } catch (e2) {
+        $('pd-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Predigten konnten nicht geladen werden (${esc(e2.message)}).</div></div>`;
+        return;
+      }
     }
     render();
+  }
+  /* Text eines Beitrags (aus der Detail-Datei, bei der alten Datei direkt) */
+  async function textOf(p) {
+    if (!p) return '';
+    if (legacy) return String(p.text || '');
+    if (texts.has(p.id)) return texts.get(p.id);
+    const t = String((await A.readJSON(textPath(p.id))).text || '');
+    texts.set(p.id, t);
+    return t;
+  }
+  /* Alte Sammeldatei aufteilen: je Beitrag eine Datei, dann die Uebersicht, dann die alte Datei weg */
+  async function migrate() {
+    if (!legacy) return;
+    const next = [];
+    for (const p of list) {
+      const id = p.id || newId(p.datum, p.titel);
+      const { text, ...rest } = p;
+      await A.saveJSON(textPath(id), { id, text: String(text || '') });
+      texts.set(id, String(text || ''));
+      const c = rest.bild ? (rest.nachweis || A.credits.get(rest.bild)) : '';
+      next.push({ ...rest, id, auszug: excerptOf(text), ...(c ? { nachweis: c } : {}) });
+      p.id = id;
+    }
+    await A.saveJSON(INDEX, { predigten: next });
+    list = next;
+    legacy = false;
+    await A.discardFile(LEGACY);
+    const old = Object.fromEntries(next.filter((p) => p.bild && A.credits.get(p.bild)).map((p) => [p.bild, '']));
+    if (Object.keys(old).length) await A.credits.save(old);
+    A.log('Predigten in die geteilte Ablage übernommen (data/predigten/)');
   }
 
   function render() {
     const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
     const shown = list.map((p, i) => ({ p, i })).filter(({ p }) =>
-      words.every((w) => `${p.titel} ${plain(p.text)}`.toLowerCase().includes(w)));
+      words.every((w) => `${p.titel} ${plain(p.auszug || p.text)}`.toLowerCase().includes(w)));
     $('pd-count').textContent = words.length ? `${plural(shown.length, 'Treffer', 'Treffer')} für „${query.trim()}“` : plural(list.length, 'Beitrag', 'Beiträge');
     if (!shown.length) {
       $('pd-list').innerHTML = words.length
@@ -76,7 +136,7 @@
             : '<span class="adm-thumb none"><img src="../assets/logo-gold.png" alt=""/></span>') +
           `<span class="adm-row-body"><span class="adm-row-title">${esc(p.titel)}</span>` +
           `<span class="adm-row-meta">${esc(longDate(p.datum))}</span>` +
-          `<span class="adm-row-people">${esc(plain(p.text).slice(0, 140))}</span></span>` +
+          `<span class="adm-row-people">${esc(plain(p.auszug || p.text).slice(0, 140))}</span></span>` +
           (p.entwurf ? '<span class="adm-badge" title="Auf der Website nicht sichtbar">Entwurf</span>' : '<span></span>') +
         '</button>' +
         '<div class="adm-row-actions">' +
@@ -102,9 +162,12 @@
     if (btn) btn.focus({ preventScroll: true });
   }
 
+  /* Uebersicht schreiben (vorher ggf. die alte Datei aufteilen) */
   async function persist(next) {
-    const direct = await A.saveFile(PATH, JSON.stringify({ predigten: next }, null, 2) + '\n');
-    list = next;
+    await migrate();
+    const clean2 = next.map(({ text, ...rest }) => rest);   // eslint-disable-line no-unused-vars
+    const direct = await A.saveJSON(INDEX, { predigten: clean2 });
+    list = clean2;
     return direct;
   }
 
@@ -112,6 +175,7 @@
   async function move(i, dir) {
     const j = i + dir;
     if (j < 0 || j >= list.length) return;
+    await migrate();
     const next = list.slice();
     [next[i], next[j]] = [next[j], next[i]];
     try {
@@ -125,6 +189,7 @@
 
   /* Auge: Entwurf ein/aus */
   async function setDraft(i, on) {
+    await migrate();
     const next = list.slice();
     const p = { ...next[i] };
     if (on) p.entwurf = true;
@@ -202,10 +267,13 @@
     A.clearErrors(form);
     $('f-titel').value = p ? p.titel : '';
     $('f-datum').value = p ? p.datum || '' : A.isoToday();
-    $('f-text').value = p ? p.text || '' : '';
+    $('f-text').value = '';
+    editText = '';
+    $('f-text').disabled = !!p;
+    $('f-text').placeholder = p ? 'Der Text wird geladen …' : '';
     $('f-bildtext').value = p ? p.bildtext || '' : '';
     $('f-draft').checked = !!(p && p.entwurf);
-    $('f-credit').value = A.credits.get(p && p.bild);
+    $('f-credit').value = p && p.bild ? (p.nachweis !== undefined ? p.nachweis : A.credits.get(p.bild)) : '';
     if (image) URL.revokeObjectURL(image.url);
     image = null;
     removeImage = false;
@@ -216,11 +284,34 @@
     $('pd-delete').hidden = !p;
     A.openDialog($('pd-dlg'), { isDirty: () => dirtyState() !== snap });
     snap = dirtyState();
+    /* Text erst jetzt laden; bis dahin ist das Feld gesperrt (nichts geht verloren) */
+    const mine = p;
+    textReady = (async () => {
+      if (!mine) return;
+      try {
+        const t = await textOf(mine);
+        if (edit < 0 || list[edit] !== mine) return;
+        const untouched = dirtyState() === snap;
+        $('f-text').value = t;
+        editText = t;
+        $('f-text').disabled = false;
+        $('f-text').placeholder = '';
+        if (untouched) snap = dirtyState();
+      } catch (e) {
+        $('f-text').placeholder = '';
+        A.toast(`Der Text konnte nicht geladen werden (${e.message}). Bitte die Seite neu laden.`, 'err');
+      }
+    })();
   }
 
   async function save(ev) {
     ev.preventDefault();
     const form = $('pd-form');
+    await textReady;
+    if ($('f-text').disabled) {
+      A.toast('Der Text ist noch nicht geladen. Bitte die Seite neu laden.', 'err');
+      return;
+    }
     const titel = clean($('f-titel').value);
     const datum = $('f-datum').value;
     const text = $('f-text').value.replace(/\r\n/g, '\n').trim();
@@ -232,37 +323,44 @@
       A.showErrors(form, errors);
       return;
     }
-    const old = edit >= 0 ? list[edit] : null;
-    const cur = currentPhoto();
-    const entry = {
-      datum, titel, text,
-      bild: cur ? cur.bild : '', breite: cur ? cur.breite || 0 : 0, hoehe: cur ? cur.hoehe || 0 : 0,
-      bildtext: clean($('f-bildtext').value)
-    };
-    if ($('f-draft').checked) entry.entwurf = true;
     const btn = $('pd-save');
     btn.disabled = true;
     try {
+      await migrate();
+      const old = edit >= 0 ? list[edit] : null;
+      const cur = currentPhoto();
+      const entry = {
+        id: old && old.id ? old.id : newId(datum, titel),
+        datum, titel, auszug: excerptOf(text),
+        bild: cur ? cur.bild : '', breite: cur ? cur.breite || 0 : 0, hoehe: cur ? cur.hoehe || 0 : 0,
+        bildtext: clean($('f-bildtext').value)
+      };
+      if ($('f-draft').checked) entry.entwurf = true;
       if (image) {
         const path = await freePath(`${datum}-${HD.slug(titel, 50) || 'predigt'}`, image.ext, old);
         await A.saveFile(path, image.blob);
         Object.assign(entry, { bild: path, breite: image.w, hoehe: image.h });
       }
+      /* Bildnachweis steht beim Beitrag (nicht mehr in data/bildnachweise.json) */
+      const credit = clean($('f-credit').value);
+      if (entry.bild && credit) entry.nachweis = credit;
+      /* Text zuerst (eigene Datei), dann die Uebersicht */
+      if (!old || text !== editText) {
+        await A.saveJSON(textPath(entry.id), { id: entry.id, text });
+        texts.set(entry.id, text);
+      }
       const next = list.slice();
       /* Bestehender Beitrag bleibt an seiner Stelle, solange das Datum gleich bleibt */
       placeEntry(next, entry, old ? edit : -1, !!old && old.datum === datum);
       const direct = await persist(next);
-      if (entry.bild) await A.credits.set(entry.bild, $('f-credit').value);
-      /* Ersetztes oder entferntes Foto aufraeumen */
-      if (old && old.bild && old.bild !== entry.bild) {
-        await A.discardFile(old.bild);
-        await A.credits.set(old.bild, '');
-      }
+      if (entry.bild && A.credits.get(entry.bild)) await A.credits.set(entry.bild, '');
+      /* Ersetztes oder entferntes Foto wirklich loeschen (samt kleiner Fassung und Nachweis) */
+      if (old && old.bild && old.bild !== entry.bild) await A.media.remove([old.bild]);
       $('pd-dlg').close();
       query = '';
       $('pd-search').value = '';
       render();
-      flash(`pd-${list.indexOf(entry)}`);
+      flash(`pd-${list.findIndex((x) => x.id === entry.id)}`);
       A.toast(direct ? `Gespeichert: ${titel}.` : `${titel} übernommen. Bitte unten die Dateien herunterladen.`);
       A.log(`Predigt/Ansprache ${old ? 'geändert' : 'ergänzt'}: ${titel}`);
     } catch (err) {
@@ -281,11 +379,15 @@
     });
     if (!ok) return;
     try {
+      await migrate();
+      const q = list[i];
       const direct = await persist(list.filter((_, k) => k !== i));
-      if (p.bild) {
-        await A.discardFile(p.bild);
-        await A.credits.set(p.bild, '');
+      /* Text-Datei und Foto wirklich loeschen */
+      if (q.id) {
+        await A.discardFile(textPath(q.id));
+        texts.delete(q.id);
       }
+      if (q.bild) await A.media.remove([q.bild]);
       if ($('pd-dlg').open) $('pd-dlg').close();
       render();
       A.toast(direct ? `Entfernt: ${p.titel}.` : 'Entfernt. Bitte unten die Datei herunterladen.');

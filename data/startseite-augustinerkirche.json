@@ -9,11 +9,11 @@
       "ausschnitt": "50% 0%"
     },
     {
-      "titel": "Blick auf die Orgelempore",
-      "bild": "assets/img/startseite/blick-auf-die-orgelempore-2.webp",
+      "titel": "Hochamt in der Augustinerkirche",
+      "bild": "assets/img/startseite/hochamt-in-der-augustinerkirche.webp",
       "breite": 2000,
-      "hoehe": 1333,
-      "ausschnitt": "0% 50%"
+      "hoehe": 1328,
+      "ausschnitt": "59% 50%"
     },
     {
       "titel": "Pfarrer Pater Matthias Schlögl OSA",
@@ -23,11 +23,11 @@
       "ausschnitt": "24% 50%"
     },
     {
-      "titel": "Hochamt in der Augustinerkirche",
-      "bild": "assets/img/startseite/hochamt-in-der-augustinerkirche.webp",
-      "breite": 2000,
-      "hoehe": 1328,
-      "ausschnitt": "59% 50%"
+      "titel": "Blick von der Orgelempore",
+      "bild": "assets/img/startseite/blick-von-der-orgelempore.webp",
+      "breite": 926,
+      "hoehe": 1600,
+      "ausschnitt": "50% 43%"
     },
     {
       "titel": "Prior Pater Dominic Sadrawetz OSA",
@@ -37,11 +37,11 @@
       "ausschnitt": "50% 37%"
     },
     {
-      "titel": "Detail aus den Bänken von Johann Baptist Straub (1704-1784)",
-      "bild": "assets/img/startseite/detail-aus-den-baenken-von-johann-baptist-straub-1704-1784.webp",
-      "breite": 1024,
-      "hoehe": 877,
-      "ausschnitt": "50% 35%"
+      "titel": "Blick auf die Orgelempore",
+      "bild": "assets/img/startseite/blick-auf-die-orgelempore-2.webp",
+      "breite": 2000,
+      "hoehe": 1333,
+      "ausschnitt": "0% 50%"
     },
     {
       "titel": "Die Wiener Augustiner",
@@ -51,18 +51,18 @@
       "ausschnitt": "50% 90%"
     },
     {
+      "titel": "Detail aus den Bänken von Johann Baptist Straub (1704-1784)",
+      "bild": "assets/img/startseite/detail-aus-den-baenken-von-johann-baptist-straub-1704-1784.webp",
+      "breite": 1024,
+      "hoehe": 877,
+      "ausschnitt": "50% 35%"
+    },
+    {
       "titel": "Blick in die Augustinerkirche",
       "bild": "assets/img/startseite/blick-in-die-augustinerkirche.webp",
       "breite": 1600,
       "hoehe": 900,
       "ausschnitt": "54% 50%"
-    },
-    {
-      "titel": "Blick von der Orgelempore",
-      "bild": "assets/img/startseite/blick-von-der-orgelempore.webp",
-      "breite": 926,
-      "hoehe": 1600,
-      "ausschnitt": "50% 43%"
     }
   ],
   "frueher": [

@@ -251,6 +251,7 @@
       group = target;
       await store(next, `${old ? 'Gespeichert' : 'Hinzugefügt'}: ${name} (${GROUPS[target].label}).`);
       if (p.bild) await A.credits.set(p.bild, $('f-credit').value);
+      if (old && old.bild && old.bild !== p.bild) await A.media.remove([old.bild]);
       $('ps-dlg').close();
       flash(`${target}-${name}`);
     } catch (err) {
@@ -264,7 +265,7 @@
     const p = list(g)[i];
     const ok = await A.confirmBox({
       title: 'Person entfernen?',
-      html: `<strong>${esc(p.name)}</strong> (${esc(GROUPS[g].label)})<br><br>Die Karte verschwindet von der Website. Das Foto bleibt im Ordner erhalten.`,
+      html: `<strong>${esc(p.name)}</strong> (${esc(GROUPS[g].label)})<br><br>Die Karte verschwindet von der Website.${p.bild ? ' Das Foto wird mitgelöscht, sofern es nicht noch anderswo verwendet wird.' : ''}`,
       ok: 'Entfernen', danger: true
     });
     if (!ok) return false;
@@ -272,6 +273,7 @@
       const next = copy();
       next[g].splice(i, 1);
       await store(next, `Entfernt: ${p.name} (${GROUPS[g].label}).`);
+      if (p.bild) await A.media.remove([p.bild]);
       return true;
     } catch (err) {
       A.toast(`Entfernen nicht möglich: ${err.message}`, 'err');

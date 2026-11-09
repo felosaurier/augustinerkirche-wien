@@ -44,7 +44,7 @@
       json('data/pgr-aspersdorf.json'),
       json('data/aspersdorf-wochen.json'),
       json('data/friedhof.json'),
-      json('data/predigten.json')
+      json('data/predigten/index.json').catch(() => json('data/predigten.json'))
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {

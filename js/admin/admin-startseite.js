@@ -168,10 +168,16 @@
   }
 
   async function persist(next, secs = seconds, prev = previous) {
+    const before = new Set([...list, ...previous].map((b) => b.bild));
     const direct = await A.saveFile(theme.path, JSON.stringify({ sekunden: secs, bilder: next, frueher: prev }, null, 2) + '\n');
     list = next;
     seconds = secs;
     previous = prev;
+    /* Fotos, die weder gezeigt noch unter den frueheren gemerkt sind (z. B. aus der Liste der frueheren
+       herausgefallen), wirklich loeschen; Admin.media.remove behaelt sie, wenn ein anderes Thema sie verwendet */
+    const now = new Set([...next, ...prev].map((b) => b.bild));
+    const gone = [...before].filter((x) => x && !now.has(x));
+    if (gone.length) await A.media.remove(gone);
     return direct;
   }
 

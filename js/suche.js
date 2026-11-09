@@ -6,7 +6,7 @@
    Reihenfolge der Treffer: Hochaemter, Neuigkeiten, Personen, Seiten, Predigten
    - Personen: data/personen.json (Patres, Leitung, Organisten …), data/pgr.json,
      data/pgr-aspersdorf.json, data/solisten.json
-   - Predigten und Ansprachen: data/predigten.json (ohne Entwuerfe)
+   - Predigten und Ansprachen: data/predigten/index.json und je Beitrag der Text (ohne Entwuerfe)
    - Neuigkeiten: data/news.csv (ohne Entwuerfe und noch nicht sichtbare)
    - Hochaemter und Konzerte: data/hochaemter.csv (kommende, auch nach Mitwirkenden)
    Wird von js/main.js erst beim ersten Klick geladen. Benoetigt js/hochaemter-data.js
@@ -145,8 +145,18 @@
     return out;
   }
 
+  /* Predigten: Uebersicht data/predigten/index.json, die Texte je Beitrag (alle parallel, nur hier
+     in der Suche); fehlt die Uebersicht noch, die alte Sammeldatei */
   async function loadSermons() {
-    const { predigten } = await json('predigten.json');
+    let predigten;
+    try {
+      predigten = (await HD.fetchJSON(`${ROOT}data/predigten/index.json`)).predigten || [];
+      await Promise.all(predigten.filter((p) => p && p.titel && !p.entwurf && /^[a-z0-9-]+$/.test(String(p.id || ''))).map(async (p) => {
+        try { p.text = (await json(`predigten/${p.id}.json`)).text || ''; } catch { p.text = p.auszug || ''; }
+      }));
+    } catch {
+      predigten = (await json('predigten.json')).predigten;
+    }
     return (predigten || []).filter((p) => p && p.titel && !p.entwurf).map((p) => {
       const raw = plain(p.text);
       return { title: squash(p.titel), url: `${ROOT}pages/augustinerkirche.html#p-predigten`, date: p.datum || '', raw, text: fold(`${p.titel} ${raw}`) };

@@ -147,7 +147,7 @@
             <div class="adm-field full" id="nv-filename-field" hidden>
               <label class="adm-label" for="f-filename">Dateiname</label>
               <input class="adm-input" type="text" id="f-filename" aria-describedby="f-filename-hint"/>
-              <span class="adm-hint" id="f-filename-hint">Wird aus dem Titel erzeugt. Das Bild kommt nach <code>assets/img/news/JAHR/</code>.</span>
+              <span class="adm-hint" id="f-filename-hint">Wird aus dem Titel erzeugt. Das Bild kommt in den eigenen Ordner der Meldung (<code>assets/img/news/JAHR/…/</code>).</span>
             </div>
           </div>
         </fieldset>
@@ -156,10 +156,14 @@
           <legend>Fotos (Bildergalerie)</legend>
           <p class="adm-hint adm-fs-lead">Erscheinen im Fenster der Meldung als Bildergalerie wie auf Facebook und lassen sich dort groß durchblättern. Bei einem <b>Bericht</b> (Häkchen bei der Kategorie) bis zu 30 Fotos, sonst bis zu 5. Ohne eigenes Bild oben zeigt die Karte das erste Foto.</p>
           <div class="adm-ph-list" id="nv-photos"></div>
+          <div class="adm-progress" id="nv-ph-progress" role="status" aria-live="polite" hidden>
+            <span class="adm-progress-text"></span>
+            <progress value="0" max="1"></progress>
+          </div>
           <label class="adm-drop" id="nv-photo-drop">
             <span data-icon="image"></span>
             <span class="adm-drop-main">Fotos hierher ziehen oder <u>auswählen</u></span>
-            <span class="adm-hint">Auch mehrere auf einmal. Sie werden als WebP gespeichert, auf höchstens 2000 Pixel verkleinert und kommen in einen eigenen Ordner dieser Meldung.</span>
+            <span class="adm-hint">Auch viele auf einmal; sie werden nacheinander verarbeitet. Je Foto entstehen eine Großfassung (WebP, höchstens 1920 Pixel) und ein Vorschaubild, beides im eigenen Ordner dieser Meldung. Ein entferntes Foto wird beim Speichern gelöscht.</span>
             <input type="file" id="nv-photo-file" accept="image/*" multiple/>
           </label>
           <span class="adm-counter" id="nv-photo-count" aria-live="polite"></span>

@@ -33,11 +33,21 @@
           "solisten",
           "paten",
           "cds",
+          "galerie",
           "musik-personen",
           "repertoire"
         ],
         "runden": []
       }
+    },
+    {
+      "benutzer": "paterdominic",
+      "name": "Pater Dominic Sadrawetz",
+      "salt": "0a9skmbLAMlXiZR6m1F9+A==",
+      "iter": 600000,
+      "hash": "XXJzgZG+Hpj/li0uoMAO/YWnQ3f9W9n6ukd829IOBs4=",
+      "rolle": "admin",
+      "angelegt": "2026-11-02"
     }
   ]
 }

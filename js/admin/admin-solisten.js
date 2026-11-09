@@ -215,6 +215,7 @@
       const direct = await A.saveFile(PATH, JSON.stringify(next, null, 2));
       people = next;
       if (person.image) await A.credits.set(person.image, $('f-credit').value);
+      if (old && old.image && old.image !== person.image) await A.media.remove([old.image]);
       $('so-dlg').close();
       renderVoices();
       render();
@@ -235,7 +236,7 @@
     if (!p) return;
     const ok = await A.confirmBox({
       title: 'Aus der Liste entfernen?',
-      html: `<strong>${esc(p.name)}</strong> (${esc(p.voice)})<br><br>Die Person verschwindet von der Seite Kirchenmusik → Solisten. Das Foto bleibt im Ordner erhalten.`,
+      html: `<strong>${esc(p.name)}</strong> (${esc(p.voice)})<br><br>Die Person verschwindet von der Seite Kirchenmusik → Solisten.${p.image ? ' Das Foto wird mitgelöscht, sofern es nicht noch anderswo verwendet wird.' : ''}`,
       ok: 'Entfernen', danger: true
     });
     if (!ok) return;
@@ -243,6 +244,7 @@
       const next = people.filter((x) => x !== p);
       const direct = await A.saveFile(PATH, JSON.stringify(next, null, 2));
       people = next;
+      if (p.image) await A.media.remove([p.image]);
       $('so-dlg').close();
       renderVoices();
       render();

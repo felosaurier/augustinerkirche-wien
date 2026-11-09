@@ -234,6 +234,7 @@
       }
       const direct = await persist(next);
       if (person.bild) await A.credits.set(person.bild, $('f-credit').value);
+      if (old && old.bild && old.bild !== person.bild) await A.media.remove([old.bild]);
       $('pg-dlg').close();
       query = '';
       $('pg-search').value = '';
@@ -252,7 +253,7 @@
     const p = data[g][i];
     const ok = await A.confirmBox({
       title: ASP ? `Aus „${LABEL[g]}“ entfernen?` : 'Aus dem Pfarrgemeinderat entfernen?',
-      html: `<strong>${esc(p.name)}</strong>${p.rolle ? `<br>${esc(p.rolle)}` : ''}<br><br>Die Person verschwindet von der Seite ${WHERE}.`,
+      html: `<strong>${esc(p.name)}</strong>${p.rolle ? `<br>${esc(p.rolle)}` : ''}<br><br>Die Person verschwindet von der Seite ${WHERE}.${p.bild ? ' Das Foto wird mitgelöscht, sofern es nicht noch anderswo verwendet wird.' : ''}`,
       ok: 'Entfernen', danger: true
     });
     if (!ok) return;
@@ -260,6 +261,7 @@
       const next = copy();
       next[g].splice(i, 1);
       const direct = await persist(next);
+      if (p.bild) await A.media.remove([p.bild]);
       if ($('pg-dlg').open) $('pg-dlg').close();
       render();
       A.toast(direct ? `Entfernt: ${p.name}.` : 'Entfernt. Bitte unten die Datei herunterladen.');

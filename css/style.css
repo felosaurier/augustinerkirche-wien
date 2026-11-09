@@ -312,6 +312,10 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   transition:color .2s,text-decoration-color .2s;
 }
 .link-arr:hover{color:var(--gold);text-decoration-color:var(--gold)}
+/* Allein stehende Pfeil-Links (nicht im Fliesstext): am Handy eine Tippflaeche von mindestens 44 px Hoehe, ohne das Bild zu veraendern */
+@media (pointer:coarse){
+  :not(p,li,td,span,figcaption,label)>a.link-arr{display:inline-block;padding-block:.65rem;margin-block:-.65rem}
+}
 
 
 /* ══ SEITENMENÜ (Reiter einer Unterseite) ══ */
@@ -1054,6 +1058,10 @@ html{scrollbar-gutter:stable}
 }
 .hd-back:hover{border-color:var(--nav-fg);color:var(--nav-accent)}
 .hd-wrap{max-width:46rem}
+/* Platz fuer das Programm, das erst nach dem Laden eingesetzt wird: so springen Zitat und Fusszeile nicht */
+.hd-page .hd-layout{min-height:min(75vh,48rem)}
+/* Ebenso fuer Listen, die erst nach dem Laden erscheinen (Archiv der Neuigkeiten) */
+#news-archive{min-height:min(75vh,48rem)}
 /* Programm eines Hochamts: Musik im Gottesdienst (Komponist ueber dem Werk), Ausfuehrende
    (Namen in einer Spalte, Stimme gleich daneben), Ort mit Symbol, Bitte um Spende als Kasten */
 .hd-sec{margin-bottom:1.8rem}
@@ -1104,15 +1112,30 @@ html{scrollbar-gutter:stable}
 .hd-nav-txt{font-family:var(--serif);font-size:1.25rem;color:var(--heading)}
 .hd-nav-date{font-size:.88rem;color:var(--text-light)}
 .hd-layout.has-poster{display:grid;grid-template-columns:minmax(0,46rem) minmax(0,19rem);gap:4rem;align-items:start}
-/* Fotos eines Hochamts: ohne Plakat in der Spalte neben dem Programm, mit Plakat als Raster unter dem Programm */
+/* Fotos eines Hochamts: bis 4 in der Spalte neben dem Programm, ab 5 als Fotogitter darunter.
+   Gitter in Zeilen gleicher Hoehe (wie ein Fotoalbum): jedes Foto behaelt sein Format (--r = Breite/Hoehe),
+   nichts wird abgeschnitten, die Zeilen fuellen die Breite; der Platz steht vor dem Laden fest (kein Springen). */
 .hd-aside-photos{display:flex;flex-direction:column;gap:1.4rem}
-.hd-photos-wrap{margin-top:3rem}
-.hd-photos-title{margin-bottom:1.1rem}
-.hd-photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(13.5rem,1fr));gap:1.2rem}
-.hd-photos .hd-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:var(--bg-warm)}
 .hd-photo{margin:0}
-.hd-photo img{cursor:zoom-in}
+.hd-photo-link{display:block;cursor:zoom-in}
+.hd-photo-link img{display:block;width:100%;height:auto;aspect-ratio:var(--r);background:var(--bg-warm)}
 .hd-photo figcaption{margin-top:.5rem;font-size:.92rem;line-height:1.4;color:var(--text-mid)}
+.hd-photos-jump{margin-top:-.4rem}
+.hd-photos-wrap{margin-top:clamp(2.2rem,4vw,3.2rem);padding-top:1.6rem;border-top:1px solid var(--line);scroll-margin-top:calc(var(--nav-h) + 1rem)}
+.hd-photos-title{display:flex;align-items:baseline;gap:.6rem;margin-bottom:1.1rem}
+.hd-photos-n{font-family:var(--sans,inherit);font-size:.95rem;font-weight:600;color:var(--gold-text)}
+.hd-gallery{--row:12rem;display:flex;flex-wrap:wrap;gap:.6rem}
+.hd-gallery::after{content:"";flex:999 1 0}
+.hd-gal-item{flex:var(--r) 1 calc(var(--row) * var(--r));max-width:100%;display:block;aspect-ratio:var(--r);overflow:hidden;background:var(--bg-warm);cursor:zoom-in}
+.hd-gal-item img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease),opacity .2s}
+.hd-gal-item:hover img{transform:scale(1.03)}
+.hd-gal-item:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:900px){.hd-gallery{--row:9rem}}
+@media(max-width:480px){.hd-gallery{--row:6.5rem;gap:.4rem}}
+@media(prefers-reduced-motion:reduce){.hd-gal-item img{transition:none}.hd-gal-item:hover img{transform:none}}
+/* Vergroesserung: bis die Grossfassung da ist, steht das Vorschaubild in voller Groesse */
+.lightbox.lb-loading .lb-img{width:94vw;height:86vh;height:86dvh;object-fit:contain;background:transparent;box-shadow:none;filter:blur(1px)}
+.lightbox.lb-loading.lb-has-strip .lb-img{height:calc(86dvh - 4.6rem)}
 /* Mit mehreren Fotos ist die Spalte hoeher als der Bildschirm: nicht mitlaufen lassen */
 .hd-poster.has-photos{position:static}
 .hd-poster .link-arr{display:flex;justify-content:center;margin-top:.9rem}
@@ -1334,7 +1357,9 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 .cal-filter .n{font-size:.88rem;font-weight:600;color:var(--text-light)}
 .cal-filter[aria-pressed="true"] .n{color:#fff}
 
-.cal-list{min-width:0;border-top:1px solid var(--blue)}
+.cal-list{min-width:0;min-height:min(60vh,36rem);border-top:1px solid var(--blue)}
+/* Monatsblatt: Platz fuer sechs Wochen, bevor es gezeichnet ist (kein Springen der Filter darunter) */
+.cal-month:empty{min-height:17rem}
 .cal-empty{padding:1.6rem 0;font-size:1.02rem;color:var(--text-mid)}
 .cal[hidden],.wk[hidden]{display:none}
 /* Ansicht: Monat oder Woche */
@@ -1527,6 +1552,9 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
     background:var(--blue-deep);border-left:0;border-bottom:0;
   }
   /* Umschalter: dunkel wie der Seitenkopf, wirkt als dessen unterer Teil (bleibt beim Scrollen unter dem Menue stehen) */
+  /* Bevor main.js den Umschalter baut, steht das Untermenue nicht kurz aufgeklappt da (kein Springen) */
+  .sidebar:not(:has(> .sidebar-toggle)){min-height:3.4rem;border-top:2px solid var(--gold-l)}
+  .sidebar:not(:has(> .sidebar-toggle))>*{display:none}
   .sidebar-toggle{
     display:flex;align-items:center;gap:.8rem;width:100%;min-height:3.4rem;padding:.6rem var(--pad);
     background:var(--blue-deep);border:0;border-top:2px solid var(--gold-l);cursor:pointer;text-align:left;font:inherit;color:#fff;
@@ -1945,6 +1973,13 @@ body.adm .suche-btn,body.adm .to-top{display:none!important}
   .nav-logo-wrap{flex:0 1 auto;min-width:0}
   .nav-logo-wrap>div{min-width:0}
   nav .nav-logo-text,nav .nav-logo-sub{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+}
+/* Schmale Handys: der Name des Bereichs (Verwaltung, Farben & Logo) darf auf zwei Zeilen umbrechen statt abgeschnitten zu werden */
+@media (max-width:600px){
+  nav .nav-logo-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;white-space:normal;line-height:1.08;overflow-wrap:anywhere}
+  nav .nav-logo-sub{margin-top:.15rem}
+}
+@media (max-width:1120px){
   .nav-right{flex:none;gap:0;margin-left:auto}
   .hamburger{flex:none}
   .suche-btn,.modus-btn{margin-right:0}
@@ -2041,17 +2076,36 @@ body.adm .suche-btn,body.adm .to-top{display:none!important}
 
 
 /* ---------- Predigten und Ansprachen ---------- */
-.pd-list{max-width:52rem}
-.pd-item{display:grid;grid-template-columns:minmax(0,1fr);gap:1.2rem 2.4rem;padding:2.2rem 0;border-top:1px solid var(--line);scroll-margin-top:calc(var(--nav-h) + 1rem)}
-.pd-item:first-child{border-top-color:var(--heading);padding-top:1.4rem}
-.pd-item.has-img{grid-template-columns:13rem minmax(0,1fr);align-items:start}
+.pd-list{max-width:60rem}
+.pd-item{border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--nav-h) + 1rem)}
+.pd-sum{display:grid;grid-template-columns:minmax(0,1fr);gap:1.6rem;align-items:center;padding:1.2rem 0;cursor:pointer;list-style:none}
+.pd-item.has-img .pd-sum{grid-template-columns:13rem minmax(0,1fr)}
+.pd-sum::-webkit-details-marker{display:none}
+.pd-sum:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .pd-img{margin:0}
-.pd-img img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;background:var(--bg-soft);cursor:zoom-in}
-.pd-date{margin-bottom:.3rem;font-size:.95rem;font-weight:600;color:var(--gold-text)}
-.pd-title{margin:0 0 1rem;font-family:var(--serif);font-size:clamp(1.7rem,3vw,2.2rem);font-weight:500;line-height:1.2;color:var(--heading)}
-.pd-text p{margin:0 0 .9rem;font-size:1.05rem;line-height:1.75;color:var(--text-mid);max-width:42rem}
-.pd-text p:last-child{margin-bottom:0}
-@media(max-width:700px){.pd-item.has-img{grid-template-columns:1fr}.pd-img{max-width:15rem}}
+/* Vorschau: ganzes Bild im eigenen Format (hoch oder quer), nichts abgeschnitten */
+.pd-img img{display:block;width:auto;max-width:100%;height:auto;max-height:16rem;margin:0 auto;background:var(--bg-soft)}
+.pd-item .bn-wrap{display:block}
+.pd-body{display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.pd-date{font-size:.92rem;font-weight:500;color:var(--gold-text)}
+.pd-title{margin:0;font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.2;color:var(--heading);transition:color .2s}
+.pd-sum:hover .pd-title{color:var(--gold)}
+.pd-excerpt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-size:.98rem;line-height:1.6;color:var(--text-mid)}
+.pd-more{margin-top:.2rem;font-size:.92rem;font-weight:600;color:var(--gold-text)}
+.pd-more::after{content:"Ganzen Text lesen \2192"}
+details[open]>.pd-sum{grid-template-columns:minmax(0,1fr)!important;align-items:start}
+details[open]>.pd-sum .pd-more::after{content:"Zuklappen \2191"}
+details[open]>.pd-sum .pd-excerpt,details[open]>.pd-sum .pd-img,details[open]>.pd-sum .bn-wrap{display:none}
+
+.pd-text{display:flow-root;padding:0 0 1.8rem}
+.pd-img-open{margin:0 0 1.2rem}
+.pd-img-open img{display:block;width:100%;height:auto;background:var(--bg-soft)}
+.pd-quer .pd-img-open img{width:auto;max-width:100%;max-height:30rem}
+.pd-hoch .pd-text>.bn-wrap,.pd-hoch .pd-text>.pd-img-open{float:left;width:15rem;max-width:45%;margin:.2rem 3.4rem .8rem 0!important}
+.pd-text .bn-wrap .pd-img-open{float:none;width:auto;max-width:none;margin:0!important}
+.pd-back{margin-top:1rem;clear:both}
+.pd-text p{margin:0 0 .9rem;font-size:1.05rem;line-height:1.75;color:var(--text-mid);max-width:56rem}
+@media(max-width:600px){.pd-hoch .pd-text>.bn-wrap,.pd-hoch .pd-text>.pd-img-open{width:10rem;margin-right:1.4rem!important}.pd-item.has-img .pd-sum{grid-template-columns:6.5rem minmax(0,1fr);gap:1rem}.pd-excerpt{display:none}.pd-title{font-size:1.2rem}}
 
 
 /* Runden: Kacheln mit Bild, Name und naechstem Termin; Klick fuehrt zur Seite der Runde */
@@ -2068,3 +2122,43 @@ body.adm .suche-btn,body.adm .to-top{display:none!important}
 .rk-tile:hover .rk-tile-img img{transform:scale(1.04)}
 .rk-tile:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.rk-tile,.rk-tile-img img{transition:none}.rk-tile:hover{transform:none}}
+
+/* ══ KOMPAKT (November 2026) ══
+   Weniger Scrollen bei gleichem Design: Farben, Schriften, Formen und Aufbau bleiben, verkleinert sind
+   nur Leerraeume (Abstaende zwischen und in Abschnitten, Zeilenabstand von Fliesstext). Alles in diesem
+   Block; wer den alten, luftigeren Stand will, entfernt ihn einfach. */
+body{line-height:1.55}
+/* Fliesstext: 1,7 bis 1,75 -> 1,55 (gut lesbar, deutlich kuerzer) */
+.s-text,.bio-p,.card-text,.card-more,.card-contact,.person-bio,.organ-desc,.cs-val,.timeline-text,.pd-text p,.nd-details p,.hs-note,.patron-text,.hero-sub,.ph-sub,.news-card-text{line-height:1.55}
+.bio-p{margin-bottom:.8rem}
+.pd-text p{margin-bottom:.7rem}
+/* Ueberschriften: etwas weniger Abstand darunter */
+.s-title{margin-bottom:1.1rem}
+.s-label{margin-bottom:.45rem}
+.ph-sub{margin-top:.8rem}
+/* Abschnitte und Baender: weniger Luft oben und unten */
+.section{padding-top:clamp(1.6rem,3.6vw,2.8rem);padding-bottom:clamp(1.6rem,3.6vw,2.8rem)}
+.page-hero{padding-top:clamp(1.6rem,4vw,2.8rem);padding-bottom:clamp(1.4rem,3vw,2.2rem)}
+.quote-band{padding-top:clamp(1.8rem,4vw,3rem);padding-bottom:clamp(1.8rem,4vw,3rem)}
+.hochamt-strip,.herzgruft,.orgel-body{padding-top:clamp(1.6rem,3.6vw,2.8rem);padding-bottom:clamp(1.6rem,3.6vw,2.8rem)}
+.contact-strip,.sakr-band{padding-top:clamp(1.8rem,4vw,3rem);padding-bottom:clamp(1.8rem,4vw,3rem)}
+.orgel-zeit,.orgel-weiter{padding-top:clamp(1.5rem,3.2vw,2.5rem);padding-bottom:clamp(1.5rem,3.2vw,2.5rem)}
+.orgel-hero-text{padding-top:clamp(2rem,5vw,4rem);padding-bottom:clamp(3rem,6vw,5rem)}
+.hero-content{padding-top:clamp(1.5rem,4vh,2.6rem);padding-bottom:clamp(1.5rem,5vh,3rem)}
+.hero-sub{margin-top:1.1rem}
+.hero-actions{margin-top:1.5rem}
+.hero-eyebrow{margin-bottom:.9rem}
+/* Startseite: das Titelbild laesst unten einen Streifen des Inhalts sehen (statt ganz voll) */
+@media(min-width:901px){.hero-home{min-height:calc(88vh - var(--nav-h));min-height:calc(88svh - var(--nav-h))}}
+/* Handy: Seitenrand und Abschnitte enger, grosse Titel etwas kleiner */
+@media(max-width:600px){
+  :root{--pad:1rem}
+  .section{padding-top:1.4rem;padding-bottom:1.4rem}
+  .page-hero{padding-top:1.4rem;padding-bottom:1.2rem}
+  .ph-title{font-size:clamp(2rem,9vw,2.5rem)}
+  /* Titelfoto oben etwas niedriger: der Text darunter ist frueher im Bild */
+  .hero-home .hero-img{max-height:50vh;max-height:50svh}
+  .hero:not(.hero-home) .hero-img{max-height:34vh;max-height:34svh}
+  .s-title{font-size:clamp(1.75rem,7.5vw,2.1rem);margin-bottom:.9rem}
+  .quote-band,.contact-strip,.sakr-band,.hochamt-strip,.herzgruft,.orgel-body,.orgel-zeit,.orgel-weiter{padding-top:1.4rem;padding-bottom:1.4rem}
+}

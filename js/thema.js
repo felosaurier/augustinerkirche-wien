@@ -78,7 +78,6 @@
   }
   const logoUrl = (v) => `${ROOT}assets/logo/logo-${LOGOS.includes(v) ? v : STANDARD.logo}.png`;
 
-  const NAMEN_JE_BEREICH = false;
   let logo = '';
   let names = null;
   function setLogo() {
@@ -89,9 +88,9 @@
         img.classList.add('v');
       }
     }
-    /* Text neben dem Logo: auf allen Seiten gleich (Vorlage tools/vorlagen/nav.html); die Namen je Bereich
-       aus der Verwaltung werden nicht mehr eingesetzt. Wieder einschalten: NAMEN_JE_BEREICH = true */
-    if (NAMEN_JE_BEREICH && names) {
+    /* Text neben dem Logo: der in der Verwaltung eingetragene Name und Untertitel des Bereichs;
+       leer gelassen bleibt der Text der Vorlage (tools/vorlagen/nav.html) */
+    if (names) {
       for (const el of d.querySelectorAll('nav .nav-logo-text')) if (names.name && el.textContent !== names.name) el.textContent = names.name;
       for (const el of d.querySelectorAll('nav .nav-logo-sub')) if (names.untertitel && el.textContent !== names.untertitel) el.textContent = names.untertitel;
     }
@@ -118,7 +117,9 @@
     .catch(() => { /* ohne Liste gelten die Originale */ });
   w.AugBild = {
     ready: kleinReady,
-    klein: (pfad) => (schmal.matches && kleinListe.has(pfad) ? String(pfad).replace(/\.webp$/, '-m.webp') : pfad)
+    klein: (pfad) => (schmal.matches && kleinListe.has(pfad) ? String(pfad).replace(/\.webp$/, '-m.webp') : pfad),
+    /* Fuer Vorschaubilder (Fotogitter): die kleine Fassung auf jedem Bildschirm, die grosse erst in der Vergroesserung */
+    vorschau: (pfad) => (kleinListe.has(pfad) ? String(pfad).replace(/\.webp$/, '-m.webp') : pfad)
   };
 
   const thema = THEMEN.includes(html.dataset.thema) ? html.dataset.thema : 'augustinerkirche';
