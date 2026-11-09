@@ -2996,3 +2996,32 @@
     isoToday, isoOf, fmtDate, fmtShort, initials
   };
 })(window, document);
+
+/* Grossansicht: ein Klick auf das Vorschaubild einer Fotoliste (Hochaemter, Berichte, Galerie, Startseite)
+   zeigt das Foto gross; Schliessen mit Klick, Esc oder dem Knopf */
+(function (document) {
+  'use strict';
+  let dlg = null;
+  function open(src) {
+    if (!dlg) {
+      dlg = document.createElement('dialog');
+      dlg.className = 'adm-zoom';
+      dlg.setAttribute('aria-label', 'Foto in groß');
+      dlg.innerHTML = '<img alt=""/><button type="button" class="adm-zoom-x" aria-label="Schließen">×</button>';
+      dlg.addEventListener('click', () => dlg.close());
+      document.body.append(dlg);
+    }
+    /* Vorschaubild (-v/-m) gegen das Originalfoto tauschen; fehlt es, bleibt das Vorschaubild */
+    const big = /^blob:|^data:/.test(src) ? src : src.replace(/-[vm]\.webp(?=$|[?#])/, '.webp');
+    const img = dlg.querySelector('img');
+    img.onerror = big === src ? null : () => { img.onerror = null; img.src = src; };
+    img.src = big;
+    dlg.showModal();
+  }
+  document.addEventListener('click', (ev) => {
+    const img = ev.target.closest && ev.target.closest('.adm-ph .adm-thumb img');
+    if (!img || !img.currentSrc && !img.src) return;
+    ev.preventDefault();
+    open(img.currentSrc || img.src);
+  });
+})(document);

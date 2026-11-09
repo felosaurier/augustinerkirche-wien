@@ -316,7 +316,7 @@ html.adm-lock{overflow:hidden}
 .adm-dialog{border:none;padding:0;margin:auto;background:var(--white);color:var(--text);width:min(940px,calc(100vw - 2rem));max-width:none;
   max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);max-height:calc(var(--adm-vh,100dvh) - 2rem);box-shadow:0 30px 90px rgba(16,25,46,.4);overflow:hidden}
 .adm-dialog[open]{display:flex;flex-direction:column;animation:nd-in .3s var(--ease)}
-.adm-dialog::backdrop{background:rgba(16,25,46,.7);animation:nd-fade .25s ease}
+.adm-dialog::backdrop{background:rgba(16,25,46,.7);animation:fade-in .25s ease}
 .adm-dialog.wide{width:min(1180px,calc(100vw - 2rem))}
 .adm-dialog.small{width:min(500px,calc(100vw - 2rem))}
 .adm-dlg-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.5rem 1.8rem 1.2rem;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--bg-warm),var(--white))}
@@ -1327,16 +1327,11 @@ html{scroll-padding-top:1.5rem}
 .adm-dlg-head{padding:1rem 1.6rem .8rem}
 .adm-dlg-body{padding:.2rem 1.6rem 1.1rem}
 .adm-dlg-foot{padding:.7rem 1.6rem}
-/* Fotolisten (Hochaemter, Berichte): kompakte Zeilen; am Laptop zwei Spalten nebeneinander,
-   so brauchen 20 bis 30 Fotos nur halb so viel Hoehe */
+/* Fotolisten (Hochaemter, Berichte, Galerie): kompakte Zeilen, untereinander */
 .adm-ph-list{gap:.55rem}
 .adm-ph{padding:.55rem;gap:.8rem}
 .adm-ph .adm-thumb{width:5rem}
 .adm-ph-fields{gap:.15rem}
-@media(min-width:1100px){
-  .adm-ph-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
-  .adm-ph-list>.adm-hint{grid-column:1/-1}
-}
 @media(max-width:700px){
   .adm-main{padding:.9rem 1rem 2.5rem}
   .adm-head-in{padding:.7rem 1rem .6rem}
@@ -1345,3 +1340,13 @@ html{scroll-padding-top:1.5rem}
   .adm-dlg-head{padding:.8rem 1rem .6rem}
   .adm-dlg-body{padding:.1rem 1rem 1rem}
 }
+
+/* Grossansicht eines Fotos (Klick auf das Vorschaubild in einer Fotoliste, js/admin/admin.js) */
+.adm-ph .adm-thumb img{cursor:zoom-in}
+.adm-ph .adm-thumb[data-ph-grip] img{cursor:grab}
+.adm-zoom{border:none;padding:0;margin:auto;background:transparent;max-width:none;max-height:none;cursor:zoom-out;overflow:visible}
+.adm-zoom[open]{display:grid;place-items:center;animation:fade-in .2s ease}
+.adm-zoom::backdrop{background:rgba(10,14,24,.88)}
+.adm-zoom img{display:block;max-width:calc(100vw - 2rem);max-height:calc(100vh - 2rem);max-height:calc(100dvh - 2rem);width:auto;height:auto;object-fit:contain;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.adm-zoom-x{position:fixed;top:.8rem;right:.8rem;width:2.75rem;height:2.75rem;border:none;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:1.6rem;line-height:1;cursor:pointer}
+.adm-zoom-x:hover,.adm-zoom-x:focus-visible{background:rgba(255,255,255,.3)}

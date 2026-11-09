@@ -2148,17 +2148,59 @@ body{line-height:1.55}
 .hero-sub{margin-top:1.1rem}
 .hero-actions{margin-top:1.5rem}
 .hero-eyebrow{margin-bottom:.9rem}
-/* Startseite: das Titelbild laesst unten einen Streifen des Inhalts sehen (statt ganz voll) */
-@media(min-width:901px){.hero-home{min-height:calc(88vh - var(--nav-h));min-height:calc(88svh - var(--nav-h))}}
 /* Handy: Seitenrand und Abschnitte enger, grosse Titel etwas kleiner */
 @media(max-width:600px){
   :root{--pad:1rem}
   .section{padding-top:1.4rem;padding-bottom:1.4rem}
   .page-hero{padding-top:1.4rem;padding-bottom:1.2rem}
   .ph-title{font-size:clamp(2rem,9vw,2.5rem)}
-  /* Titelfoto oben etwas niedriger: der Text darunter ist frueher im Bild */
-  .hero-home .hero-img{max-height:50vh;max-height:50svh}
   .hero:not(.hero-home) .hero-img{max-height:34vh;max-height:34svh}
   .s-title{font-size:clamp(1.75rem,7.5vw,2.1rem);margin-bottom:.9rem}
   .quote-band,.contact-strip,.sakr-band,.hochamt-strip,.herzgruft,.orgel-body,.orgel-zeit,.orgel-weiter{padding-top:1.4rem;padding-bottom:1.4rem}
 }
+
+/* ══ Startseite: Titelbild fuellt immer den ganzen Bildschirm (November 2026) ══
+   Hochformat: Foto oben, Text darunter, beides zusammen genau eine Bildschirmhoehe */
+@media(orientation:portrait){
+  .hero-home{min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h));grid-template-rows:minmax(0,1fr) auto}
+  .hero-home .hero-img{aspect-ratio:auto;max-height:none;min-height:12rem}
+  .hero-home .hero-content{padding-bottom:4.4rem}
+}
+/* Pfeil nach unten (js/main.js initHeroDown): links neben dem Foto, wippt sanft auf und ab */
+.hero-down{position:absolute;z-index:3;bottom:1.6rem;right:calc(52% + .7rem);display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;
+  border:1px solid var(--nav-accent);border-radius:50%;background:transparent;color:var(--nav-accent);cursor:pointer;transition:background-color .2s,color .2s}
+.hero-down svg{width:1.3rem;height:1.3rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hero-down:hover{background:var(--nav-accent);color:var(--nav-bg)}
+.hero-down:focus-visible{outline:2px solid var(--nav-accent);outline-offset:3px}
+@media(orientation:portrait){.hero-down{right:auto;left:50%;bottom:1rem;margin-left:-1.375rem}}
+@keyframes hero-down{0%,100%{transform:translateY(-4px)}50%{transform:translateY(6px)}}
+@media (prefers-reduced-motion:no-preference){
+  .hero-down{animation:hero-down 1.8s ease-in-out infinite}
+  .hero-down:hover{animation-play-state:paused}
+}
+
+/* ══ Bewegung auf allen Seiten (November 2026) ══
+   Seitenkopf: Schrift steigt beim Oeffnen nacheinander ein (wie auf der Startseite);
+   die Bereiche darunter steigen beim Scrollen ein (js/main.js initHomeMotion). */
+@media (prefers-reduced-motion:no-preference){
+  .page-hero>*,.hero:not(.hero-home) .hero-content>*{animation:rise .9s var(--ease) backwards}
+  .page-hero>:nth-child(2),.hero:not(.hero-home) .hero-content>:nth-child(2){animation-delay:.15s}
+  .page-hero>:nth-child(3),.hero:not(.hero-home) .hero-content>:nth-child(3){animation-delay:.3s}
+  .page-hero>:nth-child(n+4),.hero:not(.hero-home) .hero-content>:nth-child(n+4){animation-delay:.45s}
+  .hero:not(.hero-home) .hero-img:not(.hero-show){animation:zoom-in 1.2s var(--ease) backwards}
+}
+/* Handy hochkant: Text etwas knapper, Knoepfe nebeneinander, damit das Foto im Vollbild genug Platz behaelt */
+@media(orientation:portrait) and (max-width:600px){
+  .hero-home .hero-content{padding:1.3rem var(--edge) 4.2rem}
+  .hero-home .hero-eyebrow{margin-bottom:.6rem;font-size:.9rem}
+  .hero-home .hero-h1{font-size:clamp(1.9rem,8.4vw,2.3rem)}
+  .hero-home .hero-sub{margin-top:.7rem;font-size:.98rem;line-height:1.5}
+  .hero-home .hero-actions{margin-top:1rem;flex-wrap:nowrap;gap:.6rem}
+  .hero-home .hero-actions .btn{flex:1 1 0;justify-content:center;padding-left:.7rem;padding-right:.7rem;white-space:nowrap}
+  .hero-home .hero-actions .btn::after{margin-left:.35em}
+}
+
+/* Kopfzeile: Platz fuer die Lupe (js/main.js initSuche) von Anfang an freihalten, sonst rutschen
+   Menue und Knoepfe nach dem Laden ein Stueck zur Seite */
+body:not(.adm) .nav-right:not(:has(.suche-btn))::before{content:'';flex:none;width:2.75rem;height:2.75rem;margin-right:.4rem}
+@media (max-width:1120px){body:not(.adm) .nav-right:not(:has(.suche-btn))::before{margin-right:0}}

@@ -142,6 +142,19 @@
       gemerkt = true;
     }
   } catch { /* kein Speicher: dann erst mit der Datei */ }
+  /* Gemerkter Name und Logo: sofort einsetzen, sobald die Titelzeile eingelesen ist (noch vor dem ersten
+     Zeichnen der Seite). Sonst erscheint beim Wechsel in einen anderen Bereich erst die Titelzeile der
+     Vorlage und kurz darauf die richtige, das sieht aus, als lade die Seite zweimal. */
+  if (gemerkt && 'MutationObserver' in w) {
+    const mo = new MutationObserver(() => {
+      if (!d.querySelector('nav .nav-center, nav .nav-right')) return;
+      mo.disconnect();
+      setLogo();
+      fertig();
+    });
+    mo.observe(html, { childList: true, subtree: true });
+    d.addEventListener('DOMContentLoaded', () => mo.disconnect());
+  }
   d.addEventListener('DOMContentLoaded', () => {
     setLogo();
     if (gemerkt) fertig();

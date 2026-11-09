@@ -1177,8 +1177,83 @@
   /* ---------- Startseite: Bewegung beim Scrollen ----------
      Bereiche steigen sanft ein, sobald sie ins Bild kommen; Listen (Hochaemter, Meldungen, Karten)
      nacheinander. Nur auf der Startseite, nicht bei "reduzierte Bewegung" (Klassen: style.css, "Bewegung"). */
+  /* Alle anderen Seiten: die Bereiche unter dem Seitenkopf steigen sanft ein, sobald sie ins Bild kommen
+     (was beim Oeffnen schon sichtbar ist, sofort). Fenster, Vorlagen und Verborgenes bleiben unberuehrt. */
+  function initPageMotion() {
+    const main = qs('main#main');
+    if (!main || document.body.classList.contains('adm') || reducedMotion.matches || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver((entries) => {
+      for (const en of entries) {
+        if (!en.isIntersecting) continue;
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    }, { threshold: 0, rootMargin: '0px 0px -6% 0px' });
+    const skip = 'dialog, script, template, style, [hidden], .page-hero, .hero, .visually-hidden';
+    /* Was beim Oeffnen schon zu sehen ist, bleibt stehen (sonst waere es kurz da, verschwaende und kaeme
+       wieder); der Seitenkopf blendet dafuer ueber style.css ein, alles darunter steigt beim Scrollen ein */
+    const unten = window.innerHeight;
+    for (const sec of main.children) {
+      if (sec.matches(skip)) continue;
+      let kids = [...sec.children];
+      if (kids.length === 1 && kids[0].children.length) kids = [...kids[0].children];
+      if (!kids.length) kids = [sec];
+      for (const el of kids) {
+        if (el.matches(skip) || el.getBoundingClientRect().top < unten) continue;
+        el.classList.add('motion-in');
+        io.observe(el);
+      }
+    }
+  }
+
+  /* Startseite: Pfeil nach unten neben dem Titelbild, springt zum ersten Bereich darunter */
+  function initHeroDown() {
+    const hero = qs('.hero-home');
+    const next = hero && hero.nextElementSibling;
+    if (!next) return;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'hero-down';
+    b.setAttribute('aria-label', 'Nach unten zum Inhalt');
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+    b.addEventListener('click', () => next.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth' }));
+    hero.append(b);
+    /* Querformat: Pfeil auf Hoehe der Knoepfe, knapp links neben dem Foto. Gemessen wird ohne die
+       Einblend-Bewegung (offsetTop statt getBoundingClientRect), Hochformat: Lage aus style.css */
+    const img = qs('.hero-img', hero);
+    const quer = window.matchMedia('(orientation: landscape)');
+    const bis = (el) => {
+      let y = 0;
+      for (let e = el; e && e !== hero; e = e.offsetParent) y += e.offsetTop;
+      return y;
+    };
+    const bisL = (el) => {
+      let x = 0;
+      for (let e = el; e && e !== hero; e = e.offsetParent) x += e.offsetLeft;
+      return x;
+    };
+    const place = () => {
+      const btns = qsa('.hero-actions .btn', hero);
+      const last = btns[btns.length - 1];
+      if (!quer.matches || !img || !last) {
+        b.style.top = b.style.left = b.style.right = b.style.bottom = '';
+        return;
+      }
+      b.style.top = `${Math.round(bis(last) + (last.offsetHeight - b.offsetHeight) / 2)}px`;
+      /* 40 px vor dem Foto; wird es zu den Knoepfen enger, steht der Pfeil mittig dazwischen */
+      const frei = img.offsetLeft - (last.offsetLeft + last.offsetWidth + bisL(last.offsetParent)) - b.offsetWidth;
+      b.style.left = `${Math.round(img.offsetLeft - b.offsetWidth - Math.max(0, Math.min(40, frei / 2)))}px`;
+      b.style.right = b.style.bottom = 'auto';
+    };
+    place();
+    if ('ResizeObserver' in window) new ResizeObserver(place).observe(hero);
+    else window.addEventListener('resize', place);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+  }
+
   function initHomeMotion() {
     const wurzel = qs('main.home, main.mot');
+    if (!wurzel) initPageMotion();
     if (!wurzel || reducedMotion.matches || !('IntersectionObserver' in window)) return;
     const groups = [
       ['.hs-head', 'motion-in'], ['.hs-list', 'motion-stagger'], ['.sec-head', 'motion-in'], ['.news-grid', 'motion-stagger'],
@@ -1395,6 +1470,7 @@
     initSuche();
     initMap();
     initHomeMotion();
+    initHeroDown();
     initZahlen();
     initApp();
     initDropdowns();
