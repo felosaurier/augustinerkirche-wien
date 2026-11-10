@@ -176,9 +176,9 @@
     const months = [...monthN.keys()].sort((a, b) => a - b);
 
     el.innerHTML =
-      '<form class="news-filter" role="search" aria-label="Archiv filtern"">' +
+      '<form class="news-filter" role="search" aria-label="Archiv filtern">' +
         '<div class="news-filter-field news-filter-q"><label for="nf-q">Suche</label>' +
-          '<input type="search" id="nf-q" class="news-filter-input" placeholder="Titel oder Text" autocomplete="off"/></div>' +
+          '<input type="search" id="nf-q" class="news-filter-input" placeholder="Suchen in Titel oder Text" autocomplete="off"/></div>' +
         '<div class="news-filter-field"><label for="nf-cat">Kategorie</label>' +
           `<select id="nf-cat" class="news-filter-input">${opt('', 'Alle Kategorien')}${cats.map((c) => opt(c, c, catN.get(c))).join('')}</select></div>` +
         '<div class="news-filter-field"><label for="nf-year">Jahr</label>' +

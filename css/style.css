@@ -693,7 +693,9 @@ a.kal-row:hover .kal-name{color:var(--gold)}
 .nh-type{margin:0;font-size:1.25rem;font-weight:500;color:var(--nh-soft)}
 .nh-piece{margin:0;font-family:var(--serif);font-size:2.2rem;font-weight:500;line-height:1.2;color:var(--nh-line)}
 .nh-who{list-style:none;display:flex;flex-direction:column;gap:.15rem;margin:.7rem 0 0;padding:0;font-size:1.12rem;line-height:1.45;color:var(--nh-ink)}
-.nh-who li span{display:inline-block;min-width:6.4rem;color:var(--nh-soft)}
+/* Rolle links, Name rechts daneben; ein langer Name bricht in seiner eigenen Spalte um, nicht unter die Rolle */
+.nh-who li{display:grid;grid-template-columns:6.4rem minmax(0,1fr);column-gap:.5rem}
+.nh-who li span{color:var(--nh-soft)}
 .nh-next{padding:2.2rem 2.2rem .6rem 0}
 .nh-next ul{list-style:none;margin:0;padding:0}
 .nh-next li+li{margin-top:.6rem}
@@ -2165,11 +2167,13 @@ body{line-height:1.55}
 }
 
 /* ══ Startseite: Titelbild fuellt immer den ganzen Bildschirm (November 2026) ══
-   Hochformat: Foto oben, Text darunter, beides zusammen genau eine Bildschirmhoehe */
+   Hochformat: Foto oben, Text darunter, beides zusammen mindestens eine Bildschirmhoehe.
+   Das Foto bleibt immer mindestens halb so hoch wie der Bildschirm (wie frueher); ist der
+   Bildschirm kurz, wird die Startseite eben etwas laenger statt das Foto zu quetschen. */
 @media(orientation:portrait){
   .hero-home{min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h));grid-template-rows:minmax(0,1fr) auto}
-  .hero-home .hero-img{aspect-ratio:auto;max-height:none;min-height:12rem}
-  .hero-home .hero-content{padding-bottom:4.4rem}
+  .hero-home .hero-img{aspect-ratio:auto;max-height:none;min-height:50vh;min-height:50svh}
+  .hero-home .hero-content{padding-bottom:5.6rem}
 }
 /* Pfeil nach unten (js/main.js initHeroDown): links neben dem Foto, wippt sanft auf und ab */
 .hero-down{position:absolute;z-index:3;bottom:1.6rem;right:calc(52% + .7rem);display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;
@@ -2177,7 +2181,7 @@ body{line-height:1.55}
 .hero-down svg{width:1.3rem;height:1.3rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .hero-down:hover{background:var(--nav-accent);color:var(--nav-bg)}
 .hero-down:focus-visible{outline:2px solid var(--nav-accent);outline-offset:3px}
-@media(orientation:portrait){.hero-down{right:auto;left:50%;bottom:1rem;margin-left:-1.375rem}}
+@media(orientation:portrait){.hero-down{right:auto;left:50%;bottom:1.3rem;margin-left:-1.375rem}}
 @keyframes hero-down{0%,100%{transform:translateY(-4px)}50%{transform:translateY(6px)}}
 @media (prefers-reduced-motion:no-preference){
   .hero-down{animation:hero-down 1.8s ease-in-out infinite}
@@ -2196,7 +2200,7 @@ body{line-height:1.55}
 }
 /* Handy hochkant: Text etwas knapper, Knoepfe nebeneinander, damit das Foto im Vollbild genug Platz behaelt */
 @media(orientation:portrait) and (max-width:600px){
-  .hero-home .hero-content{padding:1.3rem var(--edge) 4.2rem}
+  .hero-home .hero-content{padding:1.3rem var(--edge) 5.4rem}
   .hero-home .hero-eyebrow{margin-bottom:.6rem;font-size:.9rem}
   .hero-home .hero-h1{font-size:clamp(1.9rem,8.4vw,2.3rem)}
   .hero-home .hero-sub{margin-top:.7rem;font-size:.98rem;line-height:1.5}
@@ -2259,3 +2263,45 @@ body:not(.adm) .nav-right:not(:has(.suche-btn))::before{content:'';flex:none;wid
 
 /* Countdown "in … Tagen": feste Ziffernbreite, damit der Text beim Zaehlen nicht wackelt */
 .nh-count,.nh-time{font-variant-numeric:tabular-nums}
+
+/* ══ Handy: Suche (Lupe) und Archiv-Filter kompakter (November 2026) ══ */
+@media(max-width:600px){
+  /* Grundschrift einen Tick kleiner (Tablet 17,5px, Computer 18px); bleibt ueber 16px, sonst zoomt das iPhone in Eingabefelder */
+  html{font-size:17px}
+  /* Suchfeld: 16px Schrift (darunter zoomt das iPhone beim Antippen), Beispiele im Platzhalter kleiner, damit sie ganz sichtbar sind */
+  .suche-dlg{width:calc(100vw - 1rem);max-width:none;margin-top:.5rem;max-height:calc(100dvh - 1rem)}
+  .suche-head{padding:.5rem .5rem .5rem .9rem;gap:.3rem}
+  .suche-input{font-size:1rem;padding:.6rem .2rem}
+  .suche-input::placeholder{font-size:.85rem}
+  .suche-out{padding:.2rem .9rem 1rem}
+  .suche-hint{padding:.8rem 0;font-size:.92rem;line-height:1.5}
+  .suche-taste{display:none}
+  /* Naechstes Hochamt: Mitwirkende etwas kleiner, schmalere Spalte fuer die Rolle */
+  .nh-who{font-size:1rem}
+  .nh-who li{grid-template-columns:5.6rem minmax(0,1fr)}
+  .nh-foot .btn{flex:1 1 100%;justify-content:center}
+  /* Vorschau am Handy nur die naechsten zwei Termine, der Rest steht unter "Weitere Hochaemter" */
+  .nh-next li:nth-child(n+3){display:none}
+  .suche-sec h3{margin-top:.9rem;font-size:.85rem}
+  .suche-sec a{padding:.55rem .3rem}
+  .suche-t{font-size:1.02rem}
+  .suche-m,.suche-x{font-size:.85rem}
+  /* Archiv-Filter: Suche ueber die ganze Breite, darunter je zwei Auswahlfelder nebeneinander;
+     die Ueberschriften entfallen sichtbar (die Felder sagen selbst "Alle Kategorien", "Alle Jahre" ...) */
+  .news-filter{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;padding-bottom:.9rem}
+  .news-filter-field{min-width:0;gap:0}
+  .news-filter-q{grid-column:1/-1}
+  .news-filter-field label{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .news-filter-input{padding:.5rem .6rem}
+  .news-filter-check{align-self:center;padding:0 0 0 .2rem;font-size:.92rem}
+  .news-filter-reset{padding:.5rem .8rem}
+}
+
+/* ══ Kein seitliches Wischen am Handy (November 2026) ══
+   overflow-x:hidden am body allein laesst iPhone und Android trotzdem seitlich schieben, sobald etwas
+   (auch nur kurz waehrend einer Einblendung) ueber den Rand ragt: rechts erscheint dann eine weisse Flaeche.
+   "clip" schneidet am body selbst ab, ohne ihn zum Scroll-Bereich zu machen (Kopfzeile und sticky bleiben heil).
+   Am html noetig, damit der Wert des body nicht ans Fenster weitergereicht wird. Aeltere Browser kennen
+   "clip" nicht, ueberspringen beide Zeilen und behalten das bisherige hidden am body. */
+html{overflow-x:clip;overscroll-behavior-x:none}
+body{overflow-x:clip}

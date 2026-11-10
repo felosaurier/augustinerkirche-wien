@@ -226,7 +226,7 @@
   function render() {
     const w = words(input.value);
     if (!w.length) {
-      out.innerHTML = '<p class="suche-hint">Tippen Sie einen Begriff, etwa „Taufe“, „Mozart“ oder „Öffnungszeiten“. Taste „/“ öffnet die Suche überall.</p>';
+      out.innerHTML = '<p class="suche-hint">Tippen Sie einen Begriff, etwa „Taufe“, „Mozart“ oder „Öffnungszeiten“.<span class="suche-taste"> Taste „/“ öffnet die Suche überall.</span></p>';
       return;
     }
     const find = (list, n) => (list || []).filter((x) => hit(x, w)).sort((a, b) => rank(b, w) - rank(a, w)).slice(0, n);
