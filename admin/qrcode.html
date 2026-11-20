@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>QR-Codes — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/qr-encoder.js" defer></script>
+<script src="../js/admin/admin-qrcode.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Werkzeuge</div>
+      <h1 class="ph-title">QR-Codes <em>erstellen</em></h1>
+      <p class="ph-sub">Adresse wählen, Design aussuchen, herunterladen: als PNG (auch mit durchsichtigem Hintergrund) oder als SVG für die Druckerei. Das Logo der Kirche sitzt auf Wunsch in der Mitte. Alles passiert in deinem Browser, nichts wird hochgeladen.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div class="qr-wrap">
+    <form class="qr-form" id="qr-form" novalidate autocomplete="off">
+      <div class="qr-tabs" role="tablist" aria-label="Schritte">
+        <button type="button" role="tab" class="qr-tab" data-tab="1" aria-selected="true"><i>1</i><span>Adresse</span></button>
+        <button type="button" role="tab" class="qr-tab" data-tab="2" aria-selected="false"><i>2</i><span>Design</span></button>
+        <button type="button" role="tab" class="qr-tab" data-tab="3" aria-selected="false"><i>3</i><span>Logo</span></button>
+        <button type="button" role="tab" class="qr-tab" data-tab="4" aria-selected="false"><i>4</i><span>Feinschliff</span></button>
+      </div>
+      <section class="adm-panel qr-pane" role="tabpanel" data-pane="1">
+        <h2 class="adm-group-title"><span class="qr-step">1</span> Wohin soll der Code führen?</h2>
+        <span class="adm-label" id="q-dom-l">Unsere Adressen</span>
+        <div class="qr-chips" id="q-doms" role="group" aria-labelledby="q-dom-l"></div>
+        <div class="adm-field">
+          <label class="adm-label" for="q-text">Link oder Text<span class="adm-req">Pflichtfeld</span></label>
+          <textarea class="adm-input" data-no-format id="q-text" rows="2" maxlength="1200" aria-describedby="q-text-hint" placeholder="z. B. https://augustinerkirche.at"></textarea>
+          <span class="adm-hint" id="q-text-hint">Adresse wählen oder selbst eintippen, auch mit Unterseite (z. B. …at/kontakt). Immer ohne „www“, das ist die kürzeste Adresse.</span>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="q-caption">Beschriftung unter dem Code</label>
+          <input class="adm-input" type="text" id="q-caption" maxlength="40" placeholder="z. B. augustinerkirche.at oder Jetzt scannen"/>
+          <span class="adm-hint">Optional, erscheint auf einem farbigen Balken unter dem Code.</span>
+        </div>
+      </section>
+
+      <section class="adm-panel qr-pane" role="tabpanel" data-pane="2">
+        <h2 class="adm-group-title"><span class="qr-step">2</span> Design wählen</h2>
+        <div class="qr-designs" id="q-designs" role="radiogroup" aria-label="Design"></div>
+        <div class="qr-custom">
+          <span>Nichts Passendes gefunden?</span>
+          <button type="button" class="btn btn-gold" id="q-custom">Selbst gestalten (Farben, Formen)</button>
+        </div>
+      </section>
+
+      <section class="adm-panel qr-pane" role="tabpanel" data-pane="3">
+        <h2 class="adm-group-title"><span class="qr-step">3</span> Logo in der Mitte</h2>
+        <div class="adm-choice qr-choice3" role="radiogroup" aria-label="Logo">
+          <label><input type="radio" name="q-logomode" value="kirche" checked/><span><b>Logo der Kirche</b><span>Passend zum Design</span></span></label>
+          <label><input type="radio" name="q-logomode" value="own"/><span><b>Eigenes Bild</b><span>PNG, JPG, SVG, WebP</span></span></label>
+          <label><input type="radio" name="q-logomode" value="none"/><span><b>Kein Logo</b><span>Nur Punkte</span></span></label>
+        </div>
+        <div class="adm-grid qr-logo-opts" id="q-logo-opts">
+          <div class="adm-field" id="q-own-box" hidden>
+            <label class="adm-label" for="q-logo">Bild auswählen</label>
+            <input class="adm-input" type="file" id="q-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"/>
+          </div>
+          <div class="adm-field" id="q-var-box">
+            <label class="adm-label" for="q-var">Farbe des Logos</label>
+            <select class="adm-input" id="q-var"></select>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="q-logo-size">Größe des Logos: <output id="q-logo-size-o">27</output> %</label>
+            <input type="range" id="q-logo-size" min="12" max="30" value="27"/>
+          </div>
+        </div>
+      </section>
+
+      <section class="adm-panel qr-pane" role="tabpanel" data-pane="4">
+        <h2 class="adm-group-title"><span class="qr-step">4</span> Feinschliff: Farben, Form, Rand</h2>
+        <div class="adm-grid">
+          <div class="adm-field">
+            <label class="adm-label" for="q-fg">Farbe der Punkte</label>
+            <div class="qr-sw" id="q-sw-fg" role="group" aria-label="Farbvorschläge"></div>
+            <input class="adm-input qr-color" type="color" id="q-fg" value="#10192e" aria-label="Eigene Farbe der Punkte"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="q-bg">Farbe des Hintergrunds</label>
+            <div class="qr-sw" id="q-sw-bg" role="group" aria-label="Farbvorschläge"></div>
+            <input class="adm-input qr-color" type="color" id="q-bg" value="#ffffff"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="q-eye">Eckmarkierungen und Logo-Ring</label>
+            <div class="qr-sw" id="q-sw-eye" role="group" aria-label="Farbvorschläge"></div>
+            <input class="adm-input qr-color" type="color" id="q-eye" value="#10192e"/>
+          </div>
+          <div class="adm-field">
+            <span class="adm-label">Hintergrund</span>
+            <label class="adm-check"><input type="checkbox" id="q-transp"/><span>Durchsichtig (PNG und SVG)</span></label>
+          </div>
+          <div class="adm-field full">
+            <span class="adm-label" id="q-dots-l">Form der Punkte</span>
+            <div class="adm-choice qr-choice3" role="radiogroup" aria-labelledby="q-dots-l">
+              <label><input type="radio" name="q-dots" value="square" checked/><span><b>Eckig</b></span></label>
+              <label><input type="radio" name="q-dots" value="dots"/><span><b>Rund</b></span></label>
+              <label><input type="radio" name="q-dots" value="small"/><span><b>Fein</b></span></label>
+              <label><input type="radio" name="q-dots" value="diamond"/><span><b>Raute</b></span></label>
+              <label><input type="radio" name="q-dots" value="tiny"/><span><b>Mini-Punkte</b></span></label>
+              <label><input type="radio" name="q-dots" value="vbar"/><span><b>Streifen</b></span></label>
+              <label><input type="radio" name="q-dots" value="hbar"/><span><b>Zeilen</b></span></label>
+            </div>
+          </div>
+          <div class="adm-field full">
+            <span class="adm-label" id="q-eyes-l">Form der Eckmarkierungen</span>
+            <div class="adm-choice qr-choice3" role="radiogroup" aria-labelledby="q-eyes-l">
+              <label><input type="radio" name="q-eyes" value="square" checked/><span><b>Eckig</b></span></label>
+              <label><input type="radio" name="q-eyes" value="circle"/><span><b>Rund</b></span></label>
+            </div>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="q-margin">Rand: <output id="q-margin-o">2</output> Punkte</label>
+            <input type="range" id="q-margin" min="0" max="8" value="2"/>
+          </div>
+          <div class="adm-field">
+            <label class="adm-label" for="q-ecc">Fehlerkorrektur</label>
+            <select class="adm-input" id="q-ecc">
+              <option value="L">Niedrig (7 %)</option>
+              <option value="M" selected>Mittel (15 %), empfohlen</option>
+              <option value="Q">Hoch (25 %)</option>
+              <option value="H">Sehr hoch (30 %)</option>
+            </select>
+            <span class="adm-hint" id="q-ecc-hint">Mit Logo immer „Sehr hoch“.</span>
+          </div>
+        </div>
+      </section>
+    </form>
+
+    <aside class="qr-side" aria-label="Vorschau und Download">
+      <div class="qr-sticky">
+        <div class="adm-panel qr-preview-panel">
+          <h2 class="adm-group-title">Vorschau</h2>
+          <div class="qr-preview" id="q-preview">
+            <img id="q-img" alt="Vorschau des QR-Codes" width="320" height="320" hidden/>
+            <p class="adm-muted" id="q-empty">Wähle links eine Adresse.</p>
+          </div>
+          <p class="qr-target" id="q-target"></p>
+          <p class="adm-hint qr-warn" id="q-contrast" role="status" hidden></p>
+          <p class="adm-hint qr-info" id="q-info" role="status"></p>
+          <div class="adm-grid">
+            <div class="adm-field">
+              <label class="adm-label" for="q-px">Größe des PNG</label>
+              <select class="adm-input" id="q-px">
+                <option value="512">512 Pixel (Bildschirm)</option>
+                <option value="1024" selected>1024 Pixel (Standard)</option>
+                <option value="2048">2048 Pixel (Druck, A5)</option>
+                <option value="4096">4096 Pixel (Plakat)</option>
+              </select>
+            </div>
+            <div class="adm-field">
+              <label class="adm-label" for="q-name">Dateiname</label>
+              <input class="adm-input" type="text" id="q-name" maxlength="60" value="qr-code"/>
+            </div>
+          </div>
+          <div class="qr-dl">
+            <button type="button" class="btn btn-gold" id="q-copy" disabled>Bild kopieren</button>
+            <button type="button" class="btn btn-outline" id="q-copy-link">Adresse kopieren</button>
+          </div>
+          <div class="qr-dl">
+            <button type="button" class="btn btn-dark" id="q-dl-png" data-icon="download" disabled>PNG herunterladen</button>
+            <button type="button" class="btn btn-dark" id="q-dl-svg" data-icon="download" disabled>SVG herunterladen</button>
+          </div>
+          <p class="adm-hint">SVG bleibt in jeder Größe scharf, ideal für Druckerei und Plakat. Vor dem Druck bitte mit dem Handy ausprobieren.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+</body>
+</html>

@@ -152,6 +152,7 @@
     { key: 'pgr', label: 'Pfarrgemeinderat', group: 'Pfarre & Kloster', page: 'pgr.html' },
     { key: 'predigten', label: 'Predigten & Ansprachen', group: 'Pfarre & Kloster', page: 'predigten.html' },
     { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' },
+    { key: 'qrcode', label: 'QR-Codes erstellen', group: 'Werkzeuge', page: 'qrcode.html' },
   ];
   /* "Runden" gehoert zu Pfarre & Kloster, steht aber wegen der Einzelauswahl getrennt */
   const RUNDEN_KEY = 'runden';
@@ -297,6 +298,7 @@
     quote: '<path d="M10 7H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v1.5A2.5 2.5 0 0 1 6.5 18M20 7h-4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v1.5a2.5 2.5 0 0 1-2.5 2.5"/>',
     palette: '<path d="M12 3a9 9 0 0 0 0 18c1.1 0 1.8-.9 1.5-1.9-.3-1 .4-2.1 1.5-2.1H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
     shield: '<path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M9 12l2 2 4-4"/>',
+    qr: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v1M14 20h1M18 18h3v3h-3z"/>',
     history: '<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6M3 4v4h4"/><path d="M12 8v4.5l3 2"/>',
     globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>'
   };
@@ -2177,6 +2179,9 @@
       ['design.html', 'Kopfzeile', 'palette', 'Farben Logo Name Design Thema Titelzeile Einstellungen'],
       ['navigation.html', 'Menü der Website', 'menu', 'Navigation Seitenleiste Bereiche ausblenden einblenden Einstellungen'],
       ['rechtliches.html', 'Impressum & Datenschutz', 'shield', 'Rechtliches Einstellungen']
+    ] },
+    { label: 'Werkzeuge', items: [
+      ['qrcode.html', 'QR-Codes', 'qr', 'QR Code Plakat Flyer Link Barcode PNG SVG transparent Farbe Logo Download']
     ] },
     { label: 'Verwaltung', items: [
       ['zugaenge.html', 'Benutzer & Passwörter', 'key', 'Zugänge Benutzer Passwort Rollen Rechte'],
