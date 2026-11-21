@@ -342,8 +342,7 @@
   }
   async function freeImagePath(id, ext, old) {
     let path = `${IMG_DIR}${id}.${ext}`;
-    if (A.folder.state !== 'ok') return path;
-    for (let n = 2; !(old && old.bild && old.bild.pfad === path) && await A.folder.exists(path); n++) path = `${IMG_DIR}${id}-${n}.${ext}`;
+    for (let n = 2; ((old && old.bild && old.bild.pfad === path) || (A.folder.state === 'ok' && await A.folder.exists(path))); n++) path = `${IMG_DIR}${id}-${n}.${ext}`;
     return path;
   }
 

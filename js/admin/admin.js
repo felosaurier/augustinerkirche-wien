@@ -970,7 +970,24 @@
   /* Kleine Fassung eines Bildes (900 px breit) fuers Handy; nur wenn das Bild deutlich groesser ist */
   const SMALL_LIST = 'data/bilder-klein.json';
   let smallChain = Promise.resolve();
+  /* Gibt es zum neuen Bild keine kleine Fassung, darf auch keine alte mehr gelten: sonst zeigte die
+     Website am Handy weiter das fruehere Bild, das unter demselben Namen lag (-m.webp und Eintrag
+     in data/bilder-klein.json entfernen) */
+  async function dropSmall(path) {
+    const small = path.replace(/\.webp$/, '-m.webp');
+    try {
+      if (pending.has(small) || (folder.state === 'ok' && await folder.exists(small))) await discardFile(small);
+    } catch { /* war schon weg */ }
+    smallChain = smallChain.then(async () => {
+      let data;
+      try { data = await readJSON(SMALL_LIST); } catch { return; }
+      const list = Array.isArray(data.bilder) ? data.bilder : [];
+      if (list.includes(path)) await saveFile(SMALL_LIST, JSON.stringify({ ...data, bilder: list.filter((b) => b !== path) }, null, 2) + '\n');
+    }).catch(() => { /* nur eine Liste */ });
+    await smallChain;
+  }
   async function makeSmall(path, blob) {
+    let made = false;
     try {
       const bmp = await createImageBitmap(blob);
       const w = bmp.width;
@@ -988,6 +1005,7 @@
       const small = await new Promise((r) => c.toBlob(r, 'image/webp', 0.78));
       if (!small || small.size >= blob.size * 0.85) return;
       await saveFile(path.replace(/\.webp$/, '-m.webp'), small);
+      made = true;
       /* Liste ergaenzen (nacheinander, damit parallele Uploads sich nicht ueberschreiben) */
       smallChain = smallChain.then(async () => {
         let list = [];
@@ -995,7 +1013,9 @@
         if (!list.includes(path)) await saveFile(SMALL_LIST, JSON.stringify({ breite: W, bilder: [...list, path].sort() }, null, 2) + '\n');
       }).catch(() => { /* die kleine Fassung ist nur eine Zugabe */ });
       await smallChain;
-    } catch { /* ohne kleine Fassung gilt das Original */ }
+    } catch { /* ohne kleine Fassung gilt das Original */ } finally {
+      if (!made) await dropSmall(path);
+    }
   }
   const saveJSON = (path, data) => saveFile(path, JSON.stringify(data, null, 2) + '\n');
   /* Eine eben erst geschriebene Datei wieder verwerfen (z. B. Foto, das doch nicht

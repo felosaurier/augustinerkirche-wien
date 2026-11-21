@@ -168,11 +168,10 @@
     renderImage();
     renderPan();
   }
-  /* Freier Dateiname; das eigene Bild darf ersetzt werden */
+  /* Freier Dateiname; ein neues Bild bekommt immer einen neuen Namen (sonst zeigen Browser evtl. noch das alte) */
   async function freePath(base, ext, old) {
     let path = `${IMG_DIR}${base}.${ext}`;
-    if (A.folder.state !== 'ok') return path;
-    for (let n = 2; !(old && old.bild === path) && await A.folder.exists(path); n++) path = `${IMG_DIR}${base}-${n}.${ext}`;
+    for (let n = 2; ((old && old.bild === path) || (A.folder.state === 'ok' && await A.folder.exists(path))); n++) path = `${IMG_DIR}${base}-${n}.${ext}`;
     return path;
   }
   const dirtyState = () => A.snapshot($('rg-form')) + (image ? 'neu' : '');

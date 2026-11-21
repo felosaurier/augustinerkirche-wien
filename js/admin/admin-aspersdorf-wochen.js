@@ -132,12 +132,11 @@
     snap = dirtyState();
   }
 
-  /* Freier Dateiname; das eigene PDF darf ersetzt werden */
+  /* Freier Dateiname; ein neues PDF bekommt immer einen neuen Namen (sonst zeigen Browser evtl. noch das alte) */
   async function freePath(datum, old) {
     const base = `${DIR}${datum}-wochenblatt`;
     let path = `${base}.pdf`;
-    if (A.folder.state !== 'ok') return path;
-    for (let n = 2; !(old && old.datei === path) && await A.folder.exists(path); n++) path = `${base}-${n}.pdf`;
+    for (let n = 2; ((old && old.datei === path) || (A.folder.state === 'ok' && await A.folder.exists(path))); n++) path = `${base}-${n}.pdf`;
     return path;
   }
 

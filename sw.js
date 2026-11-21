@@ -1,10 +1,12 @@
 /* Service Worker der Website (Wurzel, damit er alle Seiten abdeckt).
    - Seiten, Daten, Skripte: zuerst das Netz, damit immer der neueste Stand erscheint; ohne Netz die
      zuletzt gesehene Fassung, sonst offline.html
-   - Bilder: aus dem Speicher, im Hintergrund erneuert
+   - Bilder: ebenfalls zuerst das Netz (beim Server nachgefragt, ob sich das Bild geaendert hat), ohne
+     Netz das gespeicherte. Nie zuerst das gespeicherte zeigen: ein ersetztes oder geloeschtes und neu
+     hochgeladenes Bild (z. B. Plakat mit gleichem Namen) erschiene sonst noch in der alten Fassung
    - Verwaltung, Videos, Audio und Teilantworten bleiben ausserhalb
    Neue Fassung der Dateien in VORRAT: Namen von CACHE erhoehen. */
-const CACHE = 'aug-v1';
+const CACHE = 'aug-v2';
 const VORRAT = ['offline.html', 'css/style.css', 'assets/logo.png', 'assets/logo-gold.png'];
 const root = new URL('./', self.location).pathname;
 
@@ -25,13 +27,18 @@ self.addEventListener('fetch', (e) => {
   if (!url.pathname.startsWith(root) || url.pathname.startsWith(root + 'admin/') || nurNetz.test(url.pathname) || url.pathname.endsWith('/sw.js')) return;
 
   if (bild.test(url.pathname)) {
+    /* cache: 'no-cache': auch der Zwischenspeicher des Browsers fragt beim Server nach (ETag), statt
+       ein Bild bis zu einem Tag ungeprueft wiederzuverwenden */
     e.respondWith(caches.open(CACHE).then(async (c) => {
-      const alt = await c.match(req);
-      const neu = fetch(req).then((r) => {
-        if (r.ok) c.put(req, r.clone());
+      try {
+        const r = await fetch(req, { cache: 'no-cache' });
+        if (r.ok) c.put(req, r.clone()).catch(() => {});
+        /* geloeschtes Bild: auch die gespeicherte Fassung verwerfen */
+        else if (r.status === 404 || r.status === 410) c.delete(req).catch(() => {});
         return r;
-      }).catch(() => alt);
-      return alt || neu;
+      } catch {
+        return (await c.match(req)) || Response.error();
+      }
     }));
     return;
   }

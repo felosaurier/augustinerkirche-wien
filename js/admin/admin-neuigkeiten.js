@@ -1011,14 +1011,15 @@
   let isCopy = false;   /* Kopie: gilt als geaendert, bis sie gespeichert ist */
   const isDirty = () => isCopy || dirtyState() !== snap || !!image || removeImage;
 
-  /* Freier Dateiname im Ordner der Meldung (name.webp, name-2.webp …); die eigene Datei
-     einer bearbeiteten Meldung darf ersetzt werden (keine Kopie: die teilt ihr Bild evtl.) */
+  /* Freier Dateiname im Ordner der Meldung (name.webp, name-2.webp …). Ein neues Bild bekommt immer
+     einen neuen Namen, auch wenn es das bisherige ersetzt: unter derselben Adresse zeigten Browser
+     (Zwischenspeicher) evtl. noch das alte Plakat. Das ersetzte wird beim Speichern geloescht. */
   async function freeImagePath(name, ext, old) {
     const dir = folderFor();
     let path = `${dir}${name}.${ext}`;
-    const isOwn = (p) => !isCopy && old && (old.Plakat === p || old.Vorschaubild === p);
-    const taken = (p) => photos.some((x) => x.path === p || x.thumb === p) || removedMedia.includes(p);
-    for (let n = 2; !isOwn(path) && (taken(path) || (A.folder.state === 'ok' && await A.folder.exists(path))); n++) path = `${dir}${name}-${n}.${ext}`;
+    const mine = [current, old && old.Plakat, old && old.Vorschaubild].filter(Boolean);
+    const taken = (p) => mine.includes(p) || photos.some((x) => x.path === p || x.thumb === p) || removedMedia.includes(p);
+    for (let n = 2; taken(path) || (A.folder.state === 'ok' && await A.folder.exists(path)); n++) path = `${dir}${name}-${n}.${ext}`;
     return path;
   }
 

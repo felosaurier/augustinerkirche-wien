@@ -439,11 +439,12 @@
     $('st-imginfo').textContent = '';
     afterPick();
   }
-  /* Freier Dateiname; das eigene Foto darf ersetzt werden. taken: in diesem Durchgang schon vergeben */
+  /* Freier Dateiname; ein neues Foto bekommt immer einen neuen Namen (sonst zeigen Browser evtl. noch
+     das alte). taken: in diesem Durchgang schon vergeben */
   async function freePath(base, ext, old, taken = new Set()) {
     const used = new Set([...taken, ...list.map((b) => b.bild), ...previous.map((b) => b.bild), ...extra]);
-    if (old) used.delete(old.bild);
-    const busy = async (p) => used.has(p) || (A.folder.state === 'ok' && !(old && old.bild === p) && await A.folder.exists(p));
+    if (old && old.bild) used.add(old.bild);
+    const busy = async (p) => used.has(p) || (A.folder.state === 'ok' && await A.folder.exists(p));
     let path = `${IMG_DIR}${base}.${ext}`;
     for (let n = 2; await busy(path); n++) path = `${IMG_DIR}${base}-${n}.${ext}`;
     return path;

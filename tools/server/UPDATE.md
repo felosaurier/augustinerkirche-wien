@@ -91,6 +91,17 @@ Bei Apache: `apache-verwaltung.conf` nach `/etc/apache2/sites-available/augustin
 Dem Webserver muss außerdem der Ordner `admin/` gehören (war bei der Einrichtung schon so): `chown www-data:www-data /var/www/augustinerkirche/admin`.
 <!--[verwaltung-ende]-->
 
+## 5. Bilder sofort aktuell (einmalig, ab November 2026)
+
+Bisher durften Browser und Cloudflare Bilder einen Tag lang ungeprüft wiederverwenden (dazu 7 Tage „stale“), auch eine 404-Antwort. Ein ersetztes oder gelöschtes und neu hochgeladenes Bild mit gleichem Namen (z. B. ein Plakat zu einem Hochamt) erschien dann noch tagelang in der alten Fassung oder gar nicht. Die neue `nginx.conf` bzw. `apache.conf` lässt Bilder vor jeder Verwendung kurz beim Server prüfen (Antwort 304, wenn unverändert) und Fehlerantworten nicht mehr zwischenspeichern. Die Website-Konfiguration übernehmen, falls sie nie von Hand angepasst wurde (nginx):
+
+```bash
+cp {{ORDNER}}/server/nginx.conf /etc/nginx/sites-available/augustinerkirche
+nginx -t && systemctl reload nginx
+```
+
+Wurde sie angepasst, dort nur die zwei Stellen ändern: in `map $uri $aug_cache` die Zeile für Bilder auf `"public, no-cache"` und `add_header Cache-Control $aug_cache always;` ohne `always`. Bei Apache in `apache.conf` den Block `<FilesMatch "\.(webp|png|…)$">` auf `Header set Cache-Control "public, no-cache"` setzen, dann `apache2ctl configtest && systemctl reload apache2`. Hinter Cloudflare danach einmal Caching → Purge Everything.
+
 ## Neue Inhalte vom PC auf den Server
 
 Inhalte, die auf dem PC entstanden sind (zum Beispiel neue Fotos), kommen nicht mit dem Update-Paket. Am besten gleich in der Verwaltung auf dem Server eintragen. Einzelne Dateien lassen sich auch gezielt kopieren, aber nur, wenn sie auf dem Server seither niemand geändert hat (sonst geht das dort Geänderte verloren):

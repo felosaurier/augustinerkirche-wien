@@ -252,8 +252,7 @@
   }
   async function freePath(base, ext, old) {
     let path = `${IMG_DIR}${base}.${ext}`;
-    if (A.folder.state !== 'ok') return path;
-    for (let n = 2; !(old && old.bild === path) && await A.folder.exists(path); n++) path = `${IMG_DIR}${base}-${n}.${ext}`;
+    for (let n = 2; ((old && old.bild === path) || (A.folder.state === 'ok' && await A.folder.exists(path))); n++) path = `${IMG_DIR}${base}-${n}.${ext}`;
     return path;
   }
   const dirtyState = () => A.snapshot($('pd-form')) + (image ? 'neu' : '') + (removeImage ? 'weg' : '');

@@ -202,8 +202,7 @@
   async function freePath(dir, name, ext, old) {
     const base = `assets/img/personen/${dir}/${HD.slug(name, 50) || 'person'}`;
     let path = `${base}.${ext}`;
-    if (A.folder.state !== 'ok') return path;
-    for (let n = 2; !(old && old.bild === path) && await A.folder.exists(path); n++) path = `${base}-${n}.${ext}`;
+    for (let n = 2; ((old && old.bild === path) || (A.folder.state === 'ok' && await A.folder.exists(path))); n++) path = `${base}-${n}.${ext}`;
     return path;
   }
 
