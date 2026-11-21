@@ -27,7 +27,11 @@
 .v3-info-ico svg{width:1.35rem;height:1.35rem;fill:none;stroke:var(--v3-gold);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s}
 .v3-info-txt{display:flex;flex-direction:column;gap:.1rem;min-width:0}
 .v3-info-k{font-size:.88rem;font-weight:600;color:var(--v3-gold)}
-.v3-info-t{font-family:var(--serif);font-size:clamp(1.08rem,1.3vw,1.25rem);font-weight:500;line-height:1.2}
+/* Wann: Heute, Morgen, In 3 Tagen (js/start-v2.js) */
+/* Wann: Heute, Morgen, In 3 Tagen (js/start-v2.js), als goldene Kapitälchen hinter der Überschrift */
+.v3-info-when{margin-left:.5rem;padding-left:.55rem;border-left:1px solid rgba(216,185,110,.45);font-size:.74rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#fff}
+.v3-info-when.jetzt{color:var(--v3-gold)}
+.v3-info-t{font-family:var(--serif);font-size:clamp(1.08rem,1.3vw,1.25rem);font-weight:500;line-height:1.2;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;transition:color .25s}
 .v3-info-s{font-size:.92rem;line-height:1.35;color:rgba(255,255,255,.72)}
 .v3-info-arrow{flex:none;margin-left:auto;opacity:.45;transform:translateX(-4px);transition:opacity .25s,transform .25s}
 .v3-info-arrow svg{width:1.2rem;height:1.2rem;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -99,8 +103,14 @@
   .v3-hero-img{grid-column:1;grid-row:1;min-height:0;aspect-ratio:4/5;max-height:72svh}
   .v3-hero-in{grid-column:1;grid-row:2;max-width:none;padding:1.8rem var(--edge) 2rem}
   .v3-all-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .v3-end{padding-bottom:clamp(11rem,52vw,15rem)}
-  .v3-end::before{right:-3rem;height:auto;width:min(130%,34rem);opacity:.4}
+  /* Handy: kompakt. Alle Seiten stehen schon im Menü (☰), die Zeichnung nur als schmaler Streifen unten */
+  .v3-end{padding-top:2rem;padding-bottom:clamp(6.5rem,30vw,8.5rem)}
+  .v3-end::before{right:-2rem;height:auto;width:min(100%,24rem);opacity:.35}
+  .v3-end-h{margin-bottom:.6rem}
+  .v3-end-text{margin-bottom:.9rem;font-size:.95rem}
+  .v3-nur-breit,.v3-all{display:none}
+  .v3-chips{gap:.4rem}
+  .v3-chips a{padding:.32rem .7rem;font-size:.92rem}
 }
 @media(max-width:520px){
   .v3-ways{grid-template-columns:minmax(0,1fr)}
@@ -156,26 +166,40 @@
 @keyframes v3-slide{from{opacity:0;transform:translateX(-18px)}}
 
 /* ══ Heute in der Augustinerkirche (js/start-v2.js) ══ */
-.v3-heute{padding:clamp(2rem,4vw,3rem) var(--edge);background:var(--surface);border-bottom:1px solid var(--line)}
-.v3-heute-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.v3-heute{padding:clamp(2.2rem,4.5vw,3.4rem) var(--edge);background:var(--bg-soft);border-bottom:1px solid var(--line)}
+/* Breit: Überschrift links, Karten rechts über die ganze Breite (wenige Termine wirken so nicht verloren) */
+.v3-heute-in{display:grid;grid-template-columns:minmax(14rem,19rem) minmax(0,1fr);gap:clamp(1.5rem,3.5vw,3rem);align-items:start}
+.v3-heute-head{display:flex;flex-direction:column;align-items:flex-start}
 .v3-heute-title{font-family:var(--serif);font-weight:500;font-size:clamp(1.6rem,2.6vw,2.1rem);line-height:1.15;color:var(--heading)}
-.v3-heute-date{margin-top:.15rem;font-size:1rem;color:var(--gold-text);font-weight:600}
-.v3-heute-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.75rem}
-.v3-heute-list>li>a,.v3-heute-list>li>div{display:flex;align-items:flex-start;gap:.9rem;height:100%;padding:.95rem 1.1rem;border:1px solid var(--line);border-left:3px solid var(--gold);background:var(--bg-soft);color:inherit;text-decoration:none;transition:border-color .2s,background .2s}
-.v3-heute-list>li>a:hover,.v3-heute-list>li>a:focus-visible{background:var(--gold-pale);border-color:var(--gold)}
-.v3-h-zeit{flex:none;min-width:3.2rem;font-family:var(--serif);font-size:1.35rem;font-weight:600;line-height:1.15;color:var(--gold-text);font-variant-numeric:tabular-nums}
-.v3-h-was{display:flex;flex-direction:column;gap:.15rem;min-width:0}
-.v3-h-was b{font-weight:600;font-size:1.02rem;line-height:1.3;color:var(--heading)}
-.v3-h-was small{font-size:.9rem;line-height:1.35;color:var(--text-mid)}
-.v3-h-item.g-hochamt>a,.v3-h-item.g-hochamt>div{border-left-color:var(--heading)}
+.v3-heute-date{margin-top:.35rem;font-size:1rem;color:var(--gold-text);font-weight:600}
+.v3-heute-btn{margin-top:1.2rem}
+/* Wie eine gedruckte Gottesdienstordnung: keine Kästen, nur eine feine Linie über jedem Termin */
+.v3-heute-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(13.5rem,1fr));gap:1.6rem clamp(1.5rem,3vw,2.6rem)}
+.v3-heute-list>li>a,.v3-heute-list>li>div{display:flex;flex-direction:column;height:100%;padding-top:1rem;border-top:1px solid var(--gold);color:inherit;text-decoration:none}
+.v3-h-top{display:flex;align-items:baseline;justify-content:space-between;gap:.8rem;margin-bottom:.6rem}
+.v3-h-zeit{font-family:var(--serif);font-size:2rem;font-weight:500;line-height:1;color:var(--heading);font-variant-numeric:tabular-nums}
+.v3-h-st{font-size:.74rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-mid);white-space:nowrap}
+.v3-h-st.next,.v3-h-st.jetzt{color:var(--gold-text)}
+.v3-h-art{font-size:.76rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-text)}
+.v3-h-titel{margin-top:.2rem;font-family:var(--serif);font-weight:500;font-size:1.25rem;line-height:1.25;color:var(--heading);transition:color .2s}
+.v3-h-sub{margin-top:.3rem;font-size:.92rem;line-height:1.4;color:var(--text-mid)}
+.v3-h-ort{display:flex;align-items:center;gap:.3rem;margin-top:.35rem;font-size:.88rem;color:var(--text-mid)}
+.v3-h-ort svg{flex:none;width:.9rem;height:.9rem;fill:none;stroke:var(--gold-text);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.v3-h-mehr{margin-top:auto;padding-top:.75rem;font-size:.9rem;font-weight:600;color:var(--gold-text)}
+.v3-h-mehr::after{content:" →"}
+.v3-heute-list>li>a:hover .v3-h-titel,.v3-heute-list>li>a:focus-visible .v3-h-titel{color:var(--gold-text)}
+.v3-heute-list>li>a:hover .v3-h-mehr{text-decoration:underline;text-underline-offset:.25em}
+/* Hochamt: kräftigere Linie; läuft gerade: goldene */
+.v3-h-item.g-hochamt>a,.v3-h-item.g-hochamt>div{border-top:2px solid var(--heading);padding-top:calc(1rem - 1px)}
+.v3-h-item.laeuft>a,.v3-h-item.laeuft>div{border-top:2px solid var(--gold);padding-top:calc(1rem - 1px)}
 .v3-h-item.vorbei{opacity:.5}
 .v3-heute-empty{color:var(--text-mid)}
-
-/* ══ Kopfzeile: kleine Zusatzlinks (nur breite Bildschirme) ══ */
-.v3-util{display:none;align-items:center;gap:.35rem;margin-right:.9rem;font-size:.92rem;color:var(--nav-fg-soft);text-decoration:none;white-space:nowrap}
-.v3-util svg{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.v3-util:hover,.v3-util:focus-visible{color:var(--nav-accent)}
-@media(min-width:1360px){.v3-util{display:inline-flex}}
+@media (max-width:860px){
+  .v3-heute-in{grid-template-columns:1fr;gap:1.2rem}
+  .v3-heute-head{flex-direction:row;flex-wrap:wrap;align-items:flex-end;column-gap:1rem}
+  .v3-heute-head .v3-eyebrow,.v3-heute-title{flex:1 0 100%}
+  .v3-heute-btn{margin:0 0 0 auto;padding:.45rem .9rem;font-size:.9rem}
+}
 
 /* ══ Kirchenmusik erleben: Foto links, die nächsten Hochämter rechts auf Marine ══ */
 .v3-musik{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);background:var(--v3-navy);color:#fff}

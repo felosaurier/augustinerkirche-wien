@@ -470,7 +470,15 @@
     const id = safeDecode(location.hash.slice(1));
     const el = id && document.getElementById(id);
     if (!el) return null;
-    if (!el.classList.contains('tab-pane')) return el;
+    if (!el.classList.contains('tab-pane')) {
+      /* Ziel innerhalb eines Bereichs (z. B. musik.html#spenden): erst diesen Bereich oeffnen, sonst ist es unsichtbar */
+      const pane = el.closest('.tab-pane');
+      if (pane && !pane.classList.contains('active')) {
+        const paneArea = pane.closest('.tab-content-area');
+        activatePane(paneArea && paneArea.previousElementSibling, pane.id);
+      }
+      return el;
+    }
     const area = el.closest('.tab-content-area');
     const sidebar = area && area.previousElementSibling;
     if (!sidebar || !activatePane(sidebar, id)) return null;
@@ -479,8 +487,8 @@
 
   function routeToHash() {
     const target = hashTarget();
-    /* Nur Reiter selbst anfahren; andere Ziele scrollt der Browser */
-    if (!target || target.id === location.hash.slice(1)) return;
+    /* Nur Reiter selbst und Ziele in einem Bereich anfahren; andere Ziele scrollt der Browser */
+    if (!target || (target.id === location.hash.slice(1) && !target.closest('.tab-pane'))) return;
     /* kurz warten, bis der Bereich sichtbar und vermessen ist */
     setTimeout(() => target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' }), 60);
   }
@@ -1363,7 +1371,9 @@
     b.setAttribute('aria-label', 'Suche');
     b.setAttribute('aria-haspopup', 'dialog');
     b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>';
-    right.prepend(b);
+    /* direkt links neben "Gottesdienste" (auf der Startseite stehen davor noch Unterstuetzen und Kontakt) */
+    const cta = right.querySelector('.nav-cta');
+    if (cta) cta.before(b); else right.prepend(b);
     let loading = null;
     const open = () => {
       if (window.AugSuche) return window.AugSuche.open();

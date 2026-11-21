@@ -27,15 +27,13 @@ FOOT = re.compile(r'<footer>.*?</footer>', re.S)
 KONTAKT = {'pages/aspersdorf.html': 'aspersdorf.html#p-leitung'}
 
 # Seiten mit eigener Titelzeile (Vorlage in tools/vorlagen/)
-EIGENE_NAV = {'pages/aspersdorf.html': 'nav-aspersdorf.html'}
+EIGENE_NAV = {'pages/aspersdorf.html': 'nav-aspersdorf.html', 'index.html': 'nav-start.html', 'pages/musik.html': 'nav-musik.html'}
 
-# Ziel des Logos: die Titelseite des Bereichs, in dem die Seite liegt (Startseite: sie selbst; alles andere: Augustinerkirche)
-LOGO = {'index.html': 'index.html', 'pages/musik.html': 'musik.html', 'pages/hochamt.html': 'musik.html', 'pages/orgel-rieger.html': 'musik.html', 'pages/orgel-reil.html': 'musik.html',
-        'pages/augustiner.html': 'augustiner.html', 'pages/aspersdorf.html': 'aspersdorf.html'}
+# Ziel des Logos: immer die Startseite der Website (index.html)
 
 
 def seiten():
-    liste = [ROOT / 'index.html'] + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
+    liste = [ROOT / 'index.html', ROOT / 'index-v1alt.html'] + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
     return [p for p in liste if NAV.search(p.read_text(encoding='utf-8'))]
 
 
@@ -61,8 +59,8 @@ def zerlegen(text, r, pg, kontakt):
     return re.sub(r'\b(href|src|data-href)="([^"]*)"', attr, text)
 
 
-def fuellen(vorlage, r, pg, kontakt, logo='augustinerkirche.html'):
-    ziel = logo if logo == 'index.html' and not r else pg + logo
+def fuellen(vorlage, r, pg, kontakt):
+    ziel = r + 'index.html'
     return vorlage.replace('{R}', r).replace('{P}', pg).replace('{KONTAKT}', pg + kontakt).replace('{LOGO}', ziel)
 
 
@@ -97,7 +95,7 @@ def main():
         s = roh.replace('\r\n', '\n')
         kontakt = KONTAKT.get(rel, 'kontakt.html')
         # Index: Link zur eigenen Seite bleibt, das Ziel steht nach {P}
-        neu = NAV.sub(lambda m: fuellen(eigene.get(rel, nav_v), r, pg, kontakt, LOGO.get(rel, 'augustinerkirche.html')), s, count=1)
+        neu = NAV.sub(lambda m: fuellen(eigene.get(rel, nav_v), r, pg, kontakt), s, count=1)
         neu = FOOT.sub(lambda m: fuellen(foot_v, r, pg, kontakt), neu, count=1)
         if neu != s:
             abweichend += 1

@@ -403,6 +403,8 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .people-index a.active{border-color:var(--heading);box-shadow:0 10px 24px rgba(16,25,46,.14)}
 .people-index a.active span{background:var(--gold-pale)}
 .person-card-wide[id]{scroll-margin-top:calc(var(--nav-h) + 1rem)}
+/* Sprungziel innerhalb eines Bereichs (z. B. musik.html#spenden): etwas Luft unter der Kopfzeile */
+.pane-sub[id]{scroll-margin-top:1.2rem}
 .person-body{min-width:0}
 .person-name{font-family:var(--serif);font-size:1.45rem;font-weight:500;line-height:1.2;color:var(--heading)}
 .person-role{margin:.3rem 0 .8rem;font-size:.98rem;font-weight:500;color:var(--gold)}
@@ -2208,6 +2210,12 @@ body{line-height:1.55}
   .hero-home .hero-actions .btn{flex:1 1 0;justify-content:center;padding-left:.7rem;padding-right:.7rem;white-space:nowrap}
   .hero-home .hero-actions .btn::after{margin-left:.35em}
 }
+
+/* ══ Kopfzeile: kleine Zusatzlinks (nur breite Bildschirme): Unterstuetzen, Kontakt auf Startseite und Kirchenmusik ══ */
+.v3-util{order:-1;display:none;align-items:center;gap:.35rem;margin-right:.9rem;font-size:.92rem;color:var(--nav-fg-soft);text-decoration:none;white-space:nowrap}
+.v3-util svg{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.v3-util:hover,.v3-util:focus-visible{color:var(--nav-accent)}
+@media(min-width:1360px){.v3-util{display:inline-flex}}
 
 /* Kopfzeile: Platz fuer die Lupe (js/main.js initSuche) von Anfang an freihalten, sonst rutschen
    Menue und Knoepfe nach dem Laden ein Stueck zur Seite */

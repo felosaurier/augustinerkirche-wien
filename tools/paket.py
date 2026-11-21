@@ -44,8 +44,8 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / 'dist'
 VORLAGEN = ROOT / 'tools' / 'server'
 
-# index-v2.html: alternative Startseite zum Testen (noindex), wieder entfernen, sobald entschieden
-DATEIEN = ['index.html', 'index-v2.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
+# index-v1alt.html: die fruehere Startseite (noindex), bleibt aufrufbar
+DATEIEN = ['index.html', 'index-v1alt.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
 ORDNER = ['pages', 'css', 'js', 'assets', 'data']
 
 TEST_MESS_ID = 'G-VORSCHAU01'
