@@ -65,7 +65,7 @@
       const konzert = /konzert|adventlicht/i.test(e.type);
       return {
         date: e.date, time: e.time, group: konzert ? 'konzert' : HOCHAMT.test(e.type) ? 'hochamt' : 'gottesdienst',
-        title: e.type, sub: [e.piece, e.location !== 'Augustinerkirche' ? e.location : ''].filter(Boolean).join(', '),
+        title: e.type, sub: [e.piece ? `♫ ${e.piece}` : '', e.celebrant ? `Z: ${e.celebrant}` : '', e.location].filter(Boolean).join(' · '),
         href: T.seite(`${base}pages/hochamt.html?id=${encodeURIComponent(e.id)}`), src: 'hochamt',
         d: { name: e.type, zelebrant: e.celebrant || '', musik: e.piece || '', ort: e.location || '', hinweis: '', art: konzert ? 'veranstaltung' : HOCHAMT.test(e.type) ? 'hochamt' : 'gottesdienst' }
       };
@@ -181,7 +181,7 @@
         if (!t || !t.name) continue;
         const time = HD.isoTime(t.zeit);
         const group = ART_GROUP_WK[t.art] || (/hochamt/i.test(t.name) ? 'hochamt' : 'veranstaltung');
-        const sub = [t.zelebrant ? `Z: ${t.zelebrant}` : '', t.musik ? `♫ ${t.musik}` : '', t.ort, t.hinweis]
+        const sub = [t.musik ? `♫ ${t.musik}` : '', t.zelebrant ? `Z: ${t.zelebrant}` : '', t.ort, t.hinweis]
           .map((x) => String(x || '').trim()).filter(Boolean).join(' · ');
         items.push({
           date, time, group, title: t.zusatz ? `${t.name} (${t.zusatz})` : t.name, sub, src: 'wk', hidden: !!t.entfaellt,
@@ -408,13 +408,24 @@
     const m = /^(.*?) \((.*)\)$/.exec(String(s));
     return m ? `${T(m[1])} (${T(m[2])})` : T(s);
   }
+  /* Zeile unter dem Titel: "♫ Musik · Z: Zelebrant · Ort · Hinweis"; Z und Titel der Personen in der Sprache der Seite */
+  function subText(sub) {
+    /* jeder Teil in eigener Zeile (Liste) */
+    return String(sub).split(' · ').map((teil) => {
+      const z = /^Z: (.*)$/.exec(teil);
+      if (z) return `${T('Z')}: ${T.person(z[1])}`;
+      if (teil.startsWith('♫ ')) return teil;
+      const t = T(teil);
+      return t !== teil ? t : teil.split(', ').map((x) => T(x)).join(', ');
+    });
+  }
   function itemHTML(it, past, base = '', ends = '') {
     const time = (it.label && T(it.label)) || (it.time ? `${it.time}${it.ende ? `–${it.ende}` : ''}` : '');
     const head = `<span class="cal-time${time ? '' : ' empty'}">${esc(time) || '&nbsp;'}</span>` +
       '<span class="cal-main">' +
         `<span class="cal-title">${esc(titel(it.title))}</span>` +
         (it.cancelled ? `<span class="cal-flag">${T('Entfällt')}${it.why ? `: ${esc(it.why)}` : ''}</span>` : '') +
-        (it.sub ? `<span class="cal-sub">${esc(T(it.sub) !== it.sub ? T(it.sub) : it.sub.split(', ').map((x) => T(x)).join(', '))}</span>` : '') +
+        (it.sub ? `<span class="cal-sub">${subText(it.sub).map((x) => `<span class="cal-sub-l">${esc(x)}</span>`).join('')}</span>` : '') +
       '</span>' +
       (it.group === 'ohne' ? '' : `<span class="cal-cat"><i class="cal-dot g-${it.group}"></i>${esc(T(it.art || groupName.get(it.group)))}</span>`);
     /* data-ends: damit watchPast den Termin verblassen lässt, solange die Seite offen ist */

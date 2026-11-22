@@ -38,7 +38,15 @@
   const LANG = ['en', 'it', 'fr', 'es'].includes((html.lang || '').slice(0, 2)) ? html.lang.slice(0, 2) : 'de';
   function T(s, werte) {
     const wb = LANG !== 'de' && w.AugWoerter && w.AugWoerter[LANG];
-    let t = wb && Object.prototype.hasOwnProperty.call(wb, s) ? wb[s] : s;
+    const hit = wb && Object.prototype.hasOwnProperty.call(wb, s);
+    let t = hit ? wb[s] : s;
+    /* Kein Eintrag: Textregeln der Sprache (z. B. "mit P. Name", "Zentralfriedhof, Halle 4") */
+    if (wb && !hit && Array.isArray(wb.TEXTREGELN)) {
+      for (const [re, f] of wb.TEXTREGELN) {
+        const m = re.exec(String(s));
+        if (m) { t = f(m); break; }
+      }
+    }
     if (werte) t = String(t).replace(/\{(\w+)\}/g, (m, k) => (k in werte ? werte[k] : m));
     return t;
   }

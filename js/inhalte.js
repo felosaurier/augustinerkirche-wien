@@ -367,8 +367,10 @@
       .filter((h, i, a) => filled(h) || filled(a[i - 1]));
     for (const el of strips) {
       el.innerHTML =
-        `<div><div class="cs-label">${esc(T('Adresse'))}</div><div class="cs-val">${esc(k.adresse)}<br>${esc(k.ort)}` +
-          (k.eingang ? `<br><span class="cs-note">${esc(T(k.eingang))}</span>` : '') + '</div></div>' +
+        `<div><div class="cs-label">${esc(T('Adresse'))}</div><div class="cs-val">` +
+          /* Eingang der Kirche (Josefsplatz) zuerst, dann die Anschrift des Klosters und der Pfarrkanzlei */
+          (k.eingang ? `<span class="cs-note">${esc(T(k.eingang))}</span><br>${esc(T('Kloster'))}: ` : '') +
+          `${esc(k.adresse)}, ${esc(k.ort)}</div></div>` +
         `<div><div class="cs-label">${esc(T('Telefon'))}</div><div class="cs-val">${(k.telefon || []).map((t) =>
           `<a href="${esc(HD.telHref(t.nummer))}">${esc(t.nummer)}</a>${t.bezeichnung ? ` <span class="cs-note">${esc(T(t.bezeichnung))}</span>` : ''}`).join('<br>')}</div></div>` +
         `<div><div class="cs-label">${esc(T('E-Mail'))}</div><div class="cs-val">${HD.mailHTML(k.email)}</div></div>` +
@@ -376,7 +378,8 @@
           ? `<span>${esc(T(h.tage))}</span><span>${esc(T(h.zeit))}</span>` : '<span class="cs-gap" aria-hidden="true"></span>')).join('')}</div></div>`;
     }
     /* Grosse Knoepfe fuer das Handy: anrufen und die Route in der Karten-App planen */
-    const ziel = encodeURIComponent(`${k.adresse}, ${k.ort}`);
+    /* Route zur Kirche: der Eingang liegt am Josefsplatz */
+    const ziel = encodeURIComponent(`Augustinerkirche, Josefsplatz, ${k.ort}`);
     const routeLinks = [
       ['Google Maps', `https://www.google.com/maps/dir/?api=1&destination=${ziel}`],
       [T('Apple Karten'), `https://maps.apple.com/?daddr=${ziel}&dirflg=d`],

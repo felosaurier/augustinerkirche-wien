@@ -91,7 +91,7 @@
   }
   /* Augustinerkirche mit Adresse, andere Orte wie eingetragen */
   const place = (loc) => (/^augustinerkirche$/i.test(loc.trim())
-    ? { name: 'Augustinerkirche', addr: T('1010 Wien, Hofburg – Josefsplatz'), query: 'Augustinerkirche, Augustinerstraße 3, 1010 Wien' } : { name: loc, addr: '' });
+    ? { name: 'Augustinerkirche', addr: T('1010 Wien, Hofburg – Josefsplatz'), query: 'Augustinerkirche, Josefsplatz, 1010 Wien' } : { name: loc, addr: '' });
   /* Ort in Google Maps (Suche nach Name bzw. Adresse) */
   const mapsUrl = (w) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(w.query || `${w.name}, Wien`)}`;
   const PIN = '<svg class="hd-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
