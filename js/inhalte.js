@@ -40,6 +40,10 @@
   const HD = window.HochamtData;
   if (!HD) return;
   const { esc, pad } = HD;
+  /* Uebersetzung (js/thema.js); deutsche Seiten: der Text bleibt. Texte aus den Daten werden nur
+     uebersetzt, wenn das Woerterbuch (js/sprache.js) sie kennt, sonst bleiben sie deutsch. */
+  const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
+  const LANG = T.lang || 'de';
 
   /* Wurzel der Website (aus der Adresse dieses Skripts), damit Pfade aus
      den Datendateien auf jeder Unterseite stimmen */
@@ -58,7 +62,7 @@
     return cache.get(name);
   }
 
-  const DAYS = { so: 'Sonntag', mo: 'Montag', di: 'Dienstag', mi: 'Mittwoch', do: 'Donnerstag', fr: 'Freitag', sa: 'Samstag' };
+  const DAYS = Object.fromEntries(['so', 'mo', 'di', 'mi', 'do', 'fr', 'sa'].map((k, i) => [k, HD.WEEKDAYS[i]]));
   const DAY_ORDER = Object.keys(DAYS);
   const byDay = (a, b) => DAY_ORDER.indexOf(a.tag) - DAY_ORDER.indexOf(b.tag) || String(a.zeit).localeCompare(String(b.zeit));
 
@@ -68,11 +72,13 @@
     if (!lit.length) return;
     const list = (await load('gottesdienste.json')).termine.slice().sort(byDay);
     for (const el of lit) {
-      el.innerHTML = list.filter((t) => t.liturgie).map((t) =>
-        `<tr><td class="gd-day">${esc(DAYS[t.tag] || '')}</td><td class="gd-time">${esc(t.zeit)}</td>` +
-        `<td><div class="gd-name">${t.hervorheben ? '<span class="gd-dot"></span>' : ''}${esc(t.name)}</div>` +
-        (t.hinweis ? `<div class="gd-note">${esc(t.hinweis)}</div>` : '') + '</td></tr>'
-      ).join('');
+      /* Mehrere Gottesdienste am selben Tag: der Wochentag steht nur in der ersten Zeile */
+      el.innerHTML = list.filter((t) => t.liturgie).map((t, i, arr) => {
+        const gleich = i > 0 && arr[i - 1].tag === t.tag;
+        return `<tr${gleich ? ' class="gd-same"' : ''}><td class="gd-day">${gleich ? '' : esc(DAYS[t.tag] || '')}</td><td class="gd-time">${esc(HD.uhr(t.zeit))}</td>` +
+        `<td><div class="gd-name">${t.hervorheben ? '<span class="gd-dot"></span>' : ''}${esc(T(t.name))}</div>` +
+        (t.hinweis ? `<div class="gd-note">${esc(T(t.hinweis))}</div>` : '') + '</td></tr>';
+      }).join('');
     }
   }
 
@@ -294,30 +300,30 @@
       .filter((h, i, a) => filled(h) || filled(a[i - 1]));
     for (const el of strips) {
       el.innerHTML =
-        `<div><div class="cs-label">Adresse</div><div class="cs-val">${esc(k.adresse)}<br>${esc(k.ort)}` +
-          (k.eingang ? `<br><span class="cs-note">${esc(k.eingang)}</span>` : '') + '</div></div>' +
-        `<div><div class="cs-label">Telefon</div><div class="cs-val">${(k.telefon || []).map((t) =>
-          `<a href="${esc(HD.telHref(t.nummer))}">${esc(t.nummer)}</a>${t.bezeichnung ? ` <span class="cs-note">${esc(t.bezeichnung)}</span>` : ''}`).join('<br>')}</div></div>` +
-        `<div><div class="cs-label">E-Mail</div><div class="cs-val">${HD.mailHTML(k.email)}</div></div>` +
-        `<div><div class="cs-label">Pfarrkanzlei</div><div class="cs-val cs-hours">${hours.map((h) => (filled(h)
-          ? `<span>${esc(h.tage)}</span><span>${esc(h.zeit)}</span>` : '<span class="cs-gap" aria-hidden="true"></span>')).join('')}</div></div>`;
+        `<div><div class="cs-label">${esc(T('Adresse'))}</div><div class="cs-val">${esc(k.adresse)}<br>${esc(k.ort)}` +
+          (k.eingang ? `<br><span class="cs-note">${esc(T(k.eingang))}</span>` : '') + '</div></div>' +
+        `<div><div class="cs-label">${esc(T('Telefon'))}</div><div class="cs-val">${(k.telefon || []).map((t) =>
+          `<a href="${esc(HD.telHref(t.nummer))}">${esc(t.nummer)}</a>${t.bezeichnung ? ` <span class="cs-note">${esc(T(t.bezeichnung))}</span>` : ''}`).join('<br>')}</div></div>` +
+        `<div><div class="cs-label">${esc(T('E-Mail'))}</div><div class="cs-val">${HD.mailHTML(k.email)}</div></div>` +
+        `<div><div class="cs-label">${esc(T('Pfarrkanzlei'))}</div><div class="cs-val cs-hours">${hours.map((h) => (filled(h)
+          ? `<span>${esc(T(h.tage))}</span><span>${esc(T(h.zeit))}</span>` : '<span class="cs-gap" aria-hidden="true"></span>')).join('')}</div></div>`;
     }
     /* Grosse Knoepfe fuer das Handy: anrufen und die Route in der Karten-App planen */
     const ziel = encodeURIComponent(`${k.adresse}, ${k.ort}`);
     const routeLinks = [
       ['Google Maps', `https://www.google.com/maps/dir/?api=1&destination=${ziel}`],
-      ['Apple Karten', `https://maps.apple.com/?daddr=${ziel}&dirflg=d`],
+      [T('Apple Karten'), `https://maps.apple.com/?daddr=${ziel}&dirflg=d`],
       ['Waze', `https://waze.com/ul?q=${ziel}&navigate=yes`],
       ['OpenStreetMap', `https://www.openstreetmap.org/search?query=${ziel}`]
     ];
     for (const el of actions) {
       el.innerHTML = (k.telefon || []).filter((t) => t.nummer).map((t) =>
-        `<a class="btn btn-gold" href="${esc(HD.telHref(t.nummer))}">${esc(t.bezeichnung ? `${t.bezeichnung} anrufen` : 'Anrufen')}<span class="kt-act-n">${esc(t.nummer)}</span></a>`).join('') +
-        '<details class="kt-route"><summary class="btn btn-outline">Route planen</summary><ul class="kt-route-list">' +
+        `<a class="btn btn-gold" href="${esc(HD.telHref(t.nummer))}">${esc(t.bezeichnung ? T(`${t.bezeichnung} anrufen`) : T('Anrufen'))}<span class="kt-act-n">${esc(t.nummer)}</span></a>`).join('') +
+        `<details class="kt-route"><summary class="btn btn-outline">${esc(T('Route planen'))}</summary><ul class="kt-route-list">` +
         routeLinks.map(([t, h]) => `<li><a href="${esc(h)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('') + '</ul></details>';
     }
     for (const el of lines) {
-      el.textContent = `Pfarrkanzlei: ${hours.filter(filled).map((h) => `${h.tage} ${h.zeit}`.trim()).join(' ')}`;
+      el.textContent = `${T('Pfarrkanzlei')}: ${hours.filter(filled).map((h) => `${T(h.tage)} ${T(h.zeit)}`.trim()).join(' ')}`;
     }
   }
 
@@ -438,9 +444,9 @@
     const cls = (b) => (b.format === 'breit' ? ' g-breit' : b.format === 'hoch' ? ' g-hoch' : '');
     const pos = (b) => (HD.focusPos(b.ausschnitt) ? ` style="object-position:${HD.focusPos(b.ausschnitt)}"` : '');
     host.innerHTML = list.map((b) =>
-      `<div class="g-item${cls(b)}"><a href="${esc(url(b.bild))}" data-lightbox title="Bild vergrößern">` +
-      `<img src="${esc(url(b.bild))}" alt="${esc(b.titel)}" loading="lazy" width="${HD.num(b.breite, 900)}" height="${HD.num(b.hoehe, 600)}" decoding="async"${pos(b)}/></a>` +
-      (b.titel ? `<div class="g-cap">${esc(b.titel)}</div>` : '') + '</div>').join('');
+      `<div class="g-item${cls(b)}"><a href="${esc(url(b.bild))}" data-lightbox title="${esc(T('Bild vergrößern'))}">` +
+      `<img src="${esc(url(b.bild))}" alt="${esc(T(b.titel))}" loading="lazy" width="${HD.num(b.breite, 900)}" height="${HD.num(b.hoehe, 600)}" decoding="async"${pos(b)}/></a>` +
+      (b.titel ? `<div class="g-cap">${esc(T(b.titel))}</div>` : '') + '</div>').join('');
   }
 
   /* ---------- Pfarrgemeinderat ---------- */
@@ -618,8 +624,8 @@
       const e = data.ehrenpaten || [];
       ehren.textContent = e.length ? ` ${e.length === 1 ? 'Ehrenpate ist' : 'Ehrenpaten sind'} ${andList(e)}.` : '';
     }
-    /* Ohne "stufen" in der Datei bleiben die Karten aus dem HTML stehen */
-    if (stufen && Array.isArray(data.stufen) && data.stufen.length) {
+    /* Ohne "stufen" in der Datei bleiben die Karten aus dem HTML stehen, ebenso auf uebersetzten Seiten */
+    if (stufen && LANG === 'de' && Array.isArray(data.stufen) && data.stufen.length) {
       stufen.innerHTML = data.stufen.map((s) =>
         `<div class="card"><div class="card-title">${esc(s.titel)}</div>` +
         (s.betrag ? `<div class="card-price">${esc(s.betrag)}</div>` : '') +

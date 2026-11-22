@@ -56,7 +56,7 @@
       if (!d || !Array.isArray(d.tage)) throw new Error('unerwarteter Inhalt');
       tage = d.tage.filter((x) => x && HD.isoDate(x.datum)).map((x) => ({
         datum: x.datum, tag: x.tag || '', heilige: Array.isArray(x.heilige) ? x.heilige : [],
-        termine: Array.isArray(x.termine) ? x.termine : []
+        termine: Array.isArray(x.termine) ? x.termine : [], ...(x.ohneHeilige ? { ohneHeilige: true } : {})
       }));
       await loadItems();
     } catch (e) {
@@ -104,7 +104,15 @@
       const day = dayOf(d);
       const dt = HD.dateFromIso(d);
       const its = inWeek.filter((it) => it.date === d);
-      const info = day ? [day.tag, ...day.heilige].filter(Boolean).join(' · ') : '';
+      /* Heilige: eigene des Tages, sonst automatisch aus dem Heiligenkalender (kursiv markiert) */
+      const auto = day && (day.heilige.length || day.ohneHeilige) ? [] : autoHeilige(d);
+      /* Tagesbezeichnung: eigene, sonst automatisch aus dem Kirchenjahr (kursiv) */
+      const autoTag = day && day.tag ? '' : autoTagAm(d);
+      const info = [day ? day.tag : '', ...(day ? day.heilige : [])].filter(Boolean).join(' · ');
+      const autoInfo = [
+        autoTag ? `<span class="wk-auto" title="Automatisch aus dem Kirchenjahr">${esc(autoTag)}</span>` : '',
+        auto.length ? `<span class="wk-auto" title="Automatisch aus dem Heiligenkalender">${esc(auto.join(' · '))}</span>` : ''
+      ].filter(Boolean).join(' · ');
       return '<section class="wk-adm-day">' +
         '<div class="adm-group-head">' +
           `<h3 class="adm-group-title" style="margin:0">${esc(HD.WEEKDAYS[dt.getDay()])}, ${dt.getDate()}. ${esc(m[dt.getMonth()])}</h3>` +
@@ -112,7 +120,7 @@
             `<button type="button" class="adm-act" data-act="day" data-day="${d}">${icon('edit')}Tag</button> ` +
             `<button type="button" class="adm-act" data-act="new" data-day="${d}">${icon('plus')}Termin</button>` +
           '</span></div>' +
-        `<p class="adm-hint" style="margin:.2rem 0 .6rem">${info ? HD.formatText(info) : 'Keine Tagesbezeichnung'}</p>` +
+        `<p class="adm-hint" style="margin:.2rem 0 .6rem">${info || autoInfo ? [info ? HD.formatText(info) : '', autoInfo].filter(Boolean).join(' · ') : 'Keine Tagesbezeichnung'}</p>` +
         (its.length
           ? `<ul class="adm-rows">${its.map((it) => rowHTML(d, it, items.indexOf(it))).join('')}</ul>`
           : '<p class="adm-muted">Keine Termine</p>') +
@@ -122,7 +130,7 @@
 
   /* Speichern: Tage ohne Inhalt fallen weg */
   async function store(next, note) {
-    const kept = next.filter((d) => d.tag || d.heilige.length || d.termine.length).sort((a, b) => a.datum.localeCompare(b.datum));
+    const kept = next.filter((d) => d.tag || d.heilige.length || d.termine.length || d.ohneHeilige).sort((a, b) => a.datum.localeCompare(b.datum));
     const direct = await A.saveJSON(PATH, { tage: kept });
     tage = kept;
     await loadItems();
@@ -141,6 +149,11 @@
   };
   const label = (d) => A.fmtShort(d);
 
+  /* Heilige aus dem Heiligenkalender (Verwaltung: Heiligenkalender) */
+  const autoHeilige = (d) => (KD.heiligeAuto ? KD.heiligeAuto(d) : []);
+  /* Tagesbezeichnung aus dem Kirchenjahr ("28. Sonntag im Jahreskreis", "1. Adventsonntag" …) */
+  const autoTagAm = (d) => (KD.tagAm ? KD.tagAm(d) : '');
+
   /* ---------- Tag ---------- */
   function openDay(d) {
     const day = dayOf(d);
@@ -149,6 +162,18 @@
     form.reset();
     $('td-tag').value = day ? day.tag : '';
     $('td-heilige').value = day ? day.heilige.join('\n') : '';
+    /* Vorschlag aus dem Heiligenkalender: steht im Kalender, solange hier nichts eingetragen ist */
+    const auto = autoHeilige(d);
+    $('td-auto').innerHTML = auto.length
+      ? `Ohne eigenen Eintrag steht automatisch da: <b>${esc(auto.join(' · '))}</b> <button type="button" class="adm-act" id="td-auto-take">Übernehmen</button>`
+      : 'Für diesen Tag steht im Heiligenkalender nichts (oder es ist ein Sonntag).';
+    $('td-ohne').checked = !!(day && day.ohneHeilige);
+    const tagAuto = autoTagAm(d);
+    $('td-tag').placeholder = tagAuto || 'z. B. Vom Tag';
+    $('td-tag-auto').textContent = tagAuto
+      ? `Ohne eigenen Eintrag steht automatisch da: ${tagAuto}. Eine eigene Bezeichnung ersetzt sie.`
+      : 'Aus dem Kirchenjahr gibt es für diesen Tag keine Bezeichnung (Werktag).';
+    $('td-ohne-wrap').hidden = !auto.length;
     $('td-dlg-title').textContent = A.fmtDate(d);
     A.openDialog($('td-dlg'), { isDirty: () => A.snapshot(form) !== tdSnap });
     tdSnap = A.snapshot(form);
@@ -158,6 +183,8 @@
     const { next, day } = withDay(tdDay);
     day.tag = clean($('td-tag').value);
     day.heilige = $('td-heilige').value.split('\n').map(clean).filter(Boolean);
+    if ($('td-ohne').checked && !day.heilige.length && autoHeilige(tdDay).length) day.ohneHeilige = true;
+    else delete day.ohneHeilige;
     try {
       await store(next, `Tag gespeichert: ${label(tdDay)}.`);
       $('td-dlg').close();
@@ -274,6 +301,13 @@
     $('te-anschl').addEventListener('change', syncAnschl);
     $('te-form').addEventListener('submit', saveTermin);
     $('td-form').addEventListener('submit', saveDay);
+    /* Heilige aus dem Heiligenkalender ins Feld uebernehmen (zum Ergaenzen oder Aendern) */
+    $('td-auto').addEventListener('click', (ev) => {
+      if (!ev.target.closest('#td-auto-take')) return;
+      $('td-heilige').value = autoHeilige(tdDay).join('\n');
+      $('td-ohne').checked = false;
+      $('td-heilige').focus();
+    });
     $('wk-list').addEventListener('click', (ev) => {
       const b = ev.target.closest('[data-act]');
       if (!b) return;

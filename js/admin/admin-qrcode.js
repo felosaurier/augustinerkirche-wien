@@ -13,7 +13,7 @@
   const { $ } = A;
   const SVGNS = 'http://www.w3.org/2000/svg';
 
-  /* Feste Adressen (immer ohne www, das ist die kuerzeste Form) */
+  /* Feste Adressen (ohne www, das ist die kuerzeste Form; Aspersdorf mit www) */
   const DOMAINS = [
     { url: 'https://augustinerkirche.at', name: 'augustinerkirche.at', sub: 'Startseite' },
     { url: 'https://augustinerkirche.wien', name: 'augustinerkirche.wien', sub: 'Startseite (.wien)' },
@@ -21,7 +21,9 @@
     { url: 'https://augustiner.wien', name: 'augustiner.wien', sub: 'Kloster (.wien)' },
     { url: 'https://hochamt.at', name: 'hochamt.at', sub: 'Hochämter' },
     { url: 'https://hochamt.wien', name: 'hochamt.wien', sub: 'Hochämter (.wien)' },
-    { url: 'https://kirchenmusik.wien', name: 'kirchenmusik.wien', sub: 'Kirchenmusik' }
+    { url: 'https://kirchenmusik.wien', name: 'kirchenmusik.wien', sub: 'Kirchenmusik' },
+    /* Aspersdorf wie angegeben mit www */
+    { url: 'https://www.aspersdorf.at', name: 'www.aspersdorf.at', sub: 'Pfarre Aspersdorf' }
   ];
   const LOGOS = [
     ['marine', 'Marineblau'], ['gold', 'Gold'], ['gold-dunkel', 'Dunkelgold'], ['hellgold', 'Hellgold'],

@@ -43,6 +43,27 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 | **Runden** | Eigene Seiten für Bibelpur, Fensterblick, Fußwallfahrt, Ministranten und weitere Gruppen |
 | **Impressum · Datenschutz** | Rechtliche Angaben |
 
+### Englisch und Italienisch
+
+Die wichtigsten Seiten für Besucherinnen und Besucher gibt es auch auf Englisch und Italienisch. Die Sprache wählt man ganz rechts in der Kopfzeile: sichtbar ist nur die Flagge der aktuellen Sprache, ein Klick öffnet die Auswahl (Österreich, Großbritannien, Italien). Gibt es die Seite in der anderen Sprache, bleibt man auf derselben Seite und im selben Bereich, sonst geht es zur Startseite dieser Sprache.
+
+| Seite | Englisch | Italienisch |
+|---|---|---|
+| Startseite | `index.en.html` | `index.it.html` |
+| Augustinerkirche (Geschichte, Herzgruft, Rundgang, Führungen, Gottesdienstzeiten) | `pages/augustinerkirche.en.html` | `pages/augustinerkirche.it.html` |
+| Kirchenmusik (Hochämter, Chor, Orchester, Orgeln, Patenschaft) | `pages/musik.en.html` | `pages/musik.it.html` |
+| Hl. Augustinus | `pages/augustiner.en.html` | `pages/augustiner.it.html` |
+| Kontakt | `pages/kontakt.en.html` | `pages/kontakt.it.html` |
+| Hochamt (Detailseite eines Termins, `?id=…`) | `pages/hochamt.en.html` | `pages/hochamt.it.html` |
+| Rieger-Orgel, Reil-Orgel | `pages/orgel-rieger.en.html`, `pages/orgel-reil.en.html` | `pages/orgel-rieger.it.html`, `pages/orgel-reil.it.html` |
+
+- **Texte der Seiten** stehen direkt in diesen Dateien und werden dort geändert. Alles Übrige (Kalender, Neuigkeiten, Pfarrleben, Orden) verlinken sie mit dem Hinweis „in German“ bzw. „in tedesco“ auf die deutschen Seiten.
+- **Menü und Fußzeile** kommen aus `tools/vorlagen/nav.en.html`, `nav.it.html`, `footer.en.html` und `footer.it.html`; danach `python tools/seitenkopf.py` laufen lassen. Neue übersetzte Seiten (Kürzel vor `.html`) erkennt das Skript selbst und setzt auch die Flaggen.
+- **Inhalte aus der Verwaltung** (Gottesdienstzeiten, Heute in der Augustinerkirche, Hochämter, Kontakt, Bilder des Rundgangs) erscheinen automatisch, übersetzt über das Wörterbuch `js/sprache.js`. Steht ein Text dort nicht (z. B. eine neue Gottesdienst-Bezeichnung), erscheint er deutsch; dann im Wörterbuch in beiden Sprachen ergänzen. Werktitel, Namen, Hinweise zu einem Hochamt und Neuigkeiten bleiben deutsch. Uhrzeiten stehen auf Englisch im 12-Stunden-Format (11:00 am, 6:30 pm).
+- **Deutsche Texte ändern**: Was in der Verwaltung gepflegt wird, ändert sich in allen Sprachen sofort mit. Feste Texte einer Seite (z. B. Geschichte, Orgelbeschreibung) sind getrennte Dateien; eine Änderung an der deutschen Seite muss in der englischen und italienischen Fassung von Hand nachgezogen werden.
+- **Kopfzeile**: Ist sie zu schmal für alles, blendet `js/main.js` zuerst Unterstützen/Kontakt und dann den Knopf Gottesdienste aus; die Sprachwahl bleibt immer sichtbar.
+- **Suchmaschinen**: `python tools/seo.py` verknüpft die Sprachfassungen (`hreflang`) und nimmt sie in die Sitemap auf.
+
 ## Verwaltung
 
 Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B. `http://localhost:8123/admin/`). Sie ist im Stil der Website gestaltet, nicht in der öffentlichen Navigation verlinkt und nur mit **Benutzername und Passwort** erreichbar.
@@ -59,6 +80,7 @@ Inhalte pflegst du am einfachsten in der **Verwaltung** unter **`admin/`** (z. B
 | **Termine** | Eigene Termine für den Kalender: Ausflüge, Feste, Vorträge, Wallfahrten und andere; mit Uhrzeit, Ende, mehreren Tagen, Ort, Beschreibung und Link; kopieren für ein neues Datum. Hochämter und Runden-Termine kommen von selbst in den Kalender; derselbe Termin an mehreren Tagen auf einmal (Weitere Tage) |
 | **Regelmäßige Termine** | Alles, was jede Woche gleich ist: Messen, Tagzeitenliturgie, Kanzleistunden, die Führung nach dem Hochamt (je Termin Wochentag, Uhrzeit oder „anschließend“, Kategorie im Kalender: Gottesdienst, Veranstaltung oder keine; optional „Gilt von … bis …“ Monat; Gottesdienste auch unter Liturgie-Zeiten); „Ferien & Pausen“ (Zeitraum und die Wochentage, an denen in dieser Zeit nichts stattfindet); „Entfällt“ (fällt an einem Tag etwas aus, bleibt es im Kalender durchgestrichen mit Grund stehen) |
 | **Wochenkalender** | Vorschau des gedruckten Wochenkalenders, Woche für Woche: zeigt alles aus dem Kalender (regelmäßige Termine, Hochämter, Runden, eigene Termine). Dazu trägst du die Einzelheiten der Woche ein: je Tag Tagesbezeichnung und Heilige, je Termin Zelebrant, Musik, Ort und Hinweis, und Termine, die es sonst nicht gibt. Ein Termin, der nicht stattfindet, „entfällt“: er steht nicht im Wochenkalender und ist in der Verwaltung durchgestrichen (kein Löschen und Kopieren). Gespeichert in `data/wochenkalender.json`; ein Eintrag ersetzt den Termin des Kalenders um dieselbe Uhrzeit und behält dessen Link |
+| **Heiligenkalender** | Heilige und Gedenktage für jeden Kalendertag, nach Monaten oder mit Suche. Sie stehen automatisch im Kalender, im Wochenkalender und auf der Startseite (unter „Heute in der Augustinerkirche“), außer im Wochenkalender sind für den Tag eigene Heilige eingetragen oder „keine Heiligen anzeigen“ gewählt. An Sonntagen nur Tage mit „auch an Sonntagen“ (Hochfeste, Herrenfeste). Vorgabe in `assets/heiligenkalender.json` (Römischer Generalkalender, Regionalkalender deutsches Sprachgebiet mit Österreich, Feste des Augustinerordens, ergänzt um weitere Tagesheilige des Römischen Martyrologiums nach vaticannews.va/de/tagesheiliger; höchstens 2 je Tag, OSA-Feste zuerst, an Hochfesten und Herrenfesten nur das Fest; ohne bewegliche Feste), Änderungen in `data/heiligenkalender.json`. Recht: Wochenkalender. Dazu berechnet `js/kalender-daten.js` die **Tagesbezeichnung aus dem Kirchenjahr** (aus Ostern und dem 1. Adventsonntag: Sonntage im Advent mit Lesejahr, Weihnachts-, Fasten- und Osterzeit, „… Sonntag im Jahreskreis“, Christkönig, Aschermittwoch, Karwoche, Osteroktav, Himmelfahrt, Pfingsten, Dreifaltigkeit, Fronleichnam, Herz Jesu, Heilige Familie, Taufe des Herrn); sie steht, solange im Wochenkalender keine eigene Tagesbezeichnung eingetragen ist, und fällt an Sonntagen weg, an denen ein Hochfest oder Herrenfest den Sonntag im Jahreskreis ersetzt |
 | **Pfarrkanzlei & Kontakt** | Öffnungszeiten der Pfarrkanzlei, Telefon, E-Mail und Adresse (Startseite, Impressum) |
 | **Menü & Leiste** (Website) | Je Seite mit linker Leiste: welche Bereiche in der Leiste stehen und welche oben im Menü (neue Menüeinträge mit Wahl der Spalte). Ausgeblendete Bereiche bleiben erhalten und über Links erreichbar. Gespeichert wird nur, was vom HTML abweicht, in `data/navigation.json` |
 | **Impressum & Datenschutz** (Einstellungen) | Impressum und Datenschutzerklärung Abschnitt für Abschnitt: Überschrift, Text mit Werkzeugleiste (fett, Link, Telefon, Liste, Tabelle, Zwischentitel, „fehlt noch“), Reihenfolge, Vorschau je Abschnitt und der ganzen Seite |
@@ -324,6 +346,10 @@ data/
   startseite.json             Titelfotos der Startseite (Diashow, Wechselzeit)
   sprueche.json               Sprüche für die Zitat-Bänder (Text, Quelle, Wechselzeit)
   themen.json                 Farbe der Titelzeile, Schrift und Logo je Hauptseite (Startseite, Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf)
+  entdecken.json              „Das könnte Sie interessieren …“ auf der Startseite (Website → Das könnte Sie interessieren): Karten mit Titel, Ziel, Bild und Links darunter, Reihenfolge, Einleitungssatz; fehlt die Datei, gilt index.html
+  heiligenkalender.json       Heilige des Tages je Kalendertag (Pfarre & Kloster → Heiligenkalender); fehlt die Datei, gilt assets/heiligenkalender.json
+  farben.json                 Farben der Website (Werkzeuge → Farben), nur Abweichungen vom Standard in css/style.css; fehlt die Datei, gilt der Standard
+  komponisten.json            Komponisten mit Lebensdaten und anderen Schreibweisen; daraus ergänzt die Verwaltung bei den Hochämtern die Lebensdaten
   startseite-augustinerkirche.json, startseite-kirchenmusik.json, startseite-augustiner.json, startseite-aspersdorf.json
                               Titelfotos der Hauptseiten Augustinerkirche, Kirchenmusik, Augustiner, Aspersdorf (gleicher Aufbau)
   personen.json               Mitbrüder, Leitung, Gastdirigenten, Organisten

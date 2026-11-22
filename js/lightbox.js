@@ -25,16 +25,18 @@
 
   const ARROW = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${d}" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
+  const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
+
   function build() {
     box = document.createElement('dialog');
     box.className = 'lightbox';
-    box.setAttribute('aria-label', 'Bild vergrößert');
+    box.setAttribute('aria-label', T('Bild vergrößert'));
     box.innerHTML =
-      '<button type="button" class="lb-close" aria-label="Schließen"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></button>' +
-      `<button type="button" class="lb-nav lb-prev" aria-label="Voriges Foto" hidden>${ARROW('M15 5l-7 7 7 7')}</button>` +
+      `<button type="button" class="lb-close" aria-label="${T('Schließen')}"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></button>` +
+      `<button type="button" class="lb-nav lb-prev" aria-label="${T('Voriges Foto')}" hidden>${ARROW('M15 5l-7 7 7 7')}</button>` +
       '<figure class="lb-fig"><img class="lb-img" alt="" decoding="async"/><figcaption class="lb-cap" aria-live="polite"></figcaption></figure>' +
-      `<button type="button" class="lb-nav lb-next" aria-label="Nächstes Foto" hidden>${ARROW('M9 5l7 7-7 7')}</button>` +
-      '<div class="lb-strip" role="group" aria-label="Alle Fotos" hidden></div>';
+      `<button type="button" class="lb-nav lb-next" aria-label="${T('Nächstes Foto')}" hidden>${ARROW('M9 5l7 7-7 7')}</button>` +
+      `<div class="lb-strip" role="group" aria-label="${T('Alle Fotos')}" hidden></div>`;
     document.body.appendChild(box);
     img = box.querySelector('.lb-img');
     cap = box.querySelector('.lb-cap');
@@ -160,7 +162,7 @@
       b.type = 'button';
       b.className = 'lb-thumb';
       b.dataset.i = String(i);
-      b.setAttribute('aria-label', `Foto ${i + 1} von ${gallery.length}`);
+      b.setAttribute('aria-label', T('Foto {i} von {n}', { i: i + 1, n: gallery.length }));
       const t = document.createElement('img');
       t.src = thumbOf(a);
       t.alt = '';

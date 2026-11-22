@@ -741,6 +741,135 @@
     openEditor(e, 'copy', `Kopie von ${A.fmtShort(src.date)}`);
   }
 
+  /* ---------- Lebensdaten der Komponisten im Programm ----------
+     Steht in "Weitere Musik" ein Komponist ohne Lebensdaten, ergaenzt die Verwaltung sie, und zwar wie
+     ueblich nur beim ersten Stueck dieses Komponisten im Programm. Quelle ist zuerst die Liste der
+     Komponisten (data/komponisten.json, gepflegt unter Kirchenmusik → Repertoire & Komponisten; andere Schreibweisen
+     werden dort zum Namen der Liste), dann die bisherigen Hochaemter (Tabelle und Archiv) fuer alle,
+     die noch nicht in der Liste stehen. Kurzformen ("Mozart", "W. A. Mozart") werden zum vollen Namen,
+     wenn er eindeutig ist (oder mind. 90 % der Eintraege mit diesem Nachnamen ausmacht). */
+  const PIECE = /^([^:(„"]+?)\s*(?:\(([^)]*)\))?\s*:\s*(.+)$/;
+  const KOMPONISTEN = 'data/komponisten.json';
+  const nk = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  const nameTokens = (s) => nk(String(s).replace(/\./g, '. ')).split(' ').map((t) => t.replace(/\.$/, '')).filter(Boolean);
+  /* "1756-1791; 225. Todestag" -> "1756-1791", "geb. 1944" / "*1944" -> "∗1944"; sonst '' */
+  function nurJahre(y) {
+    const s = String(y || '').split(/[;·,]/)[0].trim().replace(/^(?:geb\.\s*|\*|Ú)\s*/i, '∗').replace(/\s*[–-]\s*/g, '-');
+    return /^(?:~?\d{3,4}-~?\d{3,4}|∗\d{4})$/.test(s) ? s : '';
+  }
+  let archivMusik = null;      /* "Weitere Musik" aller Archivjahre, sobald geladen */
+  let komponistenListe = [];
+  let quellenLaufen = null;
+  function archivLaden() {
+    if (!quellenLaufen) {
+      quellenLaufen = (async () => {
+        try {
+          const d = await A.readJSON(KOMPONISTEN);
+          komponistenListe = Array.isArray(d && d.komponisten) ? d.komponisten : [];
+        } catch { /* ohne Liste nur aus den Hochaemtern */ }
+        let jahre = [];
+        try { jahre = await A.readJSON(`${ARCHIVE_DIR}jahre.json`); } catch { /* noch kein Archiv */ }
+        const listen = await Promise.all((Array.isArray(jahre) ? jahre : []).map(async (j) => {
+          const y = Number(typeof j === 'object' ? j.jahr : j);
+          try { return parseTable(await A.readText(`${ARCHIVE_DIR}hochaemter-${y}.csv`)).map((e) => e.extra); } catch { return []; }
+        }));
+        archivMusik = listen.flat();
+        return archivMusik;
+      })();
+    }
+    return quellenLaufen;
+  }
+  /* Verzeichnis: Schreibweise (klein) -> Eintrag { name, jahre, n, formen, liste } */
+  function verzeichnis(extra) {
+    const map = new Map();
+    for (const k of komponistenListe) {
+      const jahre = nurJahre(k && k.jahre);
+      const name = String((k && k.name) || '').replace(/\s+/g, ' ').trim();
+      if (!jahre || !name) continue;
+      const formen = [name, ...(Array.isArray(k.auch) ? k.auch : [])].map((x) => String(x).replace(/\s+/g, ' ').trim()).filter(Boolean);
+      const e = { name, jahre, n: 1, formen, liste: true };
+      for (const f of formen) if (!map.has(nk(f))) map.set(nk(f), e);
+    }
+    const roh = new Map();
+    for (const feld of [...(archivMusik || []), ...entries.map((e) => e.extra), extra]) {
+      for (const item of HD.list(feld)) {
+        const m = PIECE.exec(item);
+        if (!m) continue;
+        const name = m[1].replace(/\s+/g, ' ').trim();
+        const k = nk(name);
+        if (map.has(k)) {
+          map.get(k).n++;
+          continue;
+        }
+        const j = m[2] !== undefined ? nurJahre(m[2]) : '';
+        if (!j) continue;
+        if (!roh.has(k)) roh.set(k, { namen: new Map(), jahre: new Map(), n: 0 });
+        const r = roh.get(k);
+        r.namen.set(name, (r.namen.get(name) || 0) + 1);
+        r.jahre.set(j, (r.jahre.get(j) || 0) + 1);
+        r.n++;
+      }
+    }
+    const top = (m) => [...m.entries()].sort((a, b) => b[1] - a[1])[0][0];
+    for (const [k, r] of roh) {
+      const name = top(r.namen);
+      map.set(k, { name, jahre: top(r.jahre), n: r.n, formen: [name], liste: false });
+    }
+    return map;
+  }
+  function komponist(v, getippt) {
+    const exakt = v.get(nk(getippt));
+    if (exakt) return exakt;
+    const t = nameTokens(getippt);
+    const sur = t[t.length - 1];
+    if (!sur || sur.length < 3) return null;
+    const vorn = t.slice(0, -1);
+    const passt = (form) => {
+      const ct = nameTokens(form);
+      const idx = ct.lastIndexOf(sur);
+      if (idx < 0) return false;
+      const vor = ct.slice(0, idx);
+      let i = 0;
+      return vorn.every((g) => {
+        while (i < vor.length && !vor[i].startsWith(g)) i++;
+        return i++ < vor.length;
+      });
+    };
+    const treffer = [...new Set(v.values())].filter((c) => c.formen.some(passt));
+    if (!treffer.length) return null;
+    /* Nach Lebensdaten zusammenfassen (Kurz- und Langform derselben Person) */
+    const gruppen = new Map();
+    for (const c of treffer) gruppen.set(c.jahre, [...(gruppen.get(c.jahre) || []), c]);
+    const summe = (cs) => cs.reduce((x, c) => x + c.n, 0);
+    const [jahre, cs] = [...gruppen.entries()].sort((x, y) => summe(y[1]) - summe(x[1]))[0];
+    if (summe(cs) < 0.9 * summe(treffer)) return null;
+    /* Als Name: aus der Liste, ausgeschrieben (ohne Abkuerzungspunkte), sonst der haeufigste */
+    const name = [...cs].sort((x, y) => (y.liste - x.liste) || (x.name.includes('.') - y.name.includes('.')) || (y.n - x.n))[0].name;
+    return { name, jahre };
+  }
+  /* Ergaenzt die Zeilen; liefert den neuen Text und was ergaenzt wurde */
+  function lebensdaten(text) {
+    const v = verzeichnis(String(text).split('\n').join(' | '));
+    const gesehen = new Set();
+    const ergaenzt = [];
+    const zeilen = String(text).split('\n').map((zeile) => {
+      const m = PIECE.exec(zeile.trim());
+      if (!m) return zeile;
+      const getippt = m[1].replace(/\s+/g, ' ').trim();
+      const hit = komponist(v, getippt);
+      const name = hit ? hit.name : getippt;
+      /* Dieselbe Person auch in anderer Schreibweise (Amadeus/Amadé) zaehlt nur einmal */
+      const person = hit ? `${hit.jahre}|${nameTokens(hit.name).pop()}` : nk(name);
+      const erstes = !gesehen.has(person);
+      gesehen.add(person);
+      if (!hit || m[2] !== undefined) return zeile;
+      if (!erstes) return name === getippt ? zeile : `${name}: ${m[3]}`;
+      ergaenzt.push(`${name} (${hit.jahre})`);
+      return `${name} (${hit.jahre}): ${m[3]}`;
+    });
+    return { text: zeilen.join('\n'), ergaenzt };
+  }
+
   function readForm() {
     const e = {};
     for (const k of SIMPLE) e[k] = k === 'note' ? A.HD.cleanLines(F(k).value) : clean(F(k).value);
@@ -749,7 +878,9 @@
     const end = HD.isoTime(F('end').value);
     const note = splitEnd(e.note).note;
     e.note = end ? `${note}${note ? ' ' : ''}Ende ca. ${end} Uhr.` : note;
-    e.extra = F('extra').value.split(/\n+/).map(cleanItem).filter(Boolean).join(' | ');
+    /* Lebensdaten auch dann, wenn direkt aus dem Feld heraus gespeichert wird */
+    const extra = archivMusik ? lebensdaten(F('extra').value).text : F('extra').value;
+    e.extra = extra.split(/\n+/).map(cleanItem).filter(Boolean).join(' | ');
     e.soloists = soloists.values().filter((p) => p.name)
       .map((p) => joinSoloist({ name: cleanItem(p.name), voice: cleanItem(p.voice).replace(/[()]/g, '') })).join(' | ');
     e.organist = organists.values().map((p) => cleanItem(p.name)).filter(Boolean).join(' | ');
@@ -973,6 +1104,16 @@
     F('date').setAttribute('aria-describedby', 'f-date-day');
     F('date').addEventListener('input', updateDay);
     F('time').addEventListener('change', shiftEnd);
+    /* Lebensdaten der Komponisten ergaenzen, sobald das Feld verlassen wird */
+    F('extra').addEventListener('change', async () => {
+      await archivLaden();
+      const r = lebensdaten(F('extra').value);
+      if (r.text === F('extra').value) return;
+      F('extra').value = r.text;
+      F('extra').dispatchEvent(new Event('input', { bubbles: true }));
+      if (r.ergaenzt.length) A.toast(`Lebensdaten ergänzt: ${r.ergaenzt.join(', ')}`);
+    });
+    archivLaden();
     nextDayHint = A.wireNextDay(F('time'), F('end'), $('f-end-next'));
 
     $('ha-new').addEventListener('click', openNew);

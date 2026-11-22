@@ -31,6 +31,8 @@
 
   const doc = document;
   const win = window;
+  /* Uebersetzung (js/thema.js); deutsche Seiten: der Text bleibt */
+  const T = win.AugT || ((s) => s);
   const SELF = doc.currentScript ? doc.currentScript.src : '';
   const host = location.hostname;
   const lokal = host === 'localhost' || host === '[::1]' || host.endsWith('.localhost') || /^127\.\d+\.\d+\.\d+$/.test(host);
@@ -157,20 +159,20 @@
 
     const inner = el('div', 'cc-box');
     inner.tabIndex = -1;
-    const h = el('h2', 'cc-titel', 'Cookies und Statistik');
+    const h = el('h2', 'cc-titel', T('Cookies und Statistik'));
     h.id = 'cc-titel';
     const p = el('p', 'cc-text');
     p.id = 'cc-text';
-    p.append('Mit Ihrer Zustimmung messen wir mit Google Analytics, wie unsere Website genutzt wird. Dafür werden Cookies gesetzt und Daten an Google übermittelt. Ohne Zustimmung geschieht das nicht, und die Website bleibt voll nutzbar. ');
-    const a = el('a', null, 'Mehr in der Datenschutzerklärung');
+    p.append(T('Mit Ihrer Zustimmung messen wir mit Google Analytics, wie unsere Website genutzt wird. Dafür werden Cookies gesetzt und Daten an Google übermittelt. Ohne Zustimmung geschieht das nicht, und die Website bleibt voll nutzbar. '));
+    const a = el('a', null, T('Mehr in der Datenschutzerklärung'));
     a.href = privacyUrl();
     p.append(a, '.');
     const status = el('p', 'cc-status');
     const actions = el('div', 'cc-actions');
-    const no = el('button', 'cc-btn', 'Ablehnen');
+    const no = el('button', 'cc-btn', T('Ablehnen'));
     no.type = 'button';
     no.addEventListener('click', () => decide(false));
-    const yes = el('button', 'cc-btn', 'Zustimmen');
+    const yes = el('button', 'cc-btn', T('Zustimmen'));
     yes.type = 'button';
     yes.addEventListener('click', () => decide(true));
     actions.append(no, yes);
@@ -193,7 +195,7 @@
 
   function show(vomBesucher) {
     if (!box) box = build();
-    box.querySelector('.cc-status').textContent = choice === null ? '' : choice ? 'Ihre aktuelle Auswahl: Statistik erlaubt.' : 'Ihre aktuelle Auswahl: Statistik abgelehnt.';
+    box.querySelector('.cc-status').textContent = choice === null ? '' : choice ? T('Ihre aktuelle Auswahl: Statistik erlaubt.') : T('Ihre aktuelle Auswahl: Statistik abgelehnt.');
     box.hidden = false;
     doc.body.classList.add('cc-offen');
     measure();

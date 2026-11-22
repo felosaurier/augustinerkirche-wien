@@ -16,9 +16,15 @@
 <meta name="description" content="Die Augustinerkirche Wien: Hofpfarrkirche der Habsburger, lebendige Pfarre St. Augustin und Heimat einer der bedeutendsten Kirchenmusiktraditionen Wiens."/>
 <!--seo-anfang-->
 <link rel="canonical" href="https://augustinerkirche.augustiner.at/"/>
+<link rel="alternate" hreflang="de" href="https://augustinerkirche.augustiner.at/"/>
+<link rel="alternate" hreflang="en" href="https://augustinerkirche.augustiner.at/index.en.html"/>
+<link rel="alternate" hreflang="it" href="https://augustinerkirche.augustiner.at/index.it.html"/>
+<link rel="alternate" hreflang="x-default" href="https://augustinerkirche.augustiner.at/"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="Augustinerkirche Wien"/>
 <meta property="og:locale" content="de_AT"/>
+<meta property="og:locale:alternate" content="en_GB"/>
+<meta property="og:locale:alternate" content="it_IT"/>
 <meta property="og:title" content="Augustinerkirche Wien — Pfarre &amp; Kloster St. Augustin"/>
 <meta property="og:description" content="Die Augustinerkirche Wien: Hofpfarrkirche der Habsburger, lebendige Pfarre St. Augustin und Heimat einer der bedeutendsten Kirchenmusiktraditionen Wiens."/>
 <meta property="og:url" content="https://augustinerkirche.augustiner.at/"/>
@@ -147,6 +153,7 @@
     <a class="v3-util" href="pages/musik.html#spenden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>Unterstützen</a>
     <a class="v3-util" href="pages/kontakt.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Kontakt</a>
     <a href="pages/augustinerkirche.html#p-zeiten" class="nav-cta">Gottesdienste</a>
+    <details class="nav-lang"><summary title="Sprache · Language · Lingua" aria-label="Sprache · Language · Lingua: Deutsch"><img src="assets/flaggen/at.svg" alt="" width="24" height="16"/><svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg></summary><div class="nav-lang-menu"><a href="index.html" hreflang="de" lang="de" aria-current="true" data-gleich><img src="assets/flaggen/at.svg" alt="" width="24" height="16"/>Deutsch</a><a href="index.en.html" hreflang="en" lang="en" data-gleich><img src="assets/flaggen/gb.svg" alt="" width="24" height="16"/>English</a><a href="index.it.html" hreflang="it" lang="it" data-gleich><img src="assets/flaggen/it.svg" alt="" width="24" height="16"/>Italiano</a></div></details>
     <button type="button" class="hamburger" id="hamburger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mob-menu">
       <span></span><span></span><span></span>
     </button>
@@ -162,9 +169,9 @@
     <noscript><div class="hero-slide is-on" style="background-image:url('assets/img/kirche/turm.webp');background-position:50% 20%"></div></noscript>
   </div>
   <div class="v3-hero-in">
-    <p class="v3-eyebrow">Pfarre &amp; Kloster St. Augustin</p>
+    <p class="v3-eyebrow">Augustinerkloster &amp; Pfarre St. Augustin</p>
     <h1 class="v3-h" id="v3-h">Augustinerkirche Wien</h1>
-    <p class="v3-sub">Hofpfarrkirche der Habsburger, mitten in der Wiener Hofburg. Ein Ort für Gottesdienst, Kirchenmusik und Gemeinschaft.</p>
+    <p class="v3-sub">Einst Hofpfarrkirche im Herzen Wiens, heute ein Ort lebendigen Glaubens, festlicher Liturgie, großer Kirchenmusik und gelebter Gemeinschaft</p>
     <div class="v3-actions">
       <a class="btn btn-gold" href="pages/augustinerkirche.html#p-zeiten">Gottesdienstzeiten</a>
       <a class="btn btn-outline-w" href="pages/musik.html#p-hochaemter">Hochämter</a>
@@ -215,11 +222,11 @@
 <section class="v3-sec" aria-labelledby="v3-ways-h">
   <div class="v3-in">
     <div class="v3-head">
-      <h2 class="v3-title" id="v3-ways-h">Entdecken</h2>
+      <h2 class="v3-title" id="v3-ways-h">Das könnte Sie interessieren …</h2>
       <p class="v3-lead">Alles rund um Kirche, Pfarre, Musik und Orden.</p>
     </div>
     <div class="v3-ways">
-      <article class="v3-way">
+      <article class="v3-way" data-entdecken="pfarre">
         <a class="v3-way-img" href="pages/augustinerkirche.html#p-pfarre" tabindex="-1" aria-hidden="true"><img src="assets/img/startseite/hochamt-in-st-augustin-m.webp" alt="" loading="lazy" decoding="async" data-bn=""/></a>
         <h3><a href="pages/augustinerkirche.html#p-pfarre">Gottesdienst &amp; Pfarre</a></h3>
         <ul>
@@ -228,7 +235,7 @@
           <li><a href="pages/augustinerkirche.html#p-sakramente">Sakramente</a></li>
         </ul>
       </article>
-      <article class="v3-way">
+      <article class="v3-way" data-entdecken="musik">
         <a class="v3-way-img" href="pages/musik.html" tabindex="-1" aria-hidden="true"><img src="assets/img/startseite/die-rieger-orgel-1976-der-augustinerkirche-m.webp" alt="" loading="lazy" decoding="async" data-bn=""/></a>
         <h3><a href="pages/musik.html">Kirchenmusik</a></h3>
         <ul>
@@ -237,7 +244,7 @@
           <li><a href="pages/musik.html#p-orgeln">Orgeln</a></li>
         </ul>
       </article>
-      <article class="v3-way">
+      <article class="v3-way" data-entdecken="kirche">
         <a class="v3-way-img" href="pages/augustinerkirche.html#p-geschichte" tabindex="-1" aria-hidden="true"><img src="assets/img/startseite/blick-in-die-augustinerkirche-m.webp" alt="" loading="lazy" decoding="async" data-bn=""/></a>
         <h3><a href="pages/augustinerkirche.html#p-geschichte">Die Kirche</a></h3>
         <ul>
@@ -246,7 +253,7 @@
           <li><a href="pages/augustinerkirche.html#p-fuehrungen">Führungen</a></li>
         </ul>
       </article>
-      <article class="v3-way">
+      <article class="v3-way" data-entdecken="runden">
         <a class="v3-way-img" href="pages/runden/runde.html" tabindex="-1" aria-hidden="true"><img src="assets/img/startseite/adventlichter-in-st-augustin-m.webp" alt="" loading="lazy" decoding="async" data-bn=""/></a>
         <h3><a href="pages/runden/runde.html">Runden &amp; Gemeinschaft</a></h3>
         <ul>
@@ -255,7 +262,7 @@
           <li><a href="pages/runden/senioren.html">Senioren</a></li>
         </ul>
       </article>
-      <article class="v3-way">
+      <article class="v3-way" data-entdecken="augustiner">
         <a class="v3-way-img" href="pages/augustiner.html" tabindex="-1" aria-hidden="true"><img src="assets/img/startseite/die-wiener-augustiner-m.webp" alt="" loading="lazy" decoding="async" data-bn=""/></a>
         <h3><a href="pages/augustiner.html">Die Augustiner</a></h3>
         <ul>
@@ -264,7 +271,7 @@
           <li><a href="pages/augustiner.html#p-berufung">Augustiner werden</a></li>
         </ul>
       </article>
-      <article class="v3-way">
+      <article class="v3-way" data-entdecken="aspersdorf">
         <a class="v3-way-img" href="pages/aspersdorf.html" tabindex="-1" aria-hidden="true"><img src="assets/img/aspersdorf/aspersdorf-kirche-m.webp" alt="" loading="lazy" decoding="async" data-bn=""/></a>
         <h3><a href="pages/aspersdorf.html">Pfarre Aspersdorf</a></h3>
         <ul>
@@ -296,7 +303,7 @@
 <section class="v3-sec v3-news" aria-labelledby="aktuelles-h">
   <div class="v3-in">
     <div class="v3-head v3-head-row">
-      <h2 class="v3-title" id="aktuelles-h">Aktuelles</h2>
+      <h2 class="v3-title" id="aktuelles-h">Aktuelles · Fotogalerie</h2>
       <a class="v3-more" href="pages/archiv.html">Alle Meldungen</a>
     </div>
     <div class="news-grid" id="news-grid" data-base="" data-seite="startseite" aria-live="polite">
@@ -328,7 +335,6 @@
       <a href="pages/kalender.html#woche">Wochenkalender</a>
       <a href="pages/augustinerkirche.html#p-wiedereintritt">Wiedereintritt</a>
       <a href="pages/musik.html#p-patenschaft">Patenschaft</a>
-      <a href="pages/musik.html#p-cds">CDs</a>
       <a href="pages/augustinerkirche.html#p-rundgang">Kirchenrundgang</a>
       <a href="pages/kontakt.html">Kontakt</a>
     </div>

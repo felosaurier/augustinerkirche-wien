@@ -7,6 +7,8 @@ zwischen <!--seo-anfang--> und <!--seo-ende--> mit:
   - Open Graph und Twitter-Karte (Titel, Beschreibung und Bild, die WhatsApp, Facebook, Signal usw. beim Teilen zeigen)
   - auf der Startseite strukturierte Daten (schema.org, Kirche mit Adresse und Telefon) fuer Google
 und legt sitemap.xml im Projektordner an.
+Uebersetzte Seiten (index.en.html, pages/musik.it.html …) bekommen ihre Sprache in og:locale; alle
+Fassungen einer Seite verweisen mit <link rel="alternate" hreflang> aufeinander (Deutsch ist x-default).
 
 Titel und Beschreibung kommen aus <title> und <meta name="description"> der Seite.
 Die Adresse der Website steht in tools/seo-einstellungen.json ("adresse"), das Bild je Seite unten in BILDER.
@@ -41,7 +43,7 @@ BILDER = {
 # Seiten, die nicht in die Sitemap und nicht in die Suche gehoeren
 AUSGENOMMEN = ('pages/news-verwaltung.html', 'pages/hochaemter-verwaltung.html', 'pages/sakramente.html', 'pages/gottesdienste.html', 'pages/pfarre.html', 'pages/chronik.html', 'pages/predigten.html')
 # Seiten, die erst mit ?id=... eine Adresse haben (Vorlagen): ohne canonical/og:url, nicht in der Sitemap
-VORLAGEN = ('pages/hochamt.html',)
+VORLAGEN = ('pages/hochamt.html', 'pages/hochamt.en.html', 'pages/hochamt.it.html')
 
 
 def einstellungen():
@@ -52,8 +54,22 @@ def einstellungen():
     return adresse
 
 
+SPRACHEN = {'de': 'de_AT', 'en': 'en_GB', 'it': 'it_IT'}
+SPRACHE = re.compile(r'\.(en|it)\.html$')
+
+
+def sprache(rel):
+    m = SPRACHE.search(rel)
+    return m.group(1) if m else 'de'
+
+
+def fassung(rel, lang):
+    basis = SPRACHE.sub('.html', rel)
+    return basis if lang == 'de' else f'{basis[:-5]}.{lang}.html'
+
+
 def seiten():
-    liste = [ROOT / 'index.html'] + sorted((ROOT / 'pages').glob('*.html'))
+    liste = [ROOT / 'index.html'] + sorted(ROOT.glob('index.*.html')) + sorted((ROOT / 'pages').glob('*.html'))
     return [p for p in liste if p.relative_to(ROOT).as_posix() not in AUSGENOMMEN and '<title>' in p.read_text(encoding='utf-8')]
 
 
@@ -93,14 +109,22 @@ def text_aus(muster, s):
 def block(rel, s, adresse):
     titel = text_aus(r'<title>(.*?)</title>', s)
     beschr = text_aus(r'<meta name="description" content="([^"]*)"', s)
-    bild = BILDER.get(rel, STANDARD_BILD)
+    bild = BILDER.get(fassung(rel, 'de'), STANDARD_BILD)
     q = html.escape
+    lang = sprache(rel)
+    andere = [l for l in SPRACHEN if (ROOT / fassung(rel, l)).exists()]
     zeilen = [
         ANFANG,
         *([] if rel in VORLAGEN else [f'<link rel="canonical" href="{q(url_von(rel, adresse))}"/>']),
+    ]
+    if len(andere) > 1 and rel not in VORLAGEN:
+        zeilen += [f'<link rel="alternate" hreflang="{l}" href="{q(url_von(fassung(rel, l), adresse))}"/>' for l in andere]
+        zeilen.append(f'<link rel="alternate" hreflang="x-default" href="{q(url_von(fassung(rel, "de"), adresse))}"/>')
+    zeilen += [
         '<meta property="og:type" content="website"/>',
         '<meta property="og:site_name" content="Augustinerkirche Wien"/>',
-        '<meta property="og:locale" content="de_AT"/>',
+        f'<meta property="og:locale" content="{SPRACHEN[lang]}"/>',
+        *[f'<meta property="og:locale:alternate" content="{SPRACHEN[l]}"/>' for l in andere if l != lang],
         f'<meta property="og:title" content="{q(titel)}"/>',
     ]
     if beschr:

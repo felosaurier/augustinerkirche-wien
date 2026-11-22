@@ -32,6 +32,35 @@
   const UNTERTITEL = 'Pfarre & Kloster St. Augustin';
   const text = (s) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 60);
 
+  /* Sprache der Seite (<html lang>): de, en oder it. Uebersetzte Seiten (index.en.html, pages/musik.it.html …)
+     laden vorher js/sprache.js mit dem Woerterbuch window.AugWoerter = {en: {deutsch: englisch}, it: {…}}.
+     AugT(text, werte) liefert die Uebersetzung (sonst den deutschen Text) und setzt {name} aus werte ein. */
+  const LANG = ['en', 'it'].includes((html.lang || '').slice(0, 2)) ? html.lang.slice(0, 2) : 'de';
+  function T(s, werte) {
+    const wb = LANG !== 'de' && w.AugWoerter && w.AugWoerter[LANG];
+    let t = wb && Object.prototype.hasOwnProperty.call(wb, s) ? wb[s] : s;
+    if (werte) t = String(t).replace(/\{(\w+)\}/g, (m, k) => (k in werte ? werte[k] : m));
+    return t;
+  }
+  T.lang = LANG;
+  /* Eintrag im Woerterbuch (z. B. Liste der Monate) oder null */
+  T.wert = (k) => (LANG !== 'de' && w.AugWoerter && w.AugWoerter[LANG] && w.AugWoerter[LANG][k]) || null;
+  /* Pfad einer Seite in der Sprache dieser Seite, falls es sie gibt (Dateinamen in js/sprache.js, "seiten") */
+  T.seite = (pfad) => {
+    const liste = LANG !== 'de' && w.AugWoerter && w.AugWoerter.seiten;
+    const datei = String(pfad).replace(/[?#].*$/, '').split('/').pop();
+    if (!liste || !liste.includes(datei)) return pfad;
+    return String(pfad).replace(/\.html(?=$|[?#])/, `.${LANG}.html`);
+  };
+  /* Uhrzeiten in der Sprache der Seite: Englisch im 12-Stunden-Format ("18:30" -> "6:30 pm",
+     "11:00 Uhr" -> "11:00 am"), sonst unveraendert */
+  T.uhr = (s) => {
+    const text = String(s == null ? '' : s);
+    if (LANG !== 'en') return text;
+    return text.replace(/\b([01]?\d|2[0-3]):([0-5]\d)\b(\s*Uhr)?/g, (_, h, m) => `${Number(h) % 12 || 12}:${m} ${Number(h) < 12 ? 'am' : 'pm'}`);
+  };
+  w.AugT = T;
+
   /* Relative Helligkeit (WCAG) und Kontrastverhaeltnis zweier Farben */
   function lum(hex) {
     const n = parseInt(hex.slice(1), 16);
@@ -91,8 +120,11 @@
     /* Text neben dem Logo: der in der Verwaltung eingetragene Name und Untertitel des Bereichs;
        leer gelassen bleibt der Text der Vorlage (tools/vorlagen/nav.html) */
     if (names) {
-      for (const el of d.querySelectorAll('nav .nav-logo-text')) if (names.name && el.textContent !== names.name) el.textContent = names.name;
-      for (const el of d.querySelectorAll('nav .nav-logo-sub')) if (names.untertitel && el.textContent !== names.untertitel) el.textContent = names.untertitel;
+      /* Uebersetzte Seiten: der Untertitel steht in der Vorlage schon in der Sprache, ein deutscher aus der Verwaltung gilt dort nur mit Uebersetzung */
+      const name = names.name && T(names.name);
+      const unter = names.untertitel && (LANG === 'de' || T(names.untertitel) !== names.untertitel) ? T(names.untertitel) : '';
+      for (const el of d.querySelectorAll('nav .nav-logo-text')) if (name && el.textContent !== name) el.textContent = name;
+      for (const el of d.querySelectorAll('nav .nav-logo-sub')) if (unter && el.textContent !== unter) el.textContent = unter;
     }
   }
   function apply(t) {
@@ -122,12 +154,74 @@
     vorschau: (pfad) => (kleinListe.has(pfad) ? String(pfad).replace(/\.webp$/, '-m.webp') : pfad)
   };
 
+  /* Farben der Website, gepflegt in der Verwaltung unter Werkzeuge → Farben, gespeichert in
+     data/farben.json: {farben: {<k>: "#rrggbb"}}, nur was vom Standard (css/style.css) abweicht.
+     Sie gelten in der hellen Ansicht. Im Dunkelmodus behalten die Variablen, die er selbst
+     festlegt (DUNKEL), seine Werte; die uebrigen (z. B. Hellgold) gelten auch dort.
+     gegen: Hintergrund fuer die Pruefung der Lesbarkeit (Farbe oder Schluessel einer Farbe). */
+  const FARBEN = [
+    { k: 'blau', name: 'Dunkelblau', wo: 'Überschriften, dunkle Flächen und Knöpfe', std: '#10192e', vars: ['--blue', '--blue-deep'], gegen: '#ffffff' },
+    { k: 'gold', name: 'Gold', wo: 'Links, Akzente und Linien auf hellem Grund', std: '#8f6b25', vars: ['--gold'], gegen: '#ffffff' },
+    { k: 'gold-dunkel', name: 'Gold beim Darüberfahren', wo: 'Gold, wenn man mit der Maus auf einen Link zeigt', std: '#7a5b1f', vars: ['--gold-h'], gegen: '#ffffff' },
+    { k: 'gold-schrift', name: 'Gold für kleine Schrift', wo: 'Überzeilen und kleine goldene Texte', std: '#7f5f20', vars: ['--gold-text'], gegen: '#ffffff' },
+    { k: 'hellgold', name: 'Hellgold', wo: 'Gold auf dunklem Grund, z. B. in der Titelzeile und im Handy-Menü', std: '#d8b96e', vars: ['--gold-l'], gegen: 'blau' },
+    { k: 'gold-blass', name: 'Blasses Gold', wo: 'Markierungen und helle Goldflächen', std: '#f6efdc', vars: ['--gold-pale'] },
+    { k: 'text', name: 'Fließtext', wo: 'normaler Text', std: '#1f2535', vars: ['--text'], gegen: '#ffffff' },
+    { k: 'text-mittel', name: 'Text mittel', wo: 'Untertitel und Beschreibungen', std: '#4a5063', vars: ['--text-mid'], gegen: '#ffffff' },
+    { k: 'text-hell', name: 'Text hell', wo: 'Nebeninfos wie Datum oder Bildnachweis', std: '#5f6574', vars: ['--text-light'], gegen: 'grund-warm' },
+    { k: 'grund-sanft', name: 'Hintergrund sanft', wo: 'leicht getönte Abschnitte und Flächen', std: '#faf8f3', vars: ['--bg-soft'] },
+    { k: 'grund-warm', name: 'Hintergrund warm', wo: 'beige Abschnitte', std: '#f4efe3', vars: ['--bg-warm'] },
+    { k: 'linie', name: 'Linien', wo: 'Trennlinien und Rahmen', std: '#e4dfd3', vars: ['--line'] }
+  ];
+  const DUNKEL = new Set(['--blue', '--gold', '--gold-h', '--gold-text', '--gold-pale', '--text', '--text-mid', '--text-light', '--bg-soft', '--bg-warm', '--line']);
+  const hex6 = (v) => (/^#[0-9a-f]{6}$/i.test(v || '') ? v.toLowerCase() : '');
+  /* Nur gueltige Farben, die vom Standard abweichen */
+  function farbenClean(x) {
+    const src = x && typeof x === 'object' ? x : {};
+    const out = {};
+    for (const f of FARBEN) {
+      const v = hex6(src[f.k]);
+      if (v && v !== f.std) out[f.k] = v;
+    }
+    return out;
+  }
+
   const thema = THEMEN.includes(html.dataset.thema) ? html.dataset.thema : 'augustinerkirche';
   /* Eintrag eines Themas; die Startseite hatte frueher keinen eigenen */
   const pick = (all, k) => all[k] || (k === 'startseite' ? all.augustinerkirche : null);
-  w.AugThema = { THEMEN, LOGOS, STANDARD, NAME, UNTERTITEL, clean, vars, logoUrl, isLight, contrast, thema, pick };
+  w.AugThema = { THEMEN, LOGOS, STANDARD, NAME, UNTERTITEL, clean, vars, logoUrl, isLight, contrast, ratio, thema, pick, FARBEN, farbenClean };
   /* Die Verwaltung braucht nur die Hilfen oben */
   if (html.dataset.thema === 'keins') return;
+
+  /* Farben der Website: zuerst der zuletzt gesehene Stand, dann die Datei. Beim Wechsel
+     zwischen hell und dunkel (Knopf oder Geraet) neu setzen. */
+  let farben = {};
+  const dunkelMQ = w.matchMedia ? w.matchMedia('(prefers-color-scheme: dark)') : null;
+  const istDunkel = () => html.dataset.theme === 'dark' || (html.dataset.theme !== 'light' && !!dunkelMQ && dunkelMQ.matches);
+  function farbenSetzen() {
+    const dunkel = istDunkel();
+    for (const f of FARBEN) {
+      const v = farben[f.k];
+      for (const p of f.vars) {
+        if (v && !(dunkel && DUNKEL.has(p))) html.style.setProperty(p, v);
+        else html.style.removeProperty(p);
+      }
+    }
+  }
+  try {
+    farben = farbenClean(JSON.parse(w.localStorage.getItem('aug-farben') || 'null'));
+    if (Object.keys(farben).length) farbenSetzen();
+  } catch { /* kein Speicher: dann erst mit der Datei */ }
+  if ('MutationObserver' in w) new MutationObserver(farbenSetzen).observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+  if (dunkelMQ && dunkelMQ.addEventListener) dunkelMQ.addEventListener('change', farbenSetzen);
+  fetch(`${ROOT}data/farben.json`, { cache: 'no-cache' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      farben = farbenClean(data && data.farben);
+      try { w.localStorage.setItem('aug-farben', JSON.stringify(farben)); } catch { /* egal */ }
+      farbenSetzen();
+    })
+    .catch(() => { /* offline: es bleibt der gemerkte Stand */ });
 
   /* Der Name neben dem Logo bleibt unsichtbar, bis der eingetragene Name feststeht: sonst blitzt kurz der
      Text aus dem HTML auf (css/style.css, .thema-wait). Spaetestens nach 0,8 s erscheint er in jedem Fall. */

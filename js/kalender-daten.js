@@ -14,6 +14,13 @@
    - data/wochenkalender.json: der gedruckte Wochenkalender, Tag für Tag (Tagesbezeichnung,
      Heilige und Gedenktage, Termine mit Zelebrant, Musik und Ort). Für die Tage, die dort
      stehen, gilt er statt des allgemeinen Wochenplans
+   - data/heiligenkalender.json (gepflegt in der Verwaltung, sonst der Standard
+     assets/heiligenkalender.json): Heilige und Gedenktage je Kalendertag ("MM-TT"); sie stehen
+     an jedem Tag, an dem im Wochenkalender keine eigenen Heiligen eingetragen sind. An Sonntagen
+     nur die Tage aus "sonntags" (Hochfeste, Herrenfeste); "ohneHeilige" im Wochenkalender blendet
+     sie fuer einen Tag aus
+   - Kirchenjahr (berechnet): Tagesbezeichnung wie "28. Sonntag im Jahreskreis", "1. Adventsonntag",
+     wenn im Wochenkalender keine eigene eingetragen ist
    Dazu die Darstellung eines Termins und eines Tages (gleich in Kalender und Woche).
    Benötigt js/hochaemter-data.js.
    ============================================================ */
@@ -165,7 +172,7 @@
       if (!date) continue;
       const heilige = (day.heilige || []).map((h) => String(h).trim()).filter(Boolean);
       const tag = String(day.tag || '').trim();
-      if (tag || heilige.length) info.set(date, { tag, heilige });
+      if (tag || heilige.length || day.ohneHeilige) info.set(date, { tag, heilige, ohne: !!day.ohneHeilige });
       for (const t of day.termine || []) {
         if (!t || !t.name) continue;
         const time = HD.isoTime(t.zeit);
@@ -213,6 +220,7 @@
     if (!loaded.has(base)) loaded.set(base, collect(base));
     return loaded.get(base).then((all) => {
       dayInfo = all.info;
+      heiligen = all.heiligen;
       return all.items.filter((it) => opts.all || !it.hidden).map((it) => ({ ...it }));
     });
   }
@@ -220,13 +228,141 @@
   const refresh = (base = '') => { loaded.delete(base); };
   /* Tagesbezeichnung und Heilige des Wochenkalenders (nach load) */
   let dayInfo = new Map();
+  /* ---------- Kirchenjahr ----------
+     Tagesbezeichnung aus dem Osterdatum und dem 1. Adventsonntag (Römischer Kalender, Österreich:
+     Erscheinung des Herrn am 6. Jänner, Fronleichnam am Donnerstag): Sonntage im Advent, in der
+     Weihnachts-, Fasten- und Osterzeit und im Jahreskreis, Christkönig, Aschermittwoch, Karwoche,
+     Osteroktav, Christi Himmelfahrt, Pfingsten, Dreifaltigkeit, Fronleichnam, Herz Jesu, Heiliger
+     Abend, Heilige Familie, Taufe des Herrn. Werktage im Jahreskreis bekommen keine Bezeichnung. */
+  const TAG = 86400000;
+  const utc = (y, m, d) => Date.UTC(y, m, d);
+  const tageZwischen = (a, b) => Math.round((a - b) / TAG);
+  /* Ostersonntag (gregorianisch, Meeus/Jones/Butcher) */
+  function ostern(y) {
+    const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+    const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const monat = Math.floor((h + l - 7 * m + 114) / 31);
+    return utc(y, monat - 1, ((h + l - 7 * m + 114) % 31) + 1);
+  }
+  /* 1. Adventsonntag: der vierte Sonntag vor dem 25. Dezember */
+  function advent1(y) {
+    const wt = new Date(utc(y, 11, 25)).getUTCDay();
+    return utc(y, 11, 25) - ((wt || 7) + 21) * TAG;
+  }
+  /* Taufe des Herrn: Sonntag nach dem 6. Jänner (7. bis 13. Jänner) */
+  function taufe(y) {
+    const wt = new Date(utc(y, 0, 7)).getUTCDay();
+    return utc(y, 0, 7 + ((7 - wt) % 7));
+  }
+  const LESEJAHR = ['C', 'A', 'B'];
+  /* Lesejahr der Sonntage (A, B, C) des Kirchenjahrs, zu dem der Tag gehoert */
+  function lesejahr(iso) {
+    const y = Number(iso.slice(0, 4));
+    const t0 = utc(y, Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)));
+    return LESEJAHR[(t0 >= advent1(y) ? y + 1 : y) % 3];
+  }
+  const WOCHENTAG_OKTAV = ['', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+  /* Tagesbezeichnung eines Tages ('' = keine); jk: false, wenn ein Fest den Sonntag im Jahreskreis ersetzt */
+  function kirchenjahr(iso, jk = true) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return '';
+    const [y, mo, da] = iso.split('-').map(Number);
+    const t0 = utc(y, mo - 1, da);
+    const wt = new Date(t0).getUTCDay();
+    const so = wt === 0;
+    const o = tageZwischen(t0, ostern(y));
+    const OSTERKREIS = {
+      '-46': 'Aschermittwoch', '-7': 'Palmsonntag', '-3': 'Gründonnerstag', '-2': 'Karfreitag', '-1': 'Karsamstag',
+      0: 'Ostersonntag', 1: 'Ostermontag', 7: '2. Sonntag der Osterzeit (Weißer Sonntag)', 39: 'Christi Himmelfahrt',
+      49: 'Pfingstsonntag', 50: 'Pfingstmontag', 56: 'Dreifaltigkeitssonntag', 60: 'Fronleichnam', 68: 'Heiligstes Herz Jesu'
+    };
+    if (OSTERKREIS[o]) return OSTERKREIS[o];
+    if (o >= -6 && o <= -4) return `${WOCHENTAG_OKTAV[wt]} der Karwoche`;
+    if (o >= 2 && o <= 6) return `${WOCHENTAG_OKTAV[wt]} der Osteroktav`;
+    if (so && o >= 14 && o <= 42) return `${o / 7 + 1}. Sonntag der Osterzeit`;
+    if (so && o >= -42 && o <= -14) {
+      const n = (o + 49) / 7;
+      return `${n}. Fastensonntag${n === 4 ? ' (Laetare)' : ''}`;
+    }
+    const a1 = advent1(y);
+    const ck = a1 - 7 * TAG;
+    if (t0 === ck) return 'Christkönigssonntag';
+    /* 24. Dezember: am Sonntag zugleich 4. Adventsonntag */
+    if (mo === 12 && da === 24) return so ? '4. Adventsonntag · Heiliger Abend' : 'Heiliger Abend';
+    if (so && t0 >= a1 && t0 < utc(y, 11, 25)) {
+      const n = tageZwischen(t0, a1) / 7 + 1;
+      return `${n}. Adventsonntag${n === 3 ? ' (Gaudete)' : ''}`;
+    }
+    /* Heilige Familie: Sonntag in der Weihnachtsoktav, sonst (Weihnachten am Sonntag) am 30. Dezember */
+    if (mo === 12 && da >= 26) {
+      const wt25 = new Date(utc(y, 11, 25)).getUTCDay();
+      if ((wt25 !== 0 && so) || (wt25 === 0 && da === 30)) return 'Fest der Heiligen Familie';
+      return '';
+    }
+    if (mo === 1 && so && da >= 2 && da <= 5) return '2. Sonntag nach Weihnachten';
+    const tf = taufe(y);
+    if (t0 === tf) return 'Taufe des Herrn';
+    if (!so || !jk) return '';
+    /* Sonntage im Jahreskreis: nach der Taufe des Herrn bis vor Aschermittwoch, nach Pfingsten
+       rückwärts gezählt vom Christkönigssonntag (34. Sonntag) */
+    if (t0 > tf && o < -46) return `${tageZwischen(t0, tf) / 7 + 1}. Sonntag im Jahreskreis`;
+    if (o > 56 && t0 < ck) return `${34 - tageZwischen(ck, t0) / 7}. Sonntag im Jahreskreis`;
+    return '';
+  }
+
+  /* Heiligenkalender {tage: {"MM-TT": [Namen]}, sonntags: ["MM-TT"]} (nach load) */
+  let heiligen = null;
+  /* Heilige eines Tages aus dem Heiligenkalender (ohne Wochenkalender) */
+  function heiligeAm(iso, liste = heiligen) {
+    if (!liste || !liste.tage || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return [];
+    const md = iso.slice(5);
+    const namen = Array.isArray(liste.tage[md]) ? liste.tage[md].map((h) => String(h).trim()).filter(Boolean) : [];
+    if (!namen.length) return [];
+    const sonntag = HD.dateFromIso(iso).getDay() === 0;
+    return sonntag && !(liste.sonntags || []).includes(md) ? [] : namen;
+  }
+  /* Fest aus dem Heiligenkalender, das den Sonntag ersetzt (Hochfest, Herrenfest)? */
+  const festStattSonntag = (iso, liste = heiligen) => !!(liste && (liste.sonntags || []).includes(iso.slice(5)) && heiligeAm(iso, liste).length);
+  /* Tagesbezeichnung aus dem Kirchenjahr (ohne Wochenkalender). Einstellungen aus der Verwaltung
+     (Heiligenkalender, Reiter Kirchenjahr) in heiligenkalender.json unter "kirchenjahr":
+     {aus: true = keine automatische Bezeichnung, lesejahr: false = ohne Lesejahr beim 1. Advent,
+      namen: {"berechneter Name": "eigene Fassung"}} */
+  function tagAm(iso, liste = heiligen) {
+    const kj = (liste && liste.kirchenjahr) || {};
+    if (kj.aus) return '';
+    const name = kirchenjahr(iso, !festStattSonntag(iso, liste));
+    if (!name) return '';
+    const eigen = kj.namen && typeof kj.namen[name] === 'string' && kj.namen[name].trim();
+    const text = eigen || name;
+    return name === '1. Adventsonntag' && kj.lesejahr !== false ? `${text} · Lesejahr ${lesejahr(iso)}` : text;
+  }
+  /* Heilige, die automatisch stehen: Tage mit eigenem Namen im Kirchenjahr (Heiliger Abend,
+     Aschermittwoch, Karwoche, Osteroktav, Himmelfahrt, Pfingsten, Fronleichnam …) stehen allein */
+  const heiligeAuto = (iso, liste = heiligen) => (kirchenjahr(iso, !festStattSonntag(iso, liste)) ? [] : heiligeAm(iso, liste));
+  /* Tagesbezeichnung und Heilige eines Tages: eigene aus dem Wochenkalender, sonst aus dem
+     Kirchenjahr bzw. dem Heiligenkalender */
+  function infoAm(iso) {
+    const inf = dayInfo.get(iso) || { tag: '', heilige: [], ohne: false };
+    /* Tage mit eigenem Namen im Kirchenjahr (Heiliger Abend, Aschermittwoch, Karwoche, Osteroktav,
+       Himmelfahrt, Pfingsten, Fronleichnam …): das Fest allein, ohne automatische Heilige */
+    const heilige = inf.heilige.length || inf.ohne ? inf.heilige : heiligeAuto(iso);
+    const tag = inf.tag || tagAm(iso);
+    return tag || heilige.length ? { tag, heilige } : null;
+  }
+  async function ladeHeilige(base) {
+    const eigene = await getJSON(`${base}data/heiligenkalender.json`);
+    if (eigene && eigene.tage) return eigene;
+    return getJSON(`${base}assets/heiligenkalender.json`);
+  }
   async function collect(base) {
-    const [ha, rd, tm, gd, wk] = await Promise.all([
+    const [ha, rd, tm, gd, wk, hk] = await Promise.all([
       HD.load(`${base}data/hochaemter.csv`).catch(() => []),
       getJSON(`${base}data/runden.json`),
       getJSON(`${base}data/termine.json`),
       getJSON(`${base}data/gottesdienste.json`),
-      getJSON(`${base}data/wochenkalender.json`)
+      getJSON(`${base}data/wochenkalender.json`),
+      ladeHeilige(base)
     ]);
     const items = [...fromHochaemter(ha, base), ...fromRunden(rd, base), ...fromTermine(tm, base)];
     items.push(...fromWochenplan(gd, items));
@@ -245,7 +381,7 @@
     }
     items.push(...wochen.items);
     items.sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
-    return { items, info: wochen.info };
+    return { items, info: wochen.info, heiligen: hk };
   }
   const sortKey = (it) => it.date + (it.sort || it.time || '99');
 
@@ -292,7 +428,7 @@
     const dt = HD.dateFromIso(iso);
     const past = iso < today;
     const now = nowHM(new Date());
-    const inf = dayInfo.get(iso);
+    const inf = infoAm(iso);
     const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag, ...inf.heilige].filter(Boolean).map(HD.formatText).join(' · ')}</p>` : '';
     return `<section class="cal-day${past ? ' past' : ''}${iso === today ? ' today' : ''}${extraClass ? ` ${extraClass}` : ''}" id="${id}" data-date="${iso}" aria-labelledby="h-${id}">` +
       `<h3 class="cal-date" id="h-${id}"><span class="cal-d">${dt.getDate()}</span>` +
@@ -325,5 +461,5 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
   }
 
-  w.KalenderDaten = { GROUPS, groupName, isMass, isoOf, shortDate, load, refresh, slotOf, itemHTML, dayHTML, watchPast };
+  w.KalenderDaten = { GROUPS, groupName, isMass, isoOf, shortDate, load, refresh, slotOf, itemHTML, dayHTML, watchPast, heiligeAm, infoAm, ladeHeilige, kirchenjahr, tagAm, lesejahr, advent1, heiligeAuto };
 })(window);

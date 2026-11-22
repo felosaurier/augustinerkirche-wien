@@ -156,10 +156,14 @@
         <div class="adm-field full">
           <label class="adm-label" for="td-tag">Tagesbezeichnung <span class="adm-opt">z. B. 28. Sonntag im Jahreskreis, Vom Tag</span></label>
           <input class="adm-input" type="text" id="td-tag" list="dl-td-tag"/>
+          <p class="adm-hint" id="td-tag-auto"></p>
         </div>
         <div class="adm-field full">
           <label class="adm-label" for="td-heilige">Heilige und Gedenktage <span class="adm-opt">eine Zeile je Eintrag</span></label>
           <textarea class="adm-input" id="td-heilige" rows="4" placeholder="Hl. Gallus&#10;Hl. Hedwig von Andechs"></textarea>
+          <p class="adm-hint" id="td-auto"></p>
+          <label class="adm-check" id="td-ohne-wrap"><input type="checkbox" id="td-ohne"/> An diesem Tag keine Heiligen anzeigen</label>
+          <p class="adm-hint"><a href="heiligenkalender.html">Heiligenkalender bearbeiten</a></p>
         </div>
       </div>
     </fieldset>

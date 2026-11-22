@@ -18,6 +18,10 @@
 
   /* ---------- Hilfsfunktionen ---------- */
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
+  /* Uebersetzung (js/thema.js, Woerterbuch js/sprache.js); deutsche Seiten: der Text bleibt */
+  const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
+  T.lang = T.lang || 'de';
+  T.seite = T.seite || ((p) => p);
   const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
   /* Weiches Scrollen nur, wenn die Nutzerin/der Nutzer Bewegung nicht reduziert hat */
@@ -182,11 +186,11 @@
     const center = qs('.nav-center');
     const logo = qs('.nav-logo-wrap');
     if (!center || !logo) return;
-    const base = homeOf(logo).replace(/index\.html$/, '');
+    const base = homeOf(logo).replace(/index(\.\w\w)?\.html$/, '');
     const quick = [
-      ['Gottesdienste', `${base}pages/augustinerkirche.html#p-zeiten`],
-      ['Kalender', `${base}pages/kalender.html`],
-      ['Kontakt', `${base}pages/kontakt.html`]
+      [T('Gottesdienste'), T.seite(`${base}pages/augustinerkirche.html#p-zeiten`)],
+      [T('Kalender'), T.seite(`${base}pages/kalender.html`)],
+      [T('Kontakt'), T.seite(`${base}pages/kontakt.html`)]
     ];
     let html = '<div class="mob-quick">' +
       quick.map(([t, h]) => `<a class="mob-quick-link" href="${escHTML(h)}">${escHTML(t)}</a>`).join('') + '</div>';
@@ -222,7 +226,7 @@
       menu.classList.toggle('open', open);
       document.documentElement.classList.toggle('menu-open', open);
       burger.setAttribute('aria-expanded', String(open));
-      burger.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+      burger.setAttribute('aria-label', open ? T('Menü schließen') : T('Menü öffnen'));
       if (!open) return;
       /* Der Bereich der aktuellen Seite ist beim Oeffnen schon aufgeklappt */
       if (!qs('.mob-sec-btn[aria-expanded="true"]', menu)) {
@@ -376,8 +380,8 @@
       const nav = document.createElement('div');
       nav.className = 'pane-steps';
       nav.setAttribute('role', 'navigation');
-      nav.setAttribute('aria-label', 'Weitere Bereiche dieser Seite');
-      nav.innerHTML = step(prev, 'prev', 'Zurück') + step(next, 'next', 'Weiter');
+      nav.setAttribute('aria-label', T('Weitere Bereiche dieser Seite'));
+      nav.innerHTML = step(prev, 'prev', T('Zurück')) + step(next, 'next', T('Weiter'));
       pane.append(nav);
     });
   }
@@ -531,7 +535,7 @@
     const current = path.split('/').pop() || 'index.html';
     const activePane = qs('.tab-pane.active');
     /* Startseite: Sprungmarken wie index.html#pfarre machen keinen Bereich zum aktuellen */
-    if (current === 'index.html') return;
+    if (/^index(\.\w\w)?\.html$/.test(current)) return;
     /* Auf einer Titelseite gilt nur ihr Titel als aktuell, auch wenn ein anderes
        Menue (z. B. Hochaemter unter Augustinerkirche) auf diese Seite zeigt */
     const titleBtn = qsa('.nav-btn[data-href]').find(isTitlePage);
@@ -851,7 +855,7 @@
       const b = document.createElement('button');
       b.type = 'button';
       b.className = `hero-arrow hero-arrow-${dir < 0 ? 'prev' : 'next'}`;
-      b.setAttribute('aria-label', dir < 0 ? 'Voriges Foto' : 'Nächstes Foto');
+      b.setAttribute('aria-label', dir < 0 ? T('Voriges Foto') : T('Nächstes Foto'));
       b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${dir < 0 ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7'}"/></svg>`;
       b.addEventListener('click', (ev) => {
         ev.stopPropagation();
@@ -905,7 +909,7 @@
     const setPaused = (p) => {
       paused = p;
       pauseBtn.innerHTML = p ? PLAY : PAUSE;
-      pauseBtn.setAttribute('aria-label', p ? 'Bildwechsel fortsetzen' : 'Bildwechsel anhalten');
+      pauseBtn.setAttribute('aria-label', p ? T('Bildwechsel fortsetzen') : T('Bildwechsel anhalten'));
       pauseBtn.setAttribute('aria-pressed', String(p));
       box.classList.toggle('is-paused', p);
     };
@@ -993,7 +997,8 @@
      solange das Band nicht zu sehen ist). Ohne Datei bleibt der Spruch im HTML. */
   async function initQuotes() {
     const bands = qsa('.quote-band');
-    if (!bands.length) return;
+    /* Die Zitate der Verwaltung sind deutsch: uebersetzte Seiten behalten das Zitat aus ihrem HTML */
+    if (!bands.length || T.lang !== 'de') return;
     let data = null;
     try {
       data = await dataJSON(`${siteRoot}data/sprueche.json`);
@@ -1059,7 +1064,7 @@
       const href = bannerLink(h.link);
       const ext = /^https?:/i.test(href) && !href.startsWith(location.origin);
       const wichtig = h.art === 'wichtig';
-      return `<section class="site-banner${wichtig ? ' is-wichtig' : ''}" aria-label="${wichtig ? 'Wichtiger Hinweis' : 'Hinweis'}" data-sig="${escHTML(bannerSig(h))}">` +
+      return `<section class="site-banner${wichtig ? ' is-wichtig' : ''}" aria-label="${wichtig ? T('Wichtiger Hinweis') : T('Hinweis')}" data-sig="${escHTML(bannerSig(h))}">` +
         '<div class="site-banner-in">' +
           `<svg class="site-banner-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${wichtig
             ? '<path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>'
@@ -1067,11 +1072,11 @@
           '<div class="site-banner-body">' +
             `<strong class="site-banner-title">${escHTML(h.titel)}</strong>` +
             (h.text ? `<span class="site-banner-text">${h.text.split('\n').map(fmtHTML).join('<br>')}</span>` : '') +
-            (href ? `<a class="site-banner-link" href="${escHTML(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${escHTML(h.linktext || 'Mehr erfahren')}</a>` : '') +
+            (href ? `<a class="site-banner-link" href="${escHTML(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${escHTML(h.linktext || T('Mehr erfahren'))}</a>` : '') +
           '</div>' +
           /* wegklickbar: false = Hinweis bleibt stehen (in der Verwaltung einstellbar) */
           (h.wegklickbar !== false
-            ? `<button type="button" class="site-banner-close" aria-label="Hinweis ausblenden: ${escHTML(h.titel)}">` +
+            ? `<button type="button" class="site-banner-close" aria-label="${escHTML(T('Hinweis ausblenden'))}: ${escHTML(h.titel)}">` +
               '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'
             : '') +
         '</div></section>';
@@ -1110,7 +1115,7 @@
     if (area) for (const s of qsa('.pane-steps', area)) s.remove();
     buildPaneSteps(sidebar);
     const hint = qs('.sidebar-toggle-hint', sidebar);
-    if (hint) hint.textContent = `${visibleItems(sidebar).length} Bereiche`;
+    if (hint) hint.textContent = T('{n} Bereiche', { n: visibleItems(sidebar).length });
   }
 
   function menuLinks(file, pane) {
@@ -1148,6 +1153,8 @@
     navBereiche = bereiche;
     for (const sidebar of qsa('.sidebar')) if (applyLeiste(sidebar)) refreshSidebar(sidebar);
 
+    /* Das Menue der uebersetzten Seiten ist fest (tools/vorlagen/nav.<sprache>.html) */
+    if (T.lang !== 'de') return;
     const logo = qs('.nav-logo-wrap');
     const base = homeOf(logo).replace(/index\.html$/, '');
     let menuChanged = false;
@@ -1222,7 +1229,7 @@
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'hero-down';
-    b.setAttribute('aria-label', 'Nach unten zum Inhalt');
+    b.setAttribute('aria-label', T('Nach unten zum Inhalt'));
     b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
     b.addEventListener('click', () => next.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth' }));
     hero.append(b);
@@ -1310,7 +1317,7 @@
       if (!box || !/^https:\/\/www\.google\.com\/maps\?/.test(box.dataset.map)) return;
       const f = document.createElement('iframe');
       f.src = box.dataset.map;
-      f.title = 'Karte: Augustinerstraße 3, 1010 Wien';
+      f.title = T('Karte: Augustinerstraße 3, 1010 Wien');
       f.loading = 'lazy';
       f.referrerPolicy = 'no-referrer-when-downgrade';
       f.allowFullscreen = true;
@@ -1339,14 +1346,14 @@
     const logo = qs('.nav-logo-wrap');
     const home = homeOf(logo);
     const links = qs('footer .f-links');
-    if (links && !/(^|\/)index\.html$/.test(location.pathname) && location.pathname !== '/' && !qs('a[data-startseite]', links)) {
-      links.insertAdjacentHTML('afterbegin', `<a data-startseite href="${escHTML(home)}">Startseite</a>`);
+    if (links && !/(^|\/)index(\.\w\w)?\.html$/.test(location.pathname) && location.pathname !== '/' && !qs('a[data-startseite]', links)) {
+      links.insertAdjacentHTML('afterbegin', `<a data-startseite href="${escHTML(home)}">${escHTML(T('Startseite'))}</a>`);
     }
     const top = document.createElement('button');
     top.type = 'button';
     top.className = 'to-top';
     top.hidden = true;
-    top.setAttribute('aria-label', 'Nach oben');
+    top.setAttribute('aria-label', T('Nach oben'));
     top.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 15l7-7 7 7"/></svg>';
     top.addEventListener('click', () => window.scrollTo({ top: 0, behavior: scrollBehavior() }));
     document.body.append(top);
@@ -1364,7 +1371,8 @@
   /* ---------- Suche (js/suche.js wird erst beim ersten Klick geladen) ---------- */
   function initSuche() {
     const right = qs('.nav-right');
-    if (!right || qs('.suche-btn')) return;
+    /* Die Suche kennt nur die deutschen Seiten: auf uebersetzten Seiten keine Lupe */
+    if (!right || qs('.suche-btn') || T.lang !== 'de') return;
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'suche-btn';
@@ -1437,10 +1445,10 @@
     const html = document.documentElement;
     const dark = () => (html.dataset.theme ? html.dataset.theme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches);
     const label = () => {
-      const text = dark() ? 'Heller Modus' : 'Dunkler Modus';
+      const text = dark() ? T('Heller Modus') : T('Dunkler Modus');
       for (const b of qsa('[data-modus]')) {
         if (b.classList.contains('modus-btn')) {
-          b.setAttribute('aria-label', `${text} einschalten`);
+          b.setAttribute('aria-label', T('{modus} einschalten', { modus: text }));
           b.title = text;
         } else b.textContent = text;
       }
@@ -1473,7 +1481,52 @@
   }
 
   /* ---------- Init ---------- */
+  /* Sprachwahl (Flaggen): bei derselben Seite in der anderen Sprache den Bereich (#…) mitnehmen */
+  function initSprachen() {
+    /* Dieselbe Seite in der anderen Sprache: Abschnitt (#…) und Termin (?id=…) bleiben erhalten */
+    for (const a of qsa('.nav-lang a[data-gleich]')) {
+      a.addEventListener('click', () => {
+        if (location.search && !a.search) a.search = location.search;
+        if (location.hash && !a.hash) a.hash = location.hash;
+      });
+    }
+    /* Passt die Kopfzeile nicht in die Breite (langer Name neben dem Logo, laengere Menuepunkte
+       auf Englisch oder Italienisch), weichen zuerst Unterstuetzen/Kontakt, dann der Knopf
+       Gottesdienste; die Sprachwahl bleibt immer sichtbar */
+    const rechts = qs('.nav-right');
+    const kopf = rechts && rechts.closest('nav');
+    if (kopf) {
+      const zuBreit = () => kopf.scrollWidth > kopf.clientWidth + 1;
+      const pruefen = () => {
+        kopf.classList.remove('nav-eng', 'nav-enger');
+        if (zuBreit()) kopf.classList.add('nav-eng');
+        if (zuBreit()) kopf.classList.add('nav-enger');
+      };
+      pruefen();
+      if ('ResizeObserver' in window) {
+        const ro = new ResizeObserver(pruefen);
+        ro.observe(kopf);
+        const logo = qs('.nav-logo-wrap', kopf);
+        if (logo) ro.observe(logo);
+      }
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(pruefen);
+    }
+    /* Auswahl schliesst bei Klick daneben und mit Escape */
+    const wahl = qs('.nav-lang');
+    if (!wahl) return;
+    document.addEventListener('click', (e) => {
+      if (wahl.open && !wahl.contains(e.target)) wahl.open = false;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && wahl.open) {
+        wahl.open = false;
+        wahl.querySelector('summary').focus();
+      }
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    initSprachen();
     initModus();
     initWege();
     initRouteMenu();

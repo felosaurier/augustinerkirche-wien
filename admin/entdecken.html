@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Das könnte Sie interessieren — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-entdecken.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Website</div>
+      <h1 class="ph-title">Das könnte Sie interessieren <em>auf der Startseite</em></h1>
+      <p class="ph-sub">Die Karten im Bereich „Das könnte Sie interessieren …“ der Startseite. Ein Klick auf eine Karte ändert Titel, Ziel, Bild und die Links darunter; die Pfeile ändern die Reihenfolge.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <div class="adm-toolbar">
+    <p class="adm-count" id="en-count" role="status"></p>
+    <button type="button" class="adm-act" id="en-reset-all" data-icon="refresh" hidden>Auf Standard zurücksetzen</button>
+    <a class="adm-act" href="../index.html#v3-ways-h" target="_blank" rel="noopener" data-icon="external">Auf der Website ansehen</a>
+    <button type="button" class="btn btn-gold" id="en-new" data-icon="plus">Neue Karte</button>
+  </div>
+  <div class="adm-field en-lead-field">
+    <label class="adm-label" for="en-lead">Satz unter der Überschrift</label>
+    <div class="en-lead-row">
+      <input class="adm-input" type="text" id="en-lead" maxlength="160"/>
+      <button type="button" class="btn btn-dark" id="en-lead-save" data-icon="check" disabled>Speichern</button>
+    </div>
+  </div>
+  <div id="en-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Karte bearbeiten -->
+<dialog class="adm-dialog w760" id="en-dlg" aria-labelledby="en-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="en-dlg-tag">Karte bearbeiten</div>
+      <h2 class="adm-dlg-title" id="en-dlg-title">Karte</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="en-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Karte</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="en-titel">Titel</label>
+          <input class="adm-input" type="text" id="en-titel" maxlength="60" required/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="en-ziel">Ziel <span class="adm-opt">Seite der Website oder https://…</span></label>
+          <input class="adm-input" type="text" id="en-ziel" list="dl-en-ziel" placeholder="z. B. pages/musik.html" required/>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="adm-fs">
+      <legend>Links darunter <span class="adm-opt">bis zu 5, Reihenfolge mit den Pfeilen</span></legend>
+      <div id="en-links"></div>
+    </fieldset>
+    <fieldset class="adm-fs">
+      <legend>Bild</legend>
+      <div class="adm-field">
+        <label class="adm-drop" id="en-drop">
+          <span data-icon="image"></span>
+          <span class="adm-drop-main">Neues Bild hierher ziehen oder <u>auswählen</u></span>
+          <span class="adm-hint">WebP, JPG oder PNG; wird auf höchstens 2000 Pixel verkleinert. Am besten Querformat.</span>
+          <input type="file" id="en-file" accept="image/*"/>
+        </label>
+      </div>
+      <div class="adm-field full adm-mt-11">
+        <span class="adm-label" id="en-pick-l">Ausschnitt: auf die Stelle klicken, die sichtbar sein soll</span>
+        <div class="en-edit">
+          <div class="en-pick" id="en-pick" tabindex="0" role="group" aria-labelledby="en-pick-l"><img id="en-full" alt=""/><span class="en-dot" id="en-dot"></span></div>
+          <div>
+            <span class="adm-hint">So erscheint es auf der Startseite:</span>
+            <span class="en-thumb en-prev"><img id="en-prev" alt=""/></span>
+            <button type="button" class="adm-act adm-mt-11" id="en-center">Ausschnitt mittig</button>
+          </div>
+        </div>
+        <input type="hidden" id="en-focus"/>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="en-delete" data-icon="trash">Entfernen</button>
+      <button type="button" class="adm-act" id="en-std" data-icon="refresh">Standardbild</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="en-form" class="btn btn-dark" id="en-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-en-ziel"></datalist>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de" data-thema="keins">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Farben — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/thema.js"></script>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-farben.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Werkzeuge</div>
+      <h1 class="ph-title">Farben <em>der Website</em></h1>
+      <p class="ph-sub">Alle Farben auf einen Blick, mit HEX-, RGB- und CMYK-Wert zum Kopieren (z. B. für Plakate, Flyer oder die Druckerei). Mit dem passenden Recht lassen sie sich hier auch ändern; das gilt für die helle Ansicht der Website.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <section class="adm-panel" aria-labelledby="fb-strip-h">
+    <h2 class="adm-panel-title" id="fb-strip-h">Auf einen Blick</h2>
+    <p class="adm-panel-sub">Klick auf eine Farbe kopiert ihren HEX-Wert.</p>
+    <div class="fb-strip" id="fb-strip"></div>
+  </section>
+  <form id="fb-form" novalidate autocomplete="off">
+    <section class="adm-panel" aria-labelledby="fb-list-h">
+      <div class="ds-head"><h2 class="adm-panel-title" id="fb-list-h">Farben im Einzelnen</h2>
+        <a class="link-arr" href="../index.html" target="_blank" rel="noopener">Website ansehen</a></div>
+      <p class="adm-panel-sub" id="fb-list-sub">Wo die Farbe vorkommt, ihre Werte und wie gut Schrift darauf bzw. davor lesbar ist.</p>
+      <div class="fb-list" id="fb-list"><p class="adm-muted">Wird geladen …</p></div>
+    </section>
+    <section class="adm-panel" aria-labelledby="fb-pv-h">
+      <h2 class="adm-panel-title" id="fb-pv-h">Vorschau</h2>
+      <p class="adm-panel-sub">So wirken die Farben zusammen.</p>
+      <div class="fb-preview" id="fb-preview" aria-hidden="true">
+        <div class="fb-pv-bar"><span class="fb-pv-brand">Augustinerkirche Wien</span><span class="fb-pv-menu">Gottesdienste</span></div>
+        <div class="fb-pv-sec fb-pv-soft">
+          <span class="fb-pv-over">Überzeile</span>
+          <h3 class="fb-pv-h">Überschrift eines Abschnitts</h3>
+          <p class="fb-pv-text">Fließtext der Website mit einem <span class="fb-pv-link">goldenen Link</span> darin.</p>
+          <p class="fb-pv-mid">Untertitel oder Beschreibung</p>
+          <p class="fb-pv-light">Sonntag, 22. November · Bildnachweis</p>
+        </div>
+        <div class="fb-pv-sec fb-pv-warm">
+          <span class="fb-pv-mark">Markierung</span>
+          <p class="fb-pv-light">Text hell auf beigem Grund</p>
+          <span class="fb-pv-btn">Knopf</span>
+        </div>
+      </div>
+    </section>
+    <section class="adm-panel" aria-labelledby="fb-kz-h">
+      <div class="ds-head"><h2 class="adm-panel-title" id="fb-kz-h">Farben der Kopfzeilen</h2>
+        <a class="link-arr" href="design.html">Ändern unter Kopfzeile</a></div>
+      <p class="adm-panel-sub">Farbe der Titelzeile je Bereich.</p>
+      <div class="fb-strip" id="fb-kz"><p class="adm-muted">Wird geladen …</p></div>
+    </section>
+    <div class="adm-inline-foot rt-foot" id="fb-foot" hidden>
+      <span class="adm-muted" id="fb-state"></span>
+      <button type="button" class="btn btn-quiet" id="fb-reset" data-icon="refresh">Alle auf Standard</button>
+      <button type="submit" class="btn btn-dark" id="fb-save" data-icon="check">Speichern</button>
+    </div>
+  </form>
+</main>
+
+</body>
+</html>

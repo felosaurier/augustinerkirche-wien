@@ -5,6 +5,12 @@ Die Vorlagen liegen in tools/vorlagen/nav.html und tools/vorlagen/footer.html. P
   {R}        Weg zur Wurzel der Website ("", "../" oder "../../")
   {P}        Weg zum Ordner pages/ ("pages/", "" oder "../")
   {KONTAKT}  Ziel des Links "Kontakt" in der Fusszeile (meist kontakt.html)
+  {SPRACHEN} Sprachwahl (Flagge der aktuellen Sprache, Klick oeffnet Deutsch, Englisch, Italienisch), ganz rechts
+
+Sprachen: uebersetzte Seiten liegen neben der deutschen, mit Kuerzel vor der Endung
+(index.en.html, pages/musik.it.html). Sie bekommen Titel- und Fusszeile aus nav.<sprache>.html und
+footer.<sprache>.html. Die Flaggen fuehren zur selben Seite in der anderen Sprache; gibt es sie
+nicht, zur Startseite dieser Sprache.
 
 Aufruf (im Projektordner):
   python tools/seitenkopf.py             schreibt alle Seiten neu (nur wenn sich etwas aendert)
@@ -20,7 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 VORLAGEN = Path(__file__).resolve().parent / 'vorlagen'
-NAV = re.compile(r'<nav aria-label="Hauptnavigation">.*?</nav>', re.S)
+NAV = re.compile(r'<nav aria-label="(?:Hauptnavigation|Main navigation|Navigazione principale)">.*?</nav>', re.S)
 FOOT = re.compile(r'<footer>.*?</footer>', re.S)
 
 # Seiten mit eigenem Ziel fuer "Kontakt" in der Fusszeile (Pfad mit / ab Projektordner)
@@ -29,11 +35,45 @@ KONTAKT = {'pages/aspersdorf.html': 'aspersdorf.html#p-leitung'}
 # Seiten mit eigener Titelzeile (Vorlage in tools/vorlagen/)
 EIGENE_NAV = {'pages/aspersdorf.html': 'nav-aspersdorf.html', 'index.html': 'nav-start.html', 'pages/musik.html': 'nav-musik.html'}
 
-# Ziel des Logos: immer die Startseite der Website (index.html)
+# Ziel des Logos: immer die Startseite der Website (index.html bzw. index.<sprache>.html)
+
+SPRACHEN = [('de', 'Deutsch', 'at'), ('en', 'English', 'gb'), ('it', 'Italiano', 'it')]
+SPRACHE = re.compile(r'\.(en|it)\.html$')
+
+
+def sprache(rel):
+    m = SPRACHE.search(rel)
+    return m.group(1) if m else 'de'
+
+
+def fassung(rel, lang):
+    """Pfad der Seite in einer Sprache (ohne Pruefung, ob es sie gibt): pages/musik.html -> pages/musik.en.html"""
+    basis = SPRACHE.sub('.html', rel)
+    return basis if lang == 'de' else f'{basis[:-5]}.{lang}.html'
+
+
+def flaggen(rel, r):
+    """Sprachwahl fuer die Seite rel; r: Weg zur Wurzel. Sichtbar ist nur die Flagge der aktuellen
+    Sprache, ein Klick oeffnet die Auswahl. data-gleich: dieselbe Seite in der anderen Sprache"""
+    jetzt = sprache(rel)
+    name_jetzt, flagge_jetzt = next((n, f) for l, n, f in SPRACHEN if l == jetzt)
+    teile = []
+    for lang, name, flagge in SPRACHEN:
+        ziel = fassung(rel, lang)
+        gleich = (ROOT / ziel).exists()
+        if not gleich:
+            ziel = fassung('index.html', lang)
+        extra = (' aria-current="true"' if lang == jetzt else '') + (' data-gleich' if gleich else '')
+        teile.append(f'<a href="{r}{ziel}" hreflang="{lang}" lang="{lang}"{extra}>'
+                     f'<img src="{r}assets/flaggen/{flagge}.svg" alt="" width="24" height="16"/>{name}</a>')
+    return ('<details class="nav-lang"><summary title="Sprache · Language · Lingua" aria-label="Sprache · Language · Lingua: '
+            f'{name_jetzt}"><img src="{r}assets/flaggen/{flagge_jetzt}.svg" alt="" width="24" height="16"/>'
+            '<svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>'
+            '</summary><div class="nav-lang-menu">' + ''.join(teile) + '</div></details>')
 
 
 def seiten():
-    liste = [ROOT / 'index.html', ROOT / 'index-v1alt.html'] + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
+    liste = [ROOT / 'index.html', ROOT / 'index-v1alt.html'] + sorted(ROOT.glob('index.*.html')) + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
     return [p for p in liste if NAV.search(p.read_text(encoding='utf-8'))]
 
 
@@ -59,9 +99,10 @@ def zerlegen(text, r, pg, kontakt):
     return re.sub(r'\b(href|src|data-href)="([^"]*)"', attr, text)
 
 
-def fuellen(vorlage, r, pg, kontakt):
-    ziel = r + 'index.html'
-    return vorlage.replace('{R}', r).replace('{P}', pg).replace('{KONTAKT}', pg + kontakt).replace('{LOGO}', ziel)
+def fuellen(vorlage, r, pg, kontakt, rel='index.html'):
+    ziel = r + fassung('index.html', sprache(rel))
+    return (vorlage.replace('{SPRACHEN}', flaggen(rel, r)).replace('{R}', r).replace('{P}', pg)
+            .replace('{KONTAKT}', pg + kontakt).replace('{LOGO}', ziel))
 
 
 def vorlagen_erzeugen():
@@ -86,6 +127,8 @@ def main():
     nav_v = (VORLAGEN / 'nav.html').read_text(encoding='utf-8').rstrip('\n')
     eigene = {rel: (VORLAGEN / name).read_text(encoding='utf-8').rstrip('\n') for rel, name in EIGENE_NAV.items()}
     foot_v = (VORLAGEN / 'footer.html').read_text(encoding='utf-8').rstrip('\n')
+    lesen = lambda name: (VORLAGEN / name).read_text(encoding='utf-8').rstrip('\n')
+    fremd = {lang: (lesen(f'nav.{lang}.html'), lesen(f'footer.{lang}.html')) for lang, _, _ in SPRACHEN if lang != 'de'}
     nur_pruefen = '--pruefen' in sys.argv
     abweichend = 0
     for p in seiten():
@@ -93,10 +136,16 @@ def main():
         roh = p.read_bytes().decode('utf-8')
         crlf = '\r\n' in roh
         s = roh.replace('\r\n', '\n')
-        kontakt = KONTAKT.get(rel, 'kontakt.html')
+        lang = sprache(rel)
+        if lang == 'de':
+            kontakt = KONTAKT.get(rel, 'kontakt.html')
+            nav, foot = eigene.get(rel, nav_v), foot_v
+        else:
+            kontakt = f'kontakt.{lang}.html'
+            nav, foot = fremd[lang]
         # Index: Link zur eigenen Seite bleibt, das Ziel steht nach {P}
-        neu = NAV.sub(lambda m: fuellen(eigene.get(rel, nav_v), r, pg, kontakt), s, count=1)
-        neu = FOOT.sub(lambda m: fuellen(foot_v, r, pg, kontakt), neu, count=1)
+        neu = NAV.sub(lambda m: fuellen(nav, r, pg, kontakt, rel), s, count=1)
+        neu = FOOT.sub(lambda m: fuellen(foot, r, pg, kontakt, rel), neu, count=1)
         if neu != s:
             abweichend += 1
             print(('weicht ab:  ' if nur_pruefen else 'geschrieben: ') + rel)

@@ -13,10 +13,30 @@
 (function (w) {
   'use strict';
 
-  const MONTHS = ['Jänner', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-  const MONTHS_SHORT = ['Jän', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-  const WEEKDAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
-  const WEEKDAYS_SHORT = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  /* Uebersetzte Seiten (js/thema.js, js/sprache.js): Monate und Wochentage in ihrer Sprache */
+  const TL = w.AugT && w.AugT.lang !== 'de' ? w.AugT : null;
+  const liste = (k, de) => (TL && Array.isArray(TL.wert(k)) && TL.wert(k).length === de.length ? TL.wert(k) : de);
+  const MONTHS = liste('MONATE', ['Jänner', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']);
+  const MONTHS_SHORT = liste('MONATE_KURZ', ['Jän', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez']);
+  const WEEKDAYS = liste('WOCHENTAGE', ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']);
+  const WEEKDAYS_SHORT = liste('WOCHENTAGE_KURZ', ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']);
+  /* Datum mit Wochentag in der Sprache der Seite: "Sonntag, 22. November 2026",
+     "Sunday, 22 November 2026", "domenica 22 novembre 2026" (jahr: mit Jahreszahl) */
+  function fmtLang(d, jahr) {
+    const j = jahr ? ` ${d.getFullYear()}` : '';
+    const lang = TL ? TL.lang : 'de';
+    if (lang === 'en') return `${WEEKDAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}${j}`;
+    if (lang === 'it') return `${WEEKDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}${j}`;
+    return `${WEEKDAYS[d.getDay()]}, ${d.getDate()}. ${MONTHS[d.getMonth()]}${j}`;
+  }
+  /* Uhrzeit allein in der Sprache der Seite: "11:00" (Deutsch, Italienisch), "11:00 am" (Englisch) */
+  const uhr = (t) => (TL && TL.uhr ? TL.uhr(t) : String(t == null ? '' : t));
+  /* Uhrzeit im Satz: "11:00 Uhr", "11:00 am", "ore 11:00" */
+  function fmtUhr(t) {
+    if (!t) return '';
+    const lang = TL ? TL.lang : 'de';
+    return lang === 'en' ? uhr(t) : lang === 'it' ? `ore ${t}` : `${t} Uhr`;
+  }
 
   /* Spaltenueberschriften (frei benennbar) -> interne Feldnamen */
   const ALIASES = {
@@ -486,7 +506,7 @@
   }
 
   w.HochamtData = {
-    MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS,
+    MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS, fmtLang, fmtUhr, uhr,
     esc, pad, num, focusPos, safeUrl, richText, formatText, plainText, cleanLines, blocksHTML, legalHTML, mailHTML, mailEncode, mailDecode, fetchJSON, telHref, slug, csvText, download,
     parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, NEWS_PAGES, newsPages, newsOnPage, list,
     normalize, byDateTime, byDateTimeDesc,

@@ -1415,3 +1415,101 @@ html{scroll-padding-top:1.5rem}
 .qr-swatch[aria-pressed="true"]{outline:2px solid var(--gold);outline-offset:2px}
 .qr-swatch:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 @media(max-width:1280px){.qr-swatch{width:2.4rem;height:2.4rem}}
+
+/* ---------- Werkzeug Farben (admin/farben.html, js/admin/admin-farben.js) ---------- */
+.fb-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem}
+.fb-chip{display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;padding:0 0 .55rem;border:1px solid var(--line);background:var(--white);font:inherit;text-align:left;cursor:pointer;overflow:hidden;transition:border-color .15s,transform .15s}
+.fb-chip:hover{border-color:var(--gold);transform:translateY(-1px)}
+.fb-chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.fb-chip-c{display:block;width:100%;height:3.2rem;background:var(--c);border-bottom:1px solid var(--line);margin-bottom:.35rem}
+.fb-chip-n{padding:0 .65rem;font-size:.9rem;font-weight:600;color:var(--text);line-height:1.25}
+.fb-chip code{padding:0 .65rem;font-size:.85rem;color:var(--text-mid)}
+.fb-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1rem}
+.fb-card{display:flex;gap:1rem;padding:1rem;border:1px solid var(--line);background:var(--white)}
+.fb-swatch{position:relative;flex:none;width:4.2rem;height:4.2rem;background:var(--c);border:1px solid rgba(0,0,0,.18);box-shadow:inset 0 0 0 3px #fff}
+label.fb-swatch{cursor:pointer}
+label.fb-swatch:hover{outline:2px solid var(--gold);outline-offset:2px}
+.fb-swatch input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
+label.fb-swatch:focus-within{outline:2px solid var(--blue);outline-offset:2px}
+.fb-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:.35rem}
+.fb-top{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+.fb-name{font-family:var(--serif);font-size:1.15rem;font-weight:600;color:var(--black);line-height:1.2}
+.fb-tag{font-size:.78rem;font-weight:600;padding:.05rem .45rem;background:var(--gold-pale);color:var(--gold-text)}
+.fb-tag[hidden]{display:none}
+.fb-wo{font-size:.92rem;color:var(--text-mid);line-height:1.4}
+.fb-codes{display:grid;gap:.1rem;margin:.2rem 0 0}
+.fb-code{display:grid;grid-template-columns:3.4rem 1fr;align-items:center}
+.fb-code dt{font-size:.8rem;font-weight:600;color:var(--text-light);letter-spacing:.03em}
+.fb-code dd{display:flex;align-items:center;gap:.3rem;margin:0;min-width:0}
+.fb-code code{font-size:.9rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fb-copy{display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;flex:none;border:none;background:none;color:var(--text-light);cursor:pointer}
+.fb-copy:hover{color:var(--gold)}
+.fb-copy:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.fb-copy svg.i{width:1rem;height:1rem}
+.fb-kontrast{display:flex;gap:.4rem;align-items:flex-start;font-size:.86rem;line-height:1.4;margin-top:.15rem}
+.fb-kontrast svg.i{flex:none;width:1rem;height:1rem;margin-top:.1rem}
+.fb-kontrast.ok{color:var(--ok)}
+.fb-kontrast.schwach{color:var(--err)}
+.fb-edit{display:flex;gap:.5rem;align-items:center;margin-top:.35rem}
+.fb-hex{max-width:8.5rem;font-family:ui-monospace,Consolas,monospace;text-transform:lowercase}
+.fb-hex.is-invalid{border-color:var(--err);outline-color:var(--err)}
+.fb-preview{border:1px solid var(--line);overflow:hidden}
+.fb-pv-bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 1.2rem;background:var(--pv-blue-deep)}
+.fb-pv-brand{font-family:var(--serif);font-size:1.1rem;color:#fff}
+.fb-pv-menu{font-size:.9rem;font-weight:600;color:var(--pv-gold-l);border:1px solid var(--pv-gold-l);padding:.25rem .7rem}
+.fb-pv-sec{padding:1.2rem;display:flex;flex-direction:column;gap:.35rem;align-items:flex-start;border-top:1px solid var(--pv-line)}
+.fb-pv-soft{background:var(--pv-bg-soft)}
+.fb-pv-warm{background:var(--pv-bg-warm)}
+.fb-pv-over{font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--pv-gold-text)}
+.fb-pv-h{font-family:var(--serif);font-size:1.5rem;font-weight:500;color:var(--pv-blue);line-height:1.2}
+.fb-pv-text{color:var(--pv-text)}
+.fb-pv-link{color:var(--pv-gold);text-decoration:underline;text-underline-offset:3px}
+.fb-pv-mid{color:var(--pv-text-mid);font-size:.95rem}
+.fb-pv-light{color:var(--pv-text-light);font-size:.85rem}
+.fb-pv-mark{background:var(--pv-gold-pale);color:var(--pv-text);padding:.1rem .5rem;font-size:.9rem}
+.fb-pv-btn{margin-top:.3rem;padding:.5rem 1.1rem;background:var(--pv-blue);color:#fff;font-size:.9rem;font-weight:600}
+@media(max-width:600px){.fb-list{grid-template-columns:1fr}.fb-card{padding:.85rem}.fb-swatch{width:3.4rem;height:3.4rem}}
+
+/* ---------- Entdecken-Bilder (admin/entdecken.html) ---------- */
+.en-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(17rem,100%),1fr));gap:1.1rem}
+.en-card{display:flex;flex-direction:column;padding:0;background:var(--white);border:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer;transition:border-color .25s,box-shadow .3s,transform .3s}
+.en-card:hover{border-color:var(--gold);box-shadow:0 10px 30px rgba(16,25,46,.08);transform:translateY(-2px)}
+.en-card:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.en-thumb{display:block;aspect-ratio:3/2;overflow:hidden;background:var(--bg-warm)}
+.en-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.en-card-body{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem;padding:.85rem 1rem}
+.en-card-title{font-family:var(--serif);font-size:1.2rem;color:var(--black)}
+.en-edit{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1.2rem;align-items:start;margin-top:.4rem}
+.en-pick{position:relative;display:inline-block;max-width:100%;line-height:0;cursor:crosshair;border:1px solid var(--line)}
+.en-pick:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.en-pick img{display:block;max-width:100%;max-height:22rem}
+.en-dot{position:absolute;width:1.3rem;height:1.3rem;margin:-.65rem 0 0 -.65rem;border:2px solid #fff;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px rgba(16,25,46,.55);pointer-events:none}
+.en-prev{margin:.4rem 0 .2rem;border:1px solid var(--line)}
+@media(max-width:640px){.en-edit{grid-template-columns:1fr}}
+/* Das koennte Sie interessieren (admin/entdecken.html): Zeilen mit Vorschaubild, Einleitungssatz */
+.en-row .adm-row-open{display:flex;align-items:center;gap:1rem}
+.en-row-thumb{flex:none;width:6.5rem;aspect-ratio:3/2;overflow:hidden;background:var(--bg-warm);border:1px solid var(--line)}
+.en-row-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.en-lead-field{margin:0 0 1.4rem}
+.en-lead-row{display:flex;gap:.7rem;align-items:center}
+.en-lead-row .adm-input{flex:1;min-width:0}
+@media(max-width:640px){.en-row-thumb{width:4.5rem}.en-lead-row{flex-wrap:wrap}}
+/* Wochenkalender: Heilige automatisch aus dem Heiligenkalender */
+.wk-auto{font-style:italic;opacity:.85}
+/* Heiligenkalender (admin/heiligenkalender.html) */
+.hk-months{flex-wrap:wrap}
+.hk-search{max-width:16rem}
+.hk-row .adm-row-open{grid-template-columns:8.5rem minmax(0,1fr);gap:1.2rem;min-height:0;padding:.75rem 1.2rem}
+.hk-date{font-family:var(--serif);font-size:1.1rem;color:var(--text-mid);white-space:nowrap}
+.hk-row .adm-row-body{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .7rem}
+.hk-row .adm-row-title{font-size:1.15rem}
+.hk-row .adm-chip{margin:0}
+.hk-row .hk-leer{font-family:inherit;font-size:.95rem;font-style:italic;color:var(--text-light)}
+@media(max-width:600px){.hk-row .adm-row-open{grid-template-columns:1fr;gap:.2rem;padding:.7rem 1rem}.hk-date{font-size:.95rem}}
+.hk-quelle{margin-bottom:1.2rem}
+.kj-opts{display:grid;gap:.45rem;margin:0 0 1.1rem}
+.kj-year-l{margin:0}
+.kj-year{width:auto;min-width:14rem}
+.kj-aus{opacity:.5}
+.kj-row .adm-row-open{grid-template-columns:12.5rem minmax(0,1fr)}
+@media(max-width:600px){.kj-row .adm-row-open{grid-template-columns:1fr}}

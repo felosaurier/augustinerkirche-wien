@@ -15,6 +15,8 @@
   const DATA_URL = '../data/hochaemter.csv';
   const ARCHIVE_DIR = '../data/archiv/';
 
+  /* Uebersetzung (js/thema.js); deutsche Seiten: der Text bleibt */
+  const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
   const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
@@ -28,12 +30,12 @@
 
   function rowHTML(entry) {
     const d = entry.dateObj;
-    return `<a class="kal-row" href="hochamt.html?id=${encodeURIComponent(entry.id)}">` +
+    return `<a class="kal-row" href="${T.seite ? T.seite('hochamt.html') : 'hochamt.html'}?id=${encodeURIComponent(entry.id)}">` +
       `<div class="kal-date"><div class="kal-d">${HD.pad(d.getDate())}</div><div class="kal-wd">${HD.WEEKDAYS_SHORT[d.getDay()]}</div>` +
         `<div class="kal-wd kal-yr">${HD.MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}</div></div>` +
-      `<div class="kal-body"><div class="kal-time">${HD.esc(entry.time)}</div>` +
-        `<div class="kal-name">${HD.esc(entry.piece || entry.type)}</div>` +
-        `<div class="kal-type">${HD.esc(entry.type)}${entry.location ? `, ${HD.esc(entry.location)}` : ''}</div></div>` +
+      `<div class="kal-body"><div class="kal-time">${HD.esc(HD.uhr(entry.time))}</div>` +
+        `<div class="kal-name">${HD.esc(entry.piece || T(entry.type))}</div>` +
+        `<div class="kal-type">${HD.esc(T(entry.type))}${entry.location ? `, ${HD.esc(T(entry.location))}` : ''}</div></div>` +
       '<div class="kal-go" aria-hidden="true">&rarr;</div>' +
     '</a>';
   }
@@ -88,7 +90,7 @@
       if (days > 1) zaehlen(qs('.nh-count', board), days + 30, days, String);
       /* Die Uhrzeit zaehlt von 00:00 hoch (Monat und Wochentag bleiben ruhig) */
       const hm = /^(\d{1,2}):(\d{2})$/.exec(String(next.time || '').trim());
-      if (hm) zaehlen(qs('.nh-time', board), 0, Number(hm[1]) * 60 + Number(hm[2]), (n) => `${HD.pad(Math.floor(n / 60))}:${HD.pad(n % 60)}`);
+      if (hm && T.lang !== 'en') zaehlen(qs('.nh-time', board), 0, Number(hm[1]) * 60 + Number(hm[2]), (n) => `${HD.pad(Math.floor(n / 60))}:${HD.pad(n % 60)}`);
     }, { threshold: 0.2 });
     io.observe(board);
   }
@@ -118,30 +120,30 @@
       return;
     }
     const days = Math.round((next.dateObj - HD.today()) / 86400000);
-    const when = days <= 0 ? 'heute' : days === 1 ? 'morgen' : `in <span class="nh-count">${days}</span> Tagen`;
-    const wd = next.dateObj.toLocaleDateString('de-AT', { weekday: 'long' });
-    const who = [['Zelebrant', next.celebrant], ['Dirigent', next.conductor], ['Chor', next.choir], ['Orchester', next.orchestra], ['Organist', next.organist]].filter(([, v]) => v);
-    const href = (e) => `hochamt.html?id=${encodeURIComponent(e.id)}`;
+    const when = days <= 0 ? T('heute') : days === 1 ? T('morgen') : T('in {n} Tagen', { n: `<span class="nh-count">${days}</span>` });
+    const wd = HD.WEEKDAYS[next.dateObj.getDay()];
+    const who = [[T('Zelebrant'), next.celebrant], [T('Dirigent'), next.conductor], [T('Chor'), next.choir], [T('Orchester'), next.orchestra], [T('Organist'), next.organist]].filter(([, v]) => v);
+    const href = (e) => `${T.seite ? T.seite('hochamt.html') : 'hochamt.html'}?id=${encodeURIComponent(e.id)}`;
     const later = entries.slice(1, 5).map((e) =>
       `<li><a href="${href(e)}"><span class="nh-slot-day">${HD.pad(e.dateObj.getDate())}<small>${HD.MONTHS_SHORT[e.dateObj.getMonth()]}</small></span>` +
-      `<span class="nh-slot-txt"><span class="nh-slot-when">${HD.WEEKDAYS_SHORT[e.dateObj.getDay()]}, ${HD.esc(e.time)} Uhr${e.piece && e.piece !== e.type ? ` · ${HD.esc(e.type)}` : ''}</span>` +
-      `<b>${HD.esc(e.piece || e.type)}</b></span></a></li>`).join('');
+      `<span class="nh-slot-txt"><span class="nh-slot-when">${HD.WEEKDAYS_SHORT[e.dateObj.getDay()]}, ${HD.esc(HD.fmtUhr(e.time))}${e.piece && e.piece !== e.type ? ` · ${HD.esc(T(e.type))}` : ''}</span>` +
+      `<b>${HD.esc(e.piece || T(e.type))}</b></span></a></li>`).join('');
     boardEl.innerHTML =
       '<div class="nh-main">' +
-        `<p class="nh-kicker">Nächstes Hochamt, ${when}</p>` +
+        `<p class="nh-kicker">${T('Nächstes Hochamt, {wann}', { wann: when })}</p>` +
         '<div class="nh-date">' +
           `<span class="nh-day">${HD.pad(next.dateObj.getDate())}</span>` +
-          `<span class="nh-md"><b class="nh-month">${HD.MONTHS[next.dateObj.getMonth()]}</b><span><span class="nh-wd">${HD.esc(wd)}</span>, <span class="nh-time">${HD.esc(next.time)}</span> Uhr</span></span>` +
+          `<span class="nh-md"><b class="nh-month">${HD.MONTHS[next.dateObj.getMonth()]}</b><span><span class="nh-wd">${HD.esc(wd)}</span>, ${HD.fmtUhr(`<span class="nh-time">${HD.esc(next.time)}</span>`)}</span></span>` +
         '</div>' +
         (next.piece && next.piece !== next.type
-          ? `<p class="nh-type">${HD.esc(next.type)}</p><h3 class="nh-piece">${HD.esc(next.piece)}</h3>`
-          : `<h3 class="nh-piece">${HD.esc(next.type)}</h3>`) +
+          ? `<p class="nh-type">${HD.esc(T(next.type))}</p><h3 class="nh-piece">${HD.esc(next.piece)}</h3>`
+          : `<h3 class="nh-piece">${HD.esc(T(next.type))}</h3>`) +
         (who.length ? `<ul class="nh-who">${who.map(([k, v]) => `<li><span>${HD.esc(k)}</span> ${HD.esc(v)}</li>`).join('')}</ul>` : '') +
       '</div>' +
-      (later ? `<div class="nh-next"><p class="nh-kicker">Vorschau</p><ul>${later}</ul></div>` : '') +
+      (later ? `<div class="nh-next"><p class="nh-kicker">${T('Vorschau')}</p><ul>${later}</ul></div>` : '') +
       '<div class="nh-foot">' +
-        `<a class="btn btn-dark" href="${href(next)}">Details</a>` +
-        (later ? '<a class="btn btn-outline" href="#kal-list" data-nh-more>Weitere Hochämter</a>' : '') +
+        `<a class="btn btn-dark" href="${href(next)}">${T('Details')}</a>` +
+        (later ? `<a class="btn btn-outline" href="#kal-list" data-nh-more>${T('Weitere Hochämter')}</a>` : '') +
       '</div>';
     const section = qs('#nh-section');
     if (section) section.hidden = false;
@@ -163,7 +165,7 @@
   function renderUpcoming(entries, listEl) {
     listEl.innerHTML = entries.length
       ? rowsWithMonths(entries)
-      : '<p class="s-text">Derzeit sind keine kommenden Hochämter eingetragen.</p>';
+      : `<p class="s-text">${T('Derzeit sind keine kommenden Hochämter eingetragen.')}</p>`;
     renderNext(entries, qs('#nh-board'));
   }
 
@@ -183,7 +185,7 @@
     }
     const years = [...counts.keys()].sort((a, b) => b - a);
     if (!years.length) {
-      listEl.innerHTML = '<p class="s-text">Es sind noch keine vergangenen Hochämter erfasst.</p>';
+      listEl.innerHTML = `<p class="s-text">${T('Es sind noch keine vergangenen Hochämter erfasst.')}</p>`;
       return;
     }
     const yearCount = (y) => counts.get(y) || known.get(y) || 0;
@@ -191,9 +193,9 @@
     /* Nach Jahren geordnet, wie im Neuigkeiten-Archiv: neuestes Jahr zuerst.
        Aeltere Jahre liegen in eigenen Dateien und werden erst beim Anklicken geladen. */
     listEl.innerHTML =
-      `<div class="kal-select-wrap kal-year-wrap">${selectHTML('kal-year-select', 'Jahr wählen',
+      `<div class="kal-select-wrap kal-year-wrap">${selectHTML('kal-year-select', T('Jahr wählen'),
         years.map((y) => ({ value: y, label: yearCount(y) ? `${y} (${yearCount(y)})` : String(y) })))}</div>` +
-      '<div class="news-years" role="group" aria-label="Jahr wählen">' +
+      `<div class="news-years" role="group" aria-label="${T('Jahr wählen')}">` +
         years.map((y, i) =>
           `<button type="button" class="news-year${i === 0 ? ' active' : ''}" data-year="${y}" aria-pressed="${i === 0}">${y}` +
           (yearCount(y) ? `<span class="news-year-n">${yearCount(y)}</span>` : '') + '</button>'
@@ -217,12 +219,12 @@
         fill(own);
         return;
       }
-      rowsEl.innerHTML = '<p class="s-text">Wird geladen …</p>';
+      rowsEl.innerHTML = `<p class="s-text">${T('Wird geladen …')}</p>`;
       try {
         const list = await HD.loadYear(ARCHIVE_DIR, y);
         if (mine === request) fill(list);
       } catch {
-        if (mine === request) rowsEl.innerHTML = '<p class="s-text">Dieses Jahr konnte nicht geladen werden.</p>';
+        if (mine === request) rowsEl.innerHTML = `<p class="s-text">${T('Dieses Jahr konnte nicht geladen werden.')}</p>`;
       }
     }
 
@@ -256,7 +258,7 @@
       if (listEl) renderUpcoming(upcoming, listEl);
       if (archiveList) renderArchive(past, years, archiveList);
     } catch {
-      const message = '<p class="s-text">Der Hochamt-Kalender konnte nicht geladen werden. Bitte laden Sie die Seite später noch einmal.</p>';
+      const message = `<p class="s-text">${T('Der Hochamt-Kalender konnte nicht geladen werden. Bitte laden Sie die Seite später noch einmal.')}</p>`;
       if (listEl) listEl.innerHTML = message;
       if (archiveList) archiveList.innerHTML = message;
     }

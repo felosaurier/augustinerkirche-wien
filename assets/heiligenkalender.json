@@ -1,0 +1,1336 @@
+{
+ "tage": {
+  "01-01": [
+   "Hochfest der Gottesmutter Maria"
+  ],
+  "01-02": [
+   "Hl. Basilius der Große",
+   "Hl. Gregor von Nazianz"
+  ],
+  "01-03": [
+   "Heiligster Name Jesu",
+   "Hl. Anterus"
+  ],
+  "01-04": [
+   "Hl. Angela von Foligno",
+   "Hl. Elisabeth Anna Bayley Seton"
+  ],
+  "01-05": [
+   "Hl. Eduard",
+   "Hl. Johannes N. Neumann"
+  ],
+  "01-06": [
+   "Erscheinung des Herrn"
+  ],
+  "01-07": [
+   "Hl. Valentin",
+   "Hl. Raimund von Peñafort"
+  ],
+  "01-08": [
+   "Hl. Severin",
+   "Hl. Lorenzo Giustiniani"
+  ],
+  "01-09": [
+   "Hl. Antonio Fatati",
+   "Hl. Andreas Corsini"
+  ],
+  "01-10": [
+   "Hl. Miltiades",
+   "Hl. Agathos"
+  ],
+  "01-11": [
+   "Hl. Hyginus",
+   "Hl. Petrus Apselamus"
+  ],
+  "01-12": [
+   "Hl. Arcadius",
+   "Hl. Antonius Maria Pucci"
+  ],
+  "01-13": [
+   "Hl. Hilarius",
+   "Hl. Remigius"
+  ],
+  "01-14": [
+   "Hl. Felix von Nola"
+  ],
+  "01-15": [
+   "Hl. Paulus",
+   "Hl. Maurus"
+  ],
+  "01-16": [
+   "Hl. Marcellus I.",
+   "Hl. Priscilla"
+  ],
+  "01-17": [
+   "Hl. Antonius"
+  ],
+  "01-18": [
+   "Hl. Prisca"
+  ],
+  "01-19": [
+   "Hl. Germanicus",
+   "Hl. Johannes"
+  ],
+  "01-20": [
+   "Hl. Fabian",
+   "Hl. Sebastian"
+  ],
+  "01-21": [
+   "Hl. Meinrad",
+   "Hl. Agnes"
+  ],
+  "01-22": [
+   "Hl. Vinzenz",
+   "Hl. Anastasius „der Perser“"
+  ],
+  "01-23": [
+   "Hl. Emerentiana",
+   "Hl. Ildefons"
+  ],
+  "01-24": [
+   "Hl. Franz von Sales",
+   "Sel. Timotheus Giaccardo"
+  ],
+  "01-25": [
+   "Bekehrung des Apostels Paulus",
+   "Hl. Ananias"
+  ],
+  "01-26": [
+   "Hl. Timotheus und Hl. Titus"
+  ],
+  "01-27": [
+   "Hl. Angela Merici",
+   "Hl. Vitalianus"
+  ],
+  "01-28": [
+   "Hl. Thomas von Aquin"
+  ],
+  "01-29": [
+   "Hl. Constantius",
+   "Hl. Sulpicius Severus"
+  ],
+  "01-30": [
+   "Hl. Martina",
+   "Hl. Hyazintha Marescotti"
+  ],
+  "01-31": [
+   "Hl. Johannes Bosco",
+   "Hl. Marcella"
+  ],
+  "02-01": [
+   "Sel. Ludovica Albertoni",
+   "Hl. Brigida von Kildare"
+  ],
+  "02-02": [
+   "Darstellung des Herrn"
+  ],
+  "02-03": [
+   "Hl. Ansgar",
+   "Hl. Blasius"
+  ],
+  "02-04": [
+   "Hl. Joseph von Leonessa"
+  ],
+  "02-05": [
+   "Hl. Agatha",
+   "Hl. Adelheid von Vilich"
+  ],
+  "02-06": [
+   "Hl. Paul Miki und Gefährten",
+   "Hl. Dorothea von Cäsarea"
+  ],
+  "02-07": [
+   "Hl. Richard",
+   "Sel. Pius IX"
+  ],
+  "02-08": [
+   "Hl. Hieronymus Ämiliani",
+   "Hl. Josefine Bakhita"
+  ],
+  "02-09": [
+   "Hl. Apollonia"
+  ],
+  "02-10": [
+   "Hl. Scholastika",
+   "Hl. Zoticus"
+  ],
+  "02-11": [
+   "Unsere Liebe Frau in Lourdes",
+   "Hl. Soteris"
+  ],
+  "02-12": [
+   "Hl. Saturninus und Gefährten"
+  ],
+  "02-13": [
+   "Sel. Jordan von Saxen"
+  ],
+  "02-14": [
+   "Hl. Cyrill und Hl. Methodius",
+   "Hl. Valentin"
+  ],
+  "02-15": [
+   "Hl. Onesimus",
+   "Hl. Faustinus und Jovita"
+  ],
+  "02-16": [
+   "Hl. Juliana von Nikomedien"
+  ],
+  "02-17": [
+   "Hl. Sieben Gründer des Servitenordens"
+  ],
+  "02-18": [
+   "Hl. Giovanni von Fiesole"
+  ],
+  "02-19": [
+   "Hl. Corrado Confalonieri"
+  ],
+  "02-20": [
+   "Hl. Leo von Catania"
+  ],
+  "02-21": [
+   "Hl. Petrus Damiani"
+  ],
+  "02-22": [
+   "Kathedra Petri",
+   "Hl. Maximianus"
+  ],
+  "02-23": [
+   "Hl. Polykarp",
+   "Hl. Josefina Vannini"
+  ],
+  "02-24": [
+   "Hl. Matthias",
+   "Hl. Evetius und Peter"
+  ],
+  "02-25": [
+   "Hl. Nestor"
+  ],
+  "02-26": [
+   "Hl. Faustinianus"
+  ],
+  "02-27": [
+   "Hl. Gabriel von der schmerzensreichen Jungfrau"
+  ],
+  "02-28": [
+   "Hl. Romanus"
+  ],
+  "03-01": [
+   "Hl. Felix III.",
+   "Hl. Albinus"
+  ],
+  "03-02": [
+   "Hl. Angela vom Kreuz"
+  ],
+  "03-03": [
+   "Hl. Kunigunde"
+  ],
+  "03-04": [
+   "Hl. Kasimir",
+   "Sel. Humbert III. von Savoyen"
+  ],
+  "03-05": [
+   "Hl. Lucius I.",
+   "Sel. Hadrian"
+  ],
+  "03-06": [
+   "Hl. Rosa von Viterbo",
+   "Hl. Coleta Boylet"
+  ],
+  "03-07": [
+   "Hl. Perpetua und Hl. Felizitas",
+   "Hl. Teresia Margaretha vom Heiligen Herzen"
+  ],
+  "03-08": [
+   "Hl. Johannes von Gott"
+  ],
+  "03-09": [
+   "Hl. Franziska von Rom",
+   "Hl. Bruno von Querfurt"
+  ],
+  "03-10": [
+   "Hl. Simplicius",
+   "Hl. John Ogilvie"
+  ],
+  "03-11": [
+   "Hl. Sophronius I.",
+   "Hl. Eulogius von Córdoba"
+  ],
+  "03-12": [
+   "Hl. Maximilian von Theveste",
+   "Hl. Innozenz I."
+  ],
+  "03-13": [
+   "Hl. Sabinus",
+   "Hl. Christina"
+  ],
+  "03-14": [
+   "Hl. Mathilde"
+  ],
+  "03-15": [
+   "Hl. Klemens Maria Hofbauer",
+   "Hl. Zacharias"
+  ],
+  "03-16": [
+   "Hl. Hilarius und Tatianus"
+  ],
+  "03-17": [
+   "Hl. Gertrud von Nivelles",
+   "Hl. Patrick"
+  ],
+  "03-18": [
+   "Hl. Cyrill von Jerusalem",
+   "Hl. Anselm"
+  ],
+  "03-19": [
+   "Hl. Josef"
+  ],
+  "03-21": [
+   "Hl. Nikolaus von Flüe"
+  ],
+  "03-22": [
+   "Hl. Paulus",
+   "Hl. Lea"
+  ],
+  "03-23": [
+   "Hl. Turibio von Mongrovejo"
+  ],
+  "03-24": [
+   "Hl. Oscar Romero",
+   "Hl. Katharina von Schweden"
+  ],
+  "03-25": [
+   "Verkündigung des Herrn"
+  ],
+  "03-26": [
+   "Hl. Castulus"
+  ],
+  "03-27": [
+   "Hl. Rupert"
+  ],
+  "03-28": [
+   "Hl. Castor"
+  ],
+  "03-29": [
+   "Hl. Eustasius"
+  ],
+  "03-30": [
+   "Hl. Johannes Klimakos",
+   "Sel. Amadeus IX. von Savoyen"
+  ],
+  "03-31": [
+   "Hl. Balbina",
+   "Sel. Benjamin von Persien"
+  ],
+  "04-01": [
+   "Hl. Venantius",
+   "Hl. Hugo"
+  ],
+  "04-02": [
+   "Hl. Franz von Paola"
+  ],
+  "04-03": [
+   "Hl. Sixtus I.",
+   "Hl. Johannes I."
+  ],
+  "04-04": [
+   "Hl. Isidor von Sevilla",
+   "Hl. Benedikt „der Mohr“"
+  ],
+  "04-05": [
+   "Hl. Vinzenz Ferrer",
+   "Hl. Irene"
+  ],
+  "04-06": [
+   "Hl. Galla",
+   "Hl. Pietro Veronese"
+  ],
+  "04-07": [
+   "Hl. Johannes Baptist de la Salle"
+  ],
+  "04-08": [
+   "Hl. Dionysios"
+  ],
+  "04-09": [
+   "Hl. Liborius"
+  ],
+  "04-10": [
+   "Hl. Magdalena von Canossa"
+  ],
+  "04-11": [
+   "Hl. Stanislaus",
+   "Hl. Gemma Galgani"
+  ],
+  "04-12": [
+   "Hl. Julius I.",
+   "Hl. Zeno"
+  ],
+  "04-13": [
+   "Hl. Martin I.",
+   "Hl. Hermenegild"
+  ],
+  "04-14": [
+   "Hl. Tiburtius"
+  ],
+  "04-15": [
+   "Hl. Abundius"
+  ],
+  "04-16": [
+   "Hl. Benedikt-Joseph Labre",
+   "Hl. Marie-Bernardette Soubirous"
+  ],
+  "04-17": [
+   "Hl. Simeon",
+   "Hl. Robert"
+  ],
+  "04-18": [
+   "Hl. Galdinus"
+  ],
+  "04-19": [
+   "Hl. Leo IX.",
+   "Hl. Expedit"
+  ],
+  "04-20": [
+   "Hl. Anicetus",
+   "Hl. Agnes"
+  ],
+  "04-21": [
+   "Hl. Konrad von Parzham",
+   "Hl. Anselm von Canterbury"
+  ],
+  "04-22": [
+   "Hl. Soter",
+   "Hl. Gaius"
+  ],
+  "04-23": [
+   "Hl. Adalbert",
+   "Hl. Georg"
+  ],
+  "04-24": [
+   "Hl. Fidelis von Sigmaringen",
+   "Hl. Maria des Kleophas und Salome von Galiläa"
+  ],
+  "04-25": [
+   "Hl. Markus",
+   "Hl. Franca"
+  ],
+  "04-26": [
+   "Maria, Mutter vom Guten Rat (OSA)",
+   "Hl. Anaklet I."
+  ],
+  "04-27": [
+   "Hl. Simon",
+   "Hl. Zita"
+  ],
+  "04-28": [
+   "Hl. Peter Chanel",
+   "Hl. Ludwig Maria Grignion de Montfort"
+  ],
+  "04-29": [
+   "Hl. Katharina von Siena"
+  ],
+  "04-30": [
+   "Hl. Pius V.",
+   "Hl. Quirinus"
+  ],
+  "05-01": [
+   "Hl. Josef der Arbeiter",
+   "Hl. Joseph von Nazaret"
+  ],
+  "05-02": [
+   "Hl. Athanasius"
+  ],
+  "05-03": [
+   "Hl. Philippus und Hl. Jakobus",
+   "Hl. Eventius"
+  ],
+  "05-04": [
+   "Hl. Florian",
+   "Hl. Antonina"
+  ],
+  "05-05": [
+   "Hl. Nunzio Sulprizio"
+  ],
+  "05-06": [
+   "Hl. Marianus und Jacobus"
+  ],
+  "05-07": [
+   "Hl. Flavia Domitilla",
+   "Hl. Rosa Venerini"
+  ],
+  "05-08": [
+   "Hl. Victor von Mailand",
+   "Hl. Bonifatius IV."
+  ],
+  "05-09": [
+   "Hl. Pachomius der Ältere",
+   "Hl. Jesaja"
+  ],
+  "05-10": [
+   "Hl. Gordianus",
+   "Hl. Juan de Ávila"
+  ],
+  "05-11": [
+   "Hl. Anthimus"
+  ],
+  "05-12": [
+   "Hl. Nereus und Hl. Achilleus",
+   "Hl. Pankratius"
+  ],
+  "05-13": [
+   "Unsere Liebe Frau in Fatima",
+   "Hl. André-Hubert Fournet"
+  ],
+  "05-14": [
+   "Hl. Matthias",
+   "Hl. Michel Garicoïts"
+  ],
+  "05-15": [
+   "Hl. Torquatus",
+   "Hl. Dymphna"
+  ],
+  "05-16": [
+   "Hl. Johannes Nepomuk",
+   "Hl. Alexander von Kappadokien"
+  ],
+  "05-17": [
+   "Hl. Victor",
+   "Hl. Pascual Baylón"
+  ],
+  "05-18": [
+   "Hl. Johannes I.",
+   "Hl. Felix von Cantalice"
+  ],
+  "05-19": [
+   "Hl. Coelestin V.",
+   "Hl. Urban I."
+  ],
+  "05-20": [
+   "Hl. Bernhardin von Siena",
+   "Hl. Aurea"
+  ],
+  "05-21": [
+   "Hl. Christophorus Magallanes und Gefährten",
+   "Hl. Charles Joseph Eugène de Mazenod"
+  ],
+  "05-22": [
+   "Hl. Rita von Cascia OSA",
+   "Hl. Julia"
+  ],
+  "05-23": [
+   "Hl. Johannes Baptist de Rossi"
+  ],
+  "05-24": [
+   "Hl. Vinzenz von Lérins"
+  ],
+  "05-25": [
+   "Hl. Beda der Ehrwürdige",
+   "Hl. Gregor VII."
+  ],
+  "05-26": [
+   "Hl. Philipp Neri",
+   "Hl. Eleutherius"
+  ],
+  "05-27": [
+   "Hl. Augustinus von Canterbury"
+  ],
+  "05-28": [
+   "Hl. Germanus"
+  ],
+  "05-29": [
+   "Hl. Ursula Ledóchowska",
+   "Hl. Restituto"
+  ],
+  "05-30": [
+   "Hl. Ferdinand III.",
+   "Hl. Johanna von Orléans"
+  ],
+  "05-31": [
+   "Hl. Felix von Nicosia",
+   "Hl. Petronilla"
+  ],
+  "06-01": [
+   "Hl. Justin"
+  ],
+  "06-02": [
+   "Hl. Marcellinus und Hl. Petrus",
+   "Hl. Eugen I."
+  ],
+  "06-03": [
+   "Hl. Karl Lwanga und Gefährten",
+   "Hl. Clothilde"
+  ],
+  "06-04": [
+   "Hl. Franz von Caracciolo",
+   "Hl. Quirinus"
+  ],
+  "06-05": [
+   "Hl. Bonifatius"
+  ],
+  "06-06": [
+   "Hl. Norbert",
+   "Hl. Claudius"
+  ],
+  "06-07": [
+   "Hl. Antonius Maria Gianelli"
+  ],
+  "06-08": [
+   "Hl. Medardus"
+  ],
+  "06-09": [
+   "Hl. Ephräm der Syrer",
+   "Hl. Ephraem (der Syrer)"
+  ],
+  "06-10": [
+   "Hl. Landericus"
+  ],
+  "06-11": [
+   "Hl. Barnabas",
+   "Hl. Paula Frassinetti"
+  ],
+  "06-12": [
+   "Hl. Johannes von Sahagún OSA",
+   "Hl. Leo III."
+  ],
+  "06-13": [
+   "Hl. Antonius von Padua",
+   "Hl. Felicola"
+  ],
+  "06-14": [
+   "Hl. Elischa"
+  ],
+  "06-15": [
+   "Hl. Vito (Veit)",
+   "Hl. Bernhard von Menthon"
+  ],
+  "06-16": [
+   "Hl. Quiricus und Julitta"
+  ],
+  "06-17": [
+   "Hl. Blastus und Diogenes"
+  ],
+  "06-18": [
+   "Hl. Marcus und Marcellianus",
+   "Hl. Marina von Bithynien"
+  ],
+  "06-19": [
+   "Hl. Romuald",
+   "Hl. Juliana Falconieri"
+  ],
+  "06-21": [
+   "Hl. Aloisius Gonzaga"
+  ],
+  "06-22": [
+   "Hl. Paulinus von Nola",
+   "Hl. John Fisher und Hl. Thomas Morus"
+  ],
+  "06-23": [
+   "Hl. Josef Cafasso"
+  ],
+  "06-24": [
+   "Geburt des hl. Johannes des Täufers"
+  ],
+  "06-25": [
+   "Hl. Wilhelm (von Vercelli)",
+   "Hl. Prosper von Aquitanien"
+  ],
+  "06-26": [
+   "Hl. Josemaria Escrivá de Balaguer"
+  ],
+  "06-27": [
+   "Hl. Hemma von Gurk",
+   "Hl. Cyrill von Alexandrien"
+  ],
+  "06-28": [
+   "Hl. Irenäus",
+   "Hl. Paul I."
+  ],
+  "06-29": [
+   "Hl. Petrus und Hl. Paulus"
+  ],
+  "06-30": [
+   "Die ersten heiligen Märtyrer der Stadt Rom"
+  ],
+  "07-01": [
+   "Hl. Julius und Aaron"
+  ],
+  "07-02": [
+   "Mariä Heimsuchung",
+   "Hl. Processus und Martinianus"
+  ],
+  "07-03": [
+   "Hl. Thomas",
+   "Hl. Leo II."
+  ],
+  "07-04": [
+   "Hl. Ulrich",
+   "Hl. Elisabeth von Portugal"
+  ],
+  "07-05": [
+   "Hl. Antonius Maria Zaccaria"
+  ],
+  "07-06": [
+   "Hl. Maria Goretti",
+   "Sel. Benedikt XI."
+  ],
+  "07-08": [
+   "Sel. Eugen III.",
+   "Hl. Aquila und Prisca"
+  ],
+  "07-09": [
+   "Hl. Augustinus Zhao Rong",
+   "Hl. Veronika Giuliani"
+  ],
+  "07-10": [
+   "Hl. Rufina und Seconda",
+   "Hl. Anatolia und Victoria"
+  ],
+  "07-11": [
+   "Hl. Benedikt",
+   "Hl. Pius I."
+  ],
+  "07-12": [
+   "Hl. Johannes Gualbertus",
+   "Hl. Nabor und Felix"
+  ],
+  "07-13": [
+   "Hl. Heinrich und Hl. Kunigunde",
+   "Hl. Esra"
+  ],
+  "07-14": [
+   "Hl. Kamillus von Lellis"
+  ],
+  "07-15": [
+   "Hl. Bonaventura",
+   "Hl. Pompilius Maria vom heiligen Nikolaus Pirotti"
+  ],
+  "07-16": [
+   "Unsere Liebe Frau auf dem Berge Karmel",
+   "Hl. Maria Magdalena Postel"
+  ],
+  "07-17": [
+   "Hl. Marcellina",
+   "Hl. Alexius von Edessa"
+  ],
+  "07-18": [
+   "Hl. Ämilianus",
+   "Hl. Bruno von Asti"
+  ],
+  "07-19": [
+   "Hl. Symmachus"
+  ],
+  "07-20": [
+   "Hl. Apollinaris",
+   "Hl. Elias"
+  ],
+  "07-21": [
+   "Hl. Laurentius von Brindisi",
+   "Hl. Praxedis von Rom"
+  ],
+  "07-22": [
+   "Hl. Maria Magdalena"
+  ],
+  "07-23": [
+   "Hl. Birgitta von Schweden"
+  ],
+  "07-24": [
+   "Hl. Christophorus",
+   "Hl. Scharbel Machluf"
+  ],
+  "07-25": [
+   "Hl. Jakobus",
+   "Hl. Christophorus"
+  ],
+  "07-26": [
+   "Hl. Joachim und Hl. Anna"
+  ],
+  "07-27": [
+   "Hl. Pantaleon",
+   "Hl. Coelestin I."
+  ],
+  "07-28": [
+   "Sel. Urban II.",
+   "Hl. Nazarius und Celsus"
+  ],
+  "07-29": [
+   "Hl. Marta, Hl. Maria und Hl. Lazarus",
+   "Hl. Beatrix"
+  ],
+  "07-30": [
+   "Hl. Petrus Chrysologus",
+   "Hl. Abdon und Sennen"
+  ],
+  "07-31": [
+   "Hl. Ignatius von Loyola",
+   "Hl. Justinus de Jacobis"
+  ],
+  "08-01": [
+   "Hl. Alfons Maria von Liguori",
+   "Hl. Peter Faber"
+  ],
+  "08-02": [
+   "Hl. Eusebius von Vercelli",
+   "Hl. Petrus Julianus Eymard"
+  ],
+  "08-03": [
+   "Hl. Lydia"
+  ],
+  "08-04": [
+   "Hl. Johannes Maria Vianney",
+   "Hl. Justinus"
+  ],
+  "08-05": [
+   "Weihetag der Basilika Santa Maria Maggiore in Rom",
+   "Hl. Oswald"
+  ],
+  "08-06": [
+   "Verklärung des Herrn"
+  ],
+  "08-07": [
+   "Hl. Xystus II. und Gefährten",
+   "Hl. Kajetan"
+  ],
+  "08-08": [
+   "Hl. Dominikus",
+   "Hl. Cyriacus"
+  ],
+  "08-09": [
+   "Hl. Theresia Benedicta vom Kreuz (Edith Stein)",
+   "Hl. Romanus von Rom"
+  ],
+  "08-10": [
+   "Hl. Laurentius"
+  ],
+  "08-11": [
+   "Hl. Klara von Assisi",
+   "Hl. Tiburtius"
+  ],
+  "08-12": [
+   "Hl. Johanna Franziska von Chantal",
+   "Hl. Johanna-Franziska von Chantal"
+  ],
+  "08-13": [
+   "Hl. Pontianus und Hl. Hippolyt",
+   "Hl. Cassianus"
+  ],
+  "08-14": [
+   "Hl. Maximilian Kolbe",
+   "Hl. Eusebius von Rom"
+  ],
+  "08-15": [
+   "Mariä Aufnahme in den Himmel"
+  ],
+  "08-16": [
+   "Hl. Stephan von Ungarn",
+   "Hl. Rochus von Montpellier"
+  ],
+  "08-17": [
+   "Hl. Klara von Montefalco OSA",
+   "Hl. Eusebius"
+  ],
+  "08-18": [
+   "Hl. Agapitus",
+   "Hl. Helena"
+  ],
+  "08-19": [
+   "Hl. Johannes Eudes",
+   "Hl. Sixtus III."
+  ],
+  "08-20": [
+   "Hl. Bernhard von Clairvaux",
+   "Hl. Samuel"
+  ],
+  "08-21": [
+   "Hl. Pius X."
+  ],
+  "08-22": [
+   "Maria Königin",
+   "Hl. Timotheus"
+  ],
+  "08-23": [
+   "Hl. Rosa von Lima",
+   "Hl. Abundius und Irenäus"
+  ],
+  "08-24": [
+   "Hl. Bartholomäus",
+   "Hl. Johanna Antida Thouret"
+  ],
+  "08-25": [
+   "Hl. Ludwig",
+   "Hl. Josef von Calasanz"
+  ],
+  "08-26": [
+   "Hl. Zephyrinus",
+   "Hl. Maximilian"
+  ],
+  "08-27": [
+   "Hl. Monika"
+  ],
+  "08-28": [
+   "Hl. Augustinus"
+  ],
+  "08-29": [
+   "Enthauptung des hl. Johannes des Täufers",
+   "Hl. Sabina"
+  ],
+  "08-30": [
+   "Hl. Felix",
+   "Hl. Pammachius von Rom"
+  ],
+  "08-31": [
+   "Hl. Raimundus Nonnatus",
+   "Hl. Joseph von Arimathäa"
+  ],
+  "09-01": [
+   "Hl. Ägidius"
+  ],
+  "09-02": [
+   "Hl. Zeno"
+  ],
+  "09-03": [
+   "Hl. Gregor der Große",
+   "Hl. Marinus von Rimini"
+  ],
+  "09-04": [
+   "Hl. Bonifatius I.",
+   "Hl. Rosalia"
+  ],
+  "09-05": [
+   "Hl. Acontus",
+   "Hl. Teresa von Kalkutta"
+  ],
+  "09-06": [
+   "Hl. Sacharja",
+   "Hl. Onesiphorus"
+  ],
+  "09-07": [
+   "Hl. Regina von Burgund"
+  ],
+  "09-08": [
+   "Mariä Geburt",
+   "Hl. Sergius I."
+  ],
+  "09-09": [
+   "Hl. Petrus Claver",
+   "Hl. Omer von Thérouanne"
+  ],
+  "09-10": [
+   "Hl. Nikolaus von Tolentino OSA"
+  ],
+  "09-11": [
+   "Hl. Protus und Hyacinthus",
+   "Sel. Bonaventura von Barcelona"
+  ],
+  "09-12": [
+   "Mariä Namen",
+   "Hl. Guido (Wido) von Anderlecht"
+  ],
+  "09-13": [
+   "Hl. Johannes Chrysostomus"
+  ],
+  "09-14": [
+   "Kreuzerhöhung"
+  ],
+  "09-15": [
+   "Gedächtnis der Schmerzen Mariens",
+   "Hl. Nikomedes"
+  ],
+  "09-16": [
+   "Hl. Kornelius und Hl. Cyprian",
+   "Hl. Euphemia"
+  ],
+  "09-17": [
+   "Hl. Hildegard von Bingen",
+   "Hl. Robert Bellarmin"
+  ],
+  "09-18": [
+   "Hl. Joseph von Copertino",
+   "Hl. Sophia"
+  ],
+  "09-19": [
+   "Hl. Januarius"
+  ],
+  "09-20": [
+   "Hl. Andreas Kim Taegon, Hl. Paul Chong Hasang und Gefährten",
+   "Hl. Eustachius (Placidus)"
+  ],
+  "09-21": [
+   "Hl. Matthäus",
+   "Hl. Pamphilus"
+  ],
+  "09-22": [
+   "Hl. Thomas von Villanova OSA",
+   "Hl. Mauritius und Gefährten"
+  ],
+  "09-23": [
+   "Hl. Pius von Pietrelcina",
+   "Hl. Zacharias und Elisabeth"
+  ],
+  "09-24": [
+   "Hl. Rupert und Hl. Virgil",
+   "Hl. Pacificus von San Severino"
+  ],
+  "09-25": [
+   "Hl. Firminus der Ältere"
+  ],
+  "09-26": [
+   "Hl. Kosmas und Hl. Damian",
+   "Hl. Senator"
+  ],
+  "09-27": [
+   "Hl. Vinzenz von Paul",
+   "Hl. Adulphus und Johannes"
+  ],
+  "09-28": [
+   "Hl. Lioba",
+   "Hl. Wenzel"
+  ],
+  "09-29": [
+   "Hl. Michael, Hl. Gabriel und Hl. Rafael",
+   "Hl. Raphael"
+  ],
+  "09-30": [
+   "Hl. Hieronymus",
+   "Hl. Simon"
+  ],
+  "10-01": [
+   "Hl. Theresia vom Kinde Jesus"
+  ],
+  "10-02": [
+   "Heilige Schutzengel"
+  ],
+  "10-03": [
+   "Hl. Candida"
+  ],
+  "10-04": [
+   "Hl. Franz von Assisi"
+  ],
+  "10-05": [
+   "Hl. Placidus und Maurus"
+  ],
+  "10-06": [
+   "Hl. Bruno",
+   "Hl. Maria Franziska von den fünf Wunden"
+  ],
+  "10-07": [
+   "Unsere Liebe Frau vom Rosenkranz",
+   "Hl. Markus I."
+  ],
+  "10-08": [
+   "Hl. Pelagia"
+  ],
+  "10-09": [
+   "Hl. Dionysius und Gefährten",
+   "Hl. Johannes Leonardi"
+  ],
+  "10-10": [
+   "Hl. Paulinus",
+   "Hl. Daniel"
+  ],
+  "10-11": [
+   "Hl. Johannes XXIII.",
+   "Hl. Philippus der Evangelist"
+  ],
+  "10-12": [
+   "Sel. Maria Teresa Fasce OSA",
+   "Hl. Edistus"
+  ],
+  "10-13": [
+   "Gedenken an die verstorbenen Wohltäter des Ordens (OSA)",
+   "Hl. Theophilos"
+  ],
+  "10-14": [
+   "Hl. Kallistus I."
+  ],
+  "10-15": [
+   "Hl. Theresia von Jesus (von Ávila)"
+  ],
+  "10-16": [
+   "Hl. Hedwig",
+   "Hl. Margareta Maria Alacoque"
+  ],
+  "10-17": [
+   "Hl. Ignatius von Antiochien",
+   "Hl. Pietro Casani"
+  ],
+  "10-18": [
+   "Hl. Lukas"
+  ],
+  "10-19": [
+   "Hl. Johannes de Brébeuf, Hl. Isaak Jogues und Gefährten",
+   "Hl. Paul vom Kreuz"
+  ],
+  "10-20": [
+   "Hl. Maria Bertilla Boscardin"
+  ],
+  "10-21": [
+   "Hl. Kaspar del Bufalo",
+   "Hl. Hilarion von Gaza"
+  ],
+  "10-22": [
+   "Hl. Johannes Paul II.",
+   "Hl. Markus"
+  ],
+  "10-23": [
+   "Hl. Johannes von Capestrano",
+   "Hl. Severinus Boetius"
+  ],
+  "10-24": [
+   "Hl. Antonius Maria Claret"
+  ],
+  "10-25": [
+   "Hl. Chrysanthus und Daria",
+   "Hl. Crispinus und Crispinianus"
+  ],
+  "10-26": [
+   "Hl. Demetrios"
+  ],
+  "10-27": [
+   "Hl. Evaristus",
+   "Hl. Frumentius"
+  ],
+  "10-28": [
+   "Hl. Simon und Hl. Judas"
+  ],
+  "10-29": [
+   "Hl. Felicianus"
+  ],
+  "10-30": [
+   "Hl. Germanus"
+  ],
+  "10-31": [
+   "Hl. Wolfgang",
+   "Hl. Alphons Rodríguez"
+  ],
+  "11-01": [
+   "Allerheiligen"
+  ],
+  "11-02": [
+   "Allerseelen"
+  ],
+  "11-03": [
+   "Hl. Hubert",
+   "Hl. Martin von Porres"
+  ],
+  "11-04": [
+   "Hl. Karl Borromäus",
+   "Hl. Vitalis und Agricola"
+  ],
+  "11-05": [
+   "Hl. Domninus"
+  ],
+  "11-06": [
+   "Hl. Leonhard"
+  ],
+  "11-07": [
+   "Hl. Prosdocimus",
+   "Hl. Willibrord von Echternach"
+  ],
+  "11-08": [
+   "Hl. Vier Gekrönte",
+   "Hl. Adeodatus (Deusdedit) I."
+  ],
+  "11-09": [
+   "Weihetag der Lateranbasilika"
+  ],
+  "11-10": [
+   "Hl. Leo der Große",
+   "Hl. Andreas Avellino"
+  ],
+  "11-11": [
+   "Hl. Martin von Tours",
+   "Hl. Bartholomäus der Jüngere"
+  ],
+  "11-12": [
+   "Hl. Josaphat",
+   "Hl. Diego von Alcalá"
+  ],
+  "11-13": [
+   "Alle Heiligen des Augustinerordens (OSA)",
+   "Hl. Nikolaus I. „der Große“"
+  ],
+  "11-14": [
+   "Hl. Serapion der Mercedarier"
+  ],
+  "11-15": [
+   "Hl. Leopold"
+  ],
+  "11-16": [
+   "Hl. Margareta von Schottland",
+   "Hl. Gertrud von Helfta"
+  ],
+  "11-17": [
+   "Hl. Elisabeth von Thüringen",
+   "Hl. Gregor der Wundertäter"
+  ],
+  "11-18": [
+   "Weihetag der Basiliken St. Peter und St. Paul in Rom",
+   "Hl. Philippine Rose Duchesne"
+  ],
+  "11-19": [
+   "Hl. Mechthild",
+   "Hl. Obadja"
+  ],
+  "11-20": [
+   "Hl. Gelasius I."
+  ],
+  "11-21": [
+   "Unsere Liebe Frau in Jerusalem",
+   "Hl. Maria von Jesus dem guten Hirten"
+  ],
+  "11-22": [
+   "Hl. Cäcilia"
+  ],
+  "11-23": [
+   "Hl. Kolumban",
+   "Hl. Klemens I."
+  ],
+  "11-24": [
+   "Hl. Andreas Dũng-Lạc und Gefährten",
+   "Hl. Chrysogonus"
+  ],
+  "11-25": [
+   "Hl. Katharina von Alexandrien",
+   "Hl. Mose"
+  ],
+  "11-26": [
+   "Hl. Konrad und Hl. Gebhard",
+   "Hl. Siricius"
+  ],
+  "11-27": [
+   "Hl. Virgil"
+  ],
+  "11-28": [
+   "Hl. Jakobus von der Mark"
+  ],
+  "11-29": [
+   "Hl. Saturnin"
+  ],
+  "11-30": [
+   "Hl. Andreas"
+  ],
+  "12-01": [
+   "Hl. Charles de Foucauld",
+   "Hl. Eligius"
+  ],
+  "12-02": [
+   "Hl. Bibiana",
+   "Hl. Pimenius"
+  ],
+  "12-03": [
+   "Hl. Franz Xaver"
+  ],
+  "12-04": [
+   "Hl. Barbara",
+   "Hl. Johannes von Damaskus"
+  ],
+  "12-05": [
+   "Hl. Sabas"
+  ],
+  "12-06": [
+   "Hl. Nikolaus",
+   "Hl. Asella"
+  ],
+  "12-07": [
+   "Hl. Ambrosius"
+  ],
+  "12-08": [
+   "Mariä Empfängnis"
+  ],
+  "12-09": [
+   "Hl. Juan Diego Cuauhtlatoatzin",
+   "Hl. Leocadia von Toledo"
+  ],
+  "12-10": [
+   "Unsere Liebe Frau von Loreto",
+   "Hl. Maurus von Rom"
+  ],
+  "12-11": [
+   "Hl. Damasus I."
+  ],
+  "12-12": [
+   "Unsere Liebe Frau in Guadalupe"
+  ],
+  "12-13": [
+   "Hl. Odilia",
+   "Hl. Luzia"
+  ],
+  "12-14": [
+   "Hl. Johannes vom Kreuz"
+  ],
+  "12-15": [
+   "Hl. Valerianus"
+  ],
+  "12-16": [
+   "Hl. David",
+   "Hl. Adelheid"
+  ],
+  "12-17": [
+   "Hl. Daniel",
+   "Hl. Hananias"
+  ],
+  "12-18": [
+   "Hl. Maleachi",
+   "Hl. Gatianus"
+  ],
+  "12-19": [
+   "Sel. Urban V.",
+   "Hl. Anastasius I."
+  ],
+  "12-20": [
+   "Hl. Philogonius"
+  ],
+  "12-21": [
+   "Hl. Petrus Canisius",
+   "Hl. Micha"
+  ],
+  "12-22": [
+   "Hl. Franziska Xaviera Cabrini"
+  ],
+  "12-23": [
+   "Hl. Johannes von Krakau"
+  ],
+  "12-24": [
+   "Hl. Tarsilla",
+   "Hl. Irmina"
+  ],
+  "12-25": [
+   "Geburt des Herrn"
+  ],
+  "12-26": [
+   "Hl. Stephanus",
+   "Hl. Dionysius"
+  ],
+  "12-27": [
+   "Hl. Johannes",
+   "Hl. Fabiola von Rom"
+  ],
+  "12-28": [
+   "Unschuldige Kinder"
+  ],
+  "12-29": [
+   "Hl. Thomas Becket"
+  ],
+  "12-30": [
+   "Hl. Felix I."
+  ],
+  "12-31": [
+   "Hl. Silvester I.",
+   "Hl. Melania"
+  ]
+ },
+ "sonntags": [
+  "01-01",
+  "01-06",
+  "02-02",
+  "06-24",
+  "06-29",
+  "08-06",
+  "08-15",
+  "09-14",
+  "11-01",
+  "11-02",
+  "11-09",
+  "12-25",
+  "08-28"
+ ]
+}

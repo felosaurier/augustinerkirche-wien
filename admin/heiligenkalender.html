@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Heiligenkalender &amp; Kirchenjahr — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/kalender-daten.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-heiligenkalender.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Pfarre &amp; Kloster</div>
+      <h1 class="ph-title">Heiligenkalender <em>&amp; Kirchenjahr</em></h1>
+      <p class="ph-sub">Heilige des Tages und die Namen der Sonn- und Festtage. Beides steht automatisch im Kalender, im Wochenkalender und auf der Startseite, außer für einen Tag ist im <a href="wochenkalender.html">Wochenkalender</a> etwas Eigenes eingetragen.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <div class="adm-seg rt-tabs" role="group" aria-label="Ansicht wählen" id="hk-tabs">
+    <button type="button" class="adm-seg-btn" data-tab="heilige" aria-pressed="true">Heilige des Tages</button>
+    <button type="button" class="adm-seg-btn" data-tab="kirchenjahr" aria-pressed="false">Kirchenjahr (Sonn- und Festtage)</button>
+  </div>
+
+  <div id="tab-heilige">
+  <div class="adm-alert info hk-quelle">
+    <span data-icon="info"></span>
+    <div>Vorgabe: Römischer Generalkalender und Regionalkalender für das deutsche Sprachgebiet mit den Eigenfeiern Österreichs (z.&nbsp;B. Hl. Leopold, Hl. Klemens Maria Hofbauer), dazu Feste des Augustinerordens (OSA); ergänzt um Tagesheilige aus dem Römischen Martyrologium (nach Vatican News). Höchstens 2 je Tag, Feste des Ordens zuerst; an Hochfesten und Herrenfesten nur das Fest. An Sonntagen erscheinen nur Tage mit „auch an Sonntagen“ (Hochfeste, Herrenfeste). Bewegliche Feste (Ostern, Pfingsten, Christkönig …) stehen im Reiter Kirchenjahr. Maßgeblich für jedes Jahr ist das Direktorium der Erzdiözese Wien bzw. des Ordens.</div>
+  </div>
+  <div class="adm-toolbar">
+    <p class="adm-count" id="hk-count" role="status"></p>
+    <input class="adm-input hk-search" type="search" id="hk-search" placeholder="Suchen, z. B. Augustinus" aria-label="Heilige suchen"/>
+    <button type="button" class="adm-act" id="hk-reset-all" data-icon="refresh" hidden>Alles auf Standard</button>
+  </div>
+  <div class="adm-seg hk-months" role="group" aria-label="Monat wählen" id="hk-months"></div>
+  <div id="hk-list"><p class="adm-muted">Wird geladen …</p></div>
+  </div>
+
+  <div id="tab-kirchenjahr" hidden>
+    <div class="adm-alert info hk-quelle">
+      <span data-icon="info"></span>
+      <div>Die Namen werden aus dem Osterdatum und dem 1. Adventsonntag berechnet (Advent, Weihnachtszeit, Fastenzeit, Osterzeit, Sonntage im Jahreskreis, Christkönig, Karwoche, Pfingsten, Fronleichnam …). Werktage im Jahreskreis haben keinen Namen. Ein Klick auf einen Tag ändert die Schreibweise dieses Namens für alle Jahre; einen einzelnen Tag änderst du im Wochenkalender.</div>
+    </div>
+    <div class="adm-field kj-opts">
+      <label class="adm-check"><input type="checkbox" id="kj-an"/>Namen der Sonn- und Festtage automatisch anzeigen</label>
+      <label class="adm-check"><input type="checkbox" id="kj-lesejahr"/>Beim 1. Adventsonntag das Lesejahr dazuschreiben (A, B oder C)</label>
+    </div>
+    <div class="adm-toolbar">
+      <p class="adm-count" id="kj-count" role="status"></p>
+      <label class="adm-label kj-year-l" for="kj-year">Kirchenjahr</label>
+      <select class="adm-input kj-year" id="kj-year"></select>
+    </div>
+    <div id="kj-list"></div>
+  </div>
+</main>
+
+<dialog class="adm-dialog" id="hk-dlg" aria-labelledby="hk-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag">Heilige des Tages</div>
+      <h2 class="adm-dlg-title" id="hk-dlg-title">Tag</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="hk-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Heilige und Gedenktage</legend>
+      <div class="adm-field full">
+        <label class="adm-label" for="hk-namen">Eine Zeile je Eintrag <span class="adm-opt">leer = an diesem Tag nichts</span></label>
+        <textarea class="adm-input" id="hk-namen" rows="4" placeholder="Hl. Augustinus"></textarea>
+        <p class="adm-hint" id="hk-std-hint"></p>
+        <label class="adm-check"><input type="checkbox" id="hk-sonntag"/>Auch an einem Sonntag anzeigen (Hochfest oder Fest des Herrn)</label>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act" id="hk-std" data-icon="refresh">Standard</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="hk-form" class="btn btn-dark" id="hk-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="adm-dialog" id="kj-dlg" aria-labelledby="kj-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag">Name im Kirchenjahr</div>
+      <h2 class="adm-dlg-title" id="kj-dlg-title">Name</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="kj-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Schreibweise</legend>
+      <div class="adm-field full">
+        <label class="adm-label" for="kj-name">So erscheint es auf der Website <span class="adm-opt">leer = berechneter Name</span></label>
+        <input class="adm-input" type="text" id="kj-name" maxlength="90"/>
+        <p class="adm-hint" id="kj-orig"></p>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l"></div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="kj-form" class="btn btn-dark" id="kj-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

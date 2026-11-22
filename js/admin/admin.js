@@ -128,7 +128,7 @@
   const AREAS = [
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Aktuelles', page: 'neuigkeiten.html' },
     { key: 'termine', label: 'Veranstaltungen (Ausflüge, Feste …)', group: 'Aktuelles', page: 'termine.html' },
-    { key: 'startseite', label: 'Titelfotos', group: 'Website', page: 'startseite.html' },
+    { key: 'startseite', label: 'Titelfotos und Das könnte Sie interessieren (Startseite)', group: 'Website', page: 'startseite.html' },
     { key: 'hinweise', label: 'Wichtiger Hinweis (oben auf der Website)', group: 'Website', page: 'hinweise.html' },
     { key: 'sprueche', label: 'Zitate (unten auf den Seiten)', group: 'Website', page: 'sprueche.html' },
     { key: 'design', label: 'Kopfzeile (Farbe, Logo, Name)', group: 'Website', page: 'design.html' },
@@ -140,7 +140,7 @@
     { key: 'cds', label: 'CDs', group: 'Kirchenmusik', page: 'cds.html' },
     { key: 'galerie', label: 'Galerie (Fotos, Videos, Aufnahmen)', group: 'Kirchenmusik', page: 'galerie.html' },
     { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
-    { key: 'repertoire', label: 'Repertoire', group: 'Kirchenmusik', page: 'repertoire.html' },
+    { key: 'repertoire', label: 'Repertoire & Komponisten (Lebensdaten)', group: 'Kirchenmusik', page: 'repertoire.html' },
     { key: 'asp-personen', label: 'Aspersdorf: Pfarrer & Leitung', group: 'Pfarre Aspersdorf', page: 'personen.html' },
     { key: 'asp-gremien', label: 'Aspersdorf: Pfarrgemeinderat & Vermögensverwaltungsrat', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gremien.html' },
     { key: 'asp-wochen', label: 'Aspersdorf: Wochenblätter (PDF)', group: 'Pfarre Aspersdorf', page: 'aspersdorf-wochen.html' },
@@ -153,6 +153,7 @@
     { key: 'predigten', label: 'Predigten & Ansprachen', group: 'Pfarre & Kloster', page: 'predigten.html' },
     { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' },
     { key: 'qrcode', label: 'QR-Codes erstellen', group: 'Werkzeuge', page: 'qrcode.html' },
+    { key: 'farben', label: 'Farben der Website ändern', group: 'Werkzeuge', page: 'farben.html' },
   ];
   /* "Runden" gehoert zu Pfarre & Kloster, steht aber wegen der Einzelauswahl getrennt */
   const RUNDEN_KEY = 'runden';
@@ -191,7 +192,13 @@
     if (page === 'runden.html') return RUNDEN_KEY;
     /* Spenden & Moeglichkeiten liegen in derselben Datei wie die Paten */
     if (page === 'spenden.html') return 'paten';
+    /* Die Entdecken-Bilder der Startseite gehoeren zu den Titelfotos */
+    if (page === 'entdecken.html') return 'startseite';
+    /* Der Heiligenkalender gehoert zum Wochenkalender */
+    if (page === 'heiligenkalender.html') return 'wochenkalender';
     if (page === 'personen.html') return personenKey(personenBereich());
+    /* Farben ansehen und kopieren darf jeder, aendern nur mit dem Recht 'farben' */
+    if (page === 'farben.html') return '';
     const a = AREAS.find((x) => x.page === page);
     return a ? a.key : '';
   }
@@ -1132,7 +1139,7 @@
     [/^data\/(archiv\/)?hochaemter.*\.csv$/, 'Hochämter'], [/^data\/hochamt-fotos(\.json|\/.+\.json)$/, 'Hochämter'],
     [/^data\/solisten\.json$/, 'Solisten'], [/^data\/paten\.json$/, 'Paten'], [/^data\/cds\.json$/, 'CDs'], [/^data\/galerie\.json$/, 'Galerie'],
     [/^data\/personen\.json$/, 'Personen'], [/^data\/repertoire\.json$/, 'Repertoire'],
-    [/^data\/gottesdienste\.json$/, 'Gottesdienstzeiten'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
+    [/^data\/gottesdienste\.json$/, 'Gottesdienstzeiten'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/heiligenkalender\.json$/, 'Heiligenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
     [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'], [/^data\/predigten\.json$/, 'Predigten & Ansprachen'],
     [/^data\/pgr-aspersdorf\.json$/, 'Aspersdorf: Gremien'], [/^data\/aspersdorf-wochen\.json$/, 'Aspersdorf: Wochenblätter'], [/^data\/friedhof\.json$/, 'Aspersdorf: Friedhofsgebühren'],
     [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
@@ -2170,6 +2177,7 @@
     { label: 'Pfarre & Kloster', items: [
       ['gottesdienste.html', 'Gottesdienstzeiten', 'clock', 'Regelmäßige Termine Gottesdienste Messen Kanzleistunden Wochenplan Ferien Pausen Vesper Laudes'],
       ['wochenkalender.html', 'Wochenkalender', 'calendarWeek', 'Woche Zelebrant Heilige Druck'],
+      ['heiligenkalender.html', 'Heiligenkalender & Kirchenjahr', 'book', 'Heilige des Tages Gedenktage Namenstage Feste Hochfeste Direktorium Kirchenjahr Sonntag Jahreskreis Advent Fastenzeit Ostern Pfingsten Lesejahr Tagesbezeichnung'],
       ['runden.html', 'Runden', 'users', 'Gruppen Angebote Kreise Bibelrunde'],
       ['kontakt.html', 'Pfarrkanzlei & Kontakt', 'phone', 'Öffnungszeiten Telefon E-Mail Adresse Straße Kanzlei'],
       ['rundgang.html', 'Kirchenrundgang', 'image', 'Chronik Bilder Fotos Führung Geschichte'],
@@ -2179,7 +2187,7 @@
     ] },
     { label: 'Kirchenmusik', items: [
       ['solisten.html', 'Solisten', 'mic', 'Sänger Sopran Alt Tenor Bass Foto'],
-      ['repertoire.html', 'Repertoire', 'book', 'Komponisten Werke Messen Chor'],
+      ['repertoire.html', 'Repertoire & Komponisten', 'book', 'Komponisten Werke Messen Chor Lebensdaten Jahreszahlen Geburt Tod Schreibweisen Hochamt Programm Weitere Musik'],
       ['personen.html?bereich=musik', 'Leitung & Organisten', 'user', 'Dirigent Chorleiter Organist Orgel Gastdirigenten'],
       ['paten.html', 'Paten & Ehrenpaten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender'],
       ['spenden.html', 'Spendenmöglichkeiten', 'heart', 'Patenschaft Spenden PayPal Beträge Preise Förderer Stifter'],
@@ -2194,6 +2202,7 @@
     ] },
     { label: 'Website', items: [
       ['startseite.html', 'Titelfotos', 'image', 'Startseite Fotos Vollbild Einstellungen'],
+      ['entdecken.html', 'Das könnte Sie interessieren', 'image', 'Startseite Entdecken interessieren Karten Links Bilder Fotos Reihenfolge'],
       ['hinweise.html', 'Wichtiger Hinweis', 'alert', 'Hinweisbanner Banner Einstellungen'],
       ['sprueche.html', 'Zitate', 'quote', 'Sprüche Einstellungen'],
       ['design.html', 'Kopfzeile', 'palette', 'Farben Logo Name Design Thema Titelzeile Einstellungen'],
@@ -2201,7 +2210,8 @@
       ['rechtliches.html', 'Impressum & Datenschutz', 'shield', 'Rechtliches Einstellungen']
     ] },
     { label: 'Werkzeuge', items: [
-      ['qrcode.html', 'QR-Codes', 'qr', 'QR Code Plakat Flyer Link Barcode PNG SVG transparent Farbe Logo Download']
+      ['qrcode.html', 'QR-Codes', 'qr', 'QR Code Plakat Flyer Link Barcode PNG SVG transparent Farbe Logo Download'],
+      ['farben.html', 'Farben', 'palette', 'Farbcodes HEX RGB CMYK Farbpalette Gold Blau Druck Plakat Flyer ändern Design']
     ] },
     { label: 'Verwaltung', items: [
       ['zugaenge.html', 'Benutzer & Passwörter', 'key', 'Zugänge Benutzer Passwort Rollen Rechte'],
@@ -2914,7 +2924,7 @@
     ...['aspersdorf-wochen.json', 'cds.json', 'friedhof.json', 'galerie.json', 'gottesdienste.json', 'hinweise.json', 'hochaemter.csv', 'kontakt.json',
       'navigation.json', 'news.csv', 'paten.json', 'personen.json', 'pgr-aspersdorf.json', 'pgr.json', 'rechtliches.json', 'repertoire.json', 'runden.json',
       'rundgang.json', 'solisten.json', 'sprueche.json', 'startseite-aspersdorf.json', 'startseite-augustiner.json', 'startseite-augustinerkirche.json',
-      'startseite-kirchenmusik.json', 'startseite.json', 'termine.json', 'themen.json', 'wochenkalender.json',
+      'startseite-kirchenmusik.json', 'startseite.json', 'entdecken.json', 'termine.json', 'themen.json', 'wochenkalender.json', 'heiligenkalender.json',
       'hochamt-fotos.json', 'news-fotos.json', 'news-videos.json', 'predigten.json', 'seite-augustiner.json', 'seite-aspersdorf.json'].map((n) => `data/${n}`)
   ];
   const SCAN_SKIP = /^data\/(bildnachweise|bilder-klein)\.json$|\.(webp|png|jpe?g|gif|svg|ico|mp3|mp4|webm|pdf|woff2?)$/i;

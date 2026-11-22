@@ -17,6 +17,7 @@
 <script src="../js/hochaemter-data.js"></script>
 <script src="../js/admin/admin.js"></script>
 <script src="../js/admin/admin-repertoire.js" defer></script>
+<script src="../js/admin/admin-komponisten.js" defer></script>
 </head>
 <body class="adm">
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
@@ -26,17 +27,26 @@
   <div class="adm-head-in">
     <div>
       <div class="ph-tag">Verwaltung</div>
-      <h1 class="ph-title">Repertoire <em>pflegen</em></h1>
-      <p class="ph-sub">Das ständige Repertoire des Chores von St. Augustin, nach Komponisten. Erscheint unter Kirchenmusik → Repertoire.</p>
+      <h1 class="ph-title">Repertoire <em>und Komponisten</em></h1>
+      <p class="ph-sub" id="rp-sub">Das ständige Repertoire des Chores von St. Augustin, nach Komponisten. Erscheint unter Kirchenmusik → Repertoire.</p>
+      <p class="ph-sub" id="kp-sub" hidden>Aus dieser Liste ergänzt die Verwaltung bei den Hochämtern unter „Weitere Musik“ die Lebensdaten von selbst, wenn nur der Name eingetragen ist. Andere Schreibweisen (z. B. „Michael Haydn“ oder ein Tippfehler) werden dabei zum Namen in der Liste.</p>
     </div>
     <div class="adm-head-actions">
       <button type="button" class="btn btn-gold" id="rp-new" data-icon="plus">Komponist hinzufügen</button>
+      <button type="button" class="btn btn-gold" id="kp-new" data-icon="plus" hidden>Komponist hinzufügen</button>
     </div>
   </div>
 </div>
 
 <main class="adm-main" id="main">
   <div data-adm-folder></div>
+
+  <div class="adm-seg rt-tabs" role="group" aria-label="Liste wählen" id="rp-tabs">
+    <button type="button" class="adm-seg-btn" data-tab="repertoire" aria-pressed="true">Repertoire</button>
+    <button type="button" class="adm-seg-btn" data-tab="komponisten" aria-pressed="false">Komponisten (Lebensdaten)</button>
+  </div>
+
+  <div id="tab-repertoire">
   <div class="adm-toolbar">
     <div class="adm-search" data-icon="search">
       <input type="search" id="rp-search" placeholder="Komponist oder Werk suchen …" aria-label="Repertoire durchsuchen" autocomplete="off"/>
@@ -56,6 +66,17 @@
       <div class="adm-inline-foot"><button type="submit" class="btn btn-dark btn-sm" data-icon="check">Einleitung speichern</button></div>
     </form>
   </section>
+  </div>
+
+  <div id="tab-komponisten" hidden>
+    <div class="adm-toolbar">
+      <div class="adm-search" data-icon="search">
+        <input type="search" id="kp-search" placeholder="Name, Schreibweise oder Jahr suchen …" aria-label="Komponisten durchsuchen" autocomplete="off"/>
+      </div>
+    </div>
+    <p class="adm-count adm-mb-10" id="kp-count" role="status"></p>
+    <div id="kp-list"><p class="adm-muted">Wird geladen …</p></div>
+  </div>
 </main>
 
 <!-- Komponist bearbeiten -->
@@ -99,6 +120,47 @@
     <div class="adm-dlg-foot-r">
       <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
       <button type="submit" form="rp-form" class="btn btn-dark" id="rp-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Komponist mit Lebensdaten bearbeiten -->
+<dialog class="adm-dialog" id="kp-dlg" aria-labelledby="kp-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="kp-dlg-tag">Komponist hinzufügen</div>
+      <h2 class="adm-dlg-title" id="kp-dlg-title">Neuer Komponist</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="kp-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Komponist</legend>
+      <div class="adm-grid">
+        <div class="adm-field">
+          <label class="adm-label" for="k-name">Name<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="k-name" placeholder="z. B. Wolfgang Amadeus Mozart" required/>
+        </div>
+        <div class="adm-field">
+          <label class="adm-label" for="k-jahre">Lebensdaten<span class="adm-req">Pflichtfeld</span></label>
+          <input class="adm-input" type="text" id="k-jahre" placeholder="z. B. 1756-1791" aria-describedby="k-jahre-hint" required/>
+          <span class="adm-hint" id="k-jahre-hint">Als <code>1756-1791</code>, ungefähr mit <code>~</code> (<code>~1450-1517</code>), Lebende mit Stern (<code>*1957</code>).</span>
+        </div>
+      </div>
+      <div class="adm-field">
+        <label class="adm-label" for="k-auch">Andere Schreibweisen</label>
+        <input class="adm-input" type="text" id="k-auch" placeholder="optional, z. B. Michael Haydn, Joh. Michael Haydn" aria-describedby="k-auch-hint"/>
+        <span class="adm-hint" id="k-auch-hint">Mit Komma trennen. Steht im Hochamt eine dieser Schreibweisen, wird daraus der Name oben.</span>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act danger" id="kp-delete" data-icon="trash">Entfernen</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="kp-form" class="btn btn-dark" id="kp-save" data-icon="check">Speichern</button>
     </div>
   </div>
 </dialog>
