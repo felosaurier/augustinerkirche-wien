@@ -169,8 +169,10 @@
        leer gelassen bleibt der Text der Vorlage (tools/vorlagen/nav.html) */
     if (names) {
       /* Uebersetzte Seiten: der Untertitel steht in der Vorlage schon in der Sprache, ein deutscher aus der Verwaltung gilt dort nur mit Uebersetzung */
-      const name = names.name && T(names.name);
-      const unter = names.untertitel && (LANG === 'de' || T(names.untertitel) !== names.untertitel) ? T(names.untertitel) : '';
+      /* Beim Umbruch nie nach dem St. trennen */
+      const nb = (s) => String(s || '').replace(/St\. /g, 'St. ');
+      const name = names.name && nb(T(names.name));
+      const unter = names.untertitel && (LANG === 'de' || T(names.untertitel) !== names.untertitel) ? nb(T(names.untertitel)) : '';
       for (const el of d.querySelectorAll('nav .nav-logo-text')) if (name && el.textContent !== name) el.textContent = name;
       for (const el of d.querySelectorAll('nav .nav-logo-sub')) if (unter && el.textContent !== unter) el.textContent = unter;
     }

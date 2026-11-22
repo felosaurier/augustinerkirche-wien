@@ -81,9 +81,9 @@
     document.getElementById('v3-heute-date').textContent = gross(HD.fmtLang(dt, true));
     /* Tagesbezeichnung und Heilige des Tages (Wochenkalender bzw. Heiligenkalender) */
     const inf = KD.infoAm ? KD.infoAm(tag) : null;
-    /* Übersetzte Seiten: nur die Tagesbezeichnung des Kirchenjahres, die Heiligen stehen deutsch im Kalender */
+    /* Übersetzte Seiten: Tagesbezeichnung und Feste, die im Wörterbuch stehen; übrige Heilige stehen nur deutsch im Kalender */
     const de = (T.lang || 'de') === 'de';
-    const zeile = inf ? (de ? [inf.tag, ...inf.heilige] : [inf.tag && (T.tag ? T.tag(inf.tag) : inf.tag)]).filter(Boolean).join(' · ') : '';
+    const zeile = inf ? (de ? [inf.tag, ...inf.heilige] : [inf.tag && (T.tag ? T.tag(inf.tag) : inf.tag), ...inf.heilige.filter((h) => T(h) !== h).map((h) => T(h))]).filter(Boolean).join(' · ') : '';
     let hl = document.getElementById('v3-heute-heilige');
     if (zeile) {
       if (!hl) {
@@ -110,7 +110,7 @@
       const art = ART[it.group] || '';
       /* Ort eigens mit Symbol (steht er schon allein in den Angaben, dort weglassen) */
       const ort = String((it.d && it.d.ort) || '').trim();
-      const sub = ort && it.sub === ort ? '' : T(String(it.sub || ''));
+      const sub = ort && it.sub === ort ? '' : (KD.subText ? KD.subText(String(it.sub || '').split(' · ').filter((x) => !ort || x !== ort).join(' · ')).join(' · ') : T(String(it.sub || '')));
       const inner = `<span class="v3-h-top"><span class="v3-h-zeit">${HD.esc(zeit)}</span>${status}</span>` +
         (art && art !== it.title ? `<span class="v3-h-art">${HD.esc(art)}</span>` : '') +
         `<b class="v3-h-titel">${HD.esc(T(it.title))}</b>` +

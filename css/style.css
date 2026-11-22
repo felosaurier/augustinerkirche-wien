@@ -173,9 +173,9 @@ nav .nav-logo-sub{color:var(--nav-sub)}
    320px ohne Umbruch in ein Drittel passt. */
 .mob-quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin-bottom:1.2rem}
 .mob-quick-link{
-  display:flex;align-items:center;justify-content:center;min-height:3rem;padding:.5rem .2rem;
+  display:flex;align-items:center;justify-content:center;min-height:3rem;padding:.5rem .35rem;
   border:1px solid rgba(216,185,110,.55);border-radius:2px;
-  font-size:min(.95rem,3.9vw);white-space:nowrap;font-weight:500;color:var(--gold-l);text-align:center;text-decoration:none;
+  font-size:min(.95rem,3.9vw);white-space:normal;overflow-wrap:break-word;line-height:1.2;font-weight:500;color:var(--gold-l);text-align:center;text-decoration:none;
   transition:background-color .2s,color .2s;
 }
 .mob-quick-link:hover,.mob-quick-link:active{background:var(--gold-l);color:var(--blue-deep)}
@@ -1714,7 +1714,8 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .person-card-wide:not(.compact):not(.no-img){grid-template-columns:minmax(0,1fr);gap:1rem}
   .person-card-wide:not(.compact) .bn-wrap{max-width:10rem}
 }
-@media(max-width:360px){
+/* iPhone und andere Handys: nur der Name, der Untertitel wuerde abgeschnitten (…) */
+@media(max-width:440px){
   .nav-logo-sub{display:none}
 }
 
@@ -1985,7 +1986,7 @@ body.adm .suche-btn,body.adm .to-top{display:none!important}
 }
 /* Schmale Handys: der Name des Bereichs (Verwaltung, Farben & Logo) darf auf zwei Zeilen umbrechen statt abgeschnitten zu werden */
 @media (max-width:600px){
-  nav .nav-logo-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;white-space:normal;line-height:1.08;overflow-wrap:anywhere}
+  nav .nav-logo-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;white-space:normal;line-height:1.08;overflow-wrap:break-word;text-wrap:balance}
   nav .nav-logo-sub{margin-top:.15rem}
 }
 @media (max-width:1120px){
@@ -2207,7 +2208,7 @@ body{line-height:1.55}
   .hero-home .hero-h1{font-size:clamp(1.9rem,8.4vw,2.3rem)}
   .hero-home .hero-sub{margin-top:.7rem;font-size:.98rem;line-height:1.5}
   .hero-home .hero-actions{margin-top:1rem;flex-wrap:nowrap;gap:.6rem}
-  .hero-home .hero-actions .btn{flex:1 1 0;justify-content:center;padding-left:.7rem;padding-right:.7rem;white-space:nowrap}
+  .hero-home .hero-actions .btn{flex:1 1 0;justify-content:center;padding-left:.7rem;padding-right:.7rem;white-space:normal;line-height:1.25;min-width:0;text-align:center}
   .hero-home .hero-actions .btn::after{margin-left:.35em}
 }
 

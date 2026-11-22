@@ -122,7 +122,7 @@
     const days = Math.round((next.dateObj - HD.today()) / 86400000);
     const when = days <= 0 ? T('heute') : days === 1 ? T('morgen') : T('in {n} Tagen', { n: `<span class="nh-count">${days}</span>` });
     const wd = HD.WEEKDAYS[next.dateObj.getDay()];
-    const who = [[T('Zelebrant'), next.celebrant], [T('Dirigent'), next.conductor], [T('Chor'), next.choir], [T('Orchester'), next.orchestra], [T('Organist'), next.organist]].filter(([, v]) => v).map(([k, v]) => [k, T.person ? T.person(v) : v]);
+    const who = [[T('Zelebrant'), next.celebrant], [T('Dirigent'), next.conductor], [T('Chor'), next.choir], [T('Orchester'), next.orchestra], [T('Organist'), next.organist]].filter(([, v]) => /[\p{L}\p{N}]/u.test(String(v || ''))).map(([k, v]) => [k, T.person ? T.person(v) : v]);
     const href = (e) => `${T.seite ? T.seite('hochamt.html') : 'hochamt.html'}?id=${encodeURIComponent(e.id)}`;
     const later = entries.slice(1, 5).map((e) =>
       `<li><a href="${href(e)}"><span class="nh-slot-day">${HD.pad(e.dateObj.getDate())}<small>${HD.MONTHS_SHORT[e.dateObj.getMonth()]}</small></span>` +

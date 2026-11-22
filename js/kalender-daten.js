@@ -414,7 +414,7 @@
     return String(sub).split(' · ').map((teil) => {
       const z = /^Z: (.*)$/.exec(teil);
       if (z) return `${T('Z')}: ${T.person(z[1])}`;
-      if (teil.startsWith('♫ ')) return teil;
+      if (teil.startsWith('♫ ')) return `♫ ${T(teil.slice(2))}`;
       const t = T(teil);
       return t !== teil ? t : teil.split(', ').map((x) => T(x)).join(', ');
     });
@@ -449,7 +449,7 @@
     const past = iso < today;
     const now = nowHM(new Date());
     const inf = infoAm(iso);
-    const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag && T.tag(inf.tag), ...inf.heilige].filter(Boolean).map(HD.formatText).join(' · ')}</p>` : '';
+    const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag && T.tag(inf.tag), ...inf.heilige.map((h) => T(h))].filter(Boolean).map(HD.formatText).join(' · ')}</p>` : '';
     return `<section class="cal-day${past ? ' past' : ''}${iso === today ? ' today' : ''}${extraClass ? ` ${extraClass}` : ''}" id="${id}" data-date="${iso}" aria-labelledby="h-${id}">` +
       `<h3 class="cal-date" id="h-${id}"><span class="cal-d">${dt.getDate()}</span>` +
       `<span class="cal-wd">${WEEKDAYS[dt.getDay()]}${iso === today ? `<span class="cal-heute"><span class="visually-hidden">, </span>${T('heute')}</span>` : ''}<span class="cal-mo">${MONTHS[dt.getMonth()]}</span></span></h3>` +
@@ -481,5 +481,5 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
   }
 
-  w.KalenderDaten = { GROUPS, groupName, isMass, isoOf, shortDate, load, refresh, slotOf, itemHTML, dayHTML, watchPast, heiligeAm, infoAm, ladeHeilige, kirchenjahr, tagAm, lesejahr, advent1, heiligeAuto };
+  w.KalenderDaten = { GROUPS, groupName, isMass, isoOf, shortDate, load, refresh, slotOf, itemHTML, dayHTML, subText, watchPast, heiligeAm, infoAm, ladeHeilige, kirchenjahr, tagAm, lesejahr, advent1, heiligeAuto };
 })(window);
