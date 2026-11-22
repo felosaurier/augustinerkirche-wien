@@ -24,9 +24,9 @@
 
   const AREAS = {
     kloster: { groups: ['mitbrueder'], title: 'Mitbrüder <em>pflegen</em>',
-      sub: 'Die Mitbrüder des Wiener Augustinerklosters, wie sie unter Chronik → Die Augustiner in Wien erscheinen.' },
+      sub: 'Die Mitbrüder des Wiener Augustinerklosters, wie sie unter Chronik → Die Augustiner in Wien erscheinen. Das Foto eines Mitbruders gilt für die ganze Website: auch bei Pfarrer und Seelsorger (Augustinerkirche), Augustiner werden und der Leitung der Pfarre Aspersdorf. Hier geändert, überall geändert.' },
     aspersdorf: { groups: ['asp-leitung'], title: 'Pfarrer & Leitung <em>Aspersdorf</em>',
-      sub: 'Pfarrmoderator, Pfarrvikar und weitere Verantwortliche der Pfarre Aspersdorf, wie sie unter Pfarre Aspersdorf → Leitung erscheinen.' },
+      sub: 'Pfarrmoderator, Pfarrvikar und weitere Verantwortliche der Pfarre Aspersdorf, wie sie unter Pfarre Aspersdorf → Leitung erscheinen. Mitbrüder des Augustinerklosters (z. B. P. Dominic) zeigen automatisch ihr Foto aus „Mitbrüder“.' },
     musik: { groups: ['leitung', 'gastdirigenten', 'organisten'], title: 'Leitung &amp; Organisten <em>pflegen</em>',
       sub: 'Leitung der Kirchenmusik, Gastdirigenten und Organisten mit Foto und Text. Die Solisten haben einen eigenen Bereich.' }
   };

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Fotos der Seiten — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-fotos.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Website</div>
+      <h1 class="ph-title">Fotos <em>der Seiten</em></h1>
+      <p class="ph-sub">Die Fotos auf den Seiten der Website, z.&nbsp;B. das Gruppenbild der Mitbrüder. Ein Klick auf ein Foto: neues Bild hochladen, Bildtext ändern, fertig. „Ursprüngliches Foto“ stellt den alten Stand wieder her. Titelfotos und die Startseite haben eigene Bereiche; die Fotos der Mitbrüder änderst du an einer Stelle unter <a href="personen.html?bereich=kloster">Mitbrüder</a>, sie gelten dann auf der ganzen Website.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <div class="adm-toolbar">
+    <p class="adm-count" id="fo-count" role="status"></p>
+  </div>
+  <div id="fo-list"><p class="adm-muted">Fotos werden gesucht …</p></div>
+</main>
+
+<dialog class="adm-dialog w760" id="fo-dlg" aria-labelledby="fo-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="fo-dlg-tag">Foto</div>
+      <h2 class="adm-dlg-title" id="fo-dlg-title">Foto</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <form id="fo-form" class="adm-dlg-body" novalidate autocomplete="off">
+    <fieldset class="adm-fs">
+      <legend>Foto</legend>
+      <div class="fo-edit">
+        <span class="fo-prev"><img id="fo-prev" alt=""/></span>
+        <label class="adm-drop" id="fo-drop">
+          <span data-icon="image"></span>
+          <span class="adm-drop-main">Neues Foto hierher ziehen oder <u>auswählen</u></span>
+          <span class="adm-hint">WebP, JPG oder PNG; wird auf höchstens 2000 Pixel verkleinert.</span>
+          <input type="file" id="fo-file" accept="image/*"/>
+        </label>
+      </div>
+      <p class="adm-hint" id="fo-mehr" hidden></p>
+    </fieldset>
+    <fieldset class="adm-fs">
+      <legend>Texte</legend>
+      <div class="adm-grid">
+        <div class="adm-field full" id="fo-text-feld">
+          <label class="adm-label" for="fo-text">Bildtext <span class="adm-opt">steht unter dem Foto</span></label>
+          <input class="adm-input" type="text" id="fo-text" maxlength="200"/>
+        </div>
+        <div class="adm-field full">
+          <label class="adm-label" for="fo-alt">Was ist zu sehen? <span class="adm-opt">kurz, für Blinde und Suchmaschinen</span></label>
+          <input class="adm-input" type="text" id="fo-alt" maxlength="200"/>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act" id="fo-reset" data-icon="refresh">Ursprüngliches Foto</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="submit" form="fo-form" class="btn btn-dark" id="fo-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

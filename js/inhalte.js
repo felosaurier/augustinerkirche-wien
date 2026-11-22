@@ -173,6 +173,11 @@
     const main = document.querySelector('main[data-runde]');
     if (!main) return;
     const id = main.dataset.runde || new URLSearchParams(location.search).get('id') || '';
+    /* Ohne Kennung (alter Link "Alle Runden"): gleich zur Uebersicht der Runden */
+    if (!id) {
+      location.replace(url('pages/augustinerkirche.html#p-runden'));
+      return;
+    }
     const { runden } = await load('runden.json');
     const r = runden.find((x) => x.id === id);
     const hero = main.querySelector('.page-hero .inner');
@@ -225,6 +230,63 @@
     layout.innerHTML = `<div class="runde-main">${html}</div>${side}`;
   }
 
+  /* ---------- Fotos der Seiten (Verwaltung: Website → Fotos der Seiten) ----------
+     <figure data-foto="schluessel"> oder <img data-foto="schluessel"> im HTML; data/fotos.json: {fotos: {schluessel: {bild, breite, hoehe, alt, bildtext}}}.
+     Gleicher Schluessel an mehreren Stellen (z. B. Gruppenbild der Mitbrueder) = ein Foto fuer alle.
+     Bildtext und Beschreibung nur auf den deutschen Seiten; die uebersetzten behalten ihre eigenen. */
+  async function fotos() {
+    const figs = qsa('[data-foto]');
+    if (!figs.length) return;
+    const map = ((await load('fotos.json')) || {}).fotos || {};
+    for (const fig of figs) {
+      const f = map[fig.dataset.foto];
+      const src = f && typeof f.bild === 'string' && /^assets\/[^?#]+\.(webp|jpe?g|png)$/i.test(f.bild) ? url(f.bild) : '';
+      if (!src) continue;
+      const img = fig.tagName === 'IMG' ? fig : fig.querySelector('img');
+      if (!img) continue;
+      img.removeAttribute('srcset');
+      img.src = src;
+      if (f.breite && f.hoehe) {
+        img.width = HD.num(f.breite, img.width);
+        img.height = HD.num(f.hoehe, img.height);
+      }
+      const link = fig.closest('a[data-lightbox]') || fig.querySelector('a[data-lightbox]');
+      if (link) link.href = src;
+      if (LANG !== 'de') continue;
+      if (f.alt) img.alt = f.alt;
+      const cap = fig.querySelector('figcaption');
+      if (cap && String(f.bildtext || '').trim()) cap.textContent = f.bildtext.trim();
+    }
+  }
+
+  /* ---------- Fotos der Mitbrueder: ueberall aus der Verwaltung "Mitbrueder" ----------
+     Nachname ohne Umlaute ("schloegl") als Schluessel; <img|figure data-mitbruder="schluessel"> im HTML
+     und Personen anderer Gruppen (z. B. Leitung Aspersdorf) zeigen das Foto des Mitbruders. */
+  const ohneUmlaut = (s) => String(s || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+  const nachname = (name) => ohneUmlaut(name).replace(/,.*$/, '').split(/\s+/).filter((w) => w && w !== 'osa' && !w.includes('.')).pop() || '';
+  const mitbruderVon = (data, key) => ((data && data.mitbrueder) || []).find((m) => m && m.bild && nachname(m.name) === key) || null;
+  async function mitbruderFotos() {
+    const els = qsa('[data-mitbruder]');
+    if (!els.length) return;
+    const data = await load('personen.json');
+    for (const el of els) {
+      const m = mitbruderVon(data, el.dataset.mitbruder);
+      const src = m ? url(m.bild) : '';
+      if (!src) continue;
+      const img = el.tagName === 'IMG' ? el : el.querySelector('img');
+      if (!img) continue;
+      img.removeAttribute('srcset');
+      img.src = src;
+      if (m.breite && m.hoehe) {
+        img.width = HD.num(m.breite, img.width);
+        img.height = HD.num(m.hoehe, img.height);
+      }
+      if (LANG === 'de') img.alt = m.bildtext || m.name;
+      const link = el.closest('a[data-lightbox]') || el.querySelector('a[data-lightbox]');
+      if (link) link.href = src;
+    }
+  }
+
   /* ---------- Personen ---------- */
   async function personen() {
     const hosts = qsa('[data-personen]');
@@ -234,7 +296,12 @@
       /* Gruppe fehlt in der Datei (z. B. noch nicht auf dem Server): Inhalt aus dem HTML bleibt */
       if (!(el.dataset.personen in data)) continue;
       const compact = el.dataset.kompakt !== undefined ? ' compact' : '';
-      const list = data[el.dataset.personen] || [];
+      const gruppe = el.dataset.personen;
+      /* Mitbrueder in anderen Gruppen (z. B. Leitung Aspersdorf): Foto aus "Mitbrueder" */
+      const list = (data[gruppe] || []).map((p) => {
+        const m = gruppe !== 'mitbrueder' && p && mitbruderVon(data, nachname(p.name));
+        return m ? { ...p, bild: m.bild, breite: m.breite, hoehe: m.hoehe, bildtext: m.bildtext || p.bildtext } : p;
+      });
       el.innerHTML = list.map((p, i) => {
         const src = url(p.bild);
         const size = p.breite && p.hoehe ? ` width="${HD.num(p.breite, 400)}" height="${HD.num(p.hoehe, 500)}"` : '';
@@ -722,7 +789,7 @@
     /* Impressum zuerst: es enthaelt die Oeffnungszeiten der Pfarrkanzlei, die kontakt() danach eintraegt */
     await rechtliches().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
-    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, kontakt, repertoire, paten, pgr, predigten, aspWochen, friedhof, cds, galerie, rundgang]) {
+    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, mitbruderFotos, fotos, kontakt, repertoire, paten, pgr, predigten, aspWochen, friedhof, cds, galerie, rundgang]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     }
   });

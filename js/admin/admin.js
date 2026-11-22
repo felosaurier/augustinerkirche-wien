@@ -128,7 +128,7 @@
   const AREAS = [
     { key: 'neuigkeiten', label: 'Neuigkeiten', group: 'Aktuelles', page: 'neuigkeiten.html' },
     { key: 'termine', label: 'Veranstaltungen (Ausflüge, Feste …)', group: 'Aktuelles', page: 'termine.html' },
-    { key: 'startseite', label: 'Titelfotos und Das könnte Sie interessieren (Startseite)', group: 'Website', page: 'startseite.html' },
+    { key: 'startseite', label: 'Titelfotos, Fotos der Seiten und Das könnte Sie interessieren', group: 'Website', page: 'startseite.html' },
     { key: 'hinweise', label: 'Wichtiger Hinweis (oben auf der Website)', group: 'Website', page: 'hinweise.html' },
     { key: 'sprueche', label: 'Zitate (unten auf den Seiten)', group: 'Website', page: 'sprueche.html' },
     { key: 'design', label: 'Kopfzeile (Farbe, Logo, Name)', group: 'Website', page: 'design.html' },
@@ -194,6 +194,8 @@
     if (page === 'spenden.html') return 'paten';
     /* Die Entdecken-Bilder der Startseite gehoeren zu den Titelfotos */
     if (page === 'entdecken.html') return 'startseite';
+    /* Fotos der Seiten gehoeren ebenfalls zu den Titelfotos (Recht fuer Fotos der Website) */
+    if (page === 'fotos.html') return 'startseite';
     /* Der Heiligenkalender gehoert zum Wochenkalender */
     if (page === 'heiligenkalender.html') return 'wochenkalender';
     if (page === 'personen.html') return personenKey(personenBereich());
@@ -2202,6 +2204,7 @@
     ] },
     { label: 'Website', items: [
       ['startseite.html', 'Titelfotos', 'image', 'Startseite Fotos Vollbild Einstellungen'],
+      ['fotos.html', 'Fotos der Seiten', 'image', 'Fotos Bilder austauschen ersetzen Gruppenbild Mitbrüder Bildtext Seiten'],
       ['entdecken.html', 'Das könnte Sie interessieren', 'image', 'Startseite Entdecken interessieren Karten Links Bilder Fotos Reihenfolge'],
       ['hinweise.html', 'Wichtiger Hinweis', 'alert', 'Hinweisbanner Banner Einstellungen'],
       ['sprueche.html', 'Zitate', 'quote', 'Sprüche Einstellungen'],
@@ -2924,7 +2927,7 @@
     ...['aspersdorf-wochen.json', 'cds.json', 'friedhof.json', 'galerie.json', 'gottesdienste.json', 'hinweise.json', 'hochaemter.csv', 'kontakt.json',
       'navigation.json', 'news.csv', 'paten.json', 'personen.json', 'pgr-aspersdorf.json', 'pgr.json', 'rechtliches.json', 'repertoire.json', 'runden.json',
       'rundgang.json', 'solisten.json', 'sprueche.json', 'startseite-aspersdorf.json', 'startseite-augustiner.json', 'startseite-augustinerkirche.json',
-      'startseite-kirchenmusik.json', 'startseite.json', 'entdecken.json', 'termine.json', 'themen.json', 'wochenkalender.json', 'heiligenkalender.json',
+      'startseite-kirchenmusik.json', 'startseite.json', 'entdecken.json', 'fotos.json', 'termine.json', 'themen.json', 'wochenkalender.json', 'heiligenkalender.json',
       'hochamt-fotos.json', 'news-fotos.json', 'news-videos.json', 'predigten.json', 'seite-augustiner.json', 'seite-aspersdorf.json'].map((n) => `data/${n}`)
   ];
   const SCAN_SKIP = /^data\/(bildnachweise|bilder-klein)\.json$|\.(webp|png|jpe?g|gif|svg|ico|mp3|mp4|webm|pdf|woff2?)$/i;

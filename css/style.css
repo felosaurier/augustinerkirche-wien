@@ -2343,3 +2343,14 @@ nav.nav-eng .v3-util,nav.nav-enger .nav-cta{display:none}
 .gd-table .gd-same{border-top:1px dashed var(--line)}
 .gd-table .gd-same td{padding-top:.6rem}
 .gd-table tr:has(+ .gd-same) td{padding-bottom:.6rem}
+/* Zitat in einem Abschnitt (z. B. Augustiner werden) */
+.pane-zitat{max-width:44rem;margin:1.6rem 0 2rem;padding:.2rem 0 .2rem 1.2rem;border-left:2px solid var(--gold);font-family:var(--serif);font-size:1.25rem;font-style:italic;line-height:1.45;color:var(--heading)}
+.pane-zitat span{display:block;margin-top:.5rem;font-family:var(--sans,inherit);font-size:.85rem;font-style:normal;letter-spacing:.04em;color:var(--text-mid)}
+/* Gedicht bzw. Gebet mit Zeilenumbruechen; Unterueberschrift und nummerierte Themen (Augustiner werden) */
+.pane-gedicht{font-size:1.12rem;line-height:1.6}
+.pane-sub2{margin:1.4rem 0 .5rem;font-family:var(--serif);font-size:1.15rem;font-weight:500;color:var(--heading)}
+.nov-themen{margin:.4rem 0 1.6rem 1.3rem;padding:0;max-width:52rem}
+.nov-themen>li{margin-bottom:.7rem;padding-left:.3rem;font-size:.97rem;line-height:1.55;color:var(--text-mid)}
+.nov-themen>li::marker{color:var(--gold);font-weight:600}
+.nov-themen>li>strong{color:var(--heading);font-weight:600}
+.nov-themen .pgr-tasks{margin:.3rem 0 0}
