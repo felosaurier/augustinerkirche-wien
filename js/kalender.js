@@ -17,6 +17,8 @@
   if (!HD || !window.KalenderDaten || !root) return;
 
   const { pad, MONTHS, WEEKDAYS } = HD;
+  const T = window.AugT || ((s, v) => String(s).replace(/\{(\w+)\}/g, (m, k) => (v && k in v ? v[k] : m)));
+  const LANG = T.lang || 'de';
   const base = root.dataset.base || '';
 
   const KD = window.KalenderDaten;
@@ -60,12 +62,12 @@
       }
       /* Fällt eine Gruppe an diesem Tag ganz aus, ist ihr Zeichen nur ein Umriss */
       const dots = GROUPS.filter(([g]) => groups.has(g)).map(([g]) => `<i class="cal-dot g-${g}${groups.get(g) ? '' : ' off'}"></i>`).join('');
-      const wd = WEEKDAYS[new Date(month.y, month.m, d).getDay()];
-      const names = [...groups].map(([g, on]) => groupName.get(g) + (on ? '' : ' (entfällt)')).join(', ');
-      cells += `<button type="button" class="${cls} has" data-day="${iso}" aria-label="${wd}, ${d}. ${MONTHS[month.m]}: ${names}">` +
+      const names = [...groups].map(([g, on]) => groupName.get(g) + (on ? '' : ` (${T('entfällt')})`)).join(', ');
+      cells += `<button type="button" class="${cls} has" data-day="${iso}" aria-label="${HD.fmtLang(new Date(month.y, month.m, d))}: ${names}">` +
         `<span class="cal-num">${d}</span><span class="cal-dots" aria-hidden="true">${dots}</span></button>`;
     }
-    return '<div class="cal-week" aria-hidden="true"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div>' +
+    const kurz = [1, 2, 3, 4, 5, 6, 0].map((i) => (LANG === 'de' ? HD.WEEKDAYS_SHORT[i] : HD.WEEKDAYS_SHORT[i].slice(0, 2).replace(/^./, (c) => c.toUpperCase())));
+    return `<div class="cal-week" aria-hidden="true">${kurz.map((k) => `<span>${k}</span>`).join('')}</div>` +
       `<div class="cal-grid">${cells}</div>`;
   }
 
@@ -85,15 +87,15 @@
     if (!all.length) {
       const any = items.filter(inMonth).length;
       return `<p class="cal-empty">${any
-        ? `Im ${MONTHS[month.m]} ${month.y} gibt es keine ${[...filter].map((g) => groupName.get(g)).join(' oder ')}.`
-        : `Für ${MONTHS[month.m]} ${month.y} sind noch keine Termine eingetragen.`}</p>`;
+        ? T('Im {monat} {jahr} gibt es keine {gruppen}.', { monat: MONTHS[month.m], jahr: month.y, gruppen: [...filter].map((g) => groupName.get(g)).join(` ${T('oder')} `) })
+        : T('Für {monat} {jahr} sind noch keine Termine eingetragen.', { monat: MONTHS[month.m], jahr: month.y })}</p>`;
     }
     /* Laufender Monat: die Liste beginnt heute, Vergangenes auf Wunsch */
     const upcoming = all.filter((it) => it.date >= today);
     const list = showPast || !upcoming.length ? all : upcoming;
     const hidden = all.length - list.length;
     const more = hidden
-      ? `<button type="button" class="cal-earlier" data-cal="frueher">${hidden === 1 ? 'Einen früheren Termin' : `${hidden} frühere Termine`} im ${MONTHS[month.m]} anzeigen</button>`
+      ? `<button type="button" class="cal-earlier" data-cal="frueher">${hidden === 1 ? T('Einen früheren Termin im {monat} anzeigen', { monat: MONTHS[month.m] }) : T('{n} frühere Termine im {monat} anzeigen', { n: hidden, monat: MONTHS[month.m] })}</button>`
       : '';
     return more + daysHTML(list, today);
   }
@@ -105,7 +107,7 @@
     const btn = (g, label, n) =>
       `<button type="button" class="cal-filter${g ? ` g-${g}` : ''}" data-group="${g}" aria-pressed="${g ? filter.has(g) : !filter.size}">` +
         `${g ? `<i class="cal-dot g-${g}"></i>` : ''}${label}<span class="n">${n}</span></button>`;
-    return btn('', 'Alle', inThis.length) +
+    return btn('', T('Alle'), inThis.length) +
       GROUPS.filter(([g]) => counts.get(g) || filter.has(g)).map(([g, label]) => btn(g, label, counts.get(g))).join('');
   }
 

@@ -79,9 +79,11 @@
     document.getElementById('v3-heute-wann').textContent =
       gross(tag === heute ? T('Heute') : tag === morgen ? T('Morgen') : T('Am {tag}', { tag: HD.WEEKDAYS[dt.getDay()] }));
     document.getElementById('v3-heute-date').textContent = gross(HD.fmtLang(dt, true));
-    /* Tagesbezeichnung und Heilige des Tages (Wochenkalender bzw. Heiligenkalender), nur deutsch */
-    const inf = (T.lang || 'de') === 'de' && KD.infoAm ? KD.infoAm(tag) : null;
-    const zeile = inf ? [inf.tag, ...inf.heilige].filter(Boolean).join(' · ') : '';
+    /* Tagesbezeichnung und Heilige des Tages (Wochenkalender bzw. Heiligenkalender) */
+    const inf = KD.infoAm ? KD.infoAm(tag) : null;
+    /* Übersetzte Seiten: nur die Tagesbezeichnung des Kirchenjahres, die Heiligen stehen deutsch im Kalender */
+    const de = (T.lang || 'de') === 'de';
+    const zeile = inf ? (de ? [inf.tag, ...inf.heilige] : [inf.tag && (T.tag ? T.tag(inf.tag) : inf.tag)]).filter(Boolean).join(' · ') : '';
     let hl = document.getElementById('v3-heute-heilige');
     if (zeile) {
       if (!hl) {

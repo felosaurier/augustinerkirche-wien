@@ -43,7 +43,7 @@ BILDER = {
 # Seiten, die nicht in die Sitemap und nicht in die Suche gehoeren
 AUSGENOMMEN = ('pages/news-verwaltung.html', 'pages/hochaemter-verwaltung.html', 'pages/sakramente.html', 'pages/gottesdienste.html', 'pages/pfarre.html', 'pages/chronik.html', 'pages/predigten.html')
 # Seiten, die erst mit ?id=... eine Adresse haben (Vorlagen): ohne canonical/og:url, nicht in der Sitemap
-VORLAGEN = ('pages/hochamt.html', 'pages/hochamt.en.html', 'pages/hochamt.it.html')
+VORLAGEN = ('pages/hochamt.html', 'pages/hochamt.en.html', 'pages/hochamt.it.html', 'pages/hochamt.fr.html', 'pages/hochamt.es.html')
 
 
 def einstellungen():
@@ -54,8 +54,8 @@ def einstellungen():
     return adresse
 
 
-SPRACHEN = {'de': 'de_AT', 'en': 'en_GB', 'it': 'it_IT'}
-SPRACHE = re.compile(r'\.(en|it)\.html$')
+SPRACHEN = {'de': 'de_AT', 'en': 'en_GB', 'it': 'it_IT', 'fr': 'fr_FR', 'es': 'es_ES'}
+SPRACHE = re.compile(r'\.(en|it|fr|es)\.html$')
 
 
 def sprache(rel):

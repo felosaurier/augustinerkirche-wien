@@ -26,7 +26,8 @@
     const j = jahr ? ` ${d.getFullYear()}` : '';
     const lang = TL ? TL.lang : 'de';
     if (lang === 'en') return `${WEEKDAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}${j}`;
-    if (lang === 'it') return `${WEEKDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}${j}`;
+    if (lang === 'it' || lang === 'fr') return `${WEEKDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}${j}`;
+    if (lang === 'es') return `${WEEKDAYS[d.getDay()]} ${d.getDate()} de ${MONTHS[d.getMonth()]}${j ? ` de ${d.getFullYear()}` : ''}`;
     return `${WEEKDAYS[d.getDay()]}, ${d.getDate()}. ${MONTHS[d.getMonth()]}${j}`;
   }
   /* Uhrzeit allein in der Sprache der Seite: "11:00" (Deutsch, Italienisch), "11:00 am" (Englisch) */
@@ -35,7 +36,7 @@
   function fmtUhr(t) {
     if (!t) return '';
     const lang = TL ? TL.lang : 'de';
-    return lang === 'en' ? uhr(t) : lang === 'it' ? `ore ${t}` : `${t} Uhr`;
+    return lang === 'en' ? uhr(t) : lang === 'it' ? `ore ${t}` : lang === 'fr' ? `${t.replace(':', ' h ')}` : lang === 'es' ? `${t} h` : `${t} Uhr`;
   }
 
   /* Spaltenueberschriften (frei benennbar) -> interne Feldnamen */

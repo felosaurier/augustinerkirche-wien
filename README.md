@@ -43,24 +43,25 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 | **Runden** | Eigene Seiten für Bibelpur, Fensterblick, Fußwallfahrt, Ministranten und weitere Gruppen |
 | **Impressum · Datenschutz** | Rechtliche Angaben |
 
-### Englisch und Italienisch
+### Englisch, Italienisch, Französisch und Spanisch
 
-Die wichtigsten Seiten für Besucherinnen und Besucher gibt es auch auf Englisch und Italienisch. Die Sprache wählt man ganz rechts in der Kopfzeile: sichtbar ist nur die Flagge der aktuellen Sprache, ein Klick öffnet die Auswahl (Österreich, Großbritannien, Italien). Gibt es die Seite in der anderen Sprache, bleibt man auf derselben Seite und im selben Bereich, sonst geht es zur Startseite dieser Sprache.
+Die wichtigsten Seiten für Besucherinnen und Besucher gibt es auch auf Englisch, Italienisch, Französisch und Spanisch. Die Sprache wählt man ganz rechts in der Kopfzeile: sichtbar ist nur die Flagge der aktuellen Sprache, ein Klick öffnet die Auswahl (Österreich, Großbritannien, Italien, Frankreich, Spanien). Gibt es die Seite in der anderen Sprache, bleibt man auf derselben Seite und im selben Bereich, sonst geht es zur Startseite dieser Sprache.
 
-| Seite | Englisch | Italienisch |
-|---|---|---|
-| Startseite | `index.en.html` | `index.it.html` |
-| Augustinerkirche (Geschichte, Herzgruft, Rundgang, Führungen, Gottesdienstzeiten) | `pages/augustinerkirche.en.html` | `pages/augustinerkirche.it.html` |
-| Kirchenmusik (Hochämter, Chor, Orchester, Orgeln, Patenschaft) | `pages/musik.en.html` | `pages/musik.it.html` |
-| Hl. Augustinus | `pages/augustiner.en.html` | `pages/augustiner.it.html` |
-| Kontakt | `pages/kontakt.en.html` | `pages/kontakt.it.html` |
-| Hochamt (Detailseite eines Termins, `?id=…`) | `pages/hochamt.en.html` | `pages/hochamt.it.html` |
-| Rieger-Orgel, Reil-Orgel | `pages/orgel-rieger.en.html`, `pages/orgel-reil.en.html` | `pages/orgel-rieger.it.html`, `pages/orgel-reil.it.html` |
+| Seite | Englisch | Italienisch | Französisch (`.fr`) und Spanisch (`.es`) |
+|---|---|---|---|
+| Startseite | `index.en.html` | `index.it.html` | `index.fr.html` · `index.es.html` |
+| Augustinerkirche (Geschichte, Herzgruft, Rundgang, Führungen, Gottesdienstzeiten) | `pages/augustinerkirche.en.html` | `pages/augustinerkirche.it.html` | `pages/augustinerkirche.fr.html` · `pages/augustinerkirche.es.html` |
+| Kirchenmusik (Hochämter, Chor, Orchester, Orgeln, Patenschaft) | `pages/musik.en.html` | `pages/musik.it.html` | `pages/musik.fr.html` · `pages/musik.es.html` |
+| Hl. Augustinus | `pages/augustiner.en.html` | `pages/augustiner.it.html` | `pages/augustiner.fr.html` · `pages/augustiner.es.html` |
+| Kontakt | `pages/kontakt.en.html` | `pages/kontakt.it.html` | `pages/kontakt.fr.html` · `pages/kontakt.es.html` |
+| Kalender (Monat und Wochenüberblick) | `pages/kalender.en.html` | `pages/kalender.it.html` | `pages/kalender.fr.html` · `pages/kalender.es.html` |
+| Hochamt (Detailseite eines Termins, `?id=…`) | `pages/hochamt.en.html` | `pages/hochamt.it.html` | `pages/hochamt.fr.html` · `pages/hochamt.es.html` |
+| Rieger-Orgel, Reil-Orgel | `pages/orgel-rieger.en.html`, `pages/orgel-reil.en.html` | `pages/orgel-rieger.it.html`, `pages/orgel-reil.it.html` | `pages/orgel-rieger.fr.html`, `pages/orgel-reil.fr.html` · `pages/orgel-rieger.es.html`, `pages/orgel-reil.es.html` |
 
 - **Texte der Seiten** stehen direkt in diesen Dateien und werden dort geändert. Alles Übrige (Kalender, Neuigkeiten, Pfarrleben, Orden) verlinken sie mit dem Hinweis „in German“ bzw. „in tedesco“ auf die deutschen Seiten.
-- **Menü und Fußzeile** kommen aus `tools/vorlagen/nav.en.html`, `nav.it.html`, `footer.en.html` und `footer.it.html`; danach `python tools/seitenkopf.py` laufen lassen. Neue übersetzte Seiten (Kürzel vor `.html`) erkennt das Skript selbst und setzt auch die Flaggen.
-- **Inhalte aus der Verwaltung** (Gottesdienstzeiten, Heute in der Augustinerkirche, Hochämter, Kontakt, Bilder des Rundgangs) erscheinen automatisch, übersetzt über das Wörterbuch `js/sprache.js`. Steht ein Text dort nicht (z. B. eine neue Gottesdienst-Bezeichnung), erscheint er deutsch; dann im Wörterbuch in beiden Sprachen ergänzen. Werktitel, Namen, Hinweise zu einem Hochamt und Neuigkeiten bleiben deutsch. Uhrzeiten stehen auf Englisch im 12-Stunden-Format (11:00 am, 6:30 pm).
-- **Deutsche Texte ändern**: Was in der Verwaltung gepflegt wird, ändert sich in allen Sprachen sofort mit. Feste Texte einer Seite (z. B. Geschichte, Orgelbeschreibung) sind getrennte Dateien; eine Änderung an der deutschen Seite muss in der englischen und italienischen Fassung von Hand nachgezogen werden.
+- **Menü und Fußzeile** kommen aus `tools/vorlagen/nav.<sprache>.html` und `footer.<sprache>.html` (en, it, fr, es); danach `python tools/seitenkopf.py` laufen lassen. Neue übersetzte Seiten (Kürzel vor `.html`) erkennt das Skript selbst und setzt auch die Flaggen.
+- **Inhalte aus der Verwaltung** (Gottesdienstzeiten, Heute in der Augustinerkirche, Hochämter, Kontakt, Bilder des Rundgangs) erscheinen automatisch, übersetzt über das Wörterbuch `js/sprache.js`. Steht ein Text dort nicht (z. B. eine neue Gottesdienst-Bezeichnung), erscheint er deutsch; dann im Wörterbuch in allen Sprachen ergänzen. Titel von Personen (Dechant, KMD …) und Tagesnamen des Kirchenjahres (Adventsonntag, Karwoche …) werden übersetzt; die Namen der Heiligen im Kalender bleiben deutsch. Werktitel, Namen, Hinweise zu einem Hochamt und Neuigkeiten bleiben deutsch. Uhrzeiten stehen auf Englisch im 12-Stunden-Format (11:00 am, 6:30 pm).
+- **Deutsche Texte ändern**: Was in der Verwaltung gepflegt wird, ändert sich in allen Sprachen sofort mit. Feste Texte einer Seite (z. B. Geschichte, Orgelbeschreibung) sind getrennte Dateien; eine Änderung an der deutschen Seite muss in allen Sprachfassungen von Hand nachgezogen werden.
 - **Kopfzeile**: Ist sie zu schmal für alles, blendet `js/main.js` zuerst Unterstützen/Kontakt und dann den Knopf Gottesdienste aus; die Sprachwahl bleibt immer sichtbar.
 - **Suchmaschinen**: `python tools/seo.py` verknüpft die Sprachfassungen (`hreflang`) und nimmt sie in die Sitemap auf.
 

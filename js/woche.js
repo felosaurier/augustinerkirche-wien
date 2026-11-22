@@ -17,6 +17,8 @@
   if (!HD || !KD || !root) return;
 
   const { MONTHS } = HD;
+  const T = window.AugT || ((s, v) => String(s).replace(/\{(\w+)\}/g, (m, k) => (v && k in v ? v[k] : m)));
+  const LANG = T.lang || 'de';
   const base = root.dataset.base || '';
   const DAY_KEYS = ['mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];
   const BACK = 4;       /* so viele Wochen zurueck */
@@ -41,16 +43,23 @@
   function rangeText(mon) {
     const sun = addDays(mon, 6);
     const m = (d) => MONTHS[d.getMonth()];
-    if (mon.getMonth() === sun.getMonth()) return `${mon.getDate()}.–${sun.getDate()}. ${m(sun)} ${sun.getFullYear()}`;
-    return `${mon.getDate()}. ${m(mon)}${mon.getFullYear() !== sun.getFullYear() ? ` ${mon.getFullYear()}` : ''} – ${sun.getDate()}. ${m(sun)} ${sun.getFullYear()}`;
+    /* Tag mit Monat (und Jahr): Deutsch "12. Oktober 2026", Spanisch "12 de octubre de 2026", sonst "12 October 2026" */
+    const dm = (d, jahr) => (LANG === 'de' ? `${d.getDate()}. ${m(d)}${jahr ? ` ${d.getFullYear()}` : ''}`
+      : LANG === 'es' ? `${d.getDate()} de ${m(d)}${jahr ? ` de ${d.getFullYear()}` : ''}`
+      : `${d.getDate()} ${m(d)}${jahr ? ` ${d.getFullYear()}` : ''}`);
+    if (mon.getMonth() === sun.getMonth()) {
+      const t = dm(sun, true);
+      return LANG === 'de' ? `${mon.getDate()}.–${t}` : `${mon.getDate()}–${t}`;
+    }
+    return `${dm(mon, mon.getFullYear() !== sun.getFullYear())} – ${dm(sun, true)}`;
   }
 
   function render(focusSel) {
     const today = isoOf(new Date());
     const from = isoOf(monday);
     const to = isoOf(addDays(monday, 6));
-    const rel = { 0: 'Diese Woche', 1: 'Nächste Woche', '-1': 'Letzte Woche' }[Math.round((monday - thisMonday()) / 604800000)];
-    root.querySelector('.wk-range').innerHTML = `KW ${weekNo(monday)} · ${rangeText(monday)}${rel ? `<span class="wk-rel">${rel}</span>` : ''}`;
+    const rel = { 0: T('Diese Woche'), 1: T('Nächste Woche'), '-1': T('Letzte Woche') }[Math.round((monday - thisMonday()) / 604800000)];
+    root.querySelector('.wk-range').innerHTML = `${T('KW {n}', { n: weekNo(monday) })} · ${rangeText(monday)}${rel ? `<span class="wk-rel">${rel}</span>` : ''}`;
     /* Wochenwahl oben und unten */
     for (const b of root.querySelectorAll('[data-wk="heute"]')) b.hidden = from === isoOf(thisMonday());
     for (const b of root.querySelectorAll('[data-wk="prev"]')) b.disabled = from <= isoOf(addDays(thisMonday(), -BACK * 7));
@@ -60,12 +69,12 @@
     const days = DAY_KEYS.map((key, i) => ({ key, iso: isoOf(addDays(monday, i)) }))
       .filter((d) => day === 'alle' || d.key === day);
     root.querySelector('.wk-list').innerHTML = days.map(({ key, iso }) =>
-      KD.dayHTML(iso, inWeek.filter((it) => it.date === iso), today, { base, empty: 'Keine Termine', extraClass: `wk-day d-${key}`, id: `woche-${iso}` })).join('');
+      KD.dayHTML(iso, inWeek.filter((it) => it.date === iso), today, { base, empty: T('Keine Termine'), extraClass: `wk-day d-${key}`, id: `woche-${iso}` })).join('');
     const n = inWeek.length;
     /* „in dieser Woche“ fällt am Handy weg (.wk-count-lang), damit die Zeile nicht umbricht */
-    root.querySelector('.wk-count').innerHTML = `${n === 1 ? 'Ein Termin' : `${n || 'Keine'} Termine`}<span class="wk-count-lang"> in dieser Woche</span>` +
-      (inWeek.some((it) => it.cancelled) ? ', durchgestrichene entfallen' : '');
-    root.querySelector('.wk-cal').href = `${base}pages/kalender.html?monat=${from.slice(0, 7)}`;
+    root.querySelector('.wk-count').innerHTML = `${n === 1 ? T('Ein Termin') : n ? T('{n} Termine', { n }) : T('Keine Termine')}<span class="wk-count-lang"> ${T('in dieser Woche')}</span>` +
+      (inWeek.some((it) => it.cancelled) ? `, ${T('durchgestrichene entfallen')}` : '');
+    root.querySelector('.wk-cal').href = T.seite(`${base}pages/kalender.html?monat=${from.slice(0, 7)}`);
     for (const b of root.querySelectorAll('.week-filter-btn')) {
       b.classList.toggle('active', b.dataset.filter === day);
       b.setAttribute('aria-pressed', String(b.dataset.filter === day));

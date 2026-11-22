@@ -45,7 +45,7 @@ DIST = ROOT / 'dist'
 VORLAGEN = ROOT / 'tools' / 'server'
 
 # index-v1alt.html: die fruehere Startseite (noindex), bleibt aufrufbar
-DATEIEN = ['index.html', 'index.en.html', 'index.it.html', 'index-v1alt.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
+DATEIEN = ['index.html', 'index.en.html', 'index.it.html', 'index.fr.html', 'index.es.html', 'index-v1alt.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
 ORDNER = ['pages', 'css', 'js', 'assets', 'data']
 
 TEST_MESS_ID = 'G-VORSCHAU01'
@@ -53,7 +53,7 @@ TEST_MESS_ID = 'G-VORSCHAU01'
 # Inhalte, die auf dem Server gepflegt werden: kommen mit --update nicht ins Paket
 INHALTE = ('data/', 'assets/img/', 'assets/audio/', 'assets/video/', 'assets/pdf/', 'assets/programme/', 'admin/zugaenge.json', 'admin/mitteilungen.json', 'admin/protokoll.json')
 # Dateien, die erst beim ersten Speichern in der Verwaltung entstehen; bis dahin gilt das HTML
-ENTSTEHEN = ('data/entdecken.json', 'data/fotos.json', 'data/heiligenkalender.json', 'data/farben.json', 'data/galerie.json', 'data/navigation.json', 'data/news-videos.json', 'data/bilder-klein.json',
+ENTSTEHEN = ('data/entdecken.json', 'data/fotos.json', 'data/heiligenkalender.json', 'data/woerterbuch.json', 'data/farben.json', 'data/galerie.json', 'data/navigation.json', 'data/news-videos.json', 'data/bilder-klein.json',
              # alte Sammeldateien: nur noch als Rueckfall gelesen, bis sie in die geteilte Ablage uebernommen sind
              'data/news-fotos.json', 'data/predigten.json', 'data/hochamt-fotos.json')
 

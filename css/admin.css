@@ -1522,3 +1522,17 @@ label.fb-swatch:focus-within{outline:2px solid var(--blue);outline-offset:2px}
 .fo-prev{display:block;border:1px solid var(--line);background:var(--bg-warm);line-height:0}
 .fo-prev img{display:block;width:100%;max-height:20rem;object-fit:contain}
 @media(max-width:640px){.fo-edit{grid-template-columns:1fr}}
+
+/* Woerterbuch (admin/woerterbuch.html) */
+.wb-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.wb-search{max-width:20rem}
+.wb-filter{max-width:15rem}
+.wb-head,.wb-row{display:grid;grid-template-columns:minmax(10rem,1.3fr) repeat(4,minmax(0,1fr));gap:.5rem;align-items:center}
+.wb-head{padding:.4rem 0;font-size:.82rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line)}
+.wb-row{padding:.35rem 0;border-bottom:1px solid var(--line)}
+.wb-row.eigen .wb-de{border-left:3px solid var(--gold);padding-left:.5rem}
+.wb-de{font-size:.92rem;overflow-wrap:anywhere}
+.wb-cell .adm-input{width:100%;min-height:38px;font-size:.9rem}
+.wb-cell .adm-input.leer{background:var(--bg-soft)}
+.wb-miss{display:flex;flex-wrap:wrap;gap:.4rem}
+@media(max-width:900px){.wb-head{display:none}.wb-row{grid-template-columns:1fr 1fr}.wb-de{grid-column:1/-1;font-weight:600}}

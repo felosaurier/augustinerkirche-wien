@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de" data-thema="keins">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Wörterbuch — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/sprache.js"></script>
+<script src="../js/thema.js"></script>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-woerterbuch.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Website</div>
+      <h1 class="ph-title">Wörterbuch <em>der Übersetzungen</em></h1>
+      <p class="ph-sub">Übersetzungen der Texte, die aus der Verwaltung kommen (Gottesdienste, Hochämter, Kalender …), auf Englisch, Italienisch, Französisch und Spanisch. Hier ergänzen oder ändern Sie sie. Steht ein Text nicht im Wörterbuch, erscheint er auf den übersetzten Seiten deutsch.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+
+  <section class="adm-panel" aria-labelledby="wb-miss-h" id="wb-miss-panel" hidden>
+    <h2 class="adm-panel-title" id="wb-miss-h">Noch nicht übersetzt</h2>
+    <p class="adm-panel-sub">Diese Texte kommen in Ihren Daten vor (Hochämter, Gottesdienstzeiten, Wochenkalender, Veranstaltungen) und fehlen im Wörterbuch. Ein Klick übernimmt den Text in die Liste unten.</p>
+    <div id="wb-miss" class="wb-miss"></div>
+  </section>
+
+  <section class="adm-panel" aria-labelledby="wb-list-h">
+    <h2 class="adm-panel-title" id="wb-list-h">Alle Einträge</h2>
+    <p class="adm-panel-sub">Platzhalter in geschweiften Klammern, z. B. <code>{n}</code> oder <code>{wann}</code>, bitte unverändert lassen. Leeres Feld = der eingebaute Text bzw. Deutsch.</p>
+    <div class="adm-toolbar">
+      <p class="adm-count" id="wb-count" role="status"></p>
+      <input class="adm-input wb-search" type="search" id="wb-search" placeholder="Suchen" aria-label="Einträge suchen"/>
+      <select class="adm-input wb-filter" id="wb-filter" aria-label="Anzeigen">
+        <option value="alle">Alle Einträge</option>
+        <option value="fehlt">Es fehlt eine Übersetzung</option>
+        <option value="eigen">Nur eigene Änderungen</option>
+      </select>
+    </div>
+    <div class="wb-actions">
+      <button type="button" class="adm-act" id="wb-add" data-icon="plus">Neuer Eintrag</button>
+      <button type="button" class="adm-act" id="wb-down" data-icon="download">Als CSV herunterladen</button>
+      <button type="button" class="adm-act" id="wb-up" data-icon="upload">CSV hochladen</button>
+      <input type="file" id="wb-file" accept=".csv,text/csv" hidden/>
+    </div>
+    <div class="wb-head" aria-hidden="true"><span>Deutsch</span><span>English</span><span>Italiano</span><span>Français</span><span>Español</span></div>
+    <div id="wb-list"><p class="adm-muted">Wird geladen …</p></div>
+  </section>
+
+  <div class="adm-inline-foot rt-foot" id="wb-foot">
+    <span class="adm-muted" id="wb-state"></span>
+    <button type="button" class="btn btn-quiet" id="wb-reset" data-icon="refresh">Eigene Änderungen verwerfen</button>
+    <button type="button" class="btn btn-dark" id="wb-save" data-icon="check">Speichern</button>
+  </div>
+</main>
+
+</body>
+</html>

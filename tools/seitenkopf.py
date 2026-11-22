@@ -5,7 +5,7 @@ Die Vorlagen liegen in tools/vorlagen/nav.html und tools/vorlagen/footer.html. P
   {R}        Weg zur Wurzel der Website ("", "../" oder "../../")
   {P}        Weg zum Ordner pages/ ("pages/", "" oder "../")
   {KONTAKT}  Ziel des Links "Kontakt" in der Fusszeile (meist kontakt.html)
-  {SPRACHEN} Sprachwahl (Flagge der aktuellen Sprache, Klick oeffnet Deutsch, Englisch, Italienisch), ganz rechts
+  {SPRACHEN} Sprachwahl (Flagge der aktuellen Sprache, Klick oeffnet Deutsch, Englisch, Italienisch, Franzoesisch, Spanisch), ganz rechts
 
 Sprachen: uebersetzte Seiten liegen neben der deutschen, mit Kuerzel vor der Endung
 (index.en.html, pages/musik.it.html). Sie bekommen Titel- und Fusszeile aus nav.<sprache>.html und
@@ -26,7 +26,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 VORLAGEN = Path(__file__).resolve().parent / 'vorlagen'
-NAV = re.compile(r'<nav aria-label="(?:Hauptnavigation|Main navigation|Navigazione principale)">.*?</nav>', re.S)
+NAV = re.compile(r'<nav aria-label="(?:Hauptnavigation|Main navigation|Navigazione principale|Navigation principale|Navegación principal)">.*?</nav>', re.S)
 FOOT = re.compile(r'<footer>.*?</footer>', re.S)
 
 # Seiten mit eigenem Ziel fuer "Kontakt" in der Fusszeile (Pfad mit / ab Projektordner)
@@ -37,8 +37,8 @@ EIGENE_NAV = {'pages/aspersdorf.html': 'nav-aspersdorf.html', 'index.html': 'nav
 
 # Ziel des Logos: immer die Startseite der Website (index.html bzw. index.<sprache>.html)
 
-SPRACHEN = [('de', 'Deutsch', 'at'), ('en', 'English', 'gb'), ('it', 'Italiano', 'it')]
-SPRACHE = re.compile(r'\.(en|it)\.html$')
+SPRACHEN = [('de', 'Deutsch', 'at'), ('en', 'English', 'gb'), ('it', 'Italiano', 'it'), ('fr', 'Français', 'fr'), ('es', 'Español', 'es')]
+SPRACHE = re.compile(r'\.(en|it|fr|es)\.html$')
 
 
 def sprache(rel):
@@ -66,7 +66,7 @@ def flaggen(rel, r):
         extra = (' aria-current="true"' if lang == jetzt else '') + (' data-gleich' if gleich else '')
         teile.append(f'<a href="{r}{ziel}" hreflang="{lang}" lang="{lang}"{extra}>'
                      f'<img src="{r}assets/flaggen/{flagge}.svg" alt="" width="24" height="16"/>{name}</a>')
-    return ('<details class="nav-lang"><summary title="Sprache · Language · Lingua" aria-label="Sprache · Language · Lingua: '
+    return ('<details class="nav-lang"><summary title="Sprache · Language · Lingua · Langue · Idioma" aria-label="Sprache · Language · Lingua · Langue · Idioma: '
             f'{name_jetzt}"><img src="{r}assets/flaggen/{flagge_jetzt}.svg" alt="" width="24" height="16"/>'
             '<svg viewBox="0 0 10 6" fill="none" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>'
             '</summary><div class="nav-lang-menu">' + ''.join(teile) + '</div></details>')

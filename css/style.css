@@ -2218,9 +2218,9 @@ body{line-height:1.55}
 @media(min-width:1360px){.v3-util{display:inline-flex}}
 
 /* Kopfzeile: Platz fuer die Lupe (js/main.js initSuche) von Anfang an freihalten, sonst rutschen
-   Menue und Knoepfe nach dem Laden ein Stueck zur Seite */
-body:not(.adm) .nav-right:not(:has(.suche-btn))::before{content:'';flex:none;width:2.75rem;height:2.75rem;margin-right:.4rem}
-@media (max-width:1120px){body:not(.adm) .nav-right:not(:has(.suche-btn))::before{margin-right:0}}
+   Menue und Knoepfe nach dem Laden ein Stueck zur Seite. Nur deutsche Seiten haben die Lupe, die uebersetzten kein Leerfeld. */
+html[lang="de"] body:not(.adm) .nav-right:not(:has(.suche-btn))::before{content:'';flex:none;width:2.75rem;height:2.75rem;margin-right:.4rem}
+@media (max-width:1120px){html[lang="de"] body:not(.adm) .nav-right:not(:has(.suche-btn))::before{margin-right:0}}
 
 /* ══ Naechstes Hochamt: Auftritt (js/hochaemter.js playNext) ══
    Die Tafel blendet ein, der Goldrahmen zeichnet sich (oben quer, dann die Seiten hinunter), der Tag zaehlt hoch,
@@ -2317,6 +2317,8 @@ body{overflow-x:clip}
 /* ══ Sprachwahl ganz rechts in der Kopfzeile (tools/seitenkopf.py): sichtbar ist nur die Flagge
    der aktuellen Sprache, ein Klick oeffnet die Auswahl (details/summary, js/main.js schliesst sie) ══ */
 .nav-lang{position:relative;flex:none}
+/* Nur die Flagge (mit Pfeil) nach rechts, mittig zwischen dem Knopf Gottesdienste und dem rechten Rand; alles andere bleibt */
+@media(min-width:1121px){.nav-lang summary{transform:translateX(calc((var(--pad) + .1rem) / 2))}}
 .nav-lang summary{display:flex;align-items:center;gap:.3rem;padding:.45rem .3rem;cursor:pointer;list-style:none;color:var(--nav-fg);line-height:0}
 .nav-lang summary::-webkit-details-marker{display:none}
 .nav-lang summary svg{width:9px;height:6px;stroke:currentColor;opacity:.7;transition:transform .2s}

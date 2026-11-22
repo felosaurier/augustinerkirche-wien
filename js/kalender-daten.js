@@ -30,16 +30,20 @@
   const HD = w.HochamtData;
   if (!HD) return;
   const { esc, pad, MONTHS, WEEKDAYS } = HD;
+  /* Sprache der Seite (js/thema.js, js/sprache.js); deutsche Seiten: alles bleibt, wie es ist */
+  const T0 = w.AugT || Object.assign((s, v) => String(s).replace(/\{(\w+)\}/g, (m, k) => (v && k in v ? v[k] : m)), { lang: 'de', x: (k, de) => de, tag: (s) => s, person: (s) => s, seite: (p) => p });
+  /* Auch mit einer aelteren js/thema.js (aus dem Cache) muss der Kalender laden */
+  const T = Object.assign(T0, { x: T0.x || ((k, de) => de), tag: T0.tag || ((s) => s), person: T0.person || ((s) => s), seite: T0.seite || ((p) => p) });
 
   /* Gruppen in der Reihenfolge der Filter: Hochämter (mit Chor und Orchester) und
      die übrigen Gottesdienste (Heilige Messen u. a.) sind getrennt */
   const GROUPS = [
-    ['hochamt', 'Hochämter'],
-    ['gottesdienst', 'Gottesdienste'],
-    ['tagzeit', 'Tagzeitenliturgie'],
-    ['konzert', 'Konzerte'],
-    ['runde', 'Runden'],
-    ['veranstaltung', 'Veranstaltungen']
+    ['hochamt', T('Hochämter')],
+    ['gottesdienst', T.x('Gruppe Gottesdienste', 'Gottesdienste')],
+    ['tagzeit', T('Tagzeitenliturgie')],
+    ['konzert', T('Konzerte')],
+    ['runde', T('Runden')],
+    ['veranstaltung', T('Veranstaltungen')]
   ];
   const groupName = new Map(GROUPS);
   /* Eigene Termine: Art -> Gruppe (alles andere ist eine Veranstaltung) */
@@ -52,7 +56,7 @@
   const isoOf = (dt) => `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
   function shortDate(iso) {
     const dt = HD.dateFromIso(iso);
-    return `${dt.getDate()}. ${MONTHS[dt.getMonth()]}`;
+    return T.lang === 'de' ? `${dt.getDate()}. ${MONTHS[dt.getMonth()]}` : T.lang === 'es' ? `${dt.getDate()} de ${MONTHS[dt.getMonth()]}` : `${dt.getDate()} ${MONTHS[dt.getMonth()]}`;
   }
 
   /* ---------- Daten zusammenführen ---------- */
@@ -62,7 +66,7 @@
       return {
         date: e.date, time: e.time, group: konzert ? 'konzert' : HOCHAMT.test(e.type) ? 'hochamt' : 'gottesdienst',
         title: e.type, sub: [e.piece, e.location !== 'Augustinerkirche' ? e.location : ''].filter(Boolean).join(', '),
-        href: `${base}pages/hochamt.html?id=${encodeURIComponent(e.id)}`, src: 'hochamt',
+        href: T.seite(`${base}pages/hochamt.html?id=${encodeURIComponent(e.id)}`), src: 'hochamt',
         d: { name: e.type, zelebrant: e.celebrant || '', musik: e.piece || '', ort: e.location || '', hinweis: '', art: konzert ? 'veranstaltung' : HOCHAMT.test(e.type) ? 'hochamt' : 'gottesdienst' }
       };
     });
@@ -100,7 +104,7 @@
       return {
         date, time, ende, group: ART_GROUP[String(t.art || '').trim().toLowerCase()] || 'veranstaltung',
         art: t.art || '', title: t.titel,
-        sub: [bis && bis > date ? `bis ${shortDate(bis)}` : '', t.ort].filter(Boolean).join(', '),
+        sub: [bis && bis > date ? T('bis {datum}', { datum: shortDate(bis) }) : '', t.ort].filter(Boolean).join(', '),
         text: t.text || '', link: HD.safeUrl(t.link || '', base), bis, src: 'termin',
         d: { name: t.titel, ort: t.ort || '', art: ART_GROUP[String(t.art || '').trim().toLowerCase()] || 'veranstaltung' }
       };
@@ -399,15 +403,20 @@
   const nowHM = (dt) => `${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
   const isPast = (iso, ends, today, now) => iso < today || (iso === today && !!ends && ends <= now);
 
+  /* Bezeichnung mit Zusatz: "Heilige Messe (Vorabendmesse)" -> beide Teile uebersetzen */
+  function titel(s) {
+    const m = /^(.*?) \((.*)\)$/.exec(String(s));
+    return m ? `${T(m[1])} (${T(m[2])})` : T(s);
+  }
   function itemHTML(it, past, base = '', ends = '') {
-    const time = it.label || (it.time ? `${it.time}${it.ende ? `–${it.ende}` : ''}` : '');
+    const time = (it.label && T(it.label)) || (it.time ? `${it.time}${it.ende ? `–${it.ende}` : ''}` : '');
     const head = `<span class="cal-time${time ? '' : ' empty'}">${esc(time) || '&nbsp;'}</span>` +
       '<span class="cal-main">' +
-        `<span class="cal-title">${esc(it.title)}</span>` +
-        (it.cancelled ? `<span class="cal-flag">Entfällt${it.why ? `: ${esc(it.why)}` : ''}</span>` : '') +
-        (it.sub ? `<span class="cal-sub">${esc(it.sub)}</span>` : '') +
+        `<span class="cal-title">${esc(titel(it.title))}</span>` +
+        (it.cancelled ? `<span class="cal-flag">${T('Entfällt')}${it.why ? `: ${esc(it.why)}` : ''}</span>` : '') +
+        (it.sub ? `<span class="cal-sub">${esc(T(it.sub) !== it.sub ? T(it.sub) : it.sub.split(', ').map((x) => T(x)).join(', '))}</span>` : '') +
       '</span>' +
-      (it.group === 'ohne' ? '' : `<span class="cal-cat"><i class="cal-dot g-${it.group}"></i>${esc(it.art || groupName.get(it.group))}</span>`);
+      (it.group === 'ohne' ? '' : `<span class="cal-cat"><i class="cal-dot g-${it.group}"></i>${esc(T(it.art || groupName.get(it.group)))}</span>`);
     /* data-ends: damit watchPast den Termin verblassen lässt, solange die Seite offen ist */
     const li = `<li class="cal-item g-${it.group}${past ? ' past' : ''}${it.cancelled ? ' cancelled' : ''}"${ends ? ` data-ends="${ends}"` : ''}>`;
     if (it.href) return `${li}<a class="cal-row" href="${esc(it.href)}">${head}</a></li>`;
@@ -429,10 +438,10 @@
     const past = iso < today;
     const now = nowHM(new Date());
     const inf = infoAm(iso);
-    const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag, ...inf.heilige].filter(Boolean).map(HD.formatText).join(' · ')}</p>` : '';
+    const infoHTML = inf ? `<p class="cal-liturgy">${[inf.tag && T.tag(inf.tag), ...inf.heilige].filter(Boolean).map(HD.formatText).join(' · ')}</p>` : '';
     return `<section class="cal-day${past ? ' past' : ''}${iso === today ? ' today' : ''}${extraClass ? ` ${extraClass}` : ''}" id="${id}" data-date="${iso}" aria-labelledby="h-${id}">` +
       `<h3 class="cal-date" id="h-${id}"><span class="cal-d">${dt.getDate()}</span>` +
-      `<span class="cal-wd">${WEEKDAYS[dt.getDay()]}${iso === today ? '<span class="cal-heute"><span class="visually-hidden">, </span>heute</span>' : ''}<span class="cal-mo">${MONTHS[dt.getMonth()]}</span></span></h3>` +
+      `<span class="cal-wd">${WEEKDAYS[dt.getDay()]}${iso === today ? `<span class="cal-heute"><span class="visually-hidden">, </span>${T('heute')}</span>` : ''}<span class="cal-mo">${MONTHS[dt.getMonth()]}</span></span></h3>` +
       '<div class="cal-body">' + infoHTML +
       (its.length ? `<ul class="cal-items">${its.map((it) => {
         const ends = endsAt(it, its);

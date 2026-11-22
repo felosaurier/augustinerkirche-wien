@@ -22,6 +22,8 @@
      uebersetzten Seiten, sofern es sie gibt */
   const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
   const LANG = T.lang || 'de';
+  /* Titel und Ensembles uebersetzen (js/thema.js); ohne diese Funktion bleibt der Text, wie er ist */
+  const person = (s) => (T.person ? T.person(s) : s);
   const seite = (pfad) => (T.seite ? T.seite(pfad) : pfad);
   const FALLBACK = `<p class="s-text">${T('Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.')}</p>`;
 
@@ -59,6 +61,8 @@
     const bis = end ? ` – ${HD.uhr(end.replace('ca. ', `${T('ca.')} `))}` : '';
     if (LANG === 'en') return `${HD.uhr(beginn)}${bis}`;
     if (LANG === 'it') return `ore ${beginn}${bis}`;
+    if (LANG === 'fr') return `${beginn.replace(':', ' h ')}${bis}`;
+    if (LANG === 'es') return `${beginn}${bis} h`;
     return `${beginn}${bis} Uhr`;
   }
   const whenHTML = (e, day, end) => [
@@ -107,15 +111,15 @@
   const nameKey = (s) => String(s || '').replace(/\([^)]*\)/g, ' ').split(/[\s,]+/)
     .filter((t) => t && !t.includes('.') && !/^[A-ZÄÖÜ]{2,4}$/.test(t)).join(' ').toLowerCase();
   /* Name mit Link zur Homepage (aus data/solisten.json und data/personen.json), sonst nur der Name */
-  function nameHTML(name, homepages) {
+  function nameHTML(name, homepages, shown = name) {
     const href = homepages.get(nameKey(name));
-    return href ? `<a href="${HD.esc(href)}" target="_blank" rel="noopener">${HD.esc(name)}</a>` : HD.esc(name);
+    return href ? `<a href="${HD.esc(href)}" target="_blank" rel="noopener">${HD.esc(shown)}</a>` : HD.esc(shown);
   }
   function castHTML(groups, people, homepages) {
     if (!groups.length && !people.length) return '';
     return `<section class="hd-sec" aria-labelledby="hd-cast-h"><h2 class="hd-sec-title" id="hd-cast-h">${T('Ausführende')}</h2><ul class="hd-cast">` +
-      groups.map((g) => `<li class="hd-cast-group">${HD.esc(g)}</li>`).join('') +
-      people.map((p) => `<li${p.gap ? ' class="hd-cast-gap"' : ''}><span class="hd-name">${nameHTML(p.name, homepages)}</span>${p.role ? `<span class="hd-role">${HD.esc(p.role)}</span>` : ''}</li>`).join('') +
+      groups.map((g) => `<li class="hd-cast-group">${HD.esc(person(g))}</li>`).join('') +
+      people.map((p) => `<li${p.gap ? ' class="hd-cast-gap"' : ''}><span class="hd-name">${nameHTML(p.name, homepages, person(p.name))}</span>${p.role ? `<span class="hd-role">${HD.esc(p.role)}</span>` : ''}</li>`).join('') +
       '</ul></section>';
   }
   /* Homepages der Solisten und der Kirchenmusik (Leitung, Gastdirigenten, Organisten):
@@ -166,7 +170,7 @@
     document.title = `${e.piece || typ} — ${typ} — Augustinerkirche Wien`;
     qs('#hd-type').innerHTML = whenHTML(e, day, end);
     qs('#hd-title').textContent = e.piece || typ;
-    qs('#hd-when').textContent = e.celebrant ? T('{typ} mit {wer}', { typ, wer: e.celebrant }) : typ;
+    qs('#hd-when').textContent = e.celebrant ? T('{typ} mit {wer}', { typ, wer: person(e.celebrant) }) : typ;
 
     const music = e.extra.length ? e.extra : (e.piece ? [e.piece] : []);
     const soloists = e.soloists.map((s) => performer(s));

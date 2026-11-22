@@ -2,10 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://augustinerkirche.augustiner.at/</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/index.en.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/index.es.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/index.fr.html</loc>
     <lastmod>2026-11-22</lastmod>
   </url>
   <url>
@@ -14,19 +22,27 @@
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/archiv.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/aspersdorf.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/augustiner.en.html</loc>
     <lastmod>2026-11-22</lastmod>
   </url>
   <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/augustiner.es.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/augustiner.fr.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
     <loc>https://augustinerkirche.augustiner.at/pages/augustiner.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/augustiner.it.html</loc>
@@ -37,8 +53,16 @@
     <lastmod>2026-11-22</lastmod>
   </url>
   <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/augustinerkirche.es.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/augustinerkirche.fr.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
     <loc>https://augustinerkirche.augustiner.at/pages/augustinerkirche.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/augustinerkirche.it.html</loc>
@@ -46,23 +70,47 @@
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/datenschutz.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/impressum.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/kalender.en.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/kalender.es.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/kalender.fr.html</loc>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/kalender.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/kalender.it.html</loc>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/kontakt.en.html</loc>
     <lastmod>2026-11-22</lastmod>
   </url>
   <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/kontakt.es.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/kontakt.fr.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
     <loc>https://augustinerkirche.augustiner.at/pages/kontakt.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/kontakt.it.html</loc>
@@ -73,8 +121,16 @@
     <lastmod>2026-11-22</lastmod>
   </url>
   <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/musik.es.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/musik.fr.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
     <loc>https://augustinerkirche.augustiner.at/pages/musik.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/musik.it.html</loc>
@@ -85,8 +141,16 @@
     <lastmod>2026-11-22</lastmod>
   </url>
   <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/orgel-reil.es.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/orgel-reil.fr.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
     <loc>https://augustinerkirche.augustiner.at/pages/orgel-reil.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/orgel-reil.it.html</loc>
@@ -97,8 +161,16 @@
     <lastmod>2026-11-22</lastmod>
   </url>
   <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/orgel-rieger.es.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://augustinerkirche.augustiner.at/pages/orgel-rieger.fr.html</loc>
+    <lastmod>2026-11-22</lastmod>
+  </url>
+  <url>
     <loc>https://augustinerkirche.augustiner.at/pages/orgel-rieger.html</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
   </url>
   <url>
     <loc>https://augustinerkirche.augustiner.at/pages/orgel-rieger.it.html</loc>

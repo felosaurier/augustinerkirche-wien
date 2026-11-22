@@ -32,10 +32,10 @@
   const UNTERTITEL = 'Pfarre & Kloster St. Augustin';
   const text = (s) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 60);
 
-  /* Sprache der Seite (<html lang>): de, en oder it. Uebersetzte Seiten (index.en.html, pages/musik.it.html …)
+  /* Sprache der Seite (<html lang>): de, en, it, fr oder es. Uebersetzte Seiten (index.en.html, pages/musik.it.html …)
      laden vorher js/sprache.js mit dem Woerterbuch window.AugWoerter = {en: {deutsch: englisch}, it: {…}}.
      AugT(text, werte) liefert die Uebersetzung (sonst den deutschen Text) und setzt {name} aus werte ein. */
-  const LANG = ['en', 'it'].includes((html.lang || '').slice(0, 2)) ? html.lang.slice(0, 2) : 'de';
+  const LANG = ['en', 'it', 'fr', 'es'].includes((html.lang || '').slice(0, 2)) ? html.lang.slice(0, 2) : 'de';
   function T(s, werte) {
     const wb = LANG !== 'de' && w.AugWoerter && w.AugWoerter[LANG];
     let t = wb && Object.prototype.hasOwnProperty.call(wb, s) ? wb[s] : s;
@@ -58,6 +58,46 @@
     const text = String(s == null ? '' : s);
     if (LANG !== 'en') return text;
     return text.replace(/\b([01]?\d|2[0-3]):([0-5]\d)\b(\s*Uhr)?/g, (_, h, m) => `${Number(h) % 12 || 12}:${m} ${Number(h) < 12 ? 'am' : 'pm'}`);
+  };
+  /* Eintrag fuer einen Schluessel, der sich mit einem anderen deutschen Text deckt (z. B. "Gottesdienste" als
+     Knopf und als Gruppe im Kalender): in der Sprache der Seite der Eintrag k, sonst der deutsche Text de */
+  T.x = (k, de) => {
+    const wb = LANG !== 'de' && w.AugWoerter && w.AugWoerter[LANG];
+    return wb && Object.prototype.hasOwnProperty.call(wb, k) ? wb[k] : de;
+  };
+  /* Wochentag (deutscher Name) in der Sprache der Seite */
+  const WT_DE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+  T.wtag = (name) => {
+    const l = T.wert('WOCHENTAGE');
+    const i = WT_DE.indexOf(name);
+    return l && i >= 0 ? l[i] : name;
+  };
+  /* Tagesbezeichnung des Kirchenjahres ("28. Sonntag im Jahreskreis · Lesejahr C"): Teile getrennt durch " · ",
+     erst das Woerterbuch, dann die Regeln REGELN [[Muster, Funktion(match)]] */
+  T.tag = (s) => {
+    if (LANG === 'de') return s;
+    const regeln = T.wert('REGELN') || [];
+    return String(s).split(' · ').map((teil) => {
+      const t = teil.trim();
+      const wb = w.AugWoerter[LANG];
+      if (Object.prototype.hasOwnProperty.call(wb, t)) return wb[t];
+      for (const [re, f] of regeln) {
+        const m = re.exec(t);
+        if (m) return f(m);
+      }
+      return t;
+    }).join(' · ');
+  };
+  /* Namen mit Titel und Ensembles aus den Hochamt-Daten ("Dechant P. Mag. … OSA", "KMD …",
+     "Kammerchor & Orchester von St. Augustin"): Titel aus TITEL [[deutsch, Uebersetzung]] */
+  T.person = (s) => {
+    let t = String(s == null ? '' : s);
+    if (LANG === 'de') return t;
+    const esc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    for (const [de, tr] of T.wert('TITEL') || []) t = t.replace(new RegExp(`(^|[\\s(])${esc(de)}(?=[\\s)]|$)`, 'g'), (_, v) => v + tr);
+    const m = /^(.+?)\s+von St\. Augustin$/.exec(t);
+    if (m) return `${m[1].split(' & ').map((x) => T(x)).join(' & ')} ${T('von St. Augustin')}`;
+    return T(t);
   };
   w.AugT = T;
 

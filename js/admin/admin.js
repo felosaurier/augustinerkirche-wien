@@ -133,6 +133,7 @@
     { key: 'sprueche', label: 'Zitate (unten auf den Seiten)', group: 'Website', page: 'sprueche.html' },
     { key: 'design', label: 'Kopfzeile (Farbe, Logo, Name)', group: 'Website', page: 'design.html' },
     { key: 'navigation', label: 'Menü der Website', group: 'Website', page: 'navigation.html' },
+    { key: 'woerterbuch', label: 'Wörterbuch (Übersetzungen der Website)', group: 'Website', page: 'woerterbuch.html' },
     { key: 'rechtliches', label: 'Impressum & Datenschutz', group: 'Website', page: 'rechtliches.html' },
     { key: 'hochaemter', label: 'Hochämter', group: 'Aktuelles', page: 'hochaemter.html' },
     { key: 'solisten', label: 'Solisten', group: 'Kirchenmusik', page: 'solisten.html' },
@@ -1141,7 +1142,7 @@
     [/^data\/(archiv\/)?hochaemter.*\.csv$/, 'Hochämter'], [/^data\/hochamt-fotos(\.json|\/.+\.json)$/, 'Hochämter'],
     [/^data\/solisten\.json$/, 'Solisten'], [/^data\/paten\.json$/, 'Paten'], [/^data\/cds\.json$/, 'CDs'], [/^data\/galerie\.json$/, 'Galerie'],
     [/^data\/personen\.json$/, 'Personen'], [/^data\/repertoire\.json$/, 'Repertoire'],
-    [/^data\/gottesdienste\.json$/, 'Gottesdienstzeiten'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/heiligenkalender\.json$/, 'Heiligenkalender'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
+    [/^data\/gottesdienste\.json$/, 'Gottesdienstzeiten'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/heiligenkalender\.json$/, 'Heiligenkalender'], [/^data\/woerterbuch\.json$/, 'Wörterbuch'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
     [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'], [/^data\/predigten\.json$/, 'Predigten & Ansprachen'],
     [/^data\/pgr-aspersdorf\.json$/, 'Aspersdorf: Gremien'], [/^data\/aspersdorf-wochen\.json$/, 'Aspersdorf: Wochenblätter'], [/^data\/friedhof\.json$/, 'Aspersdorf: Friedhofsgebühren'],
     [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
@@ -2210,6 +2211,7 @@
       ['sprueche.html', 'Zitate', 'quote', 'Sprüche Einstellungen'],
       ['design.html', 'Kopfzeile', 'palette', 'Farben Logo Name Design Thema Titelzeile Einstellungen'],
       ['navigation.html', 'Menü der Website', 'menu', 'Navigation Seitenleiste Bereiche ausblenden einblenden Einstellungen'],
+      ['woerterbuch.html', 'Wörterbuch', 'book', 'Übersetzungen Englisch Italienisch Französisch Spanisch Sprachen Texte fehlen CSV'],
       ['rechtliches.html', 'Impressum & Datenschutz', 'shield', 'Rechtliches Einstellungen']
     ] },
     { label: 'Werkzeuge', items: [

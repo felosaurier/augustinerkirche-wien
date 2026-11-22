@@ -6,7 +6,7 @@
      hochgeladenes Bild (z. B. Plakat mit gleichem Namen) erschiene sonst noch in der alten Fassung
    - Verwaltung, Videos, Audio und Teilantworten bleiben ausserhalb
    Neue Fassung der Dateien in VORRAT: Namen von CACHE erhoehen. */
-const CACHE = 'aug-v2';
+const CACHE = 'aug-v3';
 const VORRAT = ['offline.html', 'css/style.css', 'assets/logo.png', 'assets/logo-gold.png'];
 const root = new URL('./', self.location).pathname;
 
