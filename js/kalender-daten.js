@@ -410,7 +410,7 @@
   }
   /* Zeile unter dem Titel: "♫ Musik · Z: Zelebrant · Ort · Hinweis"; Z und Titel der Personen in der Sprache der Seite */
   function subText(sub) {
-    /* jeder Teil in eigener Zeile (Liste) */
+    /* jeder Teil fuer sich (auf der Seite in einer Zeile, mit | getrennt: style.css .cal-sub-l) */
     return String(sub).split(' · ').map((teil) => {
       const z = /^Z: (.*)$/.exec(teil);
       if (z) return `${T('Z')}: ${T.person(z[1])}`;

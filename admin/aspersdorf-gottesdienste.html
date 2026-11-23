@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Aspersdorf: Gottesdienste &amp; Termine — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-aspersdorf-gottesdienste.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Gottesdienste &amp; Termine <em>Aspersdorf</em></h1>
+      <p class="ph-sub">Die regelmäßigen Gottesdienste und besondere Termine für <a href="../pages/aspersdorf.html#p-gottesdienste" target="_blank" rel="noopener">Pfarre Aspersdorf → Gottesdienste &amp; Kalender</a>. Der Wochentag steht dort nur einmal, daneben alle Gottesdienste dieses Tages. Besondere Termine erscheinen bis zu ihrem Tag und verschwinden danach von selbst.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <form id="ag-form" novalidate autocomplete="off">
+    <section class="adm-panel" aria-labelledby="ag-regel-h">
+      <h2 class="adm-panel-title" id="ag-regel-h">Regelmäßige Gottesdienste</h2>
+      <p class="adm-panel-sub">Je Zeile ein Gottesdienst: Wochentag, Uhrzeit, Bezeichnung und ein Hinweis (z. B. Ort oder „1. und 3. Samstag im Monat“). Die Reihenfolge ergibt sich aus Wochentag und Uhrzeit.</p>
+      <div class="ag-head ag-regel" aria-hidden="true"><span>Wochentag</span><span>Uhrzeit</span><span>Bezeichnung</span><span>Hinweis</span><span></span></div>
+      <div class="adm-list" id="ag-regel"></div>
+      <button type="button" class="adm-list-add" id="ag-regel-add" data-icon="plus">Gottesdienst hinzufügen</button>
+    </section>
+
+    <section class="adm-panel" aria-labelledby="ag-termine-h">
+      <h2 class="adm-panel-title" id="ag-termine-h">Besondere Termine</h2>
+      <p class="adm-panel-sub">Feiertage, Andachten, Prozessionen, Feste und alles, was nicht jede Woche gleich ist. Sie stehen unter den regelmäßigen Gottesdiensten, nach Datum geordnet; vergangene Termine sind hier grau und erscheinen auf der Website nicht mehr.</p>
+      <div class="ag-head ag-termin" aria-hidden="true"><span>Datum</span><span>Uhrzeit</span><span>Bezeichnung</span><span>Hinweis</span><span></span></div>
+      <div class="adm-list" id="ag-termine"></div>
+      <button type="button" class="adm-list-add" id="ag-termine-add" data-icon="plus">Termin hinzufügen</button>
+    </section>
+
+    <div class="adm-inline-foot">
+      <span class="adm-muted" id="ag-state"></span>
+      <button type="submit" class="btn btn-dark" id="ag-save" data-icon="check">Speichern</button>
+    </div>
+  </form>
+</main>
+
+</body>
+</html>

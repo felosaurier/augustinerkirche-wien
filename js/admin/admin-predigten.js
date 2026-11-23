@@ -2,7 +2,8 @@
    Augustinerkirche Wien — admin-predigten.js
    Predigten und Ansprachen pflegen (admin/predigten.html). Geteilte Ablage:
    data/predigten/index.json: {predigten: [{id, datum, titel, auszug, bild, breite, hoehe,
-   bildtext, nachweis, entwurf}]} (Reihenfolge = Website) und je Beitrag
+   ausschnitt, bildtext, nachweis, entwurf}]} (ausschnitt: Lage des quadratischen Ausschnitts in
+   der Uebersicht als "x% y%", im Fenster per Ziehen gewaehlt) (Reihenfolge = Website) und je Beitrag
    data/predigten/<id>.json: {id, text}. Je Beitrag hoechstens ein Foto (assets/img/predigten/),
    der Text mit den Formatierungszeichen der Website (Leiste ueber dem Feld).
    Ein ersetztes oder entferntes Foto und ein geloeschter Beitrag verschwinden wirklich
@@ -207,6 +208,64 @@
     }
   }
 
+  /* ---------- Fenster: Ausschnitt in der Uebersicht ----------
+     Wie bei den Neuigkeiten: Bild im quadratischen Rahmen ziehen oder mit den Pfeiltasten
+     verschieben; gespeichert als object-position ("x% y%") in f-focus */
+  function panBox() {
+    const box = $('pd-prev');
+    const img = box.querySelector('img');
+    return img && img.naturalWidth ? { box, img } : null;
+  }
+  function panTo(x, y) {
+    const t = panBox();
+    if (!t) return;
+    const clamp = (v) => Math.round(Math.min(100, Math.max(0, v)));
+    $('f-focus').value = `${clamp(x)}% ${clamp(y)}%`;
+    t.img.style.objectPosition = $('f-focus').value;
+    $('f-focus').dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  function panStart() {
+    const v = $('f-focus').value.match(/^(\d+)% (\d+)%$/);
+    return v ? { x: Number(v[1]), y: Number(v[2]) } : { x: 50, y: 50 };
+  }
+  function wirePan() {
+    const box = $('pd-prev');
+    let drag = null;
+    box.addEventListener('pointerdown', (ev) => {
+      const t = panBox();
+      if (!t) return;
+      const r = box.getBoundingClientRect();
+      const scale = Math.max(r.width / t.img.naturalWidth, r.height / t.img.naturalHeight);
+      drag = { x0: ev.clientX, y0: ev.clientY, ...panStart(), rx: t.img.naturalWidth * scale - r.width, ry: t.img.naturalHeight * scale - r.height };
+      box.setPointerCapture(ev.pointerId);
+      box.classList.add('dragging');
+      ev.preventDefault();
+    });
+    box.addEventListener('pointermove', (ev) => {
+      if (!drag) return;
+      panTo(drag.rx > 1 ? drag.x - ((ev.clientX - drag.x0) / drag.rx) * 100 : drag.x,
+        drag.ry > 1 ? drag.y - ((ev.clientY - drag.y0) / drag.ry) * 100 : drag.y);
+    });
+    const end = () => {
+      drag = null;
+      box.classList.remove('dragging');
+    };
+    box.addEventListener('pointerup', end);
+    box.addEventListener('pointercancel', end);
+    box.addEventListener('keydown', (ev) => {
+      const step = { ArrowLeft: [-5, 0], ArrowRight: [5, 0], ArrowUp: [0, -5], ArrowDown: [0, 5] }[ev.key];
+      if (!step || !panBox()) return;
+      ev.preventDefault();
+      const s0 = panStart();
+      panTo(s0.x + step[0], s0.y + step[1]);
+    });
+    $('pd-pan-reset').addEventListener('click', () => {
+      $('f-focus').value = '';
+      renderImage();
+      $('f-focus').dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+
   /* ---------- Fenster: Foto ---------- */
   function currentPhoto() {
     const p = edit >= 0 ? list[edit] : null;
@@ -215,7 +274,19 @@
   function renderImage() {
     const cur = currentPhoto();
     const src = image ? image.url : cur ? A.imageUrl(cur.bild) : '';
-    $('pd-prev').innerHTML = src ? `<img src="${esc(src)}" alt="Vorschau des Fotos"/>` : '<span class="none">Noch kein Foto</span>';
+    const pos = A.focusPos($('f-focus').value);
+    $('pd-prev').innerHTML = src ? `<img src="${esc(src)}" alt="Vorschau des Fotos" draggable="false"${pos ? ` style="object-position:${pos}"` : ''}/>` : '<span class="none">Noch kein Foto</span>';
+    $('pd-prev').classList.toggle('adm-pan', !!src);
+    if (src) {
+      $('pd-prev').tabIndex = 0;
+      $('pd-prev').setAttribute('role', 'group');
+      $('pd-prev').setAttribute('aria-label', 'Ausschnitt in der Übersicht: mit der Maus ziehen oder mit den Pfeiltasten verschieben');
+    } else {
+      $('pd-prev').removeAttribute('tabindex');
+      $('pd-prev').removeAttribute('role');
+      $('pd-prev').removeAttribute('aria-label');
+    }
+    $('pd-pan-help').hidden = !src;
     $('pd-imginfo').textContent = image ? `${image.name} · ${image.w} × ${image.h} Pixel` : cur ? `Aktuelles Foto: ${cur.bild}` : '';
     $('pd-img-remove').hidden = !src;
   }
@@ -238,6 +309,7 @@
     /* Es gibt nur ein Foto: ein neues ersetzt das bisherige */
     image = { ...conv, url: URL.createObjectURL(conv.blob), name: file.name, w, h };
     removeImage = false;
+    $('f-focus').value = '';
     renderImage();
   }
   function dropImage() {
@@ -273,6 +345,7 @@
     $('f-bildtext').value = p ? p.bildtext || '' : '';
     $('f-draft').checked = !!(p && p.entwurf);
     $('f-credit').value = p && p.bild ? (p.nachweis !== undefined ? p.nachweis : A.credits.get(p.bild)) : '';
+    $('f-focus').value = p ? A.focusPos(p.ausschnitt) : '';
     if (image) URL.revokeObjectURL(image.url);
     image = null;
     removeImage = false;
@@ -335,6 +408,7 @@
         bildtext: clean($('f-bildtext').value)
       };
       if ($('f-draft').checked) entry.entwurf = true;
+      if ((cur || image) && A.focusPos($('f-focus').value)) entry.ausschnitt = A.focusPos($('f-focus').value);
       if (image) {
         const path = await freePath(`${datum}-${HD.slug(titel, 50) || 'predigt'}`, image.ext, old);
         await A.saveFile(path, image.blob);
@@ -373,7 +447,7 @@
     const p = list[i];
     const ok = await A.confirmBox({
       title: 'Beitrag entfernen?',
-      html: `<strong>${esc(p.titel)}</strong><br>${esc(longDate(p.datum))}<br><br>Der Beitrag verschwindet von der Seite „Predigten und Ansprachen“.${p.bild ? ' Das Foto wird gelöscht.' : ''}`,
+      html: `<strong>${esc(p.titel)}</strong><br>${esc(longDate(p.datum))}<br><br>Der Beitrag verschwindet von der Seite „Predigten &amp; Ansprachen“.${p.bild ? ' Das Foto wird gelöscht.' : ''}`,
       ok: 'Entfernen', danger: true
     });
     if (!ok) return;
@@ -402,6 +476,7 @@
     $('f-file').addEventListener('change', (ev) => onFile(ev.target.files[0]));
     $('pd-img-remove').addEventListener('click', dropImage);
     A.wireDrop($('pd-drop'));
+    wirePan();
     $('pd-new').addEventListener('click', () => openEditor());
     $('pd-form').addEventListener('submit', save);
     $('pd-delete').addEventListener('click', () => { if (edit >= 0) remove(edit); });

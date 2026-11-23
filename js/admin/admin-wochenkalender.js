@@ -5,12 +5,15 @@
    eigene Termine, js/kalender-daten.js), Woche für Woche. Dazu trägst du die Einzelheiten
    der Woche ein, gespeichert in data/wochenkalender.json:
    {"tage": [{datum, tag, heilige: [], termine: [{zeit, anschliessend, nach, name, zusatz,
-   zelebrant, musik, ort, hinweis, art, entfaellt}]}]}
+   zelebrant, musik, ort, hinweis, art, entfaellt}]}],
+   "wochen": [{montag, bild, breite, hoehe}]}
    - je Tag Tagesbezeichnung und Heilige und Gedenktage
    - je Termin Zelebrant, Musik, Ort und Hinweis; ein Eintrag ersetzt den Termin des Kalenders
      um dieselbe Uhrzeit, ein Termin, den es dort nicht gibt, kommt neu dazu
    - kein Löschen und Kopieren: ein Termin "entfällt", dann steht er nicht im Wochenkalender
      und ist hier durchgestrichen
+   - je Woche ein Bild (z. B. der gedruckte Wochenkalender), auf der Website rechts neben dem
+     Wochenueberblick (js/woche.js); die Bilder liegen in assets/img/wochenkalender/
    Benoetigt js/hochaemter-data.js, js/kalender-daten.js und js/admin/admin.js.
    ============================================================ */
 (function () {
@@ -21,10 +24,12 @@
   const { HD, $, esc, icon } = A;
   const PATH = 'data/wochenkalender.json';
   const BASE = '../';
+  const IMG_DIR = 'assets/img/wochenkalender/';
   const GROUP = { hochamt: 'Hochamt', gottesdienst: 'Gottesdienst', tagzeit: 'Tagzeitenliturgie', veranstaltung: 'Veranstaltung', konzert: 'Konzert', runde: 'Runden', ohne: 'Termin' };
   const FROM = { plan: 'Gottesdienstzeiten', hochamt: 'Hochämter', runde: 'Runden', termin: 'Veranstaltungen' };
 
   let tage = [];          /* data/wochenkalender.json */
+  let wochen = [];        /* Bilder je Woche: {montag, bild, breite, hoehe} */
   let items = [];         /* alle Termine des Kalenders samt Wochenkalender */
   let monday = null;
   let editDay = '';
@@ -58,6 +63,7 @@
         datum: x.datum, tag: x.tag || '', heilige: Array.isArray(x.heilige) ? x.heilige : [],
         termine: Array.isArray(x.termine) ? x.termine : [], ...(x.ohneHeilige ? { ohneHeilige: true } : {})
       }));
+      wochen = (Array.isArray(d.wochen) ? d.wochen : []).filter((x) => x && HD.isoDate(x.montag) && x.bild);
       await loadItems();
     } catch (e) {
       $('wk-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Der Wochenkalender konnte nicht geladen werden (${esc(e.message)}).</div></div>`;
@@ -126,13 +132,78 @@
           : '<p class="adm-muted">Keine Termine</p>') +
       '</section>';
     }).join('');
+    renderBild();
   }
 
-  /* Speichern: Tage ohne Inhalt fallen weg */
-  async function store(next, note) {
+  /* ---------- Bild der Woche ---------- */
+  const bildOf = (m) => wochen.find((x) => x.montag === m) || null;
+  function renderBild() {
+    const b = bildOf(iso(monday));
+    $('wk-bild-prev').innerHTML = b ? `<img src="${esc(A.imageUrl(b.bild))}" alt="Bild der Woche"/>` : '<span class="none">Kein Bild</span>';
+    $('wk-bild-info').textContent = b ? A.fileName(b.bild) : '';
+    $('wk-bild-label').textContent = b ? 'Anderes Bild wählen' : 'Bild wählen';
+    $('wk-bild-del').hidden = !b;
+  }
+  async function onBild(file) {
+    $('wk-bild-file').value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      A.toast('Bitte eine Bilddatei wählen (WebP, JPG oder PNG). Ein PDF bitte vorher als Bild speichern.', 'err');
+      return;
+    }
+    let conv;
+    try {
+      conv = await A.toWebp(file, { maxSize: 1600, quality: 0.86 });
+    } catch {
+      return;
+    }
+    let w = 0;
+    let h = 0;
+    try {
+      const bmp = await createImageBitmap(conv.blob);
+      w = bmp.width;
+      h = bmp.height;
+      if (bmp.close) bmp.close();
+    } catch { /* Groesse unbekannt */ }
+    const m = iso(monday);
+    const old = bildOf(m);
+    /* immer ein neuer Name, damit Browser nicht das alte Bild zeigen */
+    let path = `${IMG_DIR}${m}.${conv.ext}`;
+    for (let n = 2; (old && old.bild === path) || (A.folder.state === 'ok' && await A.folder.exists(path)); n++) path = `${IMG_DIR}${m}-${n}.${conv.ext}`;
+    try {
+      await A.saveFile(path, conv.blob);
+      const entry = { montag: m, bild: path, ...(w && h ? { breite: w, hoehe: h } : {}) };
+      await store(tage, `Bild der Woche ab ${label(m)} gespeichert.`, wochen.filter((x) => x.montag !== m).concat(entry));
+      if (old && old.bild !== path) await A.media.remove([old.bild]);
+    } catch (err) {
+      A.toast(`Speichern nicht möglich: ${err.message}`, 'err');
+    }
+  }
+  async function removeBild() {
+    const m = iso(monday);
+    const old = bildOf(m);
+    if (!old) return;
+    const ok = await A.confirmBox({
+      title: 'Bild der Woche entfernen?',
+      html: `Woche ab <strong>${esc(label(m))}</strong><br><br>Das Bild verschwindet aus dem Wochenüberblick, die Datei wird gelöscht.`,
+      ok: 'Entfernen', danger: true
+    });
+    if (!ok) return;
+    try {
+      await store(tage, `Bild der Woche ab ${label(m)} entfernt.`, wochen.filter((x) => x.montag !== m));
+      await A.media.remove([old.bild]);
+    } catch (err) {
+      A.toast(`Entfernen nicht möglich: ${err.message}`, 'err');
+    }
+  }
+
+  /* Speichern: Tage ohne Inhalt fallen weg; die Bilder der Wochen bleiben, wie sie sind */
+  async function store(next, note, nextWochen = wochen) {
     const kept = next.filter((d) => d.tag || d.heilige.length || d.termine.length || d.ohneHeilige).sort((a, b) => a.datum.localeCompare(b.datum));
-    const direct = await A.saveJSON(PATH, { tage: kept });
+    const bilder = nextWochen.slice().sort((a, b) => a.montag.localeCompare(b.montag));
+    const direct = await A.saveJSON(PATH, bilder.length ? { tage: kept, wochen: bilder } : { tage: kept });
     tage = kept;
+    wochen = bilder;
     await loadItems();
     render();
     A.toast(direct ? note : `${note} Bitte unten die Datei herunterladen.`);
@@ -299,6 +370,8 @@
       if (v) go(mondayOf(HD.dateFromIso(v)));
     });
     $('te-anschl').addEventListener('change', syncAnschl);
+    $('wk-bild-file').addEventListener('change', (ev) => onBild(ev.target.files[0]));
+    $('wk-bild-del').addEventListener('click', removeBild);
     $('te-form').addEventListener('submit', saveTermin);
     $('td-form').addEventListener('submit', saveDay);
     /* Heilige aus dem Heiligenkalender ins Feld uebernehmen (zum Ergaenzen oder Aendern) */

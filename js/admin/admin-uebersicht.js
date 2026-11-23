@@ -19,7 +19,7 @@
 
   async function loadAll() {
     const json = (path) => A.readJSON(path);
-    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga, pa, wo, fh, pr] = await Promise.allSettled([
+    const [ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga, pa, wo, fh, pr, ag, tx] = await Promise.allSettled([
       A.readText('data/hochaemter.csv').then((t) => HD.rowsToRaw(HD.parseCSV(t)).map(HD.normalize).filter(Boolean).sort(HD.byDateTime)),
       A.readText('data/news.csv').then(A.parseNews),
       json('data/solisten.json'),
@@ -44,14 +44,17 @@
       json('data/pgr-aspersdorf.json'),
       json('data/aspersdorf-wochen.json'),
       json('data/friedhof.json'),
-      json('data/predigten/index.json').catch(() => json('data/predigten.json'))
+      json('data/predigten/index.json').catch(() => json('data/predigten.json')),
+      /* entstehen erst beim ersten Speichern */
+      json('data/aspersdorf-gottesdienste.json').catch(() => null),
+      json('data/texte.json').catch(() => null)
     ]);
     const val = (r) => (r.status === 'fulfilled' ? r.value : null);
     return {
       ha: val(ha), news: val(news), sol: val(sol), acc: val(acc), gd: val(gd),
       rd: val(rd) && val(rd).runden, ps: val(ps), rp: val(rp), st: val(st),
       tm: val(tm), pt: val(pt), cd: val(cd), rg: val(rg), pg: val(pg), hw: val(hw), mt: val(mt), re: val(re), sp: val(sp), wk: val(wk), ga: val(ga),
-      pa: val(pa), wo: val(wo), fh: val(fh), pr: val(pr)
+      pa: val(pa), wo: val(wo), fh: val(fh), pr: val(pr), ag: val(ag), tx: val(tx)
     };
   }
 
@@ -88,11 +91,13 @@
   }
 
   /* Alle Bereiche, gruppiert wie die Seitenleiste (js/admin/admin.js, NAV) */
-  function renderAreas({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga, pa, wo, fh, pr }) {
+  function renderAreas({ ha, news, sol, acc, gd, rd, ps, rp, st, tm, pt, cd, rg, pg, hw, mt, re, sp, wk, ga, pa, wo, fh, pr, ag, tx }) {
     const { upcoming } = ha ? HD.splitByDate(ha) : { upcoming: [] };
     const none = '&nbsp;';
     const can = A.can;
     const count = (list) => (list || []).length;
+    /* Texte der Seiten: geaenderte Abschnitte je Bereich (Schluessel beginnt mit kirche- bzw. asp-) */
+    const geaendert = (pre) => Object.keys((tx && tx.texte) || {}).filter((k) => k.startsWith(pre)).length;
     const people = (groups) => (ps ? groups.reduce((n, g) => n + count(ps[g]), 0) : null);
     const mine = (rd || []).filter((r) => A.canRunde(r.id));
     const live = (list) => (list || []).filter((h) => A.noticeActive(h)).length;
@@ -164,6 +169,10 @@
           stat: pr ? plural(count(pr.predigten), 'Beitrag', 'Beiträge') : none,
           addHref: 'predigten.html?neu=1', addLabel: 'Neuer Beitrag'
         }),
+        can('texte') && row({
+          href: 'texte.html?bereich=kirche', ico: 'book', title: 'Texte der Seiten',
+          stat: geaendert('kirche-') ? plural(geaendert('kirche-'), 'Abschnitt geändert', 'Abschnitte geändert') : 'Wie ursprünglich'
+        }),
         can('mitbrueder') && row({
           href: 'personen.html?bereich=kloster', ico: 'user', title: 'Mitbrüder',
           stat: ps ? plural(people(['mitbrueder']), 'Mitbruder', 'Mitbrüder') : none,
@@ -217,6 +226,10 @@
           stat: pa ? plural(count(pa.mitglieder) + count(pa.vwr), 'Person', 'Personen') : none,
           addHref: 'aspersdorf-gremien.html?neu=1', addLabel: 'Neue Person'
         }),
+        can('asp-gottesdienste') && row({
+          href: 'aspersdorf-gottesdienste.html', ico: 'clock', title: 'Gottesdienste &amp; Termine',
+          stat: ag ? [plural(count(ag.regelmaessig), 'Gottesdienst', 'Gottesdienste'), plural(count((ag.termine || []).filter((t) => t && t.datum >= A.isoToday())), 'Termin', 'Termine')].join(' · ') : 'Wie auf der Seite'
+        }),
         can('asp-wochen') && row({
           href: 'aspersdorf-wochen.html', ico: 'calendarWeek', title: 'Wochenblätter (PDF)', flag: weekOld,
           stat: wo ? plural(count(wo.wochen), 'Wochenblatt', 'Wochenblätter') : none,
@@ -226,6 +239,10 @@
           href: 'aspersdorf-friedhof.html', ico: 'book', title: 'Friedhofsgebühren',
           stat: fh ? plural(count(fh.tabellen), 'Tabelle', 'Tabellen') : none,
           addHref: 'aspersdorf-friedhof.html?neu=1', addLabel: 'Neue Tabelle'
+        }),
+        can('asp-texte') && row({
+          href: 'texte.html?bereich=aspersdorf', ico: 'book', title: 'Texte (Friedhof)',
+          stat: geaendert('asp-') ? plural(geaendert('asp-'), 'Abschnitt geändert', 'Abschnitte geändert') : 'Wie ursprünglich'
         })
       ]],
       ['Website', [

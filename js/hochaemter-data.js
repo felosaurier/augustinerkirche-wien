@@ -276,6 +276,93 @@
     };
   }
 
+  /* Texte der Seiten (data/texte.json, Verwaltung "Texte der Seiten"): HTML aus dem Editor.
+     Bleibt nur, was die Seiten selbst verwenden: Absaetze, Zwischentitel, Listen, Tabellen,
+     Karten, Fotos aus assets/, Links (http, https, mailto, tel, relativ); Klassen nur aus
+     Buchstaben, Ziffern und Bindestrich, style nur ohne url() und Co. Alles andere (Skripte,
+     Rahmen, on…-Attribute, fremde Bilder) faellt weg; unbekannte Tags werden aufgeloest,
+     ihr Text bleibt. Gleich im Browser der Website und der Verwaltung (beim Speichern). */
+  const HTML_KEEP = {
+    P: ['class', 'style'], BR: [], STRONG: [], B: [], EM: [], I: [], U: [], S: [], SUB: [], SUP: [], SMALL: [],
+    SPAN: ['class'], DIV: ['class', 'style'], SECTION: ['class'], H3: ['class'], H4: ['class'], BLOCKQUOTE: ['class'],
+    UL: ['class'], OL: ['class'], LI: ['class'],
+    A: ['href', 'class', 'data-mail', 'data-subject', 'data-lightbox', 'title', 'target'],
+    TABLE: ['class'], THEAD: [], TBODY: [], TR: ['class'], TH: ['colspan', 'rowspan', 'scope', 'class'], TD: ['colspan', 'rowspan', 'class'],
+    DL: ['class', 'style'], DT: [], DD: [], FIGURE: ['class', 'data-foto'], FIGCAPTION: [],
+    IMG: ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'class', 'data-mitbruder', 'data-foto', 'style'], HR: ['class']
+  };
+  const HTML_DROP = /^(SCRIPT|STYLE|IFRAME|OBJECT|EMBED|SVG|MATH|TEMPLATE|NOSCRIPT|FORM|INPUT|BUTTON|SELECT|TEXTAREA|LINK|META|BASE|VIDEO|AUDIO|SOURCE|CANVAS|FRAME|FRAMESET)$/;
+  const safeHref = (v) => {
+    const s = String(v || '').trim();
+    if (/^(https?:|mailto:|tel:)/i.test(s)) return s;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(s) || /^\/\//.test(s)) return '';
+    return /^[\w./#?=&%-]*$/.test(s) ? s : '';
+  };
+  const safeSrc = (v) => {
+    const s = String(v || '').trim();
+    return /^(\.\.\/)*assets\/[\w./-]+\.(webp|jpe?g|png|gif|svg)$/i.test(s) ? s : '';
+  };
+  const safeStyle = (v) => {
+    const s = String(v || '');
+    return /url\s*\(|expression|@import|behavior|javascript|[<>\\]/i.test(s) ? '' : s.slice(0, 300);
+  };
+  function cleanHTML(html) {
+    if (typeof document === 'undefined') return '';
+    /* <template> ist traege: nichts wird geladen oder ausgefuehrt, solange es dort steht */
+    const tpl = document.createElement('template');
+    tpl.innerHTML = String(html ?? '');
+    const root = tpl.content;
+    const walk = (parent) => {
+      for (const node of Array.from(parent.childNodes)) {
+        if (node.nodeType === 3) continue;
+        if (node.nodeType !== 1) {
+          node.remove();
+          continue;
+        }
+        const tag = node.tagName;
+        if (HTML_DROP.test(tag)) {
+          node.remove();
+          continue;
+        }
+        const keep = HTML_KEEP[tag];
+        if (!keep) {
+          walk(node);
+          node.replaceWith(...Array.from(node.childNodes));
+          continue;
+        }
+        for (const attr of Array.from(node.attributes)) {
+          const name = attr.name.toLowerCase();
+          let val = attr.value;
+          if (!keep.includes(name)) {
+            node.removeAttribute(attr.name);
+            continue;
+          }
+          if (name === 'href') val = safeHref(val);
+          else if (name === 'src') val = safeSrc(val);
+          else if (name === 'style') val = safeStyle(val);
+          else if (name === 'class') val = val.split(/\s+/).filter((c) => /^[a-z][a-z0-9-]*$/i.test(c)).join(' ');
+          else if (name === 'target') val = val === '_blank' ? '_blank' : '';
+          else if (name === 'width' || name === 'height' || name === 'colspan' || name === 'rowspan') val = /^\d{1,4}$/.test(val) ? val : '';
+          else if (name === 'loading') val = val === 'lazy' ? 'lazy' : '';
+          else if (name === 'decoding') val = val === 'async' ? 'async' : '';
+          else val = val.slice(0, 500);
+          if (val) node.setAttribute(attr.name, val);
+          else node.removeAttribute(attr.name);
+        }
+        if (tag === 'A' && node.getAttribute('target') === '_blank') node.setAttribute('rel', 'noopener');
+        if (tag === 'IMG' && !node.getAttribute('src')) {
+          node.remove();
+          continue;
+        }
+        walk(node);
+      }
+    };
+    walk(root);
+    const out = document.createElement('div');
+    out.append(root);
+    return out.innerHTML;
+  }
+
   /* Titel -> URL-taugliche Kennung (Umlaute ausgeschrieben) */
   function slug(s, maxLength = 40) {
     return String(s).toLowerCase()
@@ -508,7 +595,7 @@
 
   w.HochamtData = {
     MONTHS, MONTHS_SHORT, WEEKDAYS, WEEKDAYS_SHORT, FIELDS, fmtLang, fmtUhr, uhr,
-    esc, pad, num, focusPos, safeUrl, richText, formatText, plainText, cleanLines, blocksHTML, legalHTML, mailHTML, mailEncode, mailDecode, fetchJSON, telHref, slug, csvText, download,
+    esc, pad, num, focusPos, safeUrl, richText, formatText, plainText, cleanLines, blocksHTML, legalHTML, cleanHTML, mailHTML, mailEncode, mailDecode, fetchJSON, telHref, slug, csvText, download,
     parseCSV, rowsToRaw, isoDate, isoTime, dateFromIso, newsUntil, NEWS_DAYS, NEWS_PAGES, newsPages, newsOnPage, list,
     normalize, byDateTime, byDateTimeDesc,
     load, loadRaw, loadYear, archiveYears, isUpcoming, splitByDate, today, toCSV

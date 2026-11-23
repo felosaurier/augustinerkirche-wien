@@ -22,7 +22,10 @@
      je Eintrag Datum, Titel, ein Foto und ein formatierter Text
    - data/aspersdorf-wochen.json: Wochenblaetter (PDF) der Pfarre Aspersdorf
      ([data-inhalt="asp-wochen"])
-   - data/friedhof.json: Gebuehrentabellen des Pfarrfriedhofs Aspersdorf
+   - data/aspersdorf-gottesdienste.json: regelmaessige Gottesdienste und besondere Termine
+    der Pfarre Aspersdorf ([data-inhalt="asp-gottesdienste"], [data-inhalt="asp-termine"])
+  - data/texte.json: Texte der Seiten ([data-text="Schluessel"], z. B. Pfarrer, Sakramente)
+  - data/friedhof.json: Gebuehrentabellen des Pfarrfriedhofs Aspersdorf
      ([data-inhalt="friedhof"])
    - data/paten.json: Paten und Ehrenpaten der Kirchenmusik
      ([data-inhalt="paten"], [data-inhalt="ehrenpaten"]), Moeglichkeiten
@@ -564,16 +567,71 @@
         continue;
       }
       const [now, ...older] = list;
+      /* Bild vorne: das eigene des aktuellen Blatts, sonst das des letzten Blatts mit Bild */
+      const withImg = list.find((w) => /^assets\/[^?#]+\.(webp|jpe?g|png)$/i.test(String(w.bild || '')));
+      const img = withImg ? url(withImg.bild) : '';
+      /* Archiv: aeltere Blaetter nach Jahren (neueste zuerst) */
+      const years = [];
+      for (const w of older) {
+        const y = String(w.datum || '').slice(0, 4) || '–';
+        if (!years.length || years[years.length - 1].y !== y) years.push({ y, list: [] });
+        years[years.length - 1].list.push(w);
+      }
       el.innerHTML =
-        '<div class="asp-woche-now">' +
-          '<div class="asp-woche-icon" aria-hidden="true">PDF</div>' +
+        `<div class="asp-woche-now${img ? ' has-img' : ''}">` +
+          (img
+            ? `<a class="asp-woche-img" href="${esc(url(now.datei))}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="${esc(img)}" alt="" loading="lazy" decoding="async"/></a>`
+            : '<div class="asp-woche-icon" aria-hidden="true">PDF</div>') +
           `<div class="asp-woche-text"><div class="asp-woche-kicker">Gottesdienstordnung &amp; Termine</div><div class="asp-woche-titel">${esc(name(now))}</div></div>` +
           `<a class="btn btn-dark" href="${esc(url(now.datei))}" target="_blank" rel="noopener">Wochenblatt öffnen</a>` +
         '</div>' +
         (older.length
-          ? `<details class="asp-woche-older"><summary>Frühere Wochen <span>${older.length}</span></summary><ul>` +
-            older.map((w) => `<li><a href="${esc(url(w.datei))}" target="_blank" rel="noopener">${esc(name(w))}</a></li>`).join('') + '</ul></details>'
+          ? `<details class="asp-woche-older"><summary>Archiv <span>${older.length}</span></summary>` +
+            years.map((g) => `<div class="asp-woche-year"><h4>${esc(g.y)}</h4><ul>` +
+              g.list.map((w) => `<li><a href="${esc(url(w.datei))}" target="_blank" rel="noopener">${esc(name(w))}</a></li>`).join('') + '</ul></div>').join('') +
+            '</details>'
           : '');
+      el.hidden = false;
+    }
+  }
+
+  /* ---------- Aspersdorf: Gottesdienste und besondere Termine ----------
+     data/aspersdorf-gottesdienste.json: {regelmaessig: [{tag, zeit, name, hinweis}],
+     termine: [{datum, zeit, name, hinweis}]}. Fehlt die Datei, bleibt die Tabelle aus dem HTML.
+     Wie in Wien steht der Wochentag nur in der ersten Zeile eines Tages; von den besonderen
+     Terminen erscheinen nur die von heute an. */
+  async function aspGottesdienste() {
+    const tables = qsa('[data-inhalt="asp-gottesdienste"]');
+    const boxes = qsa('[data-inhalt="asp-termine"]');
+    if (!tables.length && !boxes.length) return;
+    const data = await load('aspersdorf-gottesdienste.json');
+    const regel = (Array.isArray(data.regelmaessig) ? data.regelmaessig : []).filter((t) => t && t.name && DAYS[t.tag]).sort(byDay);
+    if (regel.length) {
+      for (const el of tables) {
+        el.innerHTML = regel.map((t, i, arr) => {
+          const gleich = i > 0 && arr[i - 1].tag === t.tag;
+          return `<tr${gleich ? ' class="gd-same"' : ''}><td class="gd-day">${gleich ? '' : esc(DAYS[t.tag])}</td><td class="gd-time">${esc(HD.uhr(t.zeit))}</td>` +
+            `<td><div class="gd-name">${esc(t.name)}</div>${t.hinweis ? `<div class="gd-note">${rich(t.hinweis)}</div>` : ''}</td></tr>`;
+        }).join('');
+      }
+    }
+    const jetzt = new Date();
+    const heute = `${jetzt.getFullYear()}-${pad(jetzt.getMonth() + 1)}-${pad(jetzt.getDate())}`;
+    const termine = (Array.isArray(data.termine) ? data.termine : [])
+      .filter((t) => t && t.name && HD.isoDate(t.datum) && t.datum >= heute)
+      .sort((a, b) => String(a.datum).localeCompare(String(b.datum)) || String(a.zeit || '').localeCompare(String(b.zeit || '')));
+    for (const el of boxes) {
+      if (!termine.length) {
+        el.hidden = true;
+        continue;
+      }
+      el.innerHTML = '<h3 class="pane-sub">Besondere Termine</h3><ul class="asp-termin-list">' + termine.map((t) => {
+        const d = HD.dateFromIso(t.datum);
+        const tag = d ? `${HD.WEEKDAYS[d.getDay()]}, ${d.getDate()}. ${HD.MONTHS[d.getMonth()]}` : t.datum;
+        return '<li class="asp-termin">' +
+          `<div class="asp-termin-when"><span class="asp-termin-date">${esc(tag)}</span>${t.zeit ? `<span class="asp-termin-time">${esc(HD.uhr(t.zeit))}</span>` : ''}</div>` +
+          `<div class="asp-termin-what"><div class="gd-name">${esc(t.name)}</div>${t.hinweis ? `<div class="gd-note">${rich(t.hinweis)}</div>` : ''}</div></li>`;
+      }).join('') + '</ul>';
       el.hidden = false;
     }
   }
@@ -608,8 +666,10 @@
         const size = p.breite && p.hoehe ? ` width="${HD.num(p.breite, 800)}" height="${HD.num(p.hoehe, 600)}"` : '';
         const credit = p.nachweis ? ` data-credit="${esc(p.nachweis)}"` : '';
         /* Bildnachweis setzt main.js direkt unter das Bild */
-        const fig = (cls) => `<figure class="${cls}"><img src="${esc(src)}" alt="${esc(p.bildtext || p.titel)}"${size}${credit} loading="lazy" decoding="async"/></figure>`;
-        const img = src ? fig('pd-img') : '';
+        const pos = HD.focusPos(p.ausschnitt);
+        const fig = (cls, style = '') => `<figure class="${cls}"><img src="${esc(src)}" alt="${esc(p.bildtext || p.titel)}"${size}${credit}${style} loading="lazy" decoding="async"/></figure>`;
+        /* Uebersicht: quadratischer Ausschnitt (Verwaltung: Bild ziehen) */
+        const img = src ? fig('pd-img', pos ? ` style="object-position:${pos}"` : '') : '';
         /* Aufgeklappt: Hochformat links vom Text (Text umfliesst es), Querformat oben */
         const hoch = p.breite && p.hoehe ? (Number(p.hoehe) > Number(p.breite) ? ' pd-hoch' : ' pd-quer') : '';
         const excerpt = legacy ? HD.plainText(String(p.text || '').split(/\n+/).join(' ')) : HD.plainText(p.auszug || '');
@@ -743,6 +803,24 @@
     render();
   }
 
+  /* ---------- Texte der Seiten ----------
+     data/texte.json: {texte: {"<Schluessel>": {html, geaendert}}}; je <… data-text="Schluessel">
+     im HTML ersetzt der gespeicherte Text (Verwaltung: Texte der Seiten) den Inhalt. Fehlt die
+     Datei oder der Eintrag, bleibt der Text aus dem HTML. Das HTML wird vorher gefiltert
+     (HochamtData.cleanHTML). Laeuft vor den uebrigen Bereichen, damit Fotos (data-foto,
+     data-mitbruder) und Personen in den gespeicherten Texten danach ihre Bilder bekommen. */
+  async function texte() {
+    const hosts = qsa('[data-text]');
+    if (!hosts.length) return;
+    const map = ((await load('texte.json')) || {}).texte || {};
+    for (const el of hosts) {
+      const t = map[el.dataset.text];
+      if (!t || typeof t.html !== 'string' || !t.html.trim()) continue;
+      const html = HD.cleanHTML(t.html);
+      if (html.trim()) el.innerHTML = html;
+    }
+  }
+
   /* ---------- Impressum und Datenschutz ---------- */
   async function rechtliches() {
     const host = document.querySelector('[data-inhalt="rechtliches"]');
@@ -791,8 +869,9 @@
     legalToc();
     /* Impressum zuerst: es enthaelt die Oeffnungszeiten der Pfarrkanzlei, die kontakt() danach eintraegt */
     await rechtliches().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
+    await texte().catch(() => { /* Rueckfall: Texte aus dem HTML */ });
     /* Jeder Bereich fuer sich: scheitert einer, bleibt dort der HTML-Inhalt */
-    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, mitbruderFotos, fotos, kontakt, repertoire, paten, pgr, predigten, aspWochen, friedhof, cds, galerie, rundgang]) {
+    for (const fn of [gottesdienste, rundenListe, rundeSeite, personen, mitbruderFotos, fotos, kontakt, repertoire, paten, pgr, predigten, aspWochen, aspGottesdienste, friedhof, cds, galerie, rundgang]) {
       fn().catch(() => { /* Rueckfall: Inhalt aus dem HTML */ });
     }
   });

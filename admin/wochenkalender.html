@@ -49,6 +49,18 @@
     </div>
   </div>
   <p class="adm-count" id="wk-count" role="status"></p>
+  <section class="adm-panel wk-bild" aria-labelledby="wk-bild-h">
+    <div class="wk-bild-prev" id="wk-bild-prev"></div>
+    <div class="wk-bild-body">
+      <h2 class="adm-panel-title" id="wk-bild-h">Bild der Woche</h2>
+      <p class="adm-panel-sub">Steht auf der Website im <a href="../pages/kalender.html#woche" target="_blank" rel="noopener">Wochenüberblick</a> rechts neben dieser Woche, z. B. der gedruckte Wochenkalender als Foto oder Bild. Ein Klick darauf zeigt es groß. Jede Woche hat ihr eigenes Bild; ältere bleiben gespeichert.</p>
+      <div class="wk-bild-actions">
+        <label class="btn btn-outline wk-bild-pick" id="wk-bild-drop"><span data-icon="upload"></span><span id="wk-bild-label">Bild wählen</span><input type="file" id="wk-bild-file" accept="image/*" class="visually-hidden"/></label>
+        <button type="button" class="adm-act danger" id="wk-bild-del" data-icon="trash" hidden>Bild entfernen</button>
+      </div>
+      <span class="adm-hint" id="wk-bild-info"></span>
+    </div>
+  </section>
   <div id="wk-list"><p class="adm-muted">Wird geladen …</p></div>
 
   <div class="wk-nav wk-nav-bottom" role="group" aria-label="Woche wählen (unten)">

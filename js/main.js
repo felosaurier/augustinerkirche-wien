@@ -65,6 +65,16 @@
     return !href || pagePath(new URL(href, location.href).pathname) === pagePath(location.pathname);
   }
 
+  /* Augustiner, Augustinerkirche und Kirchenmusik: steht man auf ihrer Titelseite weiter unten
+     (z. B. in einem Bereich der Leiste, #p-…), fuehrt der Titel zuerst ganz nach oben auf die
+     Titelseite; erst oben klappt er sein Menue auf und zu. */
+  const TOP_TITLES = ['ni-aug', 'ni-kirche', 'ni-musik'];
+  const awayFromTop = () => window.scrollY > 60 || /^#./.test(location.hash);
+  function toTitleTop() {
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    window.scrollTo({ top: 0, behavior: scrollBehavior() });
+  }
+
   /* true, wenn zur Titelseite gewechselt wird */
   function goToTitlePage(btn, itemId) {
     if (isTitlePage(btn)) return false;
@@ -124,6 +134,11 @@
       const item = btn && btn.closest('.nav-item');
       if (!item) return;
       if (goToTitlePage(btn, item.id)) return;
+      if (TOP_TITLES.includes(item.id) && btn.dataset.href && awayFromTop()) {
+        closeAllDropdowns();
+        toTitleTop();
+        return;
+      }
       const wasOpen = item.classList.contains('open');
       closeAllDropdowns();
       if (!wasOpen) openDropdown(item);
@@ -199,7 +214,9 @@
       const id = `mob-${item.id}`;
       html += `<div class="mob-sec" data-item="${escHTML(item.id)}">` +
         `<button type="button" class="mob-sec-btn"${btn.dataset.href ? ` data-href="${escHTML(btn.dataset.href)}"` : ''} aria-expanded="false" aria-controls="${id}">` +
-        `${escHTML(btn.textContent.trim())}${CHEVRON}</button><div class="mob-sec-panel" id="${id}" hidden>`;
+        `${escHTML(btn.textContent.trim())}${CHEVRON}</button><div class="mob-sec-panel" id="${id}" hidden>` +
+        (TOP_TITLES.includes(item.id) && btn.dataset.href
+          ? `<a class="mob-sub mob-home" href="${escHTML(btn.dataset.href)}" data-top>${escHTML(T('Übersicht'))}: ${escHTML(btn.textContent.trim())}</a>` : '');
       for (const group of qsa('.mega-group:not([hidden])', item)) {
         const label = qs('.mega-group-label', group);
         if (label) html += `<span class="mob-group-title">${escHTML(label.textContent.trim())}</span>`;
@@ -261,6 +278,12 @@
       const a = e.target.closest('a');
       if (!a) return;
       setOpen(false);
+      /* Titelseite, auf der man schon ist: nur nach oben */
+      if (a.hasAttribute('data-top') && a.pathname === location.pathname) {
+        e.preventDefault();
+        toTitleTop();
+        return;
+      }
       /* Gleicher Bereich wie in der Adresszeile: kein hashchange, also selbst hinspringen */
       if (a.pathname === location.pathname && a.hash && a.hash === location.hash) {
         e.preventDefault();

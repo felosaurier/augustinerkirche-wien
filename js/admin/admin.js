@@ -144,14 +144,17 @@
     { key: 'repertoire', label: 'Repertoire & Komponisten (Lebensdaten)', group: 'Kirchenmusik', page: 'repertoire.html' },
     { key: 'asp-personen', label: 'Aspersdorf: Pfarrer & Leitung', group: 'Pfarre Aspersdorf', page: 'personen.html' },
     { key: 'asp-gremien', label: 'Aspersdorf: Pfarrgemeinderat & Vermögensverwaltungsrat', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gremien.html' },
+    { key: 'asp-gottesdienste', label: 'Aspersdorf: Gottesdienste & Termine', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gottesdienste.html' },
     { key: 'asp-wochen', label: 'Aspersdorf: Wochenblätter (PDF)', group: 'Pfarre Aspersdorf', page: 'aspersdorf-wochen.html' },
     { key: 'asp-friedhof', label: 'Aspersdorf: Friedhofsgebühren', group: 'Pfarre Aspersdorf', page: 'aspersdorf-friedhof.html' },
+    { key: 'asp-texte', label: 'Aspersdorf: Texte (Friedhofsordnung)', group: 'Pfarre Aspersdorf', page: 'texte.html' },
     { key: 'gottesdienste', label: 'Gottesdienstzeiten', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
     { key: 'wochenkalender', label: 'Wochenkalender', group: 'Pfarre & Kloster', page: 'wochenkalender.html' },
     { key: 'kontakt', label: 'Pfarrkanzlei & Kontakt', group: 'Pfarre & Kloster', page: 'kontakt.html' },
     { key: 'rundgang', label: 'Kirchenrundgang', group: 'Pfarre & Kloster', page: 'rundgang.html' },
     { key: 'pgr', label: 'Pfarrgemeinderat', group: 'Pfarre & Kloster', page: 'pgr.html' },
     { key: 'predigten', label: 'Predigten & Ansprachen', group: 'Pfarre & Kloster', page: 'predigten.html' },
+    { key: 'texte', label: 'Texte der Seiten (Pfarrer, Sakramente, Führungen …)', group: 'Pfarre & Kloster', page: 'texte.html' },
     { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' },
     { key: 'qrcode', label: 'QR-Codes erstellen', group: 'Werkzeuge', page: 'qrcode.html' },
     { key: 'plakat', label: 'Plakat für ein Hochamt', group: 'Werkzeuge', page: 'plakat.html' },
@@ -201,6 +204,8 @@
     /* Der Heiligenkalender gehoert zum Wochenkalender */
     if (page === 'heiligenkalender.html') return 'wochenkalender';
     if (page === 'personen.html') return personenKey(personenBereich());
+    /* Texte der Seiten: Augustinerkirche oder Aspersdorf, je mit eigenem Recht */
+    if (page === 'texte.html') return texteKey(new URLSearchParams(location.search).get('bereich'));
     /* Farben ansehen und kopieren darf jeder, aendern nur mit dem Recht 'farben' */
     if (page === 'farben.html') return '';
     const a = AREAS.find((x) => x.page === page);
@@ -1145,7 +1150,7 @@
     [/^data\/personen\.json$/, 'Personen'], [/^data\/repertoire\.json$/, 'Repertoire'],
     [/^data\/gottesdienste\.json$/, 'Gottesdienstzeiten'], [/^data\/wochenkalender\.json$/, 'Wochenkalender'], [/^data\/heiligenkalender\.json$/, 'Heiligenkalender'], [/^data\/woerterbuch\.json$/, 'Wörterbuch'], [/^data\/kontakt\.json$/, 'Pfarrkanzlei & Kontakt'],
     [/^data\/runden\.json$/, 'Runden'], [/^data\/rundgang\.json$/, 'Kirchenrundgang'], [/^data\/pgr\.json$/, 'Pfarrgemeinderat'], [/^data\/predigten\.json$/, 'Predigten & Ansprachen'],
-    [/^data\/pgr-aspersdorf\.json$/, 'Aspersdorf: Gremien'], [/^data\/aspersdorf-wochen\.json$/, 'Aspersdorf: Wochenblätter'], [/^data\/friedhof\.json$/, 'Aspersdorf: Friedhofsgebühren'],
+    [/^data\/pgr-aspersdorf\.json$/, 'Aspersdorf: Gremien'], [/^data\/aspersdorf-wochen\.json$/, 'Aspersdorf: Wochenblätter'], [/^data\/aspersdorf-gottesdienste\.json$/, 'Aspersdorf: Gottesdienste & Termine'], [/^data\/texte\.json$/, 'Texte der Seiten'], [/^data\/friedhof\.json$/, 'Aspersdorf: Friedhofsgebühren'],
     [/^data\/bildnachweise\.json$/, 'Bildnachweise'], [/^data\/rechtliches\.json$/, 'Impressum & Datenschutz'],
     [/^data\/sprueche\.json$/, 'Zitate'], [/^data\/themen\.json$/, 'Kopfzeile'], [/^data\/navigation\.json$/, 'Menü der Website'], [/^data\/startseite-[a-z]+\.json$/, 'Titelfotos'],
     [/^admin\/zugaenge\.json$/, 'Benutzer & Passwörter'], [/^admin\/mitteilungen\.json$/, 'Nachricht an alle'],
@@ -2187,6 +2192,7 @@
       ['rundgang.html', 'Kirchenrundgang', 'image', 'Chronik Bilder Fotos Führung Geschichte'],
       ['pgr.html', 'Pfarrgemeinderat', 'users', 'PGR Mitglieder'],
       ['predigten.html', 'Predigten & Ansprachen', 'quote', 'Predigt Ansprache Rede Text Foto Gottesdienst'],
+      ['texte.html?bereich=kirche', 'Texte der Seiten', 'book', 'Texte ändern Pfarrer Pfarrkanzlei Seelsorger Sakramente Taufe Trauung Wiedereintritt Geschichte Geschichtliches Führungen Preise Pfarre'],
       ['personen.html?bereich=kloster', 'Mitbrüder', 'user', 'Patres Brüder Kloster Konvent']
     ] },
     { label: 'Kirchenmusik', items: [
@@ -2201,8 +2207,10 @@
     { label: 'Pfarre Aspersdorf', items: [
       ['personen.html?bereich=aspersdorf', 'Pfarrer & Leitung', 'user', 'Aspersdorf Pfarrmoderator Pfarrvikar Pfarrer Leitung'],
       ['aspersdorf-gremien.html', 'Pfarrgemeinderat & Vermögensverwaltungsrat', 'users', 'Aspersdorf PGR Vermögensverwaltungsrat VWR Mitglieder Gremien'],
+      ['aspersdorf-gottesdienste.html', 'Gottesdienste & Termine', 'clock', 'Aspersdorf Gottesdienste Messen Termine Kalender Feiertage Wochentag Uhrzeit Beichte'],
       ['aspersdorf-wochen.html', 'Wochenblätter (PDF)', 'calendarWeek', 'Aspersdorf Woche Gottesdienste Kalender PDF Pfarrblatt hochladen'],
-      ['aspersdorf-friedhof.html', 'Friedhofsgebühren', 'book', 'Aspersdorf Friedhof Gebühren Gräber Tabellen Preise']
+      ['aspersdorf-friedhof.html', 'Friedhofsgebühren', 'book', 'Aspersdorf Friedhof Gebühren Gräber Tabellen Preise'],
+      ['texte.html?bereich=aspersdorf', 'Texte (Friedhof)', 'book', 'Aspersdorf Texte ändern Friedhofsordnung Friedhofsverwaltung Pfarrfriedhof']
     ] },
     { label: 'Website', items: [
       ['startseite.html', 'Titelfotos', 'image', 'Startseite Fotos Vollbild Einstellungen'],
@@ -2231,6 +2239,7 @@
     const ok = (href) => {
       const [page, query] = href.split('?');
       if (page === 'personen.html') return can(personenKey(new URLSearchParams(query).get('bereich')));
+      if (page === 'texte.html') return can(texteKey(new URLSearchParams(query).get('bereich')));
       if (page === 'zugaenge.html') return isAdmin();
       if (page === 'aenderungen.html' || page === 'mitteilungen.html') return isDev();
       return allowed(rightOfPage(page));
@@ -2248,12 +2257,18 @@
   function personenKey(bereich) {
     return bereich === 'kloster' ? 'mitbrueder' : bereich === 'aspersdorf' ? 'asp-personen' : 'musik-personen';
   }
+  /* Texte der Seiten: Recht je Bereich (Augustinerkirche oder Aspersdorf) */
+  function texteKey(bereich) {
+    return bereich === 'aspersdorf' ? 'asp-texte' : 'texte';
+  }
   /* Ist ein Eintrag (Adresse mit optionalem ?bereich=) die aktuelle Seite? */
   function isHere(href) {
     const [page, query] = href.split('?');
     if (page !== pageName()) return false;
     const bereich = query && new URLSearchParams(query).get('bereich');
-    return !bereich || bereich === personenBereich();
+    if (!bereich) return true;
+    if (page === 'personen.html') return bereich === personenBereich();
+    return bereich === (new URLSearchParams(location.search).get('bereich') || 'kirche');
   }
   function initials(name) {
     const parts = String(name || '?').trim().split(/\s+/);
@@ -2928,7 +2943,7 @@
     ...['archiv', 'aspersdorf', 'augustiner', 'augustinerkirche', 'chronik', 'datenschutz', 'gottesdienste', 'hochamt', 'impressum',
       'kalender', 'kontakt', 'musik', 'orgel-reil', 'orgel-rieger', 'pfarre', 'predigten', 'sakramente'].map((n) => `pages/${n}.html`),
     ...['bibelpur', 'fensterblick', 'fusswallfahrt', 'glaube-konkret', 'ministranten', 'oekumenekreis', 'runde', 'senioren'].map((n) => `pages/runden/${n}.html`),
-    ...['aspersdorf-wochen.json', 'cds.json', 'friedhof.json', 'galerie.json', 'gottesdienste.json', 'hinweise.json', 'hochaemter.csv', 'kontakt.json',
+    ...['aspersdorf-wochen.json', 'aspersdorf-gottesdienste.json', 'texte.json', 'cds.json', 'friedhof.json', 'galerie.json', 'gottesdienste.json', 'hinweise.json', 'hochaemter.csv', 'kontakt.json',
       'navigation.json', 'news.csv', 'paten.json', 'personen.json', 'pgr-aspersdorf.json', 'pgr.json', 'rechtliches.json', 'repertoire.json', 'runden.json',
       'rundgang.json', 'solisten.json', 'sprueche.json', 'startseite-aspersdorf.json', 'startseite-augustiner.json', 'startseite-augustinerkirche.json',
       'startseite-kirchenmusik.json', 'startseite.json', 'entdecken.json', 'fotos.json', 'termine.json', 'themen.json', 'wochenkalender.json', 'heiligenkalender.json',

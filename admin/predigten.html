@@ -27,7 +27,7 @@
     <div>
       <div class="ph-tag">Verwaltung</div>
       <h1 class="ph-title">Predigten &amp; Ansprachen <em>pflegen</em></h1>
-      <p class="ph-sub">Mit Titel, Datum, höchstens einem Foto und einem Text. Sie erscheinen auf <a href="../pages/augustinerkirche.html#p-predigten" target="_blank" rel="noopener">Predigten und Ansprachen</a> in der Reihenfolge dieser Liste: Neue Beiträge werden nach Datum eingereiht, mit den Pfeilen lassen sie sich verschieben, mit dem Auge als Entwurf verbergen.</p>
+      <p class="ph-sub">Mit Titel, Datum, höchstens einem Foto und einem Text. Sie erscheinen auf <a href="../pages/augustinerkirche.html#p-predigten" target="_blank" rel="noopener">Predigten &amp; Ansprachen</a> in der Reihenfolge dieser Liste: Neue Beiträge werden nach Datum eingereiht, mit den Pfeilen lassen sie sich verschieben, mit dem Auge als Entwurf verbergen.</p>
     </div>
     <div class="adm-head-actions">
       <button type="button" class="btn btn-gold" id="pd-new" data-icon="plus">Neuer Beitrag</button>
@@ -84,7 +84,14 @@
     <fieldset class="adm-fs">
       <legend>Foto <span class="adm-opt">höchstens eines</span></legend>
       <div class="adm-image">
-        <div class="adm-image-prev" id="pd-prev"></div>
+        <div class="pd-prev-col">
+          <div class="adm-image-prev square" id="pd-prev"></div>
+          <input type="hidden" id="f-focus"/>
+          <div class="pd-pan-help" id="pd-pan-help" hidden>
+            <span class="adm-hint">So erscheint das Foto in der Übersicht. Zum Verschieben das Bild ziehen (oder mit den Pfeiltasten).</span>
+            <button type="button" class="adm-act" id="pd-pan-reset">Mitte</button>
+          </div>
+        </div>
         <div class="adm-field">
           <label class="adm-drop" id="pd-drop">
             <span data-icon="image"></span>

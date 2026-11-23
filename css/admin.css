@@ -1542,3 +1542,68 @@ label.fb-swatch:focus-within{outline:2px solid var(--blue);outline-offset:2px}
 .pl-list dt{font-weight:600;color:var(--text)}
 .pl-list dd{margin:0}
 @media (max-width:640px){.pl-list{grid-template-columns:1fr;gap:.15rem}.pl-list dd{margin-bottom:.6rem}}
+
+/* Aspersdorf: Gottesdienste & Termine (admin/aspersdorf-gottesdienste.html) */
+.ag-row,.ag-head{grid-template-columns:minmax(0,9.5rem) minmax(0,7rem) minmax(0,1fr) minmax(0,1.3fr) auto}
+.ag-head{display:grid;gap:.5rem;margin-bottom:.35rem;font-size:.85rem;font-weight:600;color:var(--text-mid)}
+.ag-head span:last-child{width:2.6rem}
+#ag-regel+.adm-list-add,#ag-termine+.adm-list-add{margin-top:.6rem}
+.ag-row.is-past .adm-input{color:var(--text-light);background:var(--bg-soft)}
+@media(max-width:900px){
+  .ag-row{grid-template-columns:minmax(0,9.5rem) minmax(0,7rem) minmax(0,1fr) auto}
+  .ag-row>[data-key="hinweis"]{grid-row:2;grid-column:1/4}
+  .ag-row>.adm-list-tools{grid-row:1;grid-column:4}
+  .ag-head span:nth-child(4){display:none}
+  .ag-head{grid-template-columns:minmax(0,9.5rem) minmax(0,7rem) minmax(0,1fr) auto}
+}
+@media(max-width:600px){
+  .ag-head{display:none}
+  .ag-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;padding-bottom:.8rem;border-bottom:1px solid var(--line)}
+  .ag-row>[data-key="name"]{grid-row:2;grid-column:1/-1}
+  .ag-row>[data-key="hinweis"]{grid-row:3;grid-column:1/-1}
+  .ag-row>.adm-list-tools{grid-row:1;grid-column:3}
+}
+
+/* Texte der Seiten (admin/texte.html): Editor im Aussehen der Website */
+.tx-dlg .tx-body{padding-top:0}
+.tx-tools{position:sticky;top:0;z-index:3;display:flex;flex-wrap:wrap;gap:.45rem .9rem;padding:.8rem 0 .7rem;margin-bottom:.4rem;background:var(--white);border-bottom:1px solid var(--line)}
+.tx-group{display:flex;flex-wrap:wrap;gap:.25rem}
+.tx-group+.tx-group{padding-left:.9rem;border-left:1px solid var(--line)}
+.tx-danger:hover{color:var(--err);border-color:#e3c4c1;background:var(--err-pale)}
+.tx-linkbar{margin:.2rem 0 .8rem;padding:.8rem 1rem;border:1px solid var(--gold-l);background:var(--gold-pale)}
+.tx-linkrow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.tx-linkrow .adm-input{flex:1;min-width:14rem}
+.tx-hint{margin:.2rem 0 .8rem}
+.tx-paper{padding:1.6rem 1.8rem;border:1px solid var(--line);background:var(--bg);max-width:56rem}
+.tx-paper .tab-pane{display:block;padding:0}
+.tx-edit{min-height:12rem;outline:none}
+.tx-edit:focus-visible{box-shadow:0 0 0 2px var(--gold-pale)}
+.tx-edit a{cursor:text}
+.tx-edit figure{cursor:pointer}
+.tx-edit .tx-picked{outline:3px solid var(--gold);outline-offset:3px}
+.tx-changed .adm-row-title::after{content:"geändert";margin-left:.6rem;padding:.05rem .45rem;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle;color:var(--gold-text);border:1px solid var(--gold-l)}
+@media(max-width:700px){.tx-paper{padding:1rem .9rem}.tx-group+.tx-group{padding-left:0;border-left:0}}
+
+/* Wochenkalender: Bild der Woche */
+.wk-bild{display:grid;grid-template-columns:9rem minmax(0,1fr);gap:1.2rem 1.6rem;align-items:start;margin:.6rem 0 1.4rem}
+.wk-bild-prev{display:grid;place-items:center;width:9rem;min-height:7rem;border:1px solid var(--line);background:var(--bg-soft)}
+.wk-bild-prev img{display:block;width:100%;height:auto;max-height:14rem;object-fit:contain}
+.wk-bild-prev .none{padding:1rem;font-size:.9rem;color:var(--text-light);text-align:center}
+.wk-bild-body .adm-panel-title{font-size:1.3rem}
+.wk-bild-actions{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;margin-top:.2rem}
+.wk-bild-pick{cursor:pointer}
+.wk-bild-pick:focus-within{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:600px){.wk-bild{grid-template-columns:minmax(0,1fr)}.wk-bild-prev{width:100%}}
+
+/* Predigten: quadratischer Ausschnitt fuer die Uebersicht */
+.pd-prev-col{display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.pd-pan-help{display:flex;flex-wrap:wrap;gap:.3rem .7rem;align-items:center}
+.pd-pan-help .adm-hint{flex:1;min-width:9rem}
+
+/* Hochaemter: Chor & Orchester und Zelebrant zum Anklicken */
+.ha-choice{margin-top:.2rem}
+.ha-choice label{align-items:center;padding:.6rem .8rem}
+.ha-choice input{margin-top:0}
+.ha-choice-other b+span{display:block;font-size:.88rem;color:var(--text-mid)}
+.ha-anders{margin-top:.7rem}
+@media(max-width:600px){.ha-choice{grid-template-columns:minmax(0,1fr)}}

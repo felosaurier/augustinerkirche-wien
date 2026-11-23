@@ -27,7 +27,7 @@
     <div>
       <div class="ph-tag">Verwaltung</div>
       <h1 class="ph-title">Wochenblätter <em>Aspersdorf</em></h1>
-      <p class="ph-sub">Die Gottesdienste der Woche als PDF. Das neueste Blatt steht oben bei <a href="../pages/aspersdorf.html#p-gottesdienste" target="_blank" rel="noopener">Pfarre Aspersdorf → Gottesdienste &amp; Kalender</a>, ältere darunter.</p>
+      <p class="ph-sub">Die Gottesdienste der Woche als PDF. Das neueste Blatt steht oben bei <a href="../pages/aspersdorf.html#p-gottesdienste" target="_blank" rel="noopener">Pfarre Aspersdorf → Gottesdienste &amp; Kalender</a>, ältere darunter im Archiv (nach Jahren).</p>
     </div>
     <div class="adm-head-actions">
       <button type="button" class="btn btn-gold" id="aw-new" data-icon="plus">Neues Wochenblatt</button>
@@ -77,6 +77,23 @@
         </label>
         <span class="adm-hint" id="aw-fileinfo"></span>
         <a class="adm-act" id="aw-open" href="#" target="_blank" rel="noopener" data-icon="external" hidden>Aktuelles PDF ansehen</a>
+      </div>
+    </fieldset>
+
+    <fieldset class="adm-fs">
+      <legend>Bild vorne <span class="adm-opt">optional</span></legend>
+      <div class="adm-image">
+        <div class="adm-image-prev" id="aw-prev"></div>
+        <div class="adm-field">
+          <label class="adm-drop" id="aw-imgdrop">
+            <span data-icon="image"></span>
+            <span class="adm-drop-main">Bild oder Logo hierher ziehen oder <u>auswählen</u></span>
+            <span class="adm-hint">Steht auf der Website links neben dem aktuellen Wochenblatt. Ohne eigenes Bild gilt das Bild des vorherigen Wochenblatts.</span>
+            <input type="file" id="f-img" accept="image/*" aria-describedby="aw-imginfo"/>
+          </label>
+          <span class="adm-hint" id="aw-imginfo"></span>
+          <button type="button" class="adm-act danger" id="aw-imgdel" data-icon="trash" hidden>Bild entfernen</button>
+        </div>
       </div>
     </fieldset>
   </form>

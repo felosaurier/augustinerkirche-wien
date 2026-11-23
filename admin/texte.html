@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Texte der Seiten — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<script src="../js/hochaemter-data.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/admin-texte.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Texte der Seiten <em id="tx-bereich">Augustinerkirche</em></h1>
+      <p class="ph-sub" id="tx-sub">Die festen Texte der Seite, Abschnitt für Abschnitt. Ein Klick öffnet den Text so, wie er auf der Website aussieht: einfach hineinklicken und schreiben. „Ursprünglicher Text“ stellt den Stand der Website wieder her.</p>
+    </div>
+    <div class="adm-head-actions">
+      <a class="btn btn-outline" id="tx-view" href="#" target="_blank" rel="noopener" data-icon="eye">Seite ansehen</a>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <p class="adm-count" id="tx-count" role="status"></p>
+  <div id="tx-list"><p class="adm-muted">Wird geladen …</p></div>
+</main>
+
+<!-- Bearbeiten -->
+<dialog class="adm-dialog wide tx-dlg" id="tx-dlg" aria-labelledby="tx-dlg-title">
+  <div class="adm-dlg-head">
+    <div>
+      <div class="adm-dlg-tag" id="tx-dlg-tag">Text bearbeiten</div>
+      <h2 class="adm-dlg-title" id="tx-dlg-title">Abschnitt</h2>
+    </div>
+    <button type="button" class="adm-dlg-close" data-close aria-label="Fenster schließen" data-icon="close"></button>
+  </div>
+  <div class="adm-dlg-body tx-body">
+    <div class="tx-tools" role="toolbar" aria-label="Text formatieren" aria-controls="tx-edit">
+      <div class="tx-group" role="group" aria-label="Schrift">
+        <button type="button" class="fmt-btn" data-cmd="bold" title="Fett (Strg+B)" aria-label="Fett"><b>B</b></button>
+        <button type="button" class="fmt-btn" data-cmd="italic" title="Kursiv (Strg+I)" aria-label="Kursiv"><i>I</i></button>
+        <button type="button" class="fmt-btn" data-cmd="underline" title="Unterstrichen (Strg+U)" aria-label="Unterstrichen"><u>U</u></button>
+        <button type="button" class="fmt-btn" data-cmd="strikeThrough" title="Durchgestrichen" aria-label="Durchgestrichen"><s>S</s></button>
+      </div>
+      <div class="tx-group" role="group" aria-label="Links">
+        <button type="button" class="fmt-btn fmt-wide" data-link="link" title="Link setzen">Link</button>
+        <button type="button" class="fmt-btn fmt-wide" data-link="mail" title="E-Mail-Adresse als Link">E-Mail</button>
+        <button type="button" class="fmt-btn fmt-wide" data-link="tel" title="Telefonnummer als Link">Telefon</button>
+        <button type="button" class="fmt-btn fmt-wide" data-cmd="unlink" title="Link entfernen (der Text bleibt)">Link weg</button>
+      </div>
+      <div class="tx-group" role="group" aria-label="Absätze">
+        <button type="button" class="fmt-btn fmt-wide" data-block="p" title="Normaler Absatz">Absatz</button>
+        <button type="button" class="fmt-btn fmt-wide" data-block="h3" title="Zwischentitel">Zwischentitel</button>
+        <button type="button" class="fmt-btn fmt-wide" data-cmd="insertUnorderedList" title="Aufzählung mit Punkten">• Liste</button>
+      </div>
+      <div class="tx-group" role="group" aria-label="Zeile oder Baustein an der Schreibmarke">
+        <button type="button" class="fmt-btn fmt-wide" data-part="dup" title="Zeile, Listenpunkt, Karte oder Zeile der Zeitleiste an der Schreibmarke doppeln (z. B. für einen neuen Eintrag)">Doppeln</button>
+        <button type="button" class="fmt-btn" data-part="up" title="Nach oben schieben" aria-label="Nach oben schieben" data-icon="up"></button>
+        <button type="button" class="fmt-btn" data-part="down" title="Nach unten schieben" aria-label="Nach unten schieben" data-icon="down"></button>
+        <button type="button" class="fmt-btn fmt-wide tx-danger" data-part="del" title="Zeile, Listenpunkt, Karte, Foto oder Absatz an der Schreibmarke entfernen">Entfernen</button>
+      </div>
+      <div class="tx-group" role="group" aria-label="Rückgängig">
+        <button type="button" class="fmt-btn" data-cmd="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig">↶</button>
+        <button type="button" class="fmt-btn" data-cmd="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen">↷</button>
+        <button type="button" class="fmt-btn fmt-wide" data-cmd="removeFormat" title="Fett, kursiv usw. der Auswahl entfernen">Formatierung weg</button>
+      </div>
+    </div>
+    <div class="tx-linkbar" id="tx-linkbar" hidden>
+      <label class="adm-label" for="tx-href" id="tx-href-label">Adresse des Links</label>
+      <div class="tx-linkrow">
+        <input class="adm-input" type="text" id="tx-href" autocomplete="off" spellcheck="false"/>
+        <button type="button" class="btn btn-dark" id="tx-href-ok">Übernehmen</button>
+        <button type="button" class="btn btn-quiet" id="tx-href-no">Abbrechen</button>
+      </div>
+      <span class="adm-hint" id="tx-href-hint"></span>
+    </div>
+    <p class="adm-hint tx-hint">Text markieren und oben formatieren. Enter beginnt einen neuen Absatz, Umschalt+Enter eine neue Zeile. Eingefügter Text kommt ohne fremde Formatierung. Fotos tauschen Sie unter <a href="fotos.html" target="_blank" rel="noopener">Fotos der Seiten</a>.</p>
+    <div class="tx-paper" id="tx-paper"></div>
+  </div>
+  <div class="adm-dlg-foot">
+    <div class="adm-dlg-foot-l">
+      <button type="button" class="adm-act" id="tx-reset" data-icon="refresh">Ursprünglicher Text</button>
+    </div>
+    <div class="adm-dlg-foot-r">
+      <button type="button" class="btn btn-quiet" data-close>Abbrechen</button>
+      <button type="button" class="btn btn-dark" id="tx-save" data-icon="check">Speichern</button>
+    </div>
+  </div>
+</dialog>
+
+</body>
+</html>

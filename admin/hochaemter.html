@@ -123,17 +123,30 @@
           <input class="adm-input" type="text" id="f-piece" list="dl-piece" aria-describedby="f-piece-hint" required/>
           <span class="adm-hint" id="f-piece-hint">Komponist: Werk, z. B. „W. A. Mozart: Krönungsmesse“. Erscheint als Titel.</span>
         </div>
-        <div class="adm-field">
-          <label class="adm-label" for="f-conductor">Dirigent</label>
-          <input class="adm-input" type="text" id="f-conductor" list="dl-conductor"/>
-        </div>
-        <div class="adm-field">
-          <label class="adm-label" for="f-choir">Chor</label>
-          <input class="adm-input" type="text" id="f-choir" list="dl-choir"/>
-        </div>
         <div class="adm-field full">
-          <label class="adm-label" for="f-orchestra">Orchester</label>
-          <input class="adm-input" type="text" id="f-orchestra" list="dl-orchestra"/>
+          <label class="adm-label" for="f-conductor">Dirigent</label>
+          <input class="adm-input" type="text" id="f-conductor" list="dl-conductor" aria-describedby="f-conductor-hint"/>
+          <span class="adm-hint" id="f-conductor-hint">Bei einem neuen Hochamt steht hier KMD Peter Tiefengraber. Dirigiert jemand anderer, einfach löschen und den Namen eintragen.</span>
+        </div>
+        <div class="adm-field full" role="radiogroup" aria-labelledby="f-ensemble-l">
+          <span class="adm-label" id="f-ensemble-l">Chor &amp; Orchester</span>
+          <div class="adm-choice ha-choice" id="f-ensemble">
+            <label><input type="radio" name="ha-ensemble" value="chor-orchester"/><span><b>Chor &amp; Orchester von St. Augustin</b></span></label>
+            <label><input type="radio" name="ha-ensemble" value="kammerchor-orchester"/><span><b>Kammerchor &amp; Orchester von St. Augustin</b></span></label>
+            <label><input type="radio" name="ha-ensemble" value="chor"/><span><b>Chor von St. Augustin</b></span></label>
+            <label><input type="radio" name="ha-ensemble" value="kammerchor"/><span><b>Kammerchor von St. Augustin</b></span></label>
+            <label class="ha-choice-other"><input type="radio" name="ha-ensemble" value="anders"/><span><b>Anders</b><span>Chor und Orchester selbst eintragen (oder leer lassen)</span></span></label>
+          </div>
+          <div class="adm-grid ha-anders" id="f-ensemble-anders" hidden>
+            <div class="adm-field">
+              <label class="adm-label" for="f-choir">Chor</label>
+              <input class="adm-input" type="text" id="f-choir" list="dl-choir"/>
+            </div>
+            <div class="adm-field">
+              <label class="adm-label" for="f-orchestra">Orchester</label>
+              <input class="adm-input" type="text" id="f-orchestra" list="dl-orchestra"/>
+            </div>
+          </div>
         </div>
       </div>
     </fieldset>
@@ -141,9 +154,18 @@
     <fieldset class="adm-fs">
       <legend>Mitwirkende</legend>
       <div class="adm-grid">
-        <div class="adm-field full">
-          <label class="adm-label" for="f-celebrant">Zelebrant</label>
-          <input class="adm-input" type="text" id="f-celebrant" list="dl-celebrant"/>
+        <div class="adm-field full" role="radiogroup" aria-labelledby="f-zelebrant-l">
+          <span class="adm-label" id="f-zelebrant-l">Zelebrant</span>
+          <div class="adm-choice ha-choice" id="f-zelebrant">
+            <label><input type="radio" name="ha-zelebrant" value="0"/><span><b>Dechant P. Mag. Matthias Schlögl OSA</b></span></label>
+            <label><input type="radio" name="ha-zelebrant" value="1"/><span><b>Regionalvikar P. Mag. Dominic Sadrawetz OSA</b></span></label>
+            <label><input type="radio" name="ha-zelebrant" value="2"/><span><b>P. MMag. Nikolaus Schachtner OSA</b></span></label>
+            <label class="ha-choice-other"><input type="radio" name="ha-zelebrant" value="anders"/><span><b>Anders</b><span>Namen selbst eintragen (oder leer lassen)</span></span></label>
+          </div>
+          <div class="adm-field ha-anders" id="f-celebrant-wrap" hidden>
+            <label class="adm-label" for="f-celebrant">Zelebrant</label>
+            <input class="adm-input" type="text" id="f-celebrant" list="dl-celebrant"/>
+          </div>
         </div>
         <div class="adm-field full" role="group" aria-labelledby="f-soloists-l">
           <span class="adm-label" id="f-soloists-l">Solisten <span class="adm-opt">Name und Stimme</span></span>

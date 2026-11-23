@@ -6,6 +6,8 @@
    ein Jahr voraus) und „Zur aktuellen Woche“; dazu der Filter nach
    Wochentag. Oben die Umschaltung Monat / Woche (.cal-views). Aufruf mit
    #woche zeigt die Woche, ?woche=JJJJ-MM-TT (ein Tag der Woche) öffnet sie direkt.
+   Gibt es für die Woche ein Bild (data/wochenkalender.json, "wochen": [{montag, bild}],
+   Verwaltung → Wochenkalender → Bild der Woche), steht es rechts neben den Tagen.
    Benötigt js/hochaemter-data.js und js/kalender-daten.js.
    ============================================================ */
 (function () {
@@ -28,6 +30,8 @@
   let monday = null;    /* Date, Montag der gezeigten Woche */
   let day = 'alle';     /* Filter nach Wochentag */
   let ready = false;    /* Termine sind geladen */
+  let bilder = [];      /* Bilder je Woche: {montag, bild, breite, hoehe} */
+  let aside = null;
 
   const isoOf = KD.isoOf;
   const addDays = (dt, n) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + n);
@@ -70,6 +74,7 @@
       .filter((d) => day === 'alle' || d.key === day);
     root.querySelector('.wk-list').innerHTML = days.map(({ key, iso }) =>
       KD.dayHTML(iso, inWeek.filter((it) => it.date === iso), today, { base, empty: T('Keine Termine'), extraClass: `wk-day d-${key}`, id: `woche-${iso}` })).join('');
+    renderBild(from);
     const n = inWeek.length;
     /* „in dieser Woche“ fällt am Handy weg (.wk-count-lang), damit die Zeile nicht umbricht */
     root.querySelector('.wk-count').innerHTML = `${n === 1 ? T('Ein Termin') : n ? T('{n} Termine', { n }) : T('Keine Termine')}<span class="wk-count-lang"> ${T('in dieser Woche')}</span>` +
@@ -87,6 +92,23 @@
       const el = root.querySelector(focusSel);
       if (el && !el.disabled) el.focus();
     }
+  }
+
+  /* Bild der Woche rechts (am Handy unter den Tagen); ein Klick zeigt es gross */
+  function renderBild(from) {
+    if (!aside) return;
+    const b = bilder.find((x) => x.montag === from);
+    const src = b ? HD.safeUrl(b.bild, base) : '';
+    root.classList.toggle('has-bild', !!src);
+    aside.hidden = !src;
+    if (!src) {
+      aside.innerHTML = '';
+      return;
+    }
+    const size = b.breite && b.hoehe ? ` width="${HD.num(b.breite, 800)}" height="${HD.num(b.hoehe, 1100)}"` : '';
+    const alt = `${T('Wochenkalender')} ${rangeText(monday)}`;
+    aside.innerHTML = `<a class="wk-bild-link" href="${HD.esc(src)}" data-lightbox title="${HD.esc(T('Bild vergrößern'))}">` +
+      `<img src="${HD.esc(src)}" alt="${HD.esc(alt)}"${size} loading="lazy" decoding="async"/></a>`;
   }
 
   function go(mon, focusSel) {
@@ -133,7 +155,22 @@
     const q = new URLSearchParams(location.search).get('woche');
     const start = q && HD.isoDate(q) ? HD.dateFromIso(HD.isoDate(q)) : new Date();
     monday = mondayOf(start);
-    items = await KD.load(base);
+    /* Tage und Bild nebeneinander */
+    const list = root.querySelector('.wk-list');
+    const grid = document.createElement('div');
+    grid.className = 'wk-grid';
+    list.before(grid);
+    aside = document.createElement('aside');
+    aside.className = 'wk-aside';
+    aside.hidden = true;
+    aside.setAttribute('aria-label', T('Bild der Woche'));
+    grid.append(list, aside);
+    const [geladen, wk] = await Promise.all([
+      KD.load(base),
+      HD.fetchJSON(`${base}data/wochenkalender.json`).catch(() => null)
+    ]);
+    items = geladen;
+    bilder = wk && Array.isArray(wk.wochen) ? wk.wochen.filter((x) => x && HD.isoDate(x.montag) && /^assets\/[^?#]+\.(webp|jpe?g|png)$/i.test(String(x.bild || ''))) : [];
     root.classList.add('ready');
     render();
     ready = true;

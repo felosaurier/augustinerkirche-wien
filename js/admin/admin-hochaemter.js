@@ -33,6 +33,16 @@
   const KEYS = HD.FIELDS.map(([k]) => k);
   const SIMPLE = ['date', 'time', 'type', 'location', 'piece', 'conductor', 'choir', 'orchestra', 'celebrant', 'note'];
   const DEFAULTS = { time: '11:00', type: 'Hochamt', location: 'Augustinerkirche' };
+  /* Vorbelegung eines neuen Hochamts (Dirigent, Chor & Orchester, Zelebrant); alles laesst sich aendern */
+  const NEU = { conductor: 'KMD Peter Tiefengraber', choir: 'Chor von St. Augustin', orchestra: 'Orchester von St. Augustin', celebrant: 'Dechant P. Mag. Matthias Schlögl OSA' };
+  /* Auswahl zum Anklicken: Chor & Orchester -> Spalten Chor und Orchester; "anders" = selbst eintragen */
+  const ENSEMBLES = {
+    'chor-orchester': ['Chor von St. Augustin', 'Orchester von St. Augustin'],
+    'kammerchor-orchester': ['Kammerchor von St. Augustin', 'Orchester von St. Augustin'],
+    chor: ['Chor von St. Augustin', ''],
+    kammerchor: ['Kammerchor von St. Augustin', '']
+  };
+  const ZELEBRANTEN = ['Dechant P. Mag. Matthias Schlögl OSA', 'Regionalvikar P. Mag. Dominic Sadrawetz OSA', 'P. MMag. Nikolaus Schachtner OSA'];
   const DEFAULT_END = '12:30';
   /* Das Ende steht in der Tabelle im Hinweis ("Ende ca. 12:45 Uhr.", wie auf der
      Detailseite gelesen); im Fenster hat es ein eigenes Feld neben dem Beginn. */
@@ -683,6 +693,7 @@
     const form = $('ha-form');
     A.clearErrors(form);
     for (const k of SIMPLE) F(k).value = entry[k] || '';
+    syncChoices();
     const split = splitEnd(entry.note);
     F('note').value = split.note;
     F('end').value = entry.end !== undefined ? entry.end : split.end;
@@ -715,7 +726,48 @@
       dt.setDate(dt.getDate() + 7);
     }
   }
-  const openNew = () => openEditor({ ...DEFAULTS, end: DEFAULT_END, date: nextFreeSunday() }, 'new');
+  const openNew = () => openEditor({ ...DEFAULTS, ...NEU, end: DEFAULT_END, date: nextFreeSunday() }, 'new');
+
+  /* ---------- Auswahl Chor & Orchester und Zelebrant ----------
+     Die Felder Chor, Orchester und Zelebrant bleiben die Quelle; die Knoepfe zeigen, welcher
+     Vorschlag passt, und setzen beim Anklicken die Felder. "Anders" zeigt die Felder zum Eintragen. */
+  const pickRadio = (name, value) => {
+    for (const r of document.querySelectorAll(`input[name="${name}"]`)) r.checked = r.value === value;
+  };
+  function syncChoices() {
+    const ch = clean(F('choir').value);
+    const or = clean(F('orchestra').value);
+    const ens = Object.keys(ENSEMBLES).find((k) => ENSEMBLES[k][0] === ch && ENSEMBLES[k][1] === or) || 'anders';
+    pickRadio('ha-ensemble', ens);
+    $('f-ensemble-anders').hidden = ens !== 'anders';
+    const zi = ZELEBRANTEN.indexOf(clean(F('celebrant').value));
+    pickRadio('ha-zelebrant', zi >= 0 ? String(zi) : 'anders');
+    $('f-celebrant-wrap').hidden = zi >= 0;
+  }
+  function wireChoices() {
+    $('f-ensemble').addEventListener('change', (ev) => {
+      const v = ev.target.value;
+      const anders = v === 'anders';
+      $('f-ensemble-anders').hidden = !anders;
+      if (!anders) {
+        F('choir').value = ENSEMBLES[v][0];
+        F('orchestra').value = ENSEMBLES[v][1];
+      } else {
+        F('choir').focus();
+      }
+    });
+    $('f-zelebrant').addEventListener('change', (ev) => {
+      const v = ev.target.value;
+      const anders = v === 'anders';
+      $('f-celebrant-wrap').hidden = !anders;
+      if (!anders) {
+        F('celebrant').value = ZELEBRANTEN[Number(v)];
+      } else {
+        if (ZELEBRANTEN.includes(clean(F('celebrant').value))) F('celebrant').value = '';
+        F('celebrant').focus();
+      }
+    });
+  }
 
   /* Beginn verschoben: Ende rueckt um gleich viel mit (Dauer bleibt) */
   let lastTime = '';
@@ -1082,6 +1134,7 @@
 
   /* ---------- Start ---------- */
   A.start(async () => {
+    wireChoices();
     soloists = A.listEditor($('f-soloists'), {
       fields: [
         { key: 'name', label: 'Solist', placeholder: 'Name', list: 'dl-soloist' },

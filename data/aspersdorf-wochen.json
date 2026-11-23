@@ -4,6 +4,306 @@
       "datum": "2026-11-01",
       "titel": "Gotttesdienste & Termine | November 2026",
       "datei": "assets/pdf/aspersdorf/2026-11-03-wochenblatt.pdf"
+    },
+    {
+      "datum": "2026-10-01",
+      "titel": "Gottesdienste & Termine | Oktober 2026",
+      "datei": "assets/pdf/aspersdorf/2026-10-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2026-09-01",
+      "titel": "Gottesdienste & Termine | September 2026",
+      "datei": "assets/pdf/aspersdorf/2026-09-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2026-07-01",
+      "titel": "Gottesdienste & Termine | Juli & August 2026",
+      "datei": "assets/pdf/aspersdorf/2026-07-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2026-06-01",
+      "titel": "Gottesdienste & Termine | Juni 2026",
+      "datei": "assets/pdf/aspersdorf/2026-06-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2026-05-01",
+      "titel": "Gottesdienste & Termine | Mai 2026",
+      "datei": "assets/pdf/aspersdorf/2026-05-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2026-04-01",
+      "titel": "Gottesdienste & Termine | April 2026",
+      "datei": "assets/pdf/aspersdorf/2026-04-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2026-03-01",
+      "titel": "Gottesdienste & Termine | März 2026",
+      "datei": "assets/pdf/aspersdorf/2026-03-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2026-02-01",
+      "titel": "Gottesdienste & Termine | Februar 2026",
+      "datei": "assets/pdf/aspersdorf/2026-02-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2026-01-01",
+      "titel": "Gottesdienste & Termine | Jänner 2026",
+      "datei": "assets/pdf/aspersdorf/2026-01-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-12-01",
+      "titel": "Gottesdienste & Termine | Dezember 2025",
+      "datei": "assets/pdf/aspersdorf/2025-12-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-11-01",
+      "titel": "Gottesdienste & Termine | November 2025",
+      "datei": "assets/pdf/aspersdorf/2025-11-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-10-01",
+      "titel": "Gottesdienste & Termine | Oktober 2025",
+      "datei": "assets/pdf/aspersdorf/2025-10-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-09-01",
+      "titel": "Gottesdienste & Termine | September 2025",
+      "datei": "assets/pdf/aspersdorf/2025-09-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-07-01",
+      "titel": "Gottesdienste & Termine | Juli & August 2025",
+      "datei": "assets/pdf/aspersdorf/2025-07-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-06-01",
+      "titel": "Gottesdienste & Termine | Juni 2025",
+      "datei": "assets/pdf/aspersdorf/2025-06-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-05-01",
+      "titel": "Gottesdienste & Termine | Mai 2025",
+      "datei": "assets/pdf/aspersdorf/2025-05-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-04-01",
+      "titel": "Gottesdienste & Termine | April 2025",
+      "datei": "assets/pdf/aspersdorf/2025-04-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-03-01",
+      "titel": "Gottesdienste & Termine | März 2025",
+      "datei": "assets/pdf/aspersdorf/2025-03-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-02-01",
+      "titel": "Gottesdienste & Termine | Februar 2025",
+      "datei": "assets/pdf/aspersdorf/2025-02-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2025-01-01",
+      "titel": "Gottesdienste & Termine | Jänner 2025",
+      "datei": "assets/pdf/aspersdorf/2025-01-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-12-01",
+      "titel": "Gottesdienste & Termine | Dezember 2024",
+      "datei": "assets/pdf/aspersdorf/2024-12-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-11-01",
+      "titel": "Gottesdienste & Termine | November 2024",
+      "datei": "assets/pdf/aspersdorf/2024-11-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-10-01",
+      "titel": "Gottesdienste & Termine | Oktober 2024",
+      "datei": "assets/pdf/aspersdorf/2024-10-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-09-01",
+      "titel": "Gottesdienste & Termine | September 2024",
+      "datei": "assets/pdf/aspersdorf/2024-09-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-07-01",
+      "titel": "Gottesdienste & Termine | Juli & August 2024",
+      "datei": "assets/pdf/aspersdorf/2024-07-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-06-01",
+      "titel": "Gottesdienste & Termine | Juni 2024",
+      "datei": "assets/pdf/aspersdorf/2024-06-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-05-01",
+      "titel": "Gottesdienste & Termine | Mai 2024",
+      "datei": "assets/pdf/aspersdorf/2024-05-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-04-01",
+      "titel": "Gottesdienste & Termine | April 2024",
+      "datei": "assets/pdf/aspersdorf/2024-04-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-03-01",
+      "titel": "Gottesdienste & Termine | März 2024",
+      "datei": "assets/pdf/aspersdorf/2024-03-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-02-01",
+      "titel": "Gottesdienste & Termine | Februar 2024",
+      "datei": "assets/pdf/aspersdorf/2024-02-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2024-01-01",
+      "titel": "Gottesdienste & Termine | Jänner 2024",
+      "datei": "assets/pdf/aspersdorf/2024-01-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-12-01",
+      "titel": "Gottesdienste & Termine | Dezember 2023",
+      "datei": "assets/pdf/aspersdorf/2023-12-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-11-01",
+      "titel": "Gottesdienste & Termine | November 2023",
+      "datei": "assets/pdf/aspersdorf/2023-11-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-10-01",
+      "titel": "Gottesdienste & Termine | Oktober 2023",
+      "datei": "assets/pdf/aspersdorf/2023-10-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-09-01",
+      "titel": "Gottesdienste & Termine | September 2023",
+      "datei": "assets/pdf/aspersdorf/2023-09-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-07-01",
+      "titel": "Gottesdienste & Termine | Juli & August 2023",
+      "datei": "assets/pdf/aspersdorf/2023-07-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-06-01",
+      "titel": "Gottesdienste & Termine | Juni 2023",
+      "datei": "assets/pdf/aspersdorf/2023-06-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-05-01",
+      "titel": "Gottesdienste & Termine | Mai 2023",
+      "datei": "assets/pdf/aspersdorf/2023-05-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-04-01",
+      "titel": "Gottesdienste & Termine | April 2023",
+      "datei": "assets/pdf/aspersdorf/2023-04-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-03-01",
+      "titel": "Gottesdienste & Termine | März 2023",
+      "datei": "assets/pdf/aspersdorf/2023-03-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-02-01",
+      "titel": "Gottesdienste & Termine | Februar 2023",
+      "datei": "assets/pdf/aspersdorf/2023-02-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2023-01-01",
+      "titel": "Gottesdienste & Termine | Jänner 2023",
+      "datei": "assets/pdf/aspersdorf/2023-01-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-12-01",
+      "titel": "Gottesdienste & Termine | Dezember 2022",
+      "datei": "assets/pdf/aspersdorf/2022-12-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-11-01",
+      "titel": "Gottesdienste & Termine | November 2022",
+      "datei": "assets/pdf/aspersdorf/2022-11-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-10-01",
+      "titel": "Gottesdienste & Termine | Oktober 2022",
+      "datei": "assets/pdf/aspersdorf/2022-10-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-09-01",
+      "titel": "Gottesdienste & Termine | September 2022",
+      "datei": "assets/pdf/aspersdorf/2022-09-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-07-01",
+      "titel": "Gottesdienste & Termine | Juli & August 2022",
+      "datei": "assets/pdf/aspersdorf/2022-07-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-06-01",
+      "titel": "Gottesdienste & Termine | Juni 2022",
+      "datei": "assets/pdf/aspersdorf/2022-06-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-05-01",
+      "titel": "Gottesdienste & Termine | Mai 2022",
+      "datei": "assets/pdf/aspersdorf/2022-05-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-04-01",
+      "titel": "Gottesdienste & Termine | April 2022",
+      "datei": "assets/pdf/aspersdorf/2022-04-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-03-01",
+      "titel": "Gottesdienste & Termine | März 2022",
+      "datei": "assets/pdf/aspersdorf/2022-03-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-02-01",
+      "titel": "Gottesdienste & Termine | Februar 2022",
+      "datei": "assets/pdf/aspersdorf/2022-02-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2022-01-01",
+      "titel": "Gottesdienste & Termine | Jänner 2022",
+      "datei": "assets/pdf/aspersdorf/2022-01-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2021-12-01",
+      "titel": "Gottesdienste & Termine | Dezember 2021",
+      "datei": "assets/pdf/aspersdorf/2021-12-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2021-11-01",
+      "titel": "Gottesdienste & Termine | November 2021",
+      "datei": "assets/pdf/aspersdorf/2021-11-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2021-10-01",
+      "titel": "Gottesdienste & Termine | Oktober 2021",
+      "datei": "assets/pdf/aspersdorf/2021-10-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2021-09-01",
+      "titel": "Gottesdienste & Termine | September 2021",
+      "datei": "assets/pdf/aspersdorf/2021-09-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2021-07-01",
+      "titel": "Gottesdienste & Termine | Juli & August 2021",
+      "datei": "assets/pdf/aspersdorf/2021-07-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2021-06-01",
+      "titel": "Gottesdienste & Termine | Juni 2021",
+      "datei": "assets/pdf/aspersdorf/2021-06-01-gottesdienste.pdf"
+    },
+    {
+      "datum": "2021-05-01",
+      "titel": "Gottesdienste & Termine | Mai 2021",
+      "datei": "assets/pdf/aspersdorf/2021-05-01-gottesdienste.pdf"
     }
   ]
 }

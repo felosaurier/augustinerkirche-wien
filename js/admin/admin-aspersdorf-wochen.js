@@ -2,9 +2,11 @@
    Augustinerkirche Wien — admin-aspersdorf-wochen.js
    Wochenblaetter (PDF) der Pfarre Aspersdorf pflegen
    (admin/aspersdorf-wochen.html). Quelle ist
-   data/aspersdorf-wochen.json: {wochen: [{datum, titel, datei}]}, die PDFs
-   liegen in assets/pdf/aspersdorf/. Erscheinen auf pages/aspersdorf.html →
-   Gottesdienste & Kalender: das neueste Blatt gross, die aelteren darunter.
+   data/aspersdorf-wochen.json: {wochen: [{datum, titel, datei, bild}]}, die PDFs
+   liegen in assets/pdf/aspersdorf/, die Bilder (optional, z. B. ein Logo) in
+   assets/img/aspersdorf/wochen/. Erscheinen auf pages/aspersdorf.html →
+   Gottesdienste & Kalender: das neueste Blatt gross mit seinem Bild (ohne eigenes
+   Bild das des vorherigen Blatts), die aelteren darunter im Archiv nach Jahren.
    Benoetigt js/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
@@ -14,11 +16,14 @@
   const { HD, $, esc, icon } = A;
   const PATH = 'data/aspersdorf-wochen.json';
   const DIR = 'assets/pdf/aspersdorf/';
+  const IMG_DIR = 'assets/img/aspersdorf/wochen/';
   const MAX_MB = 15;
 
   let wochen = [];
   let edit = -1;          /* Index in wochen oder -1 = neu */
   let picked = null;      /* neu gewaehltes PDF (File) */
+  let image = null;       /* neu gewaehltes Bild {blob, ext, url, name} */
+  let dropImage = false;  /* vorhandenes Bild entfernen */
   let snap = '';
 
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
@@ -77,7 +82,41 @@
   }
 
   /* ---------- Fenster ---------- */
-  const dirtyState = () => A.snapshot($('aw-form')) + (picked ? `neu:${picked.name}:${picked.size}` : '');
+  const dirtyState = () => A.snapshot($('aw-form')) + (picked ? `neu:${picked.name}:${picked.size}` : '') + (image ? `bild:${image.name}` : '') + (dropImage ? 'ohne-bild' : '');
+
+  /* ---------- Bild vorne ---------- */
+  function renderImage() {
+    const cur = edit >= 0 && !dropImage ? wochen[edit].bild : '';
+    const src = image ? image.url : cur ? A.imageUrl(cur) : '';
+    $('aw-prev').innerHTML = src ? `<img src="${esc(src)}" alt="Vorschau des Bildes"/>` : '<span class="none">Kein eigenes Bild</span>';
+    $('aw-imginfo').textContent = image ? image.name : cur ? `Aktuelles Bild: ${A.fileName(cur)}` : '';
+    $('aw-imgdel').hidden = !src;
+  }
+  async function onImage(file) {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      A.toast('Bitte eine Bilddatei wählen (WebP, JPG oder PNG).', 'err');
+      return;
+    }
+    let conv;
+    try {
+      conv = await A.toWebp(file, { maxSize: 600, quality: 0.86 });
+    } catch {
+      $('f-img').value = '';
+      return;
+    }
+    if (image) URL.revokeObjectURL(image.url);
+    image = { ...conv, url: URL.createObjectURL(conv.blob), name: file.name };
+    dropImage = false;
+    renderImage();
+  }
+  function clearImage() {
+    if (image) URL.revokeObjectURL(image.url);
+    image = null;
+    dropImage = edit >= 0 && !!wochen[edit].bild;
+    $('f-img').value = '';
+    renderImage();
+  }
 
   function showFile() {
     const cur = edit >= 0 ? wochen[edit] : null;
@@ -121,13 +160,18 @@
     form.reset();
     A.clearErrors(form);
     picked = null;
+    if (image) URL.revokeObjectURL(image.url);
+    image = null;
+    dropImage = false;
     $('f-file').value = '';
+    $('f-img').value = '';
     $('f-datum').value = w ? w.datum : A.isoToday();
     $('f-titel').value = w ? w.titel || '' : '';
     $('aw-dlg-tag').textContent = w ? 'Bearbeiten' : 'Hinzufügen';
     $('aw-dlg-title').textContent = w ? label(w) : 'Neues Wochenblatt';
     $('aw-delete').hidden = !w;
     showFile();
+    renderImage();
     A.openDialog($('aw-dlg'), { isDirty: () => dirtyState() !== snap });
     snap = dirtyState();
   }
@@ -156,9 +200,18 @@
     btn.disabled = true;
     try {
       const entry = { datum, titel: clean($('f-titel').value), datei: old ? old.datei : '' };
+      const oldImg = old && old.bild ? old.bild : '';
+      if (oldImg && !dropImage && !image) entry.bild = oldImg;
       if (picked) {
         entry.datei = await freePath(datum, old);
         await A.saveFile(entry.datei, new Blob([picked], { type: 'application/pdf' }));
+      }
+      if (image) {
+        /* immer ein neuer Name, damit Browser nicht das alte Bild zeigen */
+        let path = `${IMG_DIR}${datum}-bild.${image.ext}`;
+        for (let n = 2; path === oldImg || (A.folder.state === 'ok' && await A.folder.exists(path)); n++) path = `${IMG_DIR}${datum}-bild-${n}.${image.ext}`;
+        await A.saveFile(path, image.blob);
+        entry.bild = path;
       }
       const next = wochen.slice();
       if (old) next[edit] = entry;
@@ -166,6 +219,7 @@
       const direct = await persist(next);
       /* Ersetztes PDF unter altem Namen aufraeumen */
       if (old && picked && old.datei !== entry.datei) await A.media.remove([old.datei]);
+      if (oldImg && entry.bild !== oldImg) await A.media.remove([oldImg]);
       $('aw-dlg').close();
       render();
       flash(entry.datei);
@@ -189,7 +243,7 @@
     try {
       const next = wochen.filter((_, k) => k !== i);
       const direct = await persist(next);
-      await A.media.remove([w.datei]);
+      await A.media.remove(w.bild ? [w.datei, w.bild] : [w.datei]);
       if ($('aw-dlg').open) $('aw-dlg').close();
       render();
       A.toast(direct ? `Entfernt: ${label(w)}.` : 'Entfernt. Bitte unten die Datei herunterladen.');
@@ -203,6 +257,9 @@
   A.start(async () => {
     $('f-file').addEventListener('change', (ev) => onFile(ev.target.files[0]));
     A.wireDrop($('aw-drop'));
+    $('f-img').addEventListener('change', (ev) => onImage(ev.target.files[0]));
+    A.wireDrop($('aw-imgdrop'));
+    $('aw-imgdel').addEventListener('click', clearImage);
     $('aw-new').addEventListener('click', () => openEditor());
     $('aw-form').addEventListener('submit', save);
     $('aw-delete').addEventListener('click', () => { if (edit >= 0) remove(edit); });

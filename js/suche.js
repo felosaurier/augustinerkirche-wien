@@ -247,7 +247,7 @@
       sec('Neuigkeiten', nws, (x) => x.cat) +
       sec('Personen', pers, (x) => x.group) +
       sec('Seiten', pages, (x) => x.group) +
-      sec('Predigten und Ansprachen', prd, (x) => (HD.isoDate(x.date) ? fmt(x.date) : ''));
+      sec('Predigten & Ansprachen', prd, (x) => (HD.isoDate(x.date) ? fmt(x.date) : ''));
     out.innerHTML = (html || `<p class="suche-hint">Nichts gefunden für „${HD.esc(input.value.trim())}“. Versuchen Sie ein anderes Wort oder schreiben Sie uns über die <a href="${ROOT}pages/kontakt.html">Kontaktseite</a>.</p>`) +
       (loading ? '<p class="suche-hint suche-more">Wird noch geladen …</p>' : '');
   }
