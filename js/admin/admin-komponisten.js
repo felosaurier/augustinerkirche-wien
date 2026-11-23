@@ -6,7 +6,7 @@
    Schaltet auch zwischen den Reitern um (Adresse mit #komponisten oeffnet diesen).
    Die Hochaemter (js/admin/admin-hochaemter.js) ergaenzen daraus unter
    "Weitere Musik" die Lebensdaten. Die Website selbst liest die Datei nicht.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

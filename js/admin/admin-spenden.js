@@ -6,7 +6,7 @@
    - PayPal-Link und die Arten der Unterstützung mit Betrag und
      Text (fehlen sie in der Datei, stehen hier die Karten, die
      bisher auf der Seite stehen)
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

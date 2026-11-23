@@ -8,7 +8,7 @@
   'use strict';
 
   const HD = window.HochamtData;
-  /* Uebersetzung (js/thema.js); deutsche Seiten: der Text bleibt */
+  /* Uebersetzung (js/gemeinsam/thema.js); deutsche Seiten: der Text bleibt */
   const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
 
   /* Unten: die Strichzeichnung der Kirche zeichnet sich ein, sobald der Bereich ins Bild kommt */
@@ -25,7 +25,7 @@
   }
 
   /* "Heute in der Augustinerkirche": die Gottesdienste (und Konzerte, Veranstaltungen) des Tages aus den
-     gemeinsamen Kalenderdaten (js/kalender-daten.js: Wochenkalender, Gottesdienstplan, Hochämter, Ausfälle).
+     gemeinsamen Kalenderdaten (js/gemeinsam/kalender-daten.js: Wochenkalender, Gottesdienstplan, Hochämter, Ausfälle).
      Ist heute nichts mehr, steht der nächste Tag mit Terminen da. */
   const ZEIGEN = new Set(['hochamt', 'gottesdienst', 'tagzeit', 'konzert', 'veranstaltung']);
   let kalender = null;

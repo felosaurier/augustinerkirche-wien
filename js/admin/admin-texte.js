@@ -8,11 +8,11 @@
    (contenteditable mit den Stilen der Seite). Gespeichert wird nur, was
    vom HTML abweicht, in data/texte.json:
      {texte: {"<Schluessel>": {html, geaendert}}}
-   js/inhalte.js (texte) setzt den Text auf der Website ein; beide filtern
+   js/gemeinsam/inhalte.js (texte) setzt den Text auf der Website ein; beide filtern
    das HTML mit HochamtData.cleanHTML. E-Mail-Adressen stehen wie ueberall
    verschluesselt (data-mail), im Editor normal lesbar.
    Rechte: "texte" (Augustinerkirche) bzw. "asp-texte" (Aspersdorf).
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

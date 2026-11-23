@@ -5,7 +5,7 @@
    aendern, Zugang entfernen. Passwoerter werden nur als PBKDF2-
    Pruefsumme gespeichert (siehe js/admin/admin.js). Eine Redaktion bekommt
    Rechte: welche Bereiche und welche einzelnen Runden sie bearbeiten darf.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

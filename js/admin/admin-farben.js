@@ -4,9 +4,9 @@
    HEX, RGB und CMYK zum Kopieren, Pruefung der Lesbarkeit und eine
    Vorschau. Wer das Recht "farben" hat, kann sie aendern; gespeichert
    wird in data/farben.json (nur Abweichungen vom Standard, Aufbau und
-   Liste der Farben siehe js/thema.js). Dazu die Farben der Kopfzeilen
+   Liste der Farben siehe js/gemeinsam/thema.js). Dazu die Farben der Kopfzeilen
    aus data/themen.json (nur ansehen, geaendert wird in design.html).
-   Benoetigt js/thema.js, js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/thema.js, js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

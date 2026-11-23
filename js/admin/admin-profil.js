@@ -4,7 +4,7 @@
    ihren eigenen Namen (der Benutzername zum Anmelden bleibt) und ihr
    Passwort. Gespeichert wird in admin/zugaenge.json, nur die eigene
    Zeile aendert sich (Rolle und Rechte bleiben).
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

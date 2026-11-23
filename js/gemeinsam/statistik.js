@@ -31,7 +31,7 @@
 
   const doc = document;
   const win = window;
-  /* Uebersetzung (js/thema.js); deutsche Seiten: der Text bleibt */
+  /* Uebersetzung (js/gemeinsam/thema.js); deutsche Seiten: der Text bleibt */
   const T = win.AugT || ((s) => s);
   const SELF = doc.currentScript ? doc.currentScript.src : '';
   const host = location.hostname;
@@ -142,7 +142,7 @@
 
   function privacyUrl() {
     try {
-      return new URL('../pages/datenschutz.html#cookies', SELF || location.href).href;
+      return new URL('../../pages/datenschutz.html#cookies', SELF || location.href).href;
     } catch {
       return '#';
     }
@@ -220,7 +220,7 @@
   function init() {
     if (!GA_ID) return;
     if (!/^G-[A-Z0-9]{6,16}$/.test(GA_ID)) {
-      console.warn('Statistik: GA_ID in js/statistik.js hat nicht die Form G-ABC123DEF4, die Statistik bleibt aus.');
+      console.warn('Statistik: GA_ID in js/gemeinsam/statistik.js hat nicht die Form G-ABC123DEF4, die Statistik bleibt aus.');
       return;
     }
     if (!/^https?:$/.test(location.protocol)) return;

@@ -2,8 +2,8 @@
    Augustinerkirche Wien — admin-sprueche.js
    Sprüche pflegen (admin/sprueche.html), Quelle ist data/sprueche.json:
    {sekunden, sprueche: [{text, quelle}]}. Die Website zeigt sie in den
-   Zitat-Bändern (.quote-band, js/main.js) und wechselt sie nacheinander.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Zitat-Bändern (.quote-band, js/gemeinsam/main.js) und wechselt sie nacheinander.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

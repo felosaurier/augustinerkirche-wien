@@ -32,7 +32,7 @@
   --gold-text:#7f5f20;        /* Gold für kleinen Text: 5.9:1 auf Weiß, 5.1:1 auf Beige und Goldgrund */
   --line:#e4dfd3;
   --line-dark:rgba(255,255,255,.14);
-  /* Titelzeile: je Thema in der Verwaltung waehlbar (js/thema.js setzt diese Werte) */
+  /* Titelzeile: je Thema in der Verwaltung waehlbar (js/gemeinsam/thema.js setzt diese Werte) */
   --nav-bg:var(--blue-deep);--nav-fg:#fff;--nav-fg-soft:rgba(255,255,255,.84);--nav-sub:rgba(255,255,255,.62);
   --nav-accent:var(--gold-l);--nav-line:rgba(216,185,110,.2);--nav-cta-line:rgba(216,185,110,.6);--nav-cta-hover-fg:var(--blue-deep);
 
@@ -94,9 +94,9 @@ nav{
   filter:brightness(0) saturate(100%) invert(55%) sepia(60%) saturate(500%) hue-rotate(10deg) brightness(90%);
 }
 nav .nav-logo-img{filter:brightness(0) saturate(100%) invert(80%) sepia(30%) saturate(600%) hue-rotate(3deg) brightness(95%)}
-/* Logo-Variante aus assets/logo/ (js/thema.js): Farbe steckt in der Datei */
+/* Logo-Variante aus assets/logo/ (js/gemeinsam/thema.js): Farbe steckt in der Datei */
 nav .nav-logo-img.v{filter:none}
-/* Startwerte der Kirchenmusik (wie data/themen.json), bevor js/thema.js die Datei gelesen hat */
+/* Startwerte der Kirchenmusik (wie data/themen.json), bevor js/gemeinsam/thema.js die Datei gelesen hat */
 html[data-thema="kirchenmusik"]{--nav-bg:#c9a24d;--nav-fg:#10192e;--nav-fg-soft:rgba(16,25,46,.8);--nav-sub:rgba(16,25,46,.68);
   --nav-accent:#10192e;--nav-line:rgba(16,25,46,.16);--nav-cta-line:rgba(16,25,46,.45);--nav-cta-hover-fg:#c9a24d}
 html[data-thema="kirchenmusik"] nav .nav-logo-img:not(.v){filter:brightness(0)}
@@ -108,7 +108,7 @@ nav .nav-logo-text{color:var(--nav-fg)}
 nav .nav-logo-sub{color:var(--nav-sub)}
 
 /* Die Aufklappmenues haengen an .nav-center, nicht am einzelnen Titel: so
-   stehen alle an derselben Stelle und sind gleich gross (Hoehe: js/main.js) */
+   stehen alle an derselben Stelle und sind gleich gross (Hoehe: js/gemeinsam/main.js) */
 .nav-center{position:relative;display:flex;align-items:stretch;height:100%;margin-left:auto}
 .nav-item{display:flex;align-items:center}
 .nav-btn{
@@ -161,7 +161,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .hamburger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
 
 /* Handy-Menü: Schnellzugriffe, darunter die Bereiche zum Aufklappen.
-   Wird von js/main.js aus dem Laptop-Menü gebaut. */
+   Wird von js/gemeinsam/main.js aus dem Laptop-Menü gebaut. */
 .mobile-menu{
   display:none;position:fixed;inset:0;z-index:280;overflow-y:auto;overscroll-behavior:contain;
   background:var(--blue-deep);padding:calc(var(--nav-h) + 1.2rem) var(--pad) 3rem;
@@ -218,7 +218,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
   background-color:var(--heading);background-size:cover;background-position:center;
   animation:fade-in .5s ease-out both;
 }
-/* Startseite: Foto groesser (Text bleibt links) und mehrere Fotos als Diashow (js/main.js, data/startseite.json) */
+/* Startseite: Foto groesser (Text bleibt links) und mehrere Fotos als Diashow (js/gemeinsam/main.js, data/startseite.json) */
 .hero-home{grid-template-columns:minmax(0,1fr) minmax(0,52%)}
 /* Diashow: keine eigene Flaeche und keine Einblendung, das Foto selbst blendet
    ein, sobald es geladen ist (sonst erscheint erst eine leere Tafel, dann das Bild) */
@@ -226,7 +226,7 @@ nav .nav-logo-sub{color:var(--nav-sub)}
 .hero-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.3s ease}
 .hero-slide.is-on{opacity:1}
 /* Erstes Foto blendet genau wie die Schrift ein: die Schrift wartet, bis das
-   Foto geladen ist (hoechstens kurz, js/main.js), dann beginnen beide zugleich */
+   Foto geladen ist (hoechstens kurz, js/gemeinsam/main.js), dann beginnen beide zugleich */
 .hero:has(.hero-show.is-loading) .hero-content{animation-play-state:paused}
 .hero-slide.is-first{transition:none;animation:fade-in .5s ease-out backwards}
 .hero-multi{cursor:pointer}
@@ -588,7 +588,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .news-more{display:flex;margin-top:2.4rem}
 .news-more[hidden]{display:none}
 
-/* Instagram (derzeit nicht auf der Startseite eingebunden, siehe js/instagram.js) */
+/* Instagram (derzeit nicht auf der Startseite eingebunden, siehe js/seiten/instagram.js) */
 .insta-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem 2rem;margin-bottom:2rem}
 .insta-head .s-title{margin-bottom:0}
 .insta-handle{font-weight:500;color:var(--heading);text-decoration:underline;text-decoration-color:var(--gold-l);text-underline-offset:.3em;transition:color .2s}
@@ -618,7 +618,7 @@ a.card .link-arr{display:inline-block;margin-top:.9rem}
 .qt::before{content:'\201E';color:var(--gold)}
 .qt::after{content:'\201C';color:var(--gold)}
 .qt-src{margin-top:1.4rem;font-size:1rem;font-weight:500;color:var(--gold)}
-/* Sprüche wechseln weich (js/main.js, initQuotes) */
+/* Sprüche wechseln weich (js/gemeinsam/main.js, initQuotes) */
 .quote-band .qt,.quote-band .qt-src{transition:opacity .6s ease}
 .quote-band.qt-out .qt,.quote-band.qt-out .qt-src{opacity:0}
 
@@ -1259,12 +1259,12 @@ footer{
 .f-links a{font-size:.95rem;color:rgba(255,255,255,.75);text-decoration:none;transition:color .2s}
 .f-links a:hover{color:var(--gold-l)}
 .f-copy{font-size:.88rem;color:rgba(255,255,255,.55)}
-/* "Cookie-Einstellungen" (js/statistik.js) sieht aus wie die Links daneben */
+/* "Cookie-Einstellungen" (js/gemeinsam/statistik.js) sieht aus wie die Links daneben */
 .f-links .cc-open{padding:0;border:0;background:none;font-size:.95rem;color:rgba(255,255,255,.75);cursor:pointer;transition:color .2s}
 .f-links .cc-open:hover{color:var(--gold-l)}
 
 
-/* ══ COOKIE-HINWEIS (js/statistik.js) ══
+/* ══ COOKIE-HINWEIS (js/gemeinsam/statistik.js) ══
    Liegt fest am unteren Rand, unter Navigation und Handy-Menue. "Ablehnen" und
    "Zustimmen" sehen bewusst gleich aus. Die Seite bekommt unten so viel Platz
    (--cc-h), dass die Fusszeile erreichbar bleibt. */
@@ -1301,7 +1301,7 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 .reveal{opacity:1;transform:none}
 
 
-/* ══ RUNDEN IN ST. AUGUSTIN: Karten mit Bild (js/inhalte.js) ══
+/* ══ RUNDEN IN ST. AUGUSTIN: Karten mit Bild (js/gemeinsam/inhalte.js) ══
    Fotos füllen das Bildfeld, Plakate stehen ganz auf hellem Grund,
    ohne eigenes Bild ein Foto aus der Augustinerkirche. */
 .rk-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2.6rem 2rem}
@@ -1320,7 +1320,7 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 }
 
 
-/* ══ KALENDER (pages/kalender.html, js/kalender.js) ══
+/* ══ KALENDER (pages/kalender.html, js/seiten/kalender.js) ══
    Links das Monatsblatt mit Punkten je Gruppe, rechts die Termine nach Tagen. */
 /* Vier klar unterscheidbare Farben (auch bei Farbschwäche) und zusätzlich vier Formen:
    Hochamt Kreuz, Gottesdienst Kreis, Konzert Raute, Runde Quadrat, Veranstaltung Dreieck */
@@ -1381,7 +1381,7 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 .cal-view:hover{color:var(--heading);background:rgba(255,255,255,.75)}
 .cal-view:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .cal-view[aria-current]{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(16,25,46,.25)}
-/* Wochenueberblick (js/woche.js): Kopf mit Pfeilen und Auswahl, darunter die sieben Tage */
+/* Wochenueberblick (js/seiten/woche.js): Kopf mit Pfeilen und Auswahl, darunter die sieben Tage */
 .wk{max-width:62rem;margin-inline:auto}
 .wk-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:1rem;margin-bottom:.4rem}
 .wk-foot{margin:1.6rem 0 .4rem}
@@ -1396,7 +1396,7 @@ body.cc-offen{padding-bottom:var(--cc-h,0)}
 .wk .week-filter{justify-content:center;margin:1.2rem 0 .6rem}
 .wk-count{margin-bottom:.6rem;font-size:.95rem;color:var(--text-light);text-align:center}
 .wk-list{border-top:1px solid var(--blue)}
-/* Bild der Woche (js/woche.js): rechts neben den Tagen, bleibt beim Scrollen stehen; am Handy darunter */
+/* Bild der Woche (js/seiten/woche.js): rechts neben den Tagen, bleibt beim Scrollen stehen; am Handy darunter */
 .wk.has-bild{max-width:80rem}
 .wk.has-bild .wk-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(14rem,19rem);gap:2.4rem;align-items:start}
 .wk-aside{position:sticky;top:6rem}
@@ -1492,7 +1492,7 @@ summary.cal-row::-webkit-details-marker{display:none}
 }
 
 
-/* ══ BILDNACHWEISE (js/main.js, data/bildnachweise.json) ══ */
+/* ══ BILDNACHWEISE (js/gemeinsam/main.js, data/bildnachweise.json) ══ */
 .bn-wrap{display:block;min-width:0}
 .bn{display:block;margin-top:.35rem;font-size:.76rem;line-height:1.35;color:var(--text-light)}
 .bn-over{position:absolute;right:.6rem;bottom:.5rem;z-index:2;max-width:calc(100% - 1.2rem);margin:0;padding:.15rem .45rem;
@@ -1500,7 +1500,7 @@ summary.cal-row::-webkit-details-marker{display:none}
 .hero-img{position:relative}
 
 
-/* ══ HINWEISBANNER (data/hinweise.json, js/main.js) ══ */
+/* ══ HINWEISBANNER (data/hinweise.json, js/gemeinsam/main.js) ══ */
 .site-banners{position:relative;z-index:5}
 .site-banner{background:var(--gold-pale);border-bottom:1px solid #ead9ad;color:var(--text)}
 .site-banner+.site-banner{border-top:1px solid #fff}
@@ -1749,7 +1749,7 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
 
 /* ---------- Dunkelmodus ----------
    Folgt dem Geraet (prefers-color-scheme); der Knopf in der Titelzeile stellt
-   hell oder dunkel fest (html[data-theme], gemerkt in js/thema.js). Die Verwaltung bleibt hell. */
+   hell oder dunkel fest (html[data-theme], gemerkt in js/gemeinsam/thema.js). Die Verwaltung bleibt hell. */
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#18233d;--bg-soft:#18233d;--bg-warm:#18233d;--surface:#18233d;
@@ -1791,7 +1791,7 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
 }
 body.adm .modus-btn{display:none!important}
 
-/* ---------- Bewegung (Startseite; js/main.js initHomeMotion) ----------
+/* ---------- Bewegung (Startseite; js/gemeinsam/main.js initHomeMotion) ----------
    Ohne JavaScript oder bei "reduzierte Bewegung" bleibt alles sichtbar: die Klassen setzt erst das Skript. */
 @keyframes rise{from{opacity:0;transform:translateY(26px)}}
 @keyframes zoom-in{from{opacity:0;transform:scale(1.06)}}
@@ -1905,7 +1905,7 @@ body.adm .modus-btn{display:none!important}
   .cards-intro .card{transition:border-color .3s}
   .cards-intro .card:hover{border-top-color:var(--gold)}
 
-  /* Herzgruft: Bild bewegt sich beim Scrollen leicht (js/main.js setzt --par) */
+  /* Herzgruft: Bild bewegt sich beim Scrollen leicht (js/gemeinsam/main.js setzt --par) */
   .herzgruft-img{background-position:center calc(50% + var(--par,0px))}
 }
 
@@ -2203,7 +2203,7 @@ body{line-height:1.55}
   .hero-home .hero-img{aspect-ratio:auto;max-height:none;min-height:50vh;min-height:50svh}
   .hero-home .hero-content{padding-bottom:5.6rem}
 }
-/* Pfeil nach unten (js/main.js initHeroDown): links neben dem Foto, wippt sanft auf und ab */
+/* Pfeil nach unten (js/gemeinsam/main.js initHeroDown): links neben dem Foto, wippt sanft auf und ab */
 .hero-down{position:absolute;z-index:3;bottom:1.6rem;right:calc(52% + .7rem);display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;
   border:1px solid var(--nav-accent);border-radius:50%;background:transparent;color:var(--nav-accent);cursor:pointer;transition:background-color .2s,color .2s}
 .hero-down svg{width:1.3rem;height:1.3rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -2218,7 +2218,7 @@ body{line-height:1.55}
 
 /* ══ Bewegung auf allen Seiten (November 2026) ══
    Seitenkopf: Schrift steigt beim Oeffnen nacheinander ein (wie auf der Startseite);
-   die Bereiche darunter steigen beim Scrollen ein (js/main.js initHomeMotion). */
+   die Bereiche darunter steigen beim Scrollen ein (js/gemeinsam/main.js initHomeMotion). */
 @media (prefers-reduced-motion:no-preference){
   .page-hero>*,.hero:not(.hero-home) .hero-content>*{animation:rise .9s var(--ease) backwards}
   .page-hero>:nth-child(2),.hero:not(.hero-home) .hero-content>:nth-child(2){animation-delay:.15s}
@@ -2243,12 +2243,12 @@ body{line-height:1.55}
 .v3-util:hover,.v3-util:focus-visible{color:var(--nav-accent)}
 @media(min-width:1360px){.v3-util{display:inline-flex}}
 
-/* Kopfzeile: Platz fuer die Lupe (js/main.js initSuche) von Anfang an freihalten, sonst rutschen
+/* Kopfzeile: Platz fuer die Lupe (js/gemeinsam/main.js initSuche) von Anfang an freihalten, sonst rutschen
    Menue und Knoepfe nach dem Laden ein Stueck zur Seite. Nur deutsche Seiten haben die Lupe, die uebersetzten kein Leerfeld. */
 html[lang="de"] body:not(.adm) .nav-right:not(:has(.suche-btn))::before{content:'';flex:none;width:2.75rem;height:2.75rem;margin-right:.4rem}
 @media (max-width:1120px){html[lang="de"] body:not(.adm) .nav-right:not(:has(.suche-btn))::before{margin-right:0}}
 
-/* ══ Naechstes Hochamt: Auftritt (js/hochaemter.js playNext) ══
+/* ══ Naechstes Hochamt: Auftritt (js/seiten/hochaemter.js playNext) ══
    Die Tafel blendet ein, der Goldrahmen zeichnet sich (oben quer, dann die Seiten hinunter), der Tag zaehlt hoch,
    der Werktitel steigt auf und ein Goldglanz zieht einmal darueber, die Vorschau gleitet nacheinander herein. */
 @keyframes nh-up{from{opacity:0;transform:translateY(18px)}}
@@ -2341,7 +2341,7 @@ html{overflow-x:clip;overscroll-behavior-x:none}
 body{overflow-x:clip}
 
 /* ══ Sprachwahl ganz rechts in der Kopfzeile (tools/seitenkopf.py): sichtbar ist nur die Flagge
-   der aktuellen Sprache, ein Klick oeffnet die Auswahl (details/summary, js/main.js schliesst sie) ══ */
+   der aktuellen Sprache, ein Klick oeffnet die Auswahl (details/summary, js/gemeinsam/main.js schliesst sie) ══ */
 .nav-lang{position:relative;flex:none}
 /* Nur die Flagge (mit Pfeil) nach rechts, mittig zwischen dem Knopf Gottesdienste und dem rechten Rand; alles andere bleibt */
 @media(min-width:1121px){.nav-lang summary{transform:translateX(calc((var(--pad) + .1rem) / 2))}}
@@ -2362,7 +2362,7 @@ body{overflow-x:clip}
 @media(max-width:420px){
   .nav-lang summary img{width:20px;height:13px}
 }
-/* Kopfzeile zu schmal fuer alles (js/main.js prueft die Breite): erst Unterstuetzen/Kontakt, dann Gottesdienste ausblenden */
+/* Kopfzeile zu schmal fuer alles (js/gemeinsam/main.js prueft die Breite): erst Unterstuetzen/Kontakt, dann Gottesdienste ausblenden */
 nav.nav-eng .v3-util,nav.nav-enger .nav-cta{display:none}
 /* Gottesdienstzeiten: zwei Knoepfe unter der Tabelle (Wochenkalender, Kirchenmusik-Programm) */
 .gd-links{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}

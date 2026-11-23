@@ -5,9 +5,9 @@
    (unter dem Foto) und eine kurze Beschreibung (fuer Screenreader). Gleicher Schluessel an
    mehreren Stellen (z. B. Gruppenbild der Mitbrueder) = ein Foto fuer alle diese Stellen.
    Gespeichert in data/fotos.json: {fotos: {schluessel: {bild, breite, hoehe, alt, bildtext}}};
-   die Website setzt es mit js/inhalte.js ein. Hochgeladene Bilder liegen in
+   die Website setzt es mit js/gemeinsam/inhalte.js ein. Hochgeladene Bilder liegen in
    assets/img/seiten/<schluessel>-<Kennung>.webp; ein ersetztes eigenes Bild wird geloescht.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

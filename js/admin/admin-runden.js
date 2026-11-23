@@ -9,7 +9,7 @@
    - Neue Runden bekommen ihre Seite ueber pages/runden/runde.html?id=…
    - Rechte: Wer nicht alle Runden darf, sieht und bearbeitet nur die eigenen;
      Neu anlegen, Loeschen und Reihenfolge sind dann gesperrt.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

@@ -3,10 +3,10 @@
    Menue & Leiste pflegen (admin/navigation.html), Quelle ist
    data/navigation.json: {bereiche: {"musik.html#p-solisten": {titel,
    leiste, menue, gruppe}}}. Gespeichert wird nur, was vom HTML abweicht;
-   js/main.js wendet es auf jeder Seite an.
+   js/gemeinsam/main.js wendet es auf jeder Seite an.
    Die Bereiche (linke Leiste) und das Menue oben liest die Seite aus dem
    HTML der Website, damit neue Bereiche ohne Nacharbeit erscheinen.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

@@ -4,7 +4,7 @@
    data/rundgang.json: {bilder: [{titel, bild, breite, hoehe, format (normal|breit|hoch), ausschnitt ("x% y%")}]}.
    Erscheint auf pages/augustinerkirche.html#p-geschichte → Rundgang in der Reihenfolge
    der Liste; ein Klick vergroessert das Bild.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

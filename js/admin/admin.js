@@ -25,7 +25,7 @@
    über den Webserver. Dort schützt die Anmeldung des Webservers
    (Basic Auth) und die Liste der beschreibbaren Pfade.
 
-   Wird im <head> nach js/hochaemter-data.js geladen (ohne defer).
+   Wird im <head> nach js/gemeinsam/hochaemter-data.js geladen (ohne defer).
    ============================================================ */
 (function (w, d) {
   'use strict';
@@ -2142,9 +2142,9 @@
   /* Welche Meldungen stehen auf der Startseite? Zuerst die neuesten, deren
      "Bis"-Datum (einschliesslich) noch nicht vorbei ist (ohne Datum zwei
      Wochen ab dem Datum der Meldung); reicht das nicht fuer 3, wird mit den neuesten abgelaufenen
-     aufgefuellt, die dann unten stehen. Gleiche Regel wie in js/news.js.
+     aufgefuellt, die dann unten stehen. Gleiche Regel wie in js/seiten/news.js.
      Liefert ein Set. */
-  const NEWS_HOME = 4;   /* gleiche Zahl wie LATEST in js/news.js */
+  const NEWS_HOME = 4;   /* gleiche Zahl wie LATEST in js/seiten/news.js */
   function newsExpired(e, today = isoToday()) {
     const until = HD.newsUntil(HD.isoDate(e.Datum), e.Bis);
     return Boolean(until) && until < today;
@@ -2878,7 +2878,7 @@
 
   /* ---------- Bildnachweise (data/bildnachweise.json) ----------
      Ein Nachweis je Bild (Pfad ab der Website-Wurzel); die Website zeigt ihn
-     klein unter dem Bild (js/main.js). Gepflegt direkt beim Bild in den
+     klein unter dem Bild (js/gemeinsam/main.js). Gepflegt direkt beim Bild in den
      Werkzeugen mit Bildern. */
   const CREDITS = 'data/bildnachweise.json';
   let creditMap = null;

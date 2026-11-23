@@ -23,7 +23,7 @@
     if (modus === 'dark' || modus === 'light') html.dataset.theme = modus;
   } catch { /* ohne Speicher gilt die Einstellung des Geraets */ }
   const script = d.currentScript;
-  const ROOT = script ? new URL('..', script.src).href : '/';
+  const ROOT = script ? new URL('../..', script.src).href : '/';
   const KEY = 'aug-themen';
   const THEMEN = ['startseite', 'augustinerkirche', 'kirchenmusik', 'augustiner', 'aspersdorf'];
   const LOGOS = ['gold', 'gold-dunkel', 'hellgold', 'weiss', 'schwarz', 'marine', 'bordeaux', 'tannengruen', 'gruen'];
@@ -33,7 +33,7 @@
   const text = (s) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 60);
 
   /* Sprache der Seite (<html lang>): de, en, it, fr oder es. Uebersetzte Seiten (index.en.html, pages/musik.it.html …)
-     laden vorher js/sprache.js mit dem Woerterbuch window.AugWoerter = {en: {deutsch: englisch}, it: {…}}.
+     laden vorher js/gemeinsam/sprache.js mit dem Woerterbuch window.AugWoerter = {en: {deutsch: englisch}, it: {…}}.
      AugT(text, werte) liefert die Uebersetzung (sonst den deutschen Text) und setzt {name} aus werte ein. */
   const LANG = ['en', 'it', 'fr', 'es'].includes((html.lang || '').slice(0, 2)) ? html.lang.slice(0, 2) : 'de';
   function T(s, werte) {
@@ -53,7 +53,7 @@
   T.lang = LANG;
   /* Eintrag im Woerterbuch (z. B. Liste der Monate) oder null */
   T.wert = (k) => (LANG !== 'de' && w.AugWoerter && w.AugWoerter[LANG] && w.AugWoerter[LANG][k]) || null;
-  /* Pfad einer Seite in der Sprache dieser Seite, falls es sie gibt (Dateinamen in js/sprache.js, "seiten") */
+  /* Pfad einer Seite in der Sprache dieser Seite, falls es sie gibt (Dateinamen in js/gemeinsam/sprache.js, "seiten") */
   T.seite = (pfad) => {
     const liste = LANG !== 'de' && w.AugWoerter && w.AugWoerter.seiten;
     const datei = String(pfad).replace(/[?#].*$/, '').split('/').pop();

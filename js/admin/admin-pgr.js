@@ -9,7 +9,7 @@
    (admin/aspersdorf-gremien.html, <body data-pgr="aspersdorf">): Quelle ist dann
    data/pgr-aspersdorf.json mit den Listen mitglieder (Pfarrgemeinderat) und
    vwr (Vermoegensverwaltungsrat), sie erscheinen auf pages/aspersdorf.html → Leitung.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

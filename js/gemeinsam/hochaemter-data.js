@@ -13,7 +13,7 @@
 (function (w) {
   'use strict';
 
-  /* Uebersetzte Seiten (js/thema.js, js/sprache.js): Monate und Wochentage in ihrer Sprache */
+  /* Uebersetzte Seiten (js/gemeinsam/thema.js, js/gemeinsam/sprache.js): Monate und Wochentage in ihrer Sprache */
   const TL = w.AugT && w.AugT.lang !== 'de' ? w.AugT : null;
   const liste = (k, de) => (TL && Array.isArray(TL.wert(k)) && TL.wert(k).length === de.length ? TL.wert(k) : de);
   const MONTHS = liste('MONATE', ['Jänner', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']);

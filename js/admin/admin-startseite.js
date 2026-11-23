@@ -4,12 +4,12 @@
    eine Datei (THEMES: Startseite = data/startseite.json, Augustinerkirche, Kirchenmusik,
    Augustiner, Aspersdorf = data/startseite-<thema>.json):
    {sekunden, bilder: [{titel, bild, breite, hoehe, ausschnitt ("x% y%")}], frueher: [wie bilder]}.
-   Ein Foto steht still, mehrere wechseln nacheinander (js/main.js). Fotos der anderen
+   Ein Foto steht still, mehrere wechseln nacheinander (js/gemeinsam/main.js). Fotos der anderen
    Themen lassen sich ebenfalls wieder verwenden. Hinzufuegen (auch mehrere Fotos auf einmal), ersetzen,
    Ausschnitt waehlen, Reihenfolge, Bildnachweis, Wechselzeit. Entfernte Fotos merkt
    sich "frueher", damit sie sich spaeter wieder verwenden lassen; mit verbundenem
    Projektordner kommen auch die uebrigen Bilder aus assets/img/startseite/ dazu.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

@@ -9,13 +9,13 @@
    - Predigten und Ansprachen: data/predigten/index.json und je Beitrag der Text (ohne Entwuerfe)
    - Neuigkeiten: data/news.csv (ohne Entwuerfe und noch nicht sichtbare)
    - Hochaemter und Konzerte: data/hochaemter.csv (kommende, auch nach Mitwirkenden)
-   Wird von js/main.js erst beim ersten Klick geladen. Benoetigt js/hochaemter-data.js
+   Wird von js/gemeinsam/main.js erst beim ersten Klick geladen. Benoetigt js/gemeinsam/hochaemter-data.js
    (wird bei Bedarf nachgeladen).
    ============================================================ */
 (function () {
   'use strict';
 
-  const ROOT = new URL('..', document.currentScript.src).href;
+  const ROOT = new URL('../..', document.currentScript.src).href;
   const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss');
   let HD = window.HochamtData;
   let dialog = null;
@@ -57,7 +57,7 @@
     if (HD) return Promise.resolve();
     return new Promise((resolve, reject) => {
       const sc = document.createElement('script');
-      sc.src = `${ROOT}js/hochaemter-data.js`;
+      sc.src = `${ROOT}js/gemeinsam/hochaemter-data.js`;
       sc.onload = () => { HD = window.HochamtData; HD ? resolve() : reject(new Error('HD')); };
       sc.onerror = reject;
       document.head.append(sc);

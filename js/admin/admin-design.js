@@ -1,11 +1,11 @@
 /* ============================================================
    Augustinerkirche Wien — admin-design.js
    Farben & Logo der Hauptseiten (admin/design.html), Quelle ist
-   data/themen.json (Aufbau siehe js/thema.js). Je Thema: Farbe der
+   data/themen.json (Aufbau siehe js/gemeinsam/thema.js). Je Thema: Farbe der
    Titelzeile (Vorschlaege oder frei), Schrift (automatisch, hell, dunkel),
    Logo aus assets/logo/ und der Text neben dem Logo (Name, Untertitel);
    dazu eine Vorschau der Titelzeile.
-   Benoetigt js/thema.js, js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/thema.js, js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';
@@ -124,7 +124,7 @@
     const btn = $('ds-save');
     btn.disabled = true;
     try {
-      /* Text bereinigen wie die Website (js/thema.js) */
+      /* Text bereinigen wie die Website (js/gemeinsam/thema.js) */
       for (const k of T.THEMEN) data[k] = T.clean(data[k]);
       const direct = await A.saveJSON(PATH, { themen: data });
       snap = JSON.stringify(data);

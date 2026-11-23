@@ -5,7 +5,7 @@
    es auf Klick als Word-Datei herunterladen (gestaltet von
    js/admin/plakat.js nach der Vorlage in assets/plakat/vorlage/).
    Es wird nur das gewaehlte Plakat erstellt und nichts gespeichert.
-   Benoetigt js/hochaemter-data.js, js/admin/admin.js und js/admin/plakat.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js, js/admin/admin.js und js/admin/plakat.js.
    ============================================================ */
 (function () {
   'use strict';

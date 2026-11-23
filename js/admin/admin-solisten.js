@@ -6,7 +6,7 @@
    - Aufnehmen, Bearbeiten, Entfernen
    - Foto: quadratischer Ausschnitt (verschiebbar), 400 × 400
      Pixel als WebP nach assets/img/personen/solisten/
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

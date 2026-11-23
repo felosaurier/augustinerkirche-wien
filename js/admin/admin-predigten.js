@@ -12,7 +12,7 @@
    Erscheint auf pages/augustinerkirche.html#p-predigten in der Reihenfolge der
    Datei: neue Beitraege nach Datum eingereiht, danach mit Pfeilen verschiebbar;
    ein Entwurf (entwurf: true) ist auf der Website verborgen.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

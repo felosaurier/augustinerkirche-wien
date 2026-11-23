@@ -1,14 +1,14 @@
 /* ============================================================
    Augustinerkirche Wien — admin-woerterbuch.js
    Wörterbuch der übersetzten Seiten (admin/woerterbuch.html). Das eingebaute Wörterbuch steht in
-   js/sprache.js (window.AugWoerter.basis), eigene Ergänzungen und Änderungen in
+   js/gemeinsam/sprache.js (window.AugWoerter.basis), eigene Ergänzungen und Änderungen in
    data/woerterbuch.json: {en: {"deutscher Text": "Übersetzung"}, it: {…}, fr: {…}, es: {…}}.
    Gespeichert werden nur Einträge, die vom eingebauten Wörterbuch abweichen oder fehlen; sie
-   gelten auf den Seiten vor den eingebauten (js/sprache.js liest die Datei beim Laden).
+   gelten auf den Seiten vor den eingebauten (js/gemeinsam/sprache.js liest die Datei beim Laden).
    Oben: deutsche Texte aus den Daten (Hochämter, Gottesdienstzeiten, Wochenkalender, Veranstaltungen),
    die noch nicht im Wörterbuch stehen. Unten: alle Einträge zum Bearbeiten, dazu CSV-Download
    (Deutsch;English;Italiano;Français;Español) und CSV-Upload zum Übernehmen.
-   Benötigt js/sprache.js, js/hochaemter-data.js und js/admin/admin.js.
+   Benötigt js/gemeinsam/sprache.js, js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';
@@ -114,7 +114,7 @@
       if (m) { teile.add(clean(m[1])); teile.add(clean(m[2])); } else teile.add(t);
     }
     /* Nicht aufnehmen: interne Kennungen (hochamt, runde …), Tagesnamen des Kirchenjahres und Ensembles "… von St. Augustin"
-       (die uebersetzen Regeln in js/thema.js), Texte mit "+" (Verstorbene) */
+       (die uebersetzen Regeln in js/gemeinsam/thema.js), Texte mit "+" (Verstorbene) */
     const regeln = (window.AugWoerter && window.AugWoerter.en && window.AugWoerter.en.REGELN) || [];
     const abgedeckt = (t) => /^[a-zäöü]+$/.test(t) || /\+/.test(t) || / von St\. Augustin$/.test(t) || regeln.some(([re]) => re.test(t));
     miss = [...teile].filter((t) => t && !abgedeckt(t) && !keys.includes(t)).sort((a, b) => a.localeCompare(b, 'de'));

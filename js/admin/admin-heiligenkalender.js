@@ -2,17 +2,17 @@
    Augustinerkirche Wien — admin-heiligenkalender.js
    Heiligenkalender (admin/heiligenkalender.html): Heilige und Gedenktage je Kalendertag.
    Sie stehen im Kalender, im Wochenkalender und auf der Startseite an jedem Tag, fuer den im
-   Wochenkalender keine eigenen Heiligen eingetragen sind (js/kalender-daten.js).
+   Wochenkalender keine eigenen Heiligen eingetragen sind (js/gemeinsam/kalender-daten.js).
    Standard: assets/heiligenkalender.json (Roemischer Generalkalender, Regionalkalender fuer das
    deutsche Sprachgebiet mit den oesterreichischen Eigenfeiern, Feste des Augustinerordens).
    Aenderungen: data/heiligenkalender.json, immer der ganze Kalender
      {tage: {"MM-TT": ["Hl. …"]}, sonntags: ["MM-TT"]}
    sonntags: Tage, die auch an einem Sonntag stehen (Hochfeste, Herrenfeste); sonst hat der
    Sonntag Vorrang.
-   Reiter Kirchenjahr: die berechneten Namen der Sonn- und Festtage (js/kalender-daten.js) je
+   Reiter Kirchenjahr: die berechneten Namen der Sonn- und Festtage (js/gemeinsam/kalender-daten.js) je
    Kirchenjahr ansehen, ein- und ausschalten, Lesejahr beim 1. Advent, eigene Schreibweisen:
      kirchenjahr: {aus: true|fehlt, lesejahr: false|fehlt, namen: {"berechnet": "eigene Fassung"}}
-   Benoetigt js/hochaemter-data.js, js/kalender-daten.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js, js/gemeinsam/kalender-daten.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';
@@ -175,7 +175,7 @@
   }
   function renderKj() {
     if (!KD || !KD.kirchenjahr) {
-      $('kj-list').innerHTML = '<p class="adm-muted">Die Berechnung (js/kalender-daten.js) fehlt.</p>';
+      $('kj-list').innerHTML = '<p class="adm-muted">Die Berechnung (js/gemeinsam/kalender-daten.js) fehlt.</p>';
       return;
     }
     const kj = kal.kirchenjahr || {};

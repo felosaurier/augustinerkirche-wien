@@ -73,7 +73,7 @@ def flaggen(rel, r):
 
 
 def seiten():
-    liste = [ROOT / 'index.html', ROOT / 'index-v1alt.html'] + sorted(ROOT.glob('index.*.html')) + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
+    liste = [ROOT / 'index.html'] + sorted(ROOT.glob('index.*.html')) + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
     return [p for p in liste if NAV.search(p.read_text(encoding='utf-8'))]
 
 

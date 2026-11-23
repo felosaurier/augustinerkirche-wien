@@ -1,14 +1,14 @@
 /* ============================================================
    Augustinerkirche Wien — woche.js
    Wochenüberblick im Kalender (pages/kalender.html#woche): alle Termine einer
-   Kalenderwoche, dieselben wie im Monat (js/kalender-daten.js), Montag bis
+   Kalenderwoche, dieselben wie im Monat (js/gemeinsam/kalender-daten.js), Montag bis
    Sonntag, auch Tage ohne Termin. Woche wählen: Pfeile (vier Wochen zurück,
    ein Jahr voraus) und „Zur aktuellen Woche“; dazu der Filter nach
    Wochentag. Oben die Umschaltung Monat / Woche (.cal-views). Aufruf mit
    #woche zeigt die Woche, ?woche=JJJJ-MM-TT (ein Tag der Woche) öffnet sie direkt.
    Gibt es für die Woche ein Bild (data/wochenkalender.json, "wochen": [{montag, bild}],
    Verwaltung → Wochenkalender → Bild der Woche), steht es rechts neben den Tagen.
-   Benötigt js/hochaemter-data.js und js/kalender-daten.js.
+   Benötigt js/gemeinsam/hochaemter-data.js und js/gemeinsam/kalender-daten.js.
    ============================================================ */
 (function () {
   'use strict';

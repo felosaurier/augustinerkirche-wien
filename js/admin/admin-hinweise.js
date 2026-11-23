@@ -3,14 +3,14 @@
    Zwei Seiten mit demselben Aufbau, unterschieden durch
    <body data-quelle="…">:
    - "website" (admin/hinweise.html): Hinweisbanner oben auf der
-     Website, Quelle data/hinweise.json, Anzeige durch js/main.js.
+     Website, Quelle data/hinweise.json, Anzeige durch js/gemeinsam/main.js.
      Fuer Admins und alle mit dem Recht "Hinweisbanner".
    - "verwaltung" (admin/mitteilungen.html): Mitteilungen an alle in
      der Verwaltung (Neustart des Servers, Updates …), Quelle
      admin/mitteilungen.json, Anzeige durch js/admin/admin.js. Nur Entwickler.
    Jeder Eintrag gilt von "von" bis einschliesslich "bis" (Datum, auf
    Wunsch mit Uhrzeit) und verschwindet danach von selbst.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

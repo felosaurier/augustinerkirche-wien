@@ -3,7 +3,7 @@
    Galerie der Kirchenmusik pflegen (admin/galerie.html), Quelle ist
    data/galerie.json: {alben: [{titel, datum, text, fotos: [{bild, alt,
    breite, hoehe}], videos: [{titel, url}], audio: [{titel, datei}]}]}.
-   Erscheint auf musik.html → Galerie (js/inhalte.js).
+   Erscheint auf musik.html → Galerie (js/gemeinsam/inhalte.js).
    - Anlegen, Bearbeiten, Verschieben, Löschen
    - Fotos als WebP nach assets/img/galerie/<album>/, mit Beschreibung
      und Bildnachweis; geschrieben wird erst beim Speichern
@@ -11,7 +11,7 @@
      {titel, datei} nach assets/video/galerie/
    - Aufnahmen: MP3-Dateien nach assets/audio/galerie/
    Fehlt die Datei noch, beginnt die Liste leer; das erste Speichern legt sie an.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';
@@ -41,7 +41,7 @@
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
   const notFound = (e) => !!e && (e.status === 404 || e.name === 'NotFoundError');
-  /* YouTube-Adresse -> Kennung (gleiche Regel wie js/inhalte.js) */
+  /* YouTube-Adresse -> Kennung (gleiche Regel wie js/gemeinsam/inhalte.js) */
   function youtubeId(u) {
     const m = String(u || '').trim().match(/^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})(?:[?&#/].*)?$/i);
     return m ? m[1] : '';

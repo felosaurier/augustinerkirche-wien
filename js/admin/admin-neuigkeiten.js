@@ -16,7 +16,7 @@
    - Schaltflaeche im Fenster: Ziel aus Listen waehlen (Hochamt oder
      Konzert, Runde, Seite der Website, andere Website) statt Adresse;
      liegt am Enddatum ein Termin, wird er zum Verknuepfen vorgeschlagen
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';
@@ -795,7 +795,7 @@
     renderVideos();
   }
 
-  /* ---------- Vorschau des Fensters (wie auf der Website, js/news.js) ---------- */
+  /* ---------- Vorschau des Fensters (wie auf der Website, js/seiten/news.js) ---------- */
   /* Bildadresse fuer die Vorschau: Pfad im Projekt, in dieser Sitzung neu Gespeichertes als blob: */
   const previewSrc = (path) => {
     const u = A.imageUrl(path);

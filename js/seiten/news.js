@@ -14,7 +14,7 @@
      gross zum Durchblaettern (lightbox.js). Ohne eigenes Bild zeigt die Karte das erste Foto.
      Fehlt die Uebersicht noch, gelten die alten Dateien news-fotos.json und news-videos.json.
    Aufruf mit ?news=ID oeffnet die Meldung direkt (teilbarer Link).
-   Benoetigt js/hochaemter-data.js (CSV-Parser und Hilfen).
+   Benoetigt js/gemeinsam/hochaemter-data.js (CSV-Parser und Hilfen).
    ============================================================ */
 (function () {
   'use strict';

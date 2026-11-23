@@ -6,7 +6,7 @@
    ?bereich=musik (Leitung, Gastdirigenten, Organisten; dazu Homepage) und
    ?bereich=aspersdorf (Leitung der Pfarre Aspersdorf). Je Person Name, Aufgabe, Foto, Fotonachweis und
    Text; Reihenfolge mit Pfeilen, Wechsel der Gruppe im Fenster.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

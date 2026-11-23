@@ -2,7 +2,7 @@
    Augustinerkirche Wien — admin-wochenkalender.js
    Wochenkalender (admin/wochenkalender.html): Vorschau des gedruckten Wochenkalenders.
    Gezeigt wird alles, was im Kalender steht (regelmäßige Termine, Hochämter, Runden,
-   eigene Termine, js/kalender-daten.js), Woche für Woche. Dazu trägst du die Einzelheiten
+   eigene Termine, js/gemeinsam/kalender-daten.js), Woche für Woche. Dazu trägst du die Einzelheiten
    der Woche ein, gespeichert in data/wochenkalender.json:
    {"tage": [{datum, tag, heilige: [], termine: [{zeit, anschliessend, nach, name, zusatz,
    zelebrant, musik, ort, hinweis, art, entfaellt}]}],
@@ -13,8 +13,8 @@
    - kein Löschen und Kopieren: ein Termin "entfällt", dann steht er nicht im Wochenkalender
      und ist hier durchgestrichen
    - je Woche ein Bild (z. B. der gedruckte Wochenkalender), auf der Website rechts neben dem
-     Wochenueberblick (js/woche.js); die Bilder liegen in assets/img/wochenkalender/
-   Benoetigt js/hochaemter-data.js, js/kalender-daten.js und js/admin/admin.js.
+     Wochenueberblick (js/seiten/woche.js); die Bilder liegen in assets/img/wochenkalender/
+   Benoetigt js/gemeinsam/hochaemter-data.js, js/gemeinsam/kalender-daten.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

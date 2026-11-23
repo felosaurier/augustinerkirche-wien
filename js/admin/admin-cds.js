@@ -7,7 +7,7 @@
    - Anlegen, Bearbeiten, Verschieben (innerhalb der Gruppe), Löschen
    - Cover als WebP nach assets/img/cds/, Bildnachweis beim Cover
    - Hörproben: MP3-Dateien nach assets/audio/cds/
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

@@ -35,7 +35,7 @@
      ([data-inhalt="rechtliches"][data-seite="impressum|datenschutz"])
    Der Inhalt im HTML bleibt als Rueckfall stehen, falls eine Datei
    nicht geladen werden kann.
-   Benoetigt js/hochaemter-data.js (Escaping, sichere Links, Freitext).
+   Benoetigt js/gemeinsam/hochaemter-data.js (Escaping, sichere Links, Freitext).
    ============================================================ */
 (function () {
   'use strict';
@@ -43,14 +43,14 @@
   const HD = window.HochamtData;
   if (!HD) return;
   const { esc, pad } = HD;
-  /* Uebersetzung (js/thema.js); deutsche Seiten: der Text bleibt. Texte aus den Daten werden nur
-     uebersetzt, wenn das Woerterbuch (js/sprache.js) sie kennt, sonst bleiben sie deutsch. */
+  /* Uebersetzung (js/gemeinsam/thema.js); deutsche Seiten: der Text bleibt. Texte aus den Daten werden nur
+     uebersetzt, wenn das Woerterbuch (js/gemeinsam/sprache.js) sie kennt, sonst bleiben sie deutsch. */
   const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
   const LANG = T.lang || 'de';
 
   /* Wurzel der Website (aus der Adresse dieses Skripts), damit Pfade aus
      den Datendateien auf jeder Unterseite stimmen */
-  const ROOT = new URL('..', document.currentScript.src).href;
+  const ROOT = new URL('../..', document.currentScript.src).href;
   /* Vorschau in der Verwaltung: noch nicht gespeicherte Dateien kommen als blob:-Adressen */
   let previewing = false;
   const url = (p) => (previewing && /^blob:/.test(String(p)) ? String(p) : HD.safeUrl(p, ROOT));

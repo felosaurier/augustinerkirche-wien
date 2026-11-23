@@ -18,7 +18,7 @@ die Meldungen, Tabellen und Fotos auf dem Server nicht ueberschreiben. Ordner un
 
 Das Test-Paket unterscheidet sich vom Live-Paket nur in diesen Punkten (jeder wird beim Bauen genannt):
 robots.txt und der Kopf X-Robots-Tag sperren Suchmaschinen aus, und der Cookie-Hinweis erscheint immer
-(Test-Mess-ID in der Kopie von js/statistik.js; gemessen wird nie).
+(Test-Mess-ID in der Kopie von js/gemeinsam/statistik.js; gemessen wird nie).
 
 Mit --verwaltung kommt die Verwaltung (admin/, js/admin*, css/admin*) mit auf den Server und speichert dort
 direkt, ohne Projektordner auf dem PC (Server-Modus). Dafür liegen zwei weitere Konfigurationen bei: die
@@ -44,8 +44,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / 'dist'
 VORLAGEN = ROOT / 'tools' / 'server'
 
-# index-v1alt.html: die fruehere Startseite (noindex), bleibt aufrufbar
-DATEIEN = ['index.html', 'index.en.html', 'index.it.html', 'index.fr.html', 'index.es.html', 'index-v1alt.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
+DATEIEN = ['index.html', 'index.en.html', 'index.it.html', 'index.fr.html', 'index.es.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
 ORDNER = ['pages', 'css', 'js', 'assets', 'data']
 
 TEST_MESS_ID = 'G-VORSCHAU01'
@@ -106,13 +105,13 @@ def schreiben(p, text):
 
 
 def cookie_vorschau(site):
-    """Kopie von js/statistik.js: Test-Mess-ID und "lokal" fest, damit der Hinweis erscheint, aber nie gemessen wird."""
+    """Kopie von js/gemeinsam/statistik.js: Test-Mess-ID und "lokal" fest, damit der Hinweis erscheint, aber nie gemessen wird."""
     p = site / 'js' / 'statistik.js'
     s = lesen(p)
     alt_id = "const GA_ID = '';"
     lokal = re.search(r'const lokal = [^\n]*;', s)
     if s.count(alt_id) != 1 or not lokal:
-        fehler('js/statistik.js hat sich geändert, die Cookie-Vorschau lässt sich nicht einsetzen (siehe cookie_vorschau in tools/paket.py)')
+        fehler('js/gemeinsam/statistik.js hat sich geändert, die Cookie-Vorschau lässt sich nicht einsetzen (siehe cookie_vorschau in tools/paket.py)')
     eol = '\r\n' if '\r\n' in s else '\n'
     s = s.replace(alt_id, "const GA_ID = '" + TEST_MESS_ID + "';", 1)
     s = s.replace(lokal.group(0), 'const lokal = true;', 1)
@@ -147,10 +146,10 @@ def hinweise(test, cookie, verwaltung, update=False):
     if test:
         punkte.append('Suchmaschinen sind ausgesperrt (`robots.txt` und der Kopf `X-Robots-Tag`), falls der Container doch aus dem Internet erreichbar ist.')
         if cookie:
-            punkte.append('Der Cookie-Hinweis erscheint immer. In der Kopie von `js/statistik.js` steht dafür eine Test-Mess-ID, und die Seite gilt als „lokal“: '
+            punkte.append('Der Cookie-Hinweis erscheint immer. In der Kopie von `js/gemeinsam/statistik.js` steht dafür eine Test-Mess-ID, und die Seite gilt als „lokal“: '
                           '**es wird nie etwas an Google gesendet.**')
         else:
-            punkte.append('Der Cookie-Hinweis erscheint nur, wenn in `js/statistik.js` eine Mess-ID steht (hier: nicht der Fall).')
+            punkte.append('Der Cookie-Hinweis erscheint nur, wenn in `js/gemeinsam/statistik.js` eine Mess-ID steht (hier: nicht der Fall).')
     if verwaltung and update:
         punkte.append('Die **Verwaltung ist enthalten** (Programmcode). Zugänge und Mitteilungen auf dem Server bleiben unverändert.')
     elif verwaltung:

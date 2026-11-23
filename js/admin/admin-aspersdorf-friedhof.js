@@ -6,7 +6,7 @@
    eine Zeile ohne Betrag ist eine Zwischenueberschrift. Erscheinen auf
    pages/aspersdorf.html → Pfarrfriedhof in der Reihenfolge der Liste.
    Tabellen anlegen, aendern, verschieben und loeschen.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

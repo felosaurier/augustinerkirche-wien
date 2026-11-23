@@ -6,7 +6,7 @@
    - Anlegen, Bearbeiten, Kopieren, Löschen
    Hochämter und Runden-Termine werden hier nicht gepflegt, sie
    kommen aus ihren eigenen Werkzeugen in den Kalender.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

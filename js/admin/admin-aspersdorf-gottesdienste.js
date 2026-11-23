@@ -6,8 +6,8 @@
      {regelmaessig: [{tag, zeit, name, hinweis}], termine: [{datum, zeit, name, hinweis}]}
    tag: so, mo, di, mi, do, fr, sa. Fehlt die Datei, gilt die Tabelle in
    pages/aspersdorf.html; sie steht unten als Vorgabe (VORGABE) und wird
-   beim ersten Speichern zur Datei. Anzeige: js/inhalte.js (aspGottesdienste).
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   beim ersten Speichern zur Datei. Anzeige: js/gemeinsam/inhalte.js (aspGottesdienste).
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

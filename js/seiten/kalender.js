@@ -2,12 +2,12 @@
    Augustinerkirche Wien — kalender.js
    Kalender der Pfarre St. Augustin (pages/kalender.html). Die Termine
    (Hochämter, Gottesdienste mit Ferien und Ausfällen, Runden, eigene
-   Termine) stellt js/kalender-daten.js zusammen.
+   Termine) stellt js/gemeinsam/kalender-daten.js zusammen.
    Links ein Monatsblatt (Tage mit Terminen haben Punkte in der Farbe
    der Gruppe), rechts bzw. darunter die Termine des Monats nach Tagen.
    Aufruf mit ?monat=JJJJ-MM öffnet einen Monat direkt, ?gruppe=hochamt,konzert
    zeigt nur diese Gruppen (Filter, wieder abwählbar).
-   Benötigt js/hochaemter-data.js und js/kalender-daten.js.
+   Benötigt js/gemeinsam/hochaemter-data.js und js/gemeinsam/kalender-daten.js.
    ============================================================ */
 (function () {
   'use strict';

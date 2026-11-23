@@ -1,8 +1,8 @@
 /* ============================================================
    Augustinerkirche Wien — sprache.js
    Woerterbuch fuer die uebersetzten Seiten (index.en.html, pages/musik.it.html …),
-   nur dort geladen, im <head> vor js/thema.js. Die Skripte uebersetzen mit
-   window.AugT (js/thema.js): Schluessel ist der deutsche Text, {name} wird eingesetzt.
+   nur dort geladen, im <head> vor js/gemeinsam/thema.js. Die Skripte uebersetzen mit
+   window.AugT (js/gemeinsam/thema.js): Schluessel ist der deutsche Text, {name} wird eingesetzt.
    Texte aus den Daten der Verwaltung (Gottesdienste, Kalender, Kontakt, Rundgang)
    werden nur uebersetzt, wenn sie hier stehen; sonst erscheinen sie deutsch.
    Neue Gottesdienst-Bezeichnungen o. Ae. also hier in beiden Sprachen ergaenzen.
@@ -168,7 +168,7 @@ window.AugWoerter = {
     'Hochaltar': 'High altar',
     'Seitenaltar': 'Side altar',
 
-    /* Hochamt-Detailseite (js/hochamt-detail.js), Anlass und Aufgaben der Mitwirkenden */
+    /* Hochamt-Detailseite (js/seiten/hochamt-detail.js), Anlass und Aufgaben der Mitwirkenden */
     'Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.': 'The dates could not be loaded. Please reload the page later.',
     'Musik im Gottesdienst': 'Music in the service',
     'Ausführende': 'Performers',
@@ -589,7 +589,7 @@ window.AugWoerter = {
     'Hochaltar': 'Altare maggiore',
     'Seitenaltar': 'Altare laterale',
 
-    /* Hochamt-Detailseite (js/hochamt-detail.js), Anlass und Aufgaben der Mitwirkenden */
+    /* Hochamt-Detailseite (js/seiten/hochamt-detail.js), Anlass und Aufgaben der Mitwirkenden */
     'Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.': 'Non è stato possibile caricare le date. La preghiamo di ricaricare la pagina più tardi.',
     'Musik im Gottesdienst': 'Musica nella celebrazione',
     'Ausführende': 'Interpreti',
@@ -1010,7 +1010,7 @@ window.AugWoerter = {
     'Hochaltar': 'Maître-autel',
     'Seitenaltar': 'Autel latéral',
 
-    /* Hochamt-Detailseite (js/hochamt-detail.js), Anlass und Aufgaben der Mitwirkenden */
+    /* Hochamt-Detailseite (js/seiten/hochamt-detail.js), Anlass und Aufgaben der Mitwirkenden */
     'Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.': 'Les dates n’ont pas pu être chargées. Veuillez recharger la page plus tard.',
     'Musik im Gottesdienst': 'Musique pendant la célébration',
     'Ausführende': 'Interprètes',
@@ -1418,7 +1418,7 @@ window.AugWoerter = {
     'Hochaltar': 'Altar mayor',
     'Seitenaltar': 'Altar lateral',
 
-    /* Hochamt-Detailseite (js/hochamt-detail.js), Anlass und Aufgaben der Mitwirkenden */
+    /* Hochamt-Detailseite (js/seiten/hochamt-detail.js), Anlass und Aufgaben der Mitwirkenden */
     'Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.': 'No se han podido cargar las fechas. Vuelva a cargar la página más tarde.',
     'Musik im Gottesdienst': 'Música en la celebración',
     'Ausführende': 'Intérpretes',
@@ -1689,7 +1689,7 @@ window.AugWoerter = {
   if (!SPR.includes(l) || !d.currentScript) return;
   try {
     const x = new XMLHttpRequest();
-    x.open('GET', new URL('../data/woerterbuch.json', d.currentScript.src).href, false);
+    x.open('GET', new URL('../../data/woerterbuch.json', d.currentScript.src).href, false);
     x.send();
     if (x.status !== 200) return;
     const eigen = JSON.parse(x.responseText)[l];

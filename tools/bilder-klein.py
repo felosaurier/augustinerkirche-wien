@@ -3,7 +3,7 @@
 
 Zu jedem grossen Bild unter assets/img/ (WebP, breiter als 1100 Pixel) entsteht "<name>-m.webp"
 (900 Pixel breit). Die Liste der Bilder, zu denen es eine kleine Fassung gibt, steht in
-data/bilder-klein.json; die Seiten (js/thema.js, AugBild) nehmen auf schmalen Bildschirmen
+data/bilder-klein.json; die Seiten (js/gemeinsam/thema.js, AugBild) nehmen auf schmalen Bildschirmen
 die kleine Fassung. Neue Bilder, die in der Verwaltung hochgeladen werden, bekommen ihre
 kleine Fassung dort gleich mit; dieses Skript holt nur Bilder nach, die schon da waren.
 

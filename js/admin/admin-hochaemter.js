@@ -21,7 +21,7 @@
      geloescht. Ein entferntes Foto verschwindet beim Speichern samt Vorschau und
      Nachweis; ein geloeschtes Hochamt nimmt alle seine Fotos mit. Aendert sich Datum
      oder Uhrzeit, ziehen die Fotos in den neuen Ordner um (mit verbundenem Projektordner).
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

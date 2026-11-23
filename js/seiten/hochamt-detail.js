@@ -18,11 +18,11 @@
 
   const HD = window.HochamtData;
   const qs = (sel) => document.querySelector(sel);
-  /* Uebersetzung auf pages/hochamt.en.html und .it.html (js/sprache.js); Links fuehren dort zu den
+  /* Uebersetzung auf pages/hochamt.en.html und .it.html (js/gemeinsam/sprache.js); Links fuehren dort zu den
      uebersetzten Seiten, sofern es sie gibt */
   const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
   const LANG = T.lang || 'de';
-  /* Titel und Ensembles uebersetzen (js/thema.js); ohne diese Funktion bleibt der Text, wie er ist */
+  /* Titel und Ensembles uebersetzen (js/gemeinsam/thema.js); ohne diese Funktion bleibt der Text, wie er ist */
   const person = (s) => (T.person ? T.person(s) : s);
   const seite = (pfad) => (T.seite ? T.seite(pfad) : pfad);
   const FALLBACK = `<p class="s-text">${T('Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.')}</p>`;

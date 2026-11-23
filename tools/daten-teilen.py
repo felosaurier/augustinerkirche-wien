@@ -98,7 +98,7 @@ def vorschau(bild):
     return v
 
 
-# ---------- CSV wie js/hochaemter-data.js (csvText) ----------
+# ---------- CSV wie js/gemeinsam/hochaemter-data.js (csvText) ----------
 def csv_zelle(v):
     s = str(v if v is not None else '')
     if re.match(r'^[=+\-@\t\r]', s) and not re.match(r'^[+-]?\d[\d.,]*$', s):

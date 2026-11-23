@@ -7,12 +7,12 @@
    Gespeichert in data/entdecken.json:
      {einleitung, karten: [{key?, titel, link, bild, ausschnitt ("x% y%"), links: [{text, link}]}],
       bilder: {<key>: {bild, ausschnitt}}}
-   karten: die deutsche Startseite baut den Bereich daraus neu (js/start-v2.js);
+   karten: die deutsche Startseite baut den Bereich daraus neu (js/seiten/start-v2.js);
    bilder: eigene Bilder der sechs urspruenglichen Karten, damit auch die englische und
    italienische Startseite sie zeigen.
    Hochgeladene Bilder: assets/img/startseite/entdecken-<key|karte>-<Kennung>.webp; ein eigenes
    Bild, das keine Karte mehr verwendet, wird geloescht.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

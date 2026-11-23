@@ -2,7 +2,7 @@
    Augustinerkirche Wien — hochaemter.js
    Kalender und Archiv der Hochaemter auf musik.html.
    Die Termine kommen aus data/hochaemter.csv (Excel-Tabelle,
-   siehe js/hochaemter-data.js). Jede Zeile fuehrt zur Detailseite
+   siehe js/gemeinsam/hochaemter-data.js). Jede Zeile fuehrt zur Detailseite
    hochamt.html. Alle kommenden Termine untereinander in #p-hochaemter,
    vergangene in #p-hochaemter-archiv.
    ============================================================ */
@@ -15,7 +15,7 @@
   const DATA_URL = '../data/hochaemter.csv';
   const ARCHIVE_DIR = '../data/archiv/';
 
-  /* Uebersetzung (js/thema.js); deutsche Seiten: der Text bleibt */
+  /* Uebersetzung (js/gemeinsam/thema.js); deutsche Seiten: der Text bleibt */
   const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
   const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));

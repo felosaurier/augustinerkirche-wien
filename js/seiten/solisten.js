@@ -3,7 +3,7 @@
    Vollstaendige Solistenliste auf musik.html. Laedt
    data/solisten.json und erlaubt Sortierung alphabetisch
    (nach Nachname) oder nach Stimmlage.
-   Benoetigt js/hochaemter-data.js (HTML-Escaping, sichere Pfade).
+   Benoetigt js/gemeinsam/hochaemter-data.js (HTML-Escaping, sichere Pfade).
    ============================================================ */
 (function () {
   'use strict';

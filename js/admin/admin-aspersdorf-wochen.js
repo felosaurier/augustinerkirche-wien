@@ -7,7 +7,7 @@
    assets/img/aspersdorf/wochen/. Erscheinen auf pages/aspersdorf.html →
    Gottesdienste & Kalender: das neueste Blatt gross mit seinem Bild (ohne eigenes
    Bild das des vorherigen Blatts), die aelteren darunter im Archiv nach Jahren.
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

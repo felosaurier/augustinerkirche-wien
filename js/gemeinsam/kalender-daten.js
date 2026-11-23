@@ -1,7 +1,7 @@
 /* ============================================================
    Augustinerkirche Wien — kalender-daten.js
-   Gemeinsame Termine fuer den Kalender (js/kalender.js) und den
-   Wochenueberblick (js/woche.js). Sammelt alle Termine aus vier Quellen:
+   Gemeinsame Termine fuer den Kalender (js/seiten/kalender.js) und den
+   Wochenueberblick (js/seiten/woche.js). Sammelt alle Termine aus vier Quellen:
    - data/hochaemter.csv: Hochämter, Gottesdienste und Konzerte
    - data/runden.json:    Terminreihen der Runden (mit Uhrzeit und Ort)
    - data/termine.json:   eigene Termine wie Ausflüge, Feste, Vorträge
@@ -22,7 +22,7 @@
    - Kirchenjahr (berechnet): Tagesbezeichnung wie "28. Sonntag im Jahreskreis", "1. Adventsonntag",
      wenn im Wochenkalender keine eigene eingetragen ist
    Dazu die Darstellung eines Termins und eines Tages (gleich in Kalender und Woche).
-   Benötigt js/hochaemter-data.js.
+   Benötigt js/gemeinsam/hochaemter-data.js.
    ============================================================ */
 (function (w) {
   'use strict';
@@ -30,9 +30,9 @@
   const HD = w.HochamtData;
   if (!HD) return;
   const { esc, pad, MONTHS, WEEKDAYS } = HD;
-  /* Sprache der Seite (js/thema.js, js/sprache.js); deutsche Seiten: alles bleibt, wie es ist */
+  /* Sprache der Seite (js/gemeinsam/thema.js, js/gemeinsam/sprache.js); deutsche Seiten: alles bleibt, wie es ist */
   const T0 = w.AugT || Object.assign((s, v) => String(s).replace(/\{(\w+)\}/g, (m, k) => (v && k in v ? v[k] : m)), { lang: 'de', x: (k, de) => de, tag: (s) => s, person: (s) => s, seite: (p) => p });
-  /* Auch mit einer aelteren js/thema.js (aus dem Cache) muss der Kalender laden */
+  /* Auch mit einer aelteren js/gemeinsam/thema.js (aus dem Cache) muss der Kalender laden */
   const T = Object.assign(T0, { x: T0.x || ((k, de) => de), tag: T0.tag || ((s) => s), person: T0.person || ((s) => s), seite: T0.seite || ((p) => p) });
 
   /* Gruppen in der Reihenfolge der Filter: Hochämter (mit Chor und Orchester) und

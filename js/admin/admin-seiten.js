@@ -3,7 +3,7 @@
    Abschnitte der Seiten Augustiner (Kloster) und Aspersdorf pflegen
    (admin/seiten.html?seite=augustiner|aspersdorf), Quelle ist
    data/seite-<seite>.json: {abschnitte: [{id, titel, gruppe, zeile,
-   ueberschrift, bloecke}]}; js/inhalte.js baut die Seite daraus.
+   ueberschrift, bloecke}]}; js/gemeinsam/inhalte.js baut die Seite daraus.
    - Gibt es die Datei noch nicht, wird der Stand aus dem HTML der Seite
      uebernommen: Absaetze, Zwischentitel, Listen, Bilder und einfache
      Karten werden bearbeitbar, alles andere (Kontaktkarten, Tabellen,
@@ -11,7 +11,7 @@
      auf der Website aus dem HTML genommen.
    - Abschnitte und Bausteine anlegen, umstellen und entfernen
    - Bilder als WebP nach assets/img/<seite>/, mit Bildnachweis
-   Benoetigt js/hochaemter-data.js und js/admin/admin.js.
+   Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
 (function () {
   'use strict';

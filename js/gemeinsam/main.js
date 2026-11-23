@@ -18,7 +18,7 @@
 
   /* ---------- Hilfsfunktionen ---------- */
   const qs = (sel, ctx = document) => ctx.querySelector(sel);
-  /* Uebersetzung (js/thema.js, Woerterbuch js/sprache.js); deutsche Seiten: der Text bleibt */
+  /* Uebersetzung (js/gemeinsam/thema.js, Woerterbuch js/gemeinsam/sprache.js); deutsche Seiten: der Text bleibt */
   const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
   T.lang = T.lang || 'de';
   T.seite = T.seite || ((p) => p);
@@ -686,12 +686,12 @@
      Fotos, deren Daten den Nachweis selbst tragen (Hochaemter, Berichte, Predigten, Plakate der
      Meldungen), bringen ihn als data-credit am Bild bzw. am Link der Vergroesserung mit. */
   const siteRoot = (() => {
-    const s = qs('script[src$="js/main.js"]');
-    return s ? new URL('..', s.src).pathname : '/';
+    const s = qs('script[src$="js/gemeinsam/main.js"]');
+    return s ? new URL('../..', s.src).pathname : '/';
   })();
   /* Datendatei als JSON (null, wenn sie fehlt). E-Mail-Adressen stehen darin verschluesselt
      als [[mail:ta.renitsugua|ofni]] und werden hier wieder lesbar (wie HochamtData.mailDecode;
-     main.js laeuft auch auf Seiten ohne js/hochaemter-data.js) */
+     main.js laeuft auch auf Seiten ohne js/gemeinsam/hochaemter-data.js) */
   async function dataJSON(url) {
     const res = await fetch(url, { cache: 'no-cache' });
     if (!res.ok) return null;
@@ -1391,7 +1391,7 @@
     }, { passive: true });
   }
 
-  /* ---------- Suche (js/suche.js wird erst beim ersten Klick geladen) ---------- */
+  /* ---------- Suche (js/gemeinsam/suche.js wird erst beim ersten Klick geladen) ---------- */
   function initSuche() {
     const right = qs('.nav-right');
     /* Die Suche kennt nur die deutschen Seiten: auf uebersetzten Seiten keine Lupe */
@@ -1411,7 +1411,7 @@
       if (!loading) {
         loading = new Promise((resolve, reject) => {
           const sc = document.createElement('script');
-          sc.src = `${siteRoot}js/suche.js`;
+          sc.src = `${siteRoot}js/gemeinsam/suche.js`;
           sc.onload = resolve;
           sc.onerror = reject;
           document.head.append(sc);
@@ -1461,7 +1461,7 @@
   }
 
   /* ---------- Hell / Dunkel ----------
-     Schalter oben beim X des mobilen Menues; die Wahl merkt sich der Browser (js/thema.js setzt sie
+     Schalter oben beim X des mobilen Menues; die Wahl merkt sich der Browser (js/gemeinsam/thema.js setzt sie
      beim Laden). Ohne Wahl folgt die Seite der Einstellung des Geraets. */
   let modusLabel = () => {};
   function initModus() {
