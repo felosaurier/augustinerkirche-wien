@@ -61,6 +61,7 @@ Die wichtigsten Seiten für Besucherinnen und Besucher gibt es auch auf Englisch
 | Rieger-Orgel, Reil-Orgel | `en/pages/orgel-rieger.html`, `en/pages/orgel-reil.html` | `it/pages/orgel-rieger.html`, `it/pages/orgel-reil.html` | `fr/pages/orgel-rieger.html`, `fr/pages/orgel-reil.html` · `es/pages/orgel-rieger.html`, `es/pages/orgel-reil.html` |
 
 - **Texte der Seiten** stehen direkt in diesen Dateien und werden dort geändert. Alles Übrige (Kalender, Neuigkeiten, Pfarrleben, Orden) verlinken sie mit dem Hinweis „in German“ bzw. „in tedesco“ auf die deutschen Seiten.
+- **Alte Adressen:** Bis 2026 lagen die Übersetzungen neben den deutschen Seiten (`index.en.html`, `pages/musik.it.html`). Die Server-Vorlagen `tools/server/nginx.conf` und `apache.conf` leiten diese Adressen dauerhaft (301) auf die neuen um (`en/index.html`, `it/pages/musik.html`), damit alte Links, QR-Codes und Suchergebnisse weiter funktionieren. Die Regeln wirken erst, wenn die neue Serverkonfiguration eingespielt ist.
 - **Menü und Fußzeile** kommen aus `tools/vorlagen/nav.<sprache>.html` und `footer.<sprache>.html` (en, it, fr, es); danach `python tools/seitenkopf.py` laufen lassen. Neue übersetzte Seiten (gespiegelt in `en/`, `it/`, `fr/`, `es/`, z. B. `en/pages/musik.html`) erkennt das Skript selbst und setzt auch die Flaggen.
 - **Inhalte aus der Verwaltung** (Gottesdienstzeiten, Heute in der Augustinerkirche, Hochämter, Kontakt, Bilder des Rundgangs) erscheinen automatisch, übersetzt über das Wörterbuch `js/gemeinsam/sprache.js`. Steht ein Text dort nicht (z. B. eine neue Gottesdienst-Bezeichnung), erscheint er deutsch; dann im Wörterbuch in allen Sprachen ergänzen. Titel von Personen (Dechant, KMD …) und Tagesnamen des Kirchenjahres (Adventsonntag, Karwoche …) werden übersetzt; die Namen der Heiligen im Kalender bleiben deutsch. Werktitel, Namen, Hinweise zu einem Hochamt und Neuigkeiten bleiben deutsch. Uhrzeiten stehen auf Englisch im 12-Stunden-Format (11:00 am, 6:30 pm).
 - **Deutsche Texte ändern**: Was in der Verwaltung gepflegt wird, ändert sich in allen Sprachen sofort mit. Feste Texte einer Seite (z. B. Geschichte, Orgelbeschreibung) sind getrennte Dateien; eine Änderung an der deutschen Seite muss in allen Sprachfassungen von Hand nachgezogen werden.
@@ -250,6 +251,7 @@ pages/
   hochaemter-verwaltung.html  Weiterleitung zur neuen Verwaltung
   news-verwaltung.html        Weiterleitung zur neuen Verwaltung
   runden/                     Detailseiten je Pfarrgruppe; runde.html?id=… für neu angelegte Runden
+en/ it/ fr/ es/            Übersetzte Seiten, gespiegelt: en/index.html, en/pages/musik.html … (Menü und Fußzeile aus tools/vorlagen/nav.<sprache>.html)
 tools/
   paket.py                    Baut das Paket für nginx/Apache (siehe „Auf einen Webserver stellen“)
   daten-teilen.py             Einmalig: Fotos/Videos der Neuigkeiten, Predigten und Bildnachweise in die geteilte Ablage
@@ -295,47 +297,53 @@ css/
   style.css                   Zentrales Stylesheet
   admin.css                   Zusätze für die Verwaltung
 js/
-  main.js                     Navigation, Tabs, Hash-Routing, Einblend-Effekte
-  hochaemter-data.js          Gemeinsames Modul: CSV-Tabelle, HTML-Escaping, sichere Links
-  hochaemter.js               Kalender und Archiv auf der Musik-Seite
-  hochaemter-start.js         Nächste Hochämter auf der Startseite
-  news.js                     Neuigkeiten: 3 Karten, Fenster mit Plakat, Jahresarchiv
-  kalender-daten.js           Termine für Kalender und Wochenüberblick: Hochämter, Wochenplan (mit Ferien und Ausfällen), Runden, eigene Termine
-  kalender.js                 Kalender: Monatsblatt und Termine des Monats
-  woche.js                    Wochenüberblick im Kalender: Woche wählen, alle Tage mit ihren Terminen
-  lightbox.js                 Plakate vergrößern (Hintergrund unscharf)
-  hochamt-detail.js           Detailseite eines Hochamts
-  solisten.js                 Solistenliste
-  hoerproben.js               Hörproben im CD-Katalog (immer nur eine Probe gleichzeitig)
-  admin.js                    Verwaltung: Anmeldung, Kopfleiste, Projektordner, Speichern, Fenster
-  admin-anmeldung.js          Anmeldung und Ersteinrichtung
-  admin-uebersicht.js         Übersicht
-  admin-hochaemter.js         Hochämter pflegen, Jahreswechsel
-  admin-neuigkeiten.js        Neuigkeiten pflegen
-  admin-termine.js            Termine für den Kalender pflegen
-  admin-paten.js              Paten der Kirchenmusik pflegen
-  admin-spenden.js            Spenden & Möglichkeiten pflegen
-  admin-cds.js                CDs pflegen
-  admin-galerie.js            Galerie der Kirchenmusik pflegen
-  admin-navigation.js         Menü & Leiste pflegen
-  admin-pgr.js                Pfarrgemeinderat pflegen
-  admin-solisten.js           Solisten pflegen
-  admin-gottesdienste.js      Wochenplan, Ferien und Pausen, Ausfälle
-  admin-kontakt.js            Pfarrkanzlei und Kontakt
-  admin-runden.js             Runden pflegen
-  admin-rundgang.js           Kirchenrundgang pflegen
-  admin-startseite.js         Titelfotos der Startseite pflegen
-  admin-design.js             Farben & Logo je Hauptseite
-  admin-sprueche.js           Sprüche pflegen
-  admin-rechtliches.js        Impressum und Datenschutz pflegen
-  admin-aenderungen.js        Alle Änderungen als Tabelle (Entwickler)
-  admin-personen.js           Personen pflegen
-  admin-repertoire.js         Repertoire pflegen
-  admin-zugaenge.js           Zugänge und Rollen verwalten
-  thema.js                    Farbe der Titelzeile und Logo je Thema (im <head>, aus data/themen.json; <html data-thema="…">)
-  inhalte.js                  Zeichnet Gottesdienste, Runden, Personen, Kontakt, Repertoire, Impressum und Datenschutz aus data/
-  instagram.js                Instagram-Bereich mit Fallback (derzeit nicht auf der Startseite eingebunden)
-  statistik.js                Cookie-Hinweis und Google Analytics (nur mit Zustimmung; ohne Mess-ID aus)
+  gemeinsam/                  Auf allen Seiten: Navigation, Thema, Sprache, Statistik, Suche, Datenhilfen
+    main.js                     Navigation, Tabs, Hash-Routing, Einblend-Effekte
+    thema.js                    Farbe der Titelzeile und Logo je Thema (im <head>, aus data/themen.json; <html data-thema="…">)
+    sprache.js                  Wörterbuch Deutsch → Englisch, Italienisch, Französisch, Spanisch (nur auf übersetzten Seiten)
+    suche.js                    Suche in der Kopfzeile
+    statistik.js                Cookie-Hinweis und Google Analytics (nur mit Zustimmung; ohne Mess-ID aus)
+    lightbox.js                 Plakate vergrößern (Hintergrund unscharf)
+    hochaemter-data.js          Gemeinsames Modul: CSV-Tabelle, HTML-Escaping, sichere Links
+    kalender-daten.js           Termine für Kalender und Wochenüberblick: Hochämter, Wochenplan (mit Ferien und Ausfällen), Runden, eigene Termine
+    inhalte.js                  Zeichnet Gottesdienste, Runden, Personen, Kontakt, Repertoire, Impressum und Datenschutz aus data/
+  seiten/                     Skripte einzelner Seiten
+    hochaemter.js               Kalender und Archiv auf der Musik-Seite
+    hochaemter-start.js         Nächste Hochämter auf der Startseite
+    hochamt-detail.js           Detailseite eines Hochamts
+    kalender.js                 Kalender: Monatsblatt und Termine des Monats
+    woche.js                    Wochenüberblick im Kalender: Woche wählen, alle Tage mit ihren Terminen
+    news.js                     Neuigkeiten: 3 Karten, Fenster mit Plakat, Jahresarchiv
+    solisten.js                 Solistenliste
+    start-v2.js                 Startseite: Heute in der Augustinerkirche, Hochämter, Bewegung beim Scrollen
+    hoerproben.js               Hörproben im CD-Katalog (immer nur eine Probe gleichzeitig)
+    instagram.js                Instagram-Bereich mit Fallback (derzeit nicht auf der Startseite eingebunden)
+  admin/                      Verwaltung
+    admin.js                    Verwaltung: Anmeldung, Kopfleiste, Projektordner, Speichern, Fenster
+    admin-anmeldung.js          Anmeldung und Ersteinrichtung
+    admin-uebersicht.js         Übersicht
+    admin-hochaemter.js         Hochämter pflegen, Jahreswechsel
+    admin-neuigkeiten.js        Neuigkeiten pflegen
+    admin-termine.js            Termine für den Kalender pflegen
+    admin-paten.js              Paten der Kirchenmusik pflegen
+    admin-spenden.js            Spenden & Möglichkeiten pflegen
+    admin-cds.js                CDs pflegen
+    admin-galerie.js            Galerie der Kirchenmusik pflegen
+    admin-navigation.js         Menü & Leiste pflegen
+    admin-pgr.js                Pfarrgemeinderat pflegen
+    admin-solisten.js           Solisten pflegen
+    admin-gottesdienste.js      Wochenplan, Ferien und Pausen, Ausfälle
+    admin-kontakt.js            Pfarrkanzlei und Kontakt
+    admin-runden.js             Runden pflegen
+    admin-rundgang.js           Kirchenrundgang pflegen
+    admin-startseite.js         Titelfotos der Startseite pflegen
+    admin-design.js             Farben & Logo je Hauptseite
+    admin-sprueche.js           Sprüche pflegen
+    admin-rechtliches.js        Impressum und Datenschutz pflegen
+    admin-aenderungen.js        Alle Änderungen als Tabelle (Entwickler)
+    admin-personen.js           Personen pflegen
+    admin-repertoire.js         Repertoire pflegen
+    admin-zugaenge.js           Zugänge und Rollen verwalten
 data/
   hochaemter.csv              Hochamt-Termine ab dem laufenden Jahr inkl. Mitwirkende
   archiv/                     Hochamt-Archiv 2015–2025: hochaemter-JJJJ.csv je Jahr, jahre.json
