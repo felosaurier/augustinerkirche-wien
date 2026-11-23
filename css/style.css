@@ -1608,8 +1608,8 @@ footer a:focus-visible,footer button:focus-visible,.herzgruft a:focus-visible,.s
   .insta-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .contact-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
   .runde-layout,.hd-layout.has-poster{grid-template-columns:minmax(0,1fr);gap:2.4rem}
-  .runde-side{position:static;max-width:24rem}
-  .hd-poster{max-width:22rem}
+  .runde-side{position:static;max-width:24rem;margin-inline:auto}
+  .hd-poster{max-width:22rem;margin-inline:auto}
 
   /* Hochformat: Bilder nie beschneiden, natürliches Seitenverhältnis */
   img[style*="object-fit:cover"]{aspect-ratio:auto!important;height:auto!important;max-height:none!important}
@@ -1997,7 +1997,8 @@ body.adm .suche-btn,body.adm .to-top{display:none!important}
 }
 /* Schmale Handys: der Name des Bereichs (Verwaltung, Farben & Logo) darf auf zwei Zeilen umbrechen statt abgeschnitten zu werden */
 @media (max-width:600px){
-  nav .nav-logo-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;white-space:normal;line-height:1.08;overflow-wrap:break-word;text-wrap:balance}
+  nav .nav-logo-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;white-space:normal;line-height:1.08;overflow-wrap:break-word;text-wrap:balance;font-size:.95rem}
+  nav .nav-logo-sub{font-size:.66rem}
   nav .nav-logo-sub{margin-top:.15rem}
 }
 @media (max-width:1120px){

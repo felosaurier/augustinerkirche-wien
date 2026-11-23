@@ -345,18 +345,12 @@
       }
       const lines = splitTitle(m.mass.title);
       const wid = (s) => textWidth(s, { bold: true, pt: 110, spc: -5 });
-      const scale = lines.length === 2
-        ? Math.min(1, TITLE_PT / wid(lines[0]), LEADER_PT / wid(lines[1]))
-        : Math.min(1, LEADER_PT / wid(lines[0]));
-      const sz = Math.max(60, Math.floor((220 * scale) / 2) * 2);
-      const f = sz / 220;
+      /* Vorgabe der Kirchenmusik: das Werk immer 110 pt, Schmal 5 pt, Zeile 1 genau 100 pt, Zeile 2 genau 75 pt.
+         Nie verkleinert (zu lange Titel korrigiert man in Word von Hand). */
+      const sz = 220;
       const big = { b: true, color: NAVY, spacing: -100, sz, szCs: 160 };
-      /* Zweite Zeile: im Beispiel ("messe") ohne Oberlaengen, daher niedriger. Hat sie
-         Grossbuchstaben oder Oberlaengen, braucht sie die volle Hoehe, sonst ueberlappen die Zeilen. */
-      const hoch = (s) => /[A-ZÄÖÜbdfhklt0-9ßäöü&!?]/.test(s);
-      const tief = (s) => /[gjpqyç]/.test(s);
-      const l1 = Math.round(2000 * f);
-      const l2 = Math.round((lines.length === 2 && hoch(lines[1]) ? (tief(lines[0]) ? 2200 : 2000) : 1500) * f);
+      const l1 = 2000;
+      const l2 = 1500;
       const bigRuns = (s) => {
         let out = '';
         let buf = '';
