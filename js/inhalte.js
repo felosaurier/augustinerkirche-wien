@@ -567,7 +567,7 @@
       el.innerHTML =
         '<div class="asp-woche-now">' +
           '<div class="asp-woche-icon" aria-hidden="true">PDF</div>' +
-          `<div class="asp-woche-text"><div class="asp-woche-kicker">Aktuelles Wochenblatt</div><div class="asp-woche-titel">${esc(name(now))}</div></div>` +
+          `<div class="asp-woche-text"><div class="asp-woche-kicker">Gottesdienstordnung &amp; Termine</div><div class="asp-woche-titel">${esc(name(now))}</div></div>` +
           `<a class="btn btn-dark" href="${esc(url(now.datei))}" target="_blank" rel="noopener">Wochenblatt öffnen</a>` +
         '</div>' +
         (older.length
