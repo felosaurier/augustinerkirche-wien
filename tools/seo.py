@@ -7,7 +7,7 @@ zwischen <!--seo-anfang--> und <!--seo-ende--> mit:
   - Open Graph und Twitter-Karte (Titel, Beschreibung und Bild, die WhatsApp, Facebook, Signal usw. beim Teilen zeigen)
   - auf der Startseite strukturierte Daten (schema.org, Kirche mit Adresse und Telefon) fuer Google
 und legt sitemap.xml im Projektordner an.
-Uebersetzte Seiten (index.en.html, pages/musik.it.html …) bekommen ihre Sprache in og:locale; alle
+Uebersetzte Seiten (en/index.html, it/pages/musik.html …) bekommen ihre Sprache in og:locale; alle
 Fassungen einer Seite verweisen mit <link rel="alternate" hreflang> aufeinander (Deutsch ist x-default).
 
 Titel und Beschreibung kommen aus <title> und <meta name="description"> der Seite.
@@ -43,7 +43,7 @@ BILDER = {
 # Seiten, die nicht in die Sitemap und nicht in die Suche gehoeren
 AUSGENOMMEN = ('pages/news-verwaltung.html', 'pages/hochaemter-verwaltung.html', 'pages/sakramente.html', 'pages/gottesdienste.html', 'pages/pfarre.html', 'pages/chronik.html', 'pages/predigten.html')
 # Seiten, die erst mit ?id=... eine Adresse haben (Vorlagen): ohne canonical/og:url, nicht in der Sitemap
-VORLAGEN = ('pages/hochamt.html', 'pages/hochamt.en.html', 'pages/hochamt.it.html', 'pages/hochamt.fr.html', 'pages/hochamt.es.html')
+VORLAGEN = ('pages/hochamt.html', 'en/pages/hochamt.html', 'it/pages/hochamt.html', 'fr/pages/hochamt.html', 'es/pages/hochamt.html')
 
 
 def einstellungen():
@@ -55,7 +55,7 @@ def einstellungen():
 
 
 SPRACHEN = {'de': 'de_AT', 'en': 'en_GB', 'it': 'it_IT', 'fr': 'fr_FR', 'es': 'es_ES'}
-SPRACHE = re.compile(r'\.(en|it|fr|es)\.html$')
+SPRACHE = re.compile(r'^(en|it|fr|es)/')
 
 
 def sprache(rel):
@@ -64,12 +64,14 @@ def sprache(rel):
 
 
 def fassung(rel, lang):
-    basis = SPRACHE.sub('.html', rel)
-    return basis if lang == 'de' else f'{basis[:-5]}.{lang}.html'
+    basis = SPRACHE.sub('', rel)
+    return basis if lang == 'de' else f'{lang}/{basis}'
 
 
 def seiten():
-    liste = [ROOT / 'index.html'] + sorted(ROOT.glob('index.*.html')) + sorted((ROOT / 'pages').glob('*.html'))
+    liste = [ROOT / 'index.html'] + sorted(ROOT.glob('??/index.html')) + sorted((ROOT / 'pages').glob('*.html'))
+    for l in ('en', 'it', 'fr', 'es'):
+        liste += sorted((ROOT / l / 'pages').glob('*.html'))
     return [p for p in liste if p.relative_to(ROOT).as_posix() not in AUSGENOMMEN and '<title>' in p.read_text(encoding='utf-8')]
 
 

@@ -11,7 +11,8 @@
   const HD = window.HochamtData;
   if (!HD) return;
 
-  const DATA_URL = '../data/solisten.json';
+  const UP = (window.AugT && window.AugT.up) || '';   /* auf uebersetzten Seiten (en/pages/…) eine Ebene tiefer */
+  const DATA_URL = UP + '../data/solisten.json';
   /* Stimmlagen von hoch nach tief; unbekannte Angaben ans Ende */
   const VOICE_ORDER = ['Sopran', 'Mezzosopran', 'Alt', 'Altus', 'Tenor', 'Bariton', 'Bass'];
   const collator = new Intl.Collator('de');
@@ -24,7 +25,7 @@
     /* Mit Homepage ist der Name ein Link (neues Fenster) */
     const home = /^https?:\/\//i.test(String(p.homepage || '').trim()) && HD.safeUrl(p.homepage.trim());
     return '<div class="person-card-wide compact">' +
-      `<img src="${esc(HD.safeUrl(p.image, '../'))}" alt="${name}" width="300" height="300" loading="lazy" decoding="async"/>` +
+      `<img src="${esc(HD.safeUrl(p.image, UP + '../'))}" alt="${name}" width="300" height="300" loading="lazy" decoding="async"/>` +
       '<div class="person-body">' +
         `<div class="person-name">${home ? `<a href="${esc(home)}" target="_blank" rel="noopener">${name}</a>` : name}</div>` +
         `<div class="person-role">${esc(p.voice)}</div>` +

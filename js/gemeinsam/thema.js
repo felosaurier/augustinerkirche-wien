@@ -32,7 +32,7 @@
   const UNTERTITEL = 'Pfarre & Kloster St. Augustin';
   const text = (s) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 60);
 
-  /* Sprache der Seite (<html lang>): de, en, it, fr oder es. Uebersetzte Seiten (index.en.html, pages/musik.it.html …)
+  /* Sprache der Seite (<html lang>): de, en, it, fr oder es. Uebersetzte Seiten (en/index.html, it/pages/musik.html …)
      laden vorher js/gemeinsam/sprache.js mit dem Woerterbuch window.AugWoerter = {en: {deutsch: englisch}, it: {…}}.
      AugT(text, werte) liefert die Uebersetzung (sonst den deutschen Text) und setzt {name} aus werte ein. */
   const LANG = ['en', 'it', 'fr', 'es'].includes((html.lang || '').slice(0, 2)) ? html.lang.slice(0, 2) : 'de';
@@ -53,12 +53,21 @@
   T.lang = LANG;
   /* Eintrag im Woerterbuch (z. B. Liste der Monate) oder null */
   T.wert = (k) => (LANG !== 'de' && w.AugWoerter && w.AugWoerter[LANG] && w.AugWoerter[LANG][k]) || null;
-  /* Pfad einer Seite in der Sprache dieser Seite, falls es sie gibt (Dateinamen in js/gemeinsam/sprache.js, "seiten") */
+  /* Auf uebersetzten Seiten (en/pages/musik.html) liegen Daten und Bilder eine Ebene hoeher: Vorsatz fuer Pfade ab Seitenordner */
+  T.up = LANG === 'de' ? '' : '../';
+  /* Adresse einer Seite in der Sprache dieser Seite, falls es sie gibt (Dateinamen in js/gemeinsam/sprache.js, "seiten").
+     Die Fassungen liegen gespiegelt: pages/musik.html -> en/pages/musik.html, index.html -> en/index.html.
+     pfad darf relativ zur aktuellen Seite sein (auch auf die deutsche Seite oder bereits auf die uebersetzte). */
   T.seite = (pfad) => {
     const liste = LANG !== 'de' && w.AugWoerter && w.AugWoerter.seiten;
-    const datei = String(pfad).replace(/[?#].*$/, '').split('/').pop();
-    if (!liste || !liste.includes(datei)) return pfad;
-    return String(pfad).replace(/\.html(?=$|[?#])/, `.${LANG}.html`);
+    if (!liste) return pfad;
+    let u;
+    try { u = new URL(pfad, w.location.href); } catch { return pfad; }
+    if (!u.href.startsWith(ROOT)) return pfad;
+    const base = u.pathname.slice(new URL(ROOT).pathname.length).replace(new RegExp(`^${LANG}/`), '');
+    const datei = base.split('/').pop();
+    const uebersetzt = liste.includes(datei) && (base === 'index.html' || base === `pages/${datei}`);
+    return ROOT + (uebersetzt ? `${LANG}/` : '') + base + u.search + u.hash;
   };
   /* Uhrzeiten in der Sprache der Seite: Englisch im 12-Stunden-Format ("18:30" -> "6:30 pm",
      "11:00 Uhr" -> "11:00 am"), sonst unveraendert */

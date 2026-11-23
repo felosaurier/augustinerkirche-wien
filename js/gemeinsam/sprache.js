@@ -1,6 +1,6 @@
 /* ============================================================
    Augustinerkirche Wien — sprache.js
-   Woerterbuch fuer die uebersetzten Seiten (index.en.html, pages/musik.it.html …),
+   Woerterbuch fuer die uebersetzten Seiten (en/index.html, it/pages/musik.html …),
    nur dort geladen, im <head> vor js/gemeinsam/thema.js. Die Skripte uebersetzen mit
    window.AugT (js/gemeinsam/thema.js): Schluessel ist der deutsche Text, {name} wird eingesetzt.
    Texte aus den Daten der Verwaltung (Gottesdienste, Kalender, Kontakt, Rundgang)

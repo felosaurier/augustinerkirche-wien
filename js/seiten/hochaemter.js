@@ -12,8 +12,9 @@
   const HD = window.HochamtData;
   if (!HD) return;
 
-  const DATA_URL = '../data/hochaemter.csv';
-  const ARCHIVE_DIR = '../data/archiv/';
+  const UP = (window.AugT && window.AugT.up) || '';   /* auf uebersetzten Seiten (en/pages/…) eine Ebene tiefer */
+  const DATA_URL = UP + '../data/hochaemter.csv';
+  const ARCHIVE_DIR = UP + '../data/archiv/';
 
   /* Uebersetzung (js/gemeinsam/thema.js); deutsche Seiten: der Text bleibt */
   const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));

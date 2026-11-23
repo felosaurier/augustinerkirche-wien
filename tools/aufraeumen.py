@@ -28,7 +28,7 @@ SKIP = {'data/bildnachweise.json', 'data/bilder-klein.json'}
 def texte():
     teile = []
     quellen = list((ROOT / 'data').rglob('*.json')) + list((ROOT / 'data').rglob('*.csv'))
-    quellen += list(ROOT.glob('*.html')) + list((ROOT / 'pages').rglob('*.html')) + list((ROOT / 'admin').glob('*.html'))
+    quellen += list(ROOT.glob('*.html')) + list((ROOT / 'pages').rglob('*.html')) + [q for l in ('en', 'it', 'fr', 'es') for q in (ROOT / l).rglob('*.html')] + list((ROOT / 'admin').glob('*.html'))
     quellen += list((ROOT / 'css').glob('*.css')) + list((ROOT / 'js').rglob('*.js')) + list(ROOT.glob('*.webmanifest')) + [ROOT / 'sw.js']
     for p in quellen:
         if p.is_file() and p.relative_to(ROOT).as_posix() not in SKIP:

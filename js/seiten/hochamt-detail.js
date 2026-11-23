@@ -18,12 +18,13 @@
 
   const HD = window.HochamtData;
   const qs = (sel) => document.querySelector(sel);
-  /* Uebersetzung auf pages/hochamt.en.html und .it.html (js/gemeinsam/sprache.js); Links fuehren dort zu den
+  /* Uebersetzung auf en/pages/hochamt.html und it/pages/hochamt.html (js/gemeinsam/sprache.js); Links fuehren dort zu den
      uebersetzten Seiten, sofern es sie gibt */
   const T = window.AugT || ((s, v) => (v ? String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : s));
   const LANG = T.lang || 'de';
   /* Titel und Ensembles uebersetzen (js/gemeinsam/thema.js); ohne diese Funktion bleibt der Text, wie er ist */
   const person = (s) => (T.person ? T.person(s) : s);
+  const UP = (window.AugT && window.AugT.up) || '';   /* auf uebersetzten Seiten (en/pages/…) eine Ebene tiefer */
   const seite = (pfad) => (T.seite ? T.seite(pfad) : pfad);
   const FALLBACK = `<p class="s-text">${T('Die Termine konnten nicht geladen werden. Bitte laden Sie die Seite später noch einmal.')}</p>`;
 
@@ -102,8 +103,8 @@
       lines.map((l) => {
         const p = piece(l);
         return '<li>' + (p.composer
-          ? `<span class="hd-composer">${HD.richText(p.composer, '../')}${p.years ? ` <span class="hd-years">${HD.esc(p.years)}</span>` : ''}</span>` : '') +
-          `<span class="hd-work">${HD.richText(p.work, '../')}</span></li>`;
+          ? `<span class="hd-composer">${HD.richText(p.composer, UP + '../')}${p.years ? ` <span class="hd-years">${HD.esc(p.years)}</span>` : ''}</span>` : '') +
+          `<span class="hd-work">${HD.richText(p.work, UP + '../')}</span></li>`;
       }).join('') + '</ul></section>';
   }
   /* Name ohne Titel und Klammern zum Vergleichen: "KMD MMag. Peter Tiefengraber, MA"
@@ -130,7 +131,7 @@
       const href = p && /^https?:\/\//i.test(String(p.homepage || '').trim()) && HD.safeUrl(p.homepage.trim());
       if (p && p.name && href) map.set(nameKey(p.name), href);
     };
-    const [sol, pers] = await Promise.allSettled([HD.fetchJSON('../data/solisten.json'), HD.fetchJSON('../data/personen.json')]);
+    const [sol, pers] = await Promise.allSettled([HD.fetchJSON(UP + '../data/solisten.json'), HD.fetchJSON(UP + '../data/personen.json')]);
     if (sol.status === 'fulfilled' && Array.isArray(sol.value)) sol.value.forEach(add);
     if (pers.status === 'fulfilled' && pers.value) {
       for (const g of ['leitung', 'gastdirigenten', 'organisten']) (pers.value[g] || []).forEach(add);
@@ -187,7 +188,7 @@
     body.innerHTML =
       (program || `<p class="s-text">${T('Die Mitwirkenden und das genaue Programm werden noch bekannt gegeben.')}</p>`) +
       `<p class="hd-place">${PIN}<a class="hd-map" href="${HD.esc(mapsUrl(where))}" target="_blank" rel="noopener" title="${T('In Google Maps öffnen (neues Fenster)')}"><strong>${HD.esc(where.name)}</strong>${where.addr ? `<span class="hd-addr">${HD.esc(where.addr)}</span>` : ''}</a></p>` +
-      (note ? `<p class="hd-note"><span class="hd-note-label">${T('Hinweis')}</span>${HD.richText(note, '../')}</p>` : '') +
+      (note ? `<p class="hd-note"><span class="hd-note-label">${T('Hinweis')}</span>${HD.richText(note, UP + '../')}</p>` : '') +
       `<div class="hd-thanks"><p>${T('Dankbar sind wir für Ihre Spende zur Erhaltung der Kirchenmusik!')}</p>` +
         `<a class="btn btn-gold hd-thanks-btn" href="${seite('musik.html')}#p-patenschaft">${T('Kirchenmusik unterstützen')}</a></div>` +
       `<p class="hd-list-link"><a class="link-arr" href="${listHref}">${upcoming ? T('Alle Hochämter') : T('Zum Archiv')}</a></p>`;
@@ -219,13 +220,13 @@
       return res.json();
     };
     try {
-      const index = (await json('../data/hochamt-fotos/index.json')).hochaemter || {};
+      const index = (await json(UP + '../data/hochamt-fotos/index.json')).hochaemter || {};
       if (!index[id]) return [];
-      return (await json(`../data/hochamt-fotos/${encodeURIComponent(id)}.json`)).bilder || [];
+      return (await json(`${UP}../data/hochamt-fotos/${encodeURIComponent(id)}.json`)).bilder || [];
     } catch (e) {
       if (e && e.status !== 404) return [];
       try {
-        return ((await json('../data/hochamt-fotos.json')).bilder || {})[id] || [];
+        return ((await json(UP + '../data/hochamt-fotos.json')).bilder || {})[id] || [];
       } catch {
         return [];
       }
@@ -253,7 +254,7 @@
     if (!aside || !layout || !id) return;
     const list = await loadPhotos(id);
     const shown = (Array.isArray(list) ? list : []).map((b) => ({
-      ...b, src: HD.safeUrl(b && b.bild, '../'), thumb: HD.safeUrl((b && b.vorschau) || (b && b.bild), '../')
+      ...b, src: HD.safeUrl(b && b.bild, UP + '../'), thumb: HD.safeUrl((b && b.vorschau) || (b && b.bild), UP + '../')
     })).filter((b) => b.src);
     if (!shown.length) return;
     const title = qs('#hd-title').textContent;
@@ -296,7 +297,7 @@
     if (!aside || !id) return false;
     let rows;
     try {
-      const res = await fetch('../data/news.csv');
+      const res = await fetch(UP + '../data/news.csv');
       if (!res.ok) return false;
       rows = HD.rowsToRaw(HD.parseCSV(HD.mailDecode(await res.text())), NEWS_KEYS);
     } catch {
@@ -307,7 +308,7 @@
     const today = `${dd.getFullYear()}-${HD.pad(dd.getMonth() + 1)}-${HD.pad(dd.getDate())}`;
     const visible = (r) => !/^ja$/i.test(r.draft || '') && !(HD.isoDate(r.from || '') && HD.isoDate(r.from) > today);
     const n = rows.find((r) => visible(r) && (r.poster || r.thumb) && safeDecode(String(r.link || '').trim()) === target);
-    const src = n && HD.safeUrl(n.poster || n.thumb, '../');
+    const src = n && HD.safeUrl(n.poster || n.thumb, UP + '../');
     if (!src) return false;
     const newsId = `${HD.isoDate(n.date)}-${HD.slug(n.title)}`;
     const credit = n.credit ? ` data-credit="${HD.esc(n.credit)}"` : '';
@@ -323,12 +324,12 @@
       ? `<a href="${HD.esc(src)}" target="_blank" rel="noopener" title="${T('Plakat in voller Größe öffnen')}" data-lightbox${credit}>${img}</a><div class="runde-side-cap">${T('Plakat vergrößern')}</div>`
       : img;
     /* Zweite Schaltflaeche der Meldung, z. B. Kartenverkauf */
-    const link2 = HD.safeUrl(n.link2, '../');
+    const link2 = HD.safeUrl(n.link2, UP + '../');
     if (link2) {
       const ext = /^https?:/i.test(link2) ? ' target="_blank" rel="noopener"' : '';
       host.insertAdjacentHTML('beforeend', `<a class="btn btn-gold hd-poster-btn" href="${HD.esc(link2)}"${ext}>${HD.esc(n.linktext2 || T('Mehr Informationen'))}</a>`);
     }
-    host.insertAdjacentHTML('beforeend', `<a class="link-arr" href="../index.html?news=${encodeURIComponent(newsId)}">${LANG === 'de' ? 'Zur Meldung' : T('Zur Meldung (Deutsch)')}</a>`);
+    host.insertAdjacentHTML('beforeend', `<a class="link-arr" href="${UP}../index.html?news=${encodeURIComponent(newsId)}">${LANG === 'de' ? 'Zur Meldung' : T('Zur Meldung (Deutsch)')}</a>`);
     aside.hidden = false;
     qs('#hd-layout').classList.add('has-poster');
     return true;
@@ -336,15 +337,15 @@
 
   /* Aktuelle Tabelle laden; fehlt der Termin, im Archiv seines Jahres nachsehen */
   async function loadEntries(id) {
-    const entries = await HD.load('../data/hochaemter.csv');
+    const entries = await HD.load(UP + '../data/hochaemter.csv');
     if (entries.some((e) => e.id === id)) return entries;
     const year = parseInt(id.slice(0, 4), 10);
     if (!year) return entries;
     /* Nur Jahre nachladen, die es im Archiv gibt (sonst eine unnoetige 404-Anfrage) */
-    const years = await HD.archiveYears('../data/archiv/');
+    const years = await HD.archiveYears(UP + '../data/archiv/');
     if (Array.isArray(years) && years.length && !years.some((y) => Number(y && y.jahr) === year)) return entries;
     try {
-      const older = await HD.loadYear('../data/archiv/', year);
+      const older = await HD.loadYear(UP + '../data/archiv/', year);
       return older.concat(entries).sort(HD.byDateTime);
     } catch {
       return entries;

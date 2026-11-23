@@ -44,8 +44,8 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / 'dist'
 VORLAGEN = ROOT / 'tools' / 'server'
 
-DATEIEN = ['index.html', 'index.en.html', 'index.it.html', 'index.fr.html', 'index.es.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
-ORDNER = ['pages', 'css', 'js', 'assets', 'data']
+DATEIEN = ['index.html', 'favicon.ico', 'site.webmanifest', 'sw.js', 'offline.html', 'sitemap.xml']
+ORDNER = ['pages', 'en', 'it', 'fr', 'es', 'css', 'js', 'assets', 'data']
 
 TEST_MESS_ID = 'G-VORSCHAU01'
 

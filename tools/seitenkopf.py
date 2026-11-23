@@ -7,8 +7,8 @@ Die Vorlagen liegen in tools/vorlagen/nav.html und tools/vorlagen/footer.html. P
   {KONTAKT}  Ziel des Links "Kontakt" in der Fusszeile (meist kontakt.html)
   {SPRACHEN} Sprachwahl (Flagge der aktuellen Sprache, Klick oeffnet Deutsch, Englisch, Italienisch, Franzoesisch, Spanisch), ganz rechts
 
-Sprachen: uebersetzte Seiten liegen neben der deutschen, mit Kuerzel vor der Endung
-(index.en.html, pages/musik.it.html). Sie bekommen Titel- und Fusszeile aus nav.<sprache>.html und
+Sprachen: uebersetzte Seiten liegen gespiegelt in einem Ordner je Sprache
+(en/index.html, it/pages/musik.html). Sie bekommen Titel- und Fusszeile aus nav.<sprache>.html und
 footer.<sprache>.html. Die Flaggen fuehren zur selben Seite in der anderen Sprache; gibt es sie
 nicht, zur Startseite dieser Sprache.
 
@@ -38,7 +38,7 @@ EIGENE_NAV = {'pages/aspersdorf.html': 'nav-aspersdorf.html', 'index.html': 'nav
 # Ziel des Logos: immer die Startseite der Website (index.html bzw. index.<sprache>.html)
 
 SPRACHEN = [('de', 'Deutsch', 'at'), ('en', 'English', 'gb'), ('it', 'Italiano', 'it'), ('fr', 'Français', 'fr'), ('es', 'Español', 'es')]
-SPRACHE = re.compile(r'\.(en|it|fr|es)\.html$')
+SPRACHE = re.compile(r'^(en|it|fr|es)/')
 
 
 def sprache(rel):
@@ -47,9 +47,9 @@ def sprache(rel):
 
 
 def fassung(rel, lang):
-    """Pfad der Seite in einer Sprache (ohne Pruefung, ob es sie gibt): pages/musik.html -> pages/musik.en.html"""
-    basis = SPRACHE.sub('.html', rel)
-    return basis if lang == 'de' else f'{basis[:-5]}.{lang}.html'
+    """Pfad der Seite in einer Sprache (ohne Pruefung, ob es sie gibt): pages/musik.html -> en/pages/musik.html"""
+    basis = SPRACHE.sub('', rel)
+    return basis if lang == 'de' else f'{lang}/{basis}'
 
 
 def flaggen(rel, r):
@@ -73,7 +73,9 @@ def flaggen(rel, r):
 
 
 def seiten():
-    liste = [ROOT / 'index.html'] + sorted(ROOT.glob('index.*.html')) + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
+    liste = [ROOT / 'index.html'] + sorted(ROOT.glob('??/index.html')) + sorted((ROOT / 'pages').glob('*.html')) + sorted((ROOT / 'pages' / 'runden').glob('*.html'))
+    for l, _, _ in SPRACHEN[1:]:
+        liste += sorted((ROOT / l / 'pages').glob('*.html'))
     return [p for p in liste if NAV.search(p.read_text(encoding='utf-8'))]
 
 
@@ -100,9 +102,17 @@ def zerlegen(text, r, pg, kontakt):
 
 
 def fuellen(vorlage, r, pg, kontakt, rel='index.html'):
-    ziel = r + fassung('index.html', sprache(rel))
-    return (vorlage.replace('{SPRACHEN}', flaggen(rel, r)).replace('{R}', r).replace('{P}', pg)
-            .replace('{KONTAKT}', pg + kontakt).replace('{LOGO}', ziel))
+    lang = sprache(rel)
+    if lang == 'de':
+        ziel = idx = r + 'index.html'
+        pl = pg
+    else:
+        # uebersetzte Seiten liegen gespiegelt: en/index.html, en/pages/musik.html
+        pl = 'pages/' if rel.endswith('/index.html') else ''
+        ziel = idx = 'index.html' if rel.endswith('/index.html') else '../index.html'
+        kontakt = 'kontakt.html'
+    return (vorlage.replace('{SPRACHEN}', flaggen(rel, r)).replace('{R}', r).replace('{PL}', pl).replace('{P}', pg)
+            .replace('{IDX}', idx).replace('{KONTAKT}', pl + kontakt).replace('{LOGO}', ziel))
 
 
 def vorlagen_erzeugen():
@@ -141,7 +151,7 @@ def main():
             kontakt = KONTAKT.get(rel, 'kontakt.html')
             nav, foot = eigene.get(rel, nav_v), foot_v
         else:
-            kontakt = f'kontakt.{lang}.html'
+            kontakt = 'kontakt.html'
             nav, foot = fremd[lang]
         # Index: Link zur eigenen Seite bleibt, das Ziel steht nach {P}
         neu = NAV.sub(lambda m: fuellen(nav, r, pg, kontakt, rel), s, count=1)

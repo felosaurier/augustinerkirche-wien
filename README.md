@@ -49,19 +49,19 @@ Die Website der Pfarre und des Klosters St. Augustin in Wien: Gottesdienste, Sak
 
 Die wichtigsten Seiten für Besucherinnen und Besucher gibt es auch auf Englisch, Italienisch, Französisch und Spanisch. Die Sprache wählt man ganz rechts in der Kopfzeile: sichtbar ist nur die Flagge der aktuellen Sprache, ein Klick öffnet die Auswahl (Österreich, Großbritannien, Italien, Frankreich, Spanien). Gibt es die Seite in der anderen Sprache, bleibt man auf derselben Seite und im selben Bereich, sonst geht es zur Startseite dieser Sprache.
 
-| Seite | Englisch | Italienisch | Französisch (`.fr`) und Spanisch (`.es`) |
+| Seite | Englisch | Italienisch | Französisch und Spanisch |
 |---|---|---|---|
-| Startseite | `index.en.html` | `index.it.html` | `index.fr.html` · `index.es.html` |
-| Augustinerkirche (Geschichte, Herzgruft, Rundgang, Führungen, Gottesdienstzeiten) | `pages/augustinerkirche.en.html` | `pages/augustinerkirche.it.html` | `pages/augustinerkirche.fr.html` · `pages/augustinerkirche.es.html` |
-| Kirchenmusik (Hochämter, Chor, Orchester, Orgeln, Patenschaft) | `pages/musik.en.html` | `pages/musik.it.html` | `pages/musik.fr.html` · `pages/musik.es.html` |
-| Hl. Augustinus | `pages/augustiner.en.html` | `pages/augustiner.it.html` | `pages/augustiner.fr.html` · `pages/augustiner.es.html` |
-| Kontakt | `pages/kontakt.en.html` | `pages/kontakt.it.html` | `pages/kontakt.fr.html` · `pages/kontakt.es.html` |
-| Kalender (Monat und Wochenüberblick) | `pages/kalender.en.html` | `pages/kalender.it.html` | `pages/kalender.fr.html` · `pages/kalender.es.html` |
-| Hochamt (Detailseite eines Termins, `?id=…`) | `pages/hochamt.en.html` | `pages/hochamt.it.html` | `pages/hochamt.fr.html` · `pages/hochamt.es.html` |
-| Rieger-Orgel, Reil-Orgel | `pages/orgel-rieger.en.html`, `pages/orgel-reil.en.html` | `pages/orgel-rieger.it.html`, `pages/orgel-reil.it.html` | `pages/orgel-rieger.fr.html`, `pages/orgel-reil.fr.html` · `pages/orgel-rieger.es.html`, `pages/orgel-reil.es.html` |
+| Startseite | `en/index.html` | `it/index.html` | `fr/index.html` · `es/index.html` |
+| Augustinerkirche (Geschichte, Herzgruft, Rundgang, Führungen, Gottesdienstzeiten) | `en/pages/augustinerkirche.html` | `it/pages/augustinerkirche.html` | `fr/pages/augustinerkirche.html` · `es/pages/augustinerkirche.html` |
+| Kirchenmusik (Hochämter, Chor, Orchester, Orgeln, Patenschaft) | `en/pages/musik.html` | `it/pages/musik.html` | `fr/pages/musik.html` · `es/pages/musik.html` |
+| Hl. Augustinus | `en/pages/augustiner.html` | `it/pages/augustiner.html` | `fr/pages/augustiner.html` · `es/pages/augustiner.html` |
+| Kontakt | `en/pages/kontakt.html` | `it/pages/kontakt.html` | `fr/pages/kontakt.html` · `es/pages/kontakt.html` |
+| Kalender (Monat und Wochenüberblick) | `en/pages/kalender.html` | `it/pages/kalender.html` | `fr/pages/kalender.html` · `es/pages/kalender.html` |
+| Hochamt (Detailseite eines Termins, `?id=…`) | `en/pages/hochamt.html` | `it/pages/hochamt.html` | `fr/pages/hochamt.html` · `es/pages/hochamt.html` |
+| Rieger-Orgel, Reil-Orgel | `en/pages/orgel-rieger.html`, `en/pages/orgel-reil.html` | `it/pages/orgel-rieger.html`, `it/pages/orgel-reil.html` | `fr/pages/orgel-rieger.html`, `fr/pages/orgel-reil.html` · `es/pages/orgel-rieger.html`, `es/pages/orgel-reil.html` |
 
 - **Texte der Seiten** stehen direkt in diesen Dateien und werden dort geändert. Alles Übrige (Kalender, Neuigkeiten, Pfarrleben, Orden) verlinken sie mit dem Hinweis „in German“ bzw. „in tedesco“ auf die deutschen Seiten.
-- **Menü und Fußzeile** kommen aus `tools/vorlagen/nav.<sprache>.html` und `footer.<sprache>.html` (en, it, fr, es); danach `python tools/seitenkopf.py` laufen lassen. Neue übersetzte Seiten (Kürzel vor `.html`) erkennt das Skript selbst und setzt auch die Flaggen.
+- **Menü und Fußzeile** kommen aus `tools/vorlagen/nav.<sprache>.html` und `footer.<sprache>.html` (en, it, fr, es); danach `python tools/seitenkopf.py` laufen lassen. Neue übersetzte Seiten (gespiegelt in `en/`, `it/`, `fr/`, `es/`, z. B. `en/pages/musik.html`) erkennt das Skript selbst und setzt auch die Flaggen.
 - **Inhalte aus der Verwaltung** (Gottesdienstzeiten, Heute in der Augustinerkirche, Hochämter, Kontakt, Bilder des Rundgangs) erscheinen automatisch, übersetzt über das Wörterbuch `js/gemeinsam/sprache.js`. Steht ein Text dort nicht (z. B. eine neue Gottesdienst-Bezeichnung), erscheint er deutsch; dann im Wörterbuch in allen Sprachen ergänzen. Titel von Personen (Dechant, KMD …) und Tagesnamen des Kirchenjahres (Adventsonntag, Karwoche …) werden übersetzt; die Namen der Heiligen im Kalender bleiben deutsch. Werktitel, Namen, Hinweise zu einem Hochamt und Neuigkeiten bleiben deutsch. Uhrzeiten stehen auf Englisch im 12-Stunden-Format (11:00 am, 6:30 pm).
 - **Deutsche Texte ändern**: Was in der Verwaltung gepflegt wird, ändert sich in allen Sprachen sofort mit. Feste Texte einer Seite (z. B. Geschichte, Orgelbeschreibung) sind getrennte Dateien; eine Änderung an der deutschen Seite muss in allen Sprachfassungen von Hand nachgezogen werden.
 - **Kopfzeile**: Ist sie zu schmal für alles, blendet `js/gemeinsam/main.js` zuerst Unterstützen/Kontakt und dann den Knopf Gottesdienste aus; die Sprachwahl bleibt immer sichtbar.
