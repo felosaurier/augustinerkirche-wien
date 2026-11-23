@@ -102,7 +102,8 @@
     btn.disabled = true;
     try {
       const fetchPart = async (name) => {
-        const res = await fetch(VORLAGE + name);
+        /* Der Server liefert keine Dateien mit Punkt am Namensanfang aus: _rels/.rels liegt als _rels/rels.xml */
+        const res = await fetch(VORLAGE + (name === '_rels/.rels' ? '_rels/rels.xml' : name));
         if (!res.ok) throw new Error(`${name}: HTTP ${res.status}`);
         return new Uint8Array(await res.arrayBuffer());
       };
