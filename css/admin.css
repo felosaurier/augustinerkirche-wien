@@ -1536,3 +1536,9 @@ label.fb-swatch:focus-within{outline:2px solid var(--blue);outline-offset:2px}
 .wb-cell .adm-input.leer{background:var(--bg-soft)}
 .wb-miss{display:flex;flex-wrap:wrap;gap:.4rem}
 @media(max-width:900px){.wb-head{display:none}.wb-row{grid-template-columns:1fr 1fr}.wb-de{grid-column:1/-1;font-weight:600}}
+
+/* Werkzeug Plakat: was auf dem Plakat steht */
+.pl-list{display:grid;grid-template-columns:max-content 1fr;gap:.55rem 1.4rem;margin:0 0 1.4rem}
+.pl-list dt{font-weight:600;color:var(--text)}
+.pl-list dd{margin:0}
+@media (max-width:640px){.pl-list{grid-template-columns:1fr;gap:.15rem}.pl-list dd{margin-bottom:.6rem}}
