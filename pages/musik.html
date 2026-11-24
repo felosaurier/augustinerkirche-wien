@@ -134,7 +134,10 @@
           <span class="mega-group-label">Personen</span>
           <a href="musik.html#p-leitung">Kirchenmusikdirektor</a>
           <a href="musik.html#p-organisten">Organisten</a>
-          <a href="musik.html#p-chor">Chor &amp; Orchester von St. Augustin</a>
+        </div>
+        <div class="mega-group">
+          <span class="mega-group-label">Chor &amp; Orchester</span>
+          <a href="musik.html#p-chor">Chor von St. Augustin</a>
         </div>
         <div class="mega-group">
           <span class="mega-group-label">Orgeln</span>
@@ -211,15 +214,17 @@
         <span class="sidebar-group-label">Personen</span>
         <button type="button" class="sidebar-item" data-pane="p-leitung">Kirchenmusikdirektor</button>
         <button type="button" class="sidebar-item" data-pane="p-organisten">Organisten</button>
-        <button type="button" class="sidebar-item" data-pane="p-chor">Chor &amp; Orchester von St. Augustin</button>
-        <button type="button" class="sidebar-item" data-pane="p-kammerchor" hidden>Kammerchor</button>
-        <button type="button" class="sidebar-item" data-pane="p-repertoire" hidden>Repertoire</button>
         <button type="button" class="sidebar-item" data-pane="p-solisten" hidden>Solisten</button>
-        <button type="button" class="sidebar-item" data-pane="p-orchester" hidden>Orchester</button>
         <button type="button" class="sidebar-item" data-pane="p-gastdirigenten" hidden>Gastdirigenten</button>
-        <button type="button" class="sidebar-item" data-pane="p-orgeln" hidden>Orgeln</button>
+        <div class="sidebar-divider"></div>
+        <span class="sidebar-group-label">Chor &amp; Orchester</span>
+        <button type="button" class="sidebar-item" data-pane="p-chor">Chor von St. Augustin</button>
+        <button type="button" class="sidebar-item" data-pane="p-kammerchor" hidden>Kammerchor</button>
+        <button type="button" class="sidebar-item" data-pane="p-orchester" hidden>Orchester</button>
+        <button type="button" class="sidebar-item" data-pane="p-repertoire" hidden>Repertoire</button>
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Orgeln</span>
+        <button type="button" class="sidebar-item" data-pane="p-orgeln" hidden>Die Orgeln</button>
         <a class="sidebar-item" href="orgel-rieger.html">Rieger-Orgel</a>
         <a class="sidebar-item" href="orgel-reil.html">Reil-Orgel</a>
         <div class="sidebar-divider"></div>
@@ -234,7 +239,9 @@
         <div class="tab-pane active" id="p-hochaemter">
           <div class="s-label">Jeden Sonntag 11:00 Uhr</div>
           <h2 class="s-title">Hochämter in St. Augustin</h2>
+          <div data-text="musik-hochaemter" data-text-titel="Hochämter: Einleitung">
           <p class="s-text" style="margin-bottom:2.5rem">Werke von Mozart, Haydn, Schubert, Beethoven und anderen großen Komponisten machen das Hochamt zu einem unvergesslichen Klangerlebnis.</p>
+          </div>
           <div class="kal-wrap">
             <div id="kal-list" aria-live="polite"></div>
           </div>
@@ -265,8 +272,10 @@
 
         <div class="tab-pane" id="p-chor">
           <h2 class="s-title">Chor von St. Augustin</h2>
+          <div data-text="musik-chor" data-text-titel="Chor von St. Augustin">
           <p class="bio-p">In jedem Gottesdienst kommt Gott seinem Volk nahe, und die Gemeinde antwortet mit ihrem Lob. Der Chor von St. Augustin hilft der feiernden Gemeinde, ihr Herz zu Gott zu erheben, und singt stellvertretend für sie das Lob des Schöpfers, in klassischen wie in zeitgenössischen Werken.</p>
           <p class="bio-p">Wie die Kirche selbst ist ein Kirchenchor eine Einheit in der Vielfalt, die mit einer Stimme Gott lobt. Neue Sängerinnen und Sänger sind herzlich willkommen.</p>
+          </div>
           <div class="cards-2" style="margin-top:2rem">
             <div class="card">
               <div class="card-title">Chorprobe</div>
@@ -284,7 +293,9 @@
         <div class="tab-pane" id="p-kammerchor">
           <h2 class="s-title">Kammerchor von St. Augustin</h2>
           <img data-foto="kammerchor-gruppe" src="../assets/img/musik/kammerchor-gruppe.webp" alt="Kammerchor von St. Augustin" loading="lazy" style="width:100%;aspect-ratio:16/10;object-fit:cover;border:1px solid var(--line);margin-bottom:1.5rem" width="800" height="500" decoding="async"/>
+          <div data-text="musik-kammerchor" data-text-titel="Kammerchor">
           <p class="s-text" style="max-width:50rem">Der Kammerchor widmet sich kammermusikalischen Programmen und a-cappella-Werken bei besonderen Anlässen des Kirchenjahres.</p>
+          </div>
         </div>
 
         <div class="tab-pane" id="p-repertoire">
@@ -300,7 +311,9 @@
 
         <div class="tab-pane" id="p-solisten">
           <h2 class="s-title">Solisten von St. Augustin</h2>
+          <div data-text="musik-solisten" data-text-titel="Solisten: Einleitung">
           <p class="s-text" style="max-width:50rem;margin-bottom:1rem">Renommierte Sängerinnen und Sänger, die regelmäßig die Hochämter und Konzerte von St. Augustin mitgestalten.</p>
+          </div>
 
           <div class="week-filter" role="group" aria-label="Solisten sortieren">
             <button type="button" class="week-filter-btn" id="solisten-sort-alpha">Alphabetisch</button>
@@ -314,8 +327,10 @@
         <div class="tab-pane" id="p-orchester">
           <h2 class="s-title">Orchester von St. Augustin</h2>
           <img data-foto="orchester-gruppe" src="../assets/img/musik/orchester-gruppe.webp" alt="Franz Welser-Möst dirigiert das Orchester von St. Augustin" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--line);margin-bottom:1.5rem" width="800" height="485" decoding="async"/>
+          <div data-text="musik-orchester" data-text-titel="Orchester">
           <p class="bio-p">Das Orchester ist ein wesentlicher Teil der Kirchenmusik von St. Augustin. Hier spielen vor allem freiberufliche Profimusikerinnen und -musiker, die auch fest in Ensembles wie der Wiener Akademie (Martin Haselböck) oder dem Concilium musicum (Christoph Angerer) musizieren. Sie sind mit der historischen Aufführungspraxis vertraut, und das kommt dem vorwiegend klassisch-frühromantischen Repertoire der Hochämter zugute.</p>
           <p class="bio-p" style="margin-bottom:2rem">Immer wieder spielen auch Mitglieder der großen Wiener Orchester mit, etwa der Wiener Philharmoniker, der Staatsoper, der Volksoper und des Radio-Symphonieorchesters Wien. Für die Besetzung ist der <a href="#p-leitung">Kirchenmusikdirektor</a> zuständig.</p>
+          </div>
           <div class="card" style="max-width:360px"><div class="card-title">Einteilung Hochamt</div><div class="card-text">Diensteinteilung für Orchestermitglieder.</div><div style="margin-top:1rem"><a class="link-arr" href="https://einteilung.hochamt.at">einteilung.hochamt.at</a></div></div>
         </div>
 
@@ -450,13 +465,15 @@
 
         <div class="tab-pane" id="p-orgeln">
           <h2 class="s-title">Orgeln in St. Augustin</h2>
+          <div data-text="musik-orgeln" data-text-titel="Orgeln: Einleitung">
           <p class="s-text">Die Augustinerkirche hat zwei Orgeln: die große Rieger-Orgel von 1976 und die kleine Reil-Orgel von 1985, die „Wiener Bach-Orgel“.</p>
+          </div>
           <div class="organ-grid">
             <div class="organ-card">
               <img data-foto="rieger-orgel" class="organ-img" src="../assets/img/orgeln/rieger-orgel.webp" alt="Rieger-Orgel in der Augustinerkirche" loading="lazy" width="1500" height="2000" decoding="async"/>
               <div class="organ-body">
                 <h3 class="organ-title">Die Rieger-Orgel</h3>
-                <dl class="organ-facts">
+                <dl class="organ-facts" data-text="musik-orgeln-rieger-daten" data-text-titel="Orgeln: Rieger-Orgel, Daten">
                   <div><dt>Erbaut</dt><dd>1976 von Rieger Orgelbau, Schwarzach (Vorarlberg)</dd></div>
                   <div><dt>Gehäuse</dt><dd>Johann Hencke, 1785</dd></div>
                   <div><dt>Umfang</dt><dd>4 Manuale und Pedal, 48 Register</dd></div>
@@ -470,7 +487,7 @@
               <img data-foto="reil-orgel" class="organ-img" src="../assets/img/orgeln/reil-orgel.webp" alt="Reil-Orgel in der Augustinerkirche" loading="lazy" width="900" height="1060" decoding="async"/>
               <div class="organ-body">
                 <h3 class="organ-title">Die Reil-Orgel</h3>
-                <dl class="organ-facts">
+                <dl class="organ-facts" data-text="musik-orgeln-reil-daten" data-text-titel="Orgeln: Reil-Orgel, Daten">
                   <div><dt>Erbaut</dt><dd>1985 von den Gebrüdern Reil, Heerde (Niederlande)</dd></div>
                   <div><dt>Umfang</dt><dd>2 Manuale und Pedal, 25 Register</dd></div>
                   <div><dt>Bauweise</dt><dd>historisch, nach Gottfried Silbermann und Tobias Trost; Schleifladen, mechanische Traktur, Stimmung Werkmeister III</dd></div>
@@ -486,8 +503,10 @@
 
         <div class="tab-pane" id="p-patenschaft">
           <h2 class="s-title">Patenschaft St. Augustin</h2>
+          <div data-text="musik-patenschaft" data-text-titel="Patenschaft St. Augustin">
           <p class="bio-p">Die Augustinerkirche ist in Österreich und weit darüber hinaus für ihre feierlichen Hochämter bekannt und gilt wegen ihrer jahrhundertelangen Tradition als ein Zentrum der Kirchenmusik. Menschen aus der ganzen Welt kommen, um die Hochämter mit Chor und Orchester mitzufeiern.</p>
           <p class="bio-p">Diese lebendige Tradition ist aus finanziellen Gründen in Gefahr. Der Chor singt ehrenamtlich, doch Noten, Honorare für Solisten und Orchester und die Organisation kosten viel Geld. Mit Ihrer Unterstützung bleibt die Kirchenmusik von St. Augustin auch in Zukunft erhalten.</p>
+          </div>
 
           <div class="patron-box">
             <div class="s-label">Schirmherr</div>

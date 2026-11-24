@@ -195,6 +195,10 @@
           stat: ps ? plural(people(['leitung', 'gastdirigenten', 'organisten']), 'Person', 'Personen') : none,
           addHref: 'personen.html?bereich=musik&neu=1', addLabel: 'Neue Person'
         }),
+        can('musik-texte') && row({
+          href: 'texte.html?bereich=musik', ico: 'book', title: 'Texte der Kirchenmusik',
+          stat: geaendert('musik-') ? plural(geaendert('musik-'), 'Abschnitt geändert', 'Abschnitte geändert') : 'Wie ursprünglich'
+        }),
         can('paten') && row({
           href: 'paten.html', ico: 'heart', title: 'Paten &amp; Ehrenpaten',
           stat: pt ? `${plural(count(pt.paten), 'Pate', 'Paten')} · ${plural(count(pt.ehrenpaten), 'Ehrenpate', 'Ehrenpaten')}` : none,

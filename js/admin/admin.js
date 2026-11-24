@@ -141,6 +141,7 @@
     { key: 'cds', label: 'CDs', group: 'Kirchenmusik', page: 'cds.html' },
     { key: 'galerie', label: 'Galerie (Fotos, Videos, Aufnahmen)', group: 'Kirchenmusik', page: 'galerie.html' },
     { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
+    { key: 'musik-texte', label: 'Texte der Kirchenmusik (Chor, Orchester, Orgeln …)', group: 'Kirchenmusik', page: 'texte.html' },
     { key: 'repertoire', label: 'Repertoire & Komponisten (Lebensdaten)', group: 'Kirchenmusik', page: 'repertoire.html' },
     { key: 'asp-personen', label: 'Aspersdorf: Pfarrer & Leitung', group: 'Pfarre Aspersdorf', page: 'personen.html' },
     { key: 'asp-gremien', label: 'Aspersdorf: Pfarrgemeinderat & Vermögensverwaltungsrat', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gremien.html' },
@@ -2198,6 +2199,7 @@
     { label: 'Kirchenmusik', items: [
       ['solisten.html', 'Solisten', 'mic', 'Sänger Sopran Alt Tenor Bass Foto'],
       ['repertoire.html', 'Repertoire & Komponisten', 'book', 'Komponisten Werke Messen Chor Lebensdaten Jahreszahlen Geburt Tod Schreibweisen Hochamt Programm Weitere Musik'],
+      ['texte.html?bereich=musik', 'Texte der Kirchenmusik', 'book', 'Texte ändern Kirchenmusik Chor Orchester Orgeln Solisten Patenschaft'],
       ['personen.html?bereich=musik', 'Leitung & Organisten', 'user', 'Dirigent Chorleiter Organist Orgel Gastdirigenten'],
       ['paten.html', 'Paten & Ehrenpaten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender'],
       ['spenden.html', 'Spendenmöglichkeiten', 'heart', 'Patenschaft Spenden PayPal Beträge Preise Förderer Stifter'],
@@ -2259,7 +2261,7 @@
   }
   /* Texte der Seiten: Recht je Bereich (Augustinerkirche oder Aspersdorf) */
   function texteKey(bereich) {
-    return bereich === 'aspersdorf' ? 'asp-texte' : 'texte';
+    return bereich === 'aspersdorf' ? 'asp-texte' : bereich === 'musik' ? 'musik-texte' : 'texte';
   }
   /* Ist ein Eintrag (Adresse mit optionalem ?bereich=) die aktuelle Seite? */
   function isHere(href) {

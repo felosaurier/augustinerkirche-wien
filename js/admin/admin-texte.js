@@ -22,7 +22,25 @@
   const PATH = 'data/texte.json';
   const BEREICHE = {
     kirche: { name: 'Augustinerkirche', seite: 'pages/augustinerkirche.html' },
-    aspersdorf: { name: 'Aspersdorf', seite: 'pages/aspersdorf.html' }
+    aspersdorf: { name: 'Aspersdorf', seite: 'pages/aspersdorf.html' },
+    musik: { name: 'Kirchenmusik', seite: 'pages/musik.html', seiten: ['pages/musik.html', 'pages/orgel-rieger.html', 'pages/orgel-reil.html'] }
+  };
+  /* Gruppen in der Liste (Ueberschrift + Schluessel); Abschnitte ohne Gruppe kommen am Ende */
+  const GRUPPEN = {
+    kirche: [
+      ['Pfarre & Kloster', ['kirche-pfarre', 'kirche-pfarrer', 'kirche-kanzlei', 'kirche-seelsorger']],
+      ['Gemeindeleben', ['kirche-sakramente', 'kirche-sakr-taufe', 'kirche-sakr-eucharistie', 'kirche-sakr-firmung', 'kirche-sakr-busse', 'kirche-sakr-trauung', 'kirche-sakr-weihe', 'kirche-sakr-krankensalbung', 'kirche-sakr-sterbebegleitung', 'kirche-wiedereintritt']],
+      ['Augustinerkirche', ['kirche-geschichte', 'kirche-fuehrungen']]
+    ],
+    musik: [
+      ['Hochämter', ['musik-hochaemter']],
+      ['Solisten', ['musik-solisten']],
+      ['Chor & Orchester', ['musik-chor', 'musik-kammerchor', 'musik-orchester']],
+      ['Orgeln: Überblick (Reiter auf der Kirchenmusik-Seite)', ['musik-orgeln', 'musik-orgeln-rieger-daten', 'musik-orgeln-reil-daten']],
+      ['Seite „Rieger-Orgel“', ['musik-rieger-text', 'musik-rieger-daten', 'musik-rieger-disposition', 'musik-rieger-dispo-note', 'musik-rieger-zeit']],
+      ['Seite „Reil-Orgel“', ['musik-reil-text', 'musik-reil-daten', 'musik-reil-disposition', 'musik-reil-dispo-note']],
+      ['Förderung', ['musik-patenschaft']]
+    ]
   };
   const query = new URLSearchParams(location.search).get('bereich');
   const B = BEREICHE[query] || BEREICHE.kirche;
@@ -99,29 +117,33 @@
 
   /* ---------- Laden ---------- */
   async function load() {
-    let doc;
-    try {
-      doc = new DOMParser().parseFromString(await A.readText(B.seite), 'text/html');
-    } catch (e) {
-      $('tx-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Seite <code>${esc(B.seite)}</code> konnte nicht gelesen werden (${esc(e.message)}).</div></div>`;
-      return;
-    }
-    blocks = Array.from(doc.querySelectorAll('[data-text]')).map((el) => {
-      const shell = [];
-      for (let n = el.parentElement; n && n.tagName !== 'BODY'; n = n.parentElement) {
-        shell.unshift({ cls: n.className || '', sakr: !!(n.previousElementSibling && n.parentElement.querySelector(':scope > .sakr-register')) && n.classList.contains('sakr-sec') });
-        if (n.classList.contains('tab-pane')) break;
+    blocks = [];
+    for (const seite of (B.seiten || [B.seite])) {
+      let doc;
+      try {
+        doc = new DOMParser().parseFromString(await A.readText(seite), 'text/html');
+      } catch (e) {
+        $('tx-list').innerHTML = `<div class="adm-alert">${icon('alert')}<div>Die Seite <code>${esc(seite)}</code> konnte nicht gelesen werden (${esc(e.message)}).</div></div>`;
+        return;
       }
-      const pane = el.closest('.tab-pane');
-      const sec = el.closest('.sakr-sec');
-      return {
-        key: el.dataset.text,
-        titel: el.dataset.textTitel || el.dataset.text,
-        html: el.innerHTML,
-        anchor: (sec && sec.id) || (pane && pane.id) || '',
-        shell
-      };
-    });
+      blocks.push(...Array.from(doc.querySelectorAll('[data-text]')).map((el) => {
+        const shell = [];
+        for (let n = el.parentElement; n && n.tagName !== 'BODY'; n = n.parentElement) {
+          shell.unshift({ cls: n.className || '', sakr: !!(n.previousElementSibling && n.parentElement.querySelector(':scope > .sakr-register')) && n.classList.contains('sakr-sec') });
+          if (n.classList.contains('tab-pane')) break;
+        }
+        const pane = el.closest('.tab-pane');
+        const sec = el.closest('.sakr-sec');
+        return {
+          key: el.dataset.text,
+          titel: el.dataset.textTitel || el.dataset.text,
+          html: el.innerHTML,
+          anchor: (sec && sec.id) || (pane && pane.id) || '',
+          seite,
+          shell
+        };
+      }));
+    }
     texte = {};
     try {
       const d = await A.readJSON(PATH);
@@ -144,7 +166,7 @@
       $('tx-list').innerHTML = '<div class="adm-empty"><p class="adm-empty-title">Auf dieser Seite gibt es keine änderbaren Texte.</p></div>';
       return;
     }
-    $('tx-list').innerHTML = '<ul class="adm-rows">' + blocks.map((b, i) => {
+    const rowOf = (b, i) => {
       const t = texte[b.key];
       const meta = changed(b) ? `Geändert${t.geaendert ? ` am ${A.fmtDate ? A.fmtDate(t.geaendert) : t.geaendert}` : ''}` : 'Ursprünglicher Text';
       const plain = (changed(b) ? t.html : b.html).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').replace(/&nbsp;/g, ' ').trim();
@@ -155,10 +177,23 @@
           `<span class="adm-row-meta">${esc(meta)}${excerpt ? ` · ${esc(excerpt)}…` : ''}</span></span>` +
         '</button>' +
         '<div class="adm-row-actions">' +
-          `<a class="adm-act" href="../${esc(B.seite)}${b.anchor ? `#${esc(b.anchor)}` : ''}" target="_blank" rel="noopener" aria-label="Auf der Website ansehen: ${esc(b.titel)}">${icon('eye')}Ansehen</a>` +
+          `<a class="adm-act" href="../${esc(b.seite)}${b.anchor ? `#${esc(b.anchor)}` : ''}" target="_blank" rel="noopener" aria-label="Auf der Website ansehen: ${esc(b.titel)}">${icon('eye')}Ansehen</a>` +
           (changed(b) ? `<button type="button" class="adm-act" data-act="reset" data-i="${i}" aria-label="Ursprünglichen Text wiederherstellen: ${esc(b.titel)}">${icon('refresh')}Ursprünglich</button>` : '') +
         '</div></li>';
-    }).join('') + '</ul>';
+    };
+    const gr = GRUPPEN[query] || null;
+    const used = new Set();
+    let out = '';
+    if (gr) {
+      for (const [titel, keys] of gr) {
+        const idx = blocks.map((b, i) => i).filter((i) => keys.includes(blocks[i].key));
+        idx.forEach((i) => used.add(i));
+        if (idx.length) out += `<h2 class="adm-group-title">${esc(titel)}</h2><ul class="adm-rows">${idx.map((i) => rowOf(blocks[i], i)).join('')}</ul>`;
+      }
+    }
+    const rest = blocks.map((b, i) => i).filter((i) => !used.has(i));
+    if (rest.length) out += `${gr ? '<h2 class="adm-group-title">Weitere</h2>' : ''}<ul class="adm-rows">${rest.map((i) => rowOf(blocks[i], i)).join('')}</ul>`;
+    $('tx-list').innerHTML = out;
   }
 
   function flash(key) {
