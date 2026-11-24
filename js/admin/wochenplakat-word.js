@@ -9,16 +9,16 @@
   'use strict';
 
   const WP = window.WochenPlakat;
-  const NAVY = '1A1680';
-  const RED = 'E03C1E';
+  let NAVY = '1A1680';
+  let RED = 'E03C1E';
   const PAGE_W = 11906;
   const PAGE_H = 16838;
   const MAR_X = 794;
   const MAR_T = 567;
   const MAR_B = 454;
   const CONTENT_W = PAGE_W - 2 * MAR_X;
-  const TIME_TAB = 1000;
-  const TEXT_TAB = 1130;
+  const TIME_TAB = 960;
+  const TEXT_TAB = 1090;
 
   const x = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   /* Auszeichnungen der Verwaltung (**fett**, [Text](Adresse) …) entfernen */
@@ -34,19 +34,25 @@
   const cell = (w, inner, { fill, vAlign = 'top', b = 6 } = {}) =>
     `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/><w:tcBorders>${borders(b)}</w:tcBorders>${fill ? `<w:shd w:val="clear" w:color="auto" w:fill="${fill}"/>` : ''}<w:tcMar><w:top w:w="60" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:bottom w:w="40" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tcMar><w:vAlign w:val="${vAlign}"/></w:tcPr>${inner}</w:tc>`;
 
-  function itemParas(it, c3) {
+  /* Schriftgrößen wie im Plakat (halbe Punkte); k < 1 nur, wenn sonst die Seite nicht reicht */
+  const SZ = { main: 23, place: 18, sub: 19, wd: 25, info: 18, num: 100 };
+  const sc = (n, k) => Math.max(10, Math.round(n * k));
+  function itemParas(it, c3, k = 1) {
     const col = it.red ? RED : NAVY;
-    const head = tab({ sz: 20 }) + run(it.time, { b: true, sz: 20, color: col }) + tab({ sz: 20 }) +
-      run(it.title, { b: true, sz: 20, color: col }) +
-      (it.paren ? run(` (${it.paren})`, { sz: 20 }) : '') +
-      (it.zel ? run(` | Z: ${it.zel}`, { sz: 20 }) : '') +
-      (it.place ? tab({ sz: 17 }) + run(it.place, { sz: 17 }) : '');
+    const m = sc(SZ.main, k);
+    const pl = sc(SZ.place, k);
+    const sb = sc(SZ.sub, k);
+    const head = tab({ sz: m }) + run(it.time, { b: true, sz: m, color: col }) + tab({ sz: m }) +
+      run(it.title, { b: true, sz: m, color: col }) +
+      (it.paren ? run(` (${it.paren})`, { sz: m }) : '') +
+      (it.zel ? run(` | Z: ${it.zel}`, { sz: m }) : '') +
+      (it.place ? tab({ sz: pl }) + run(it.place, { sz: pl }) : '');
     const tabs = `<w:tab w:val="right" w:pos="${TIME_TAB}"/><w:tab w:val="left" w:pos="${TEXT_TAB}"/><w:tab w:val="right" w:pos="${c3}"/>`;
     const out = [para(head, { ind: [TEXT_TAB, TEXT_TAB], tabs, after: 10 })];
     const sub = (inner) => para(inner, { ind: [TEXT_TAB], after: 10 });
-    if (it.bis) out.push(sub(run(it.bis, { sz: 18 })));
-    if (it.musik) out.push(sub(run('♫ ', { sz: 18, color: RED }) + run(it.musik, { sz: 18 })));
-    if (it.note) out.push(sub(run(it.note, { i: true, sz: 18 })));
+    if (it.bis) out.push(sub(run(it.bis, { sz: sb })));
+    if (it.musik) out.push(sub(run('♫ ', { sz: sb, color: RED }) + run(it.musik, { sz: sb })));
+    if (it.note) out.push(sub(run(it.note, { i: true, sz: sb })));
     return out.join('');
   }
 
@@ -56,24 +62,45 @@
   function documentXml(days, withLogo) {
     /* Spaltenbreiten: die erste so breit, dass der längste Heilige (8 pt) in eine Zeile passt */
     const longest = Math.max(0, ...days.flatMap((d) => d.info.map((s) => plain(s).length)));
-    const c1 = Math.max(1800, Math.min(3300, longest * 78 + 260));
-    const c2 = 1250;
+    const c1 = Math.max(1700, Math.min(2500, longest * 70 + 260));
+    const c2 = 1350;
     const c3 = CONTENT_W - c1 - c2;
-    const rowH = Math.floor((PAGE_H - MAR_T - MAR_B - 2300 - 500) / days.length);
-    const rows = days.map((d) => {
+    /* Jeder Tag ist mindestens 2,7 cm hoch und wächst mit seinen Terminen; alles bleibt auf einer Seite.
+       Reicht der Platz nicht, wird die Schrift gleichmäßig kleiner. Was übrig bleibt, wird auf die Tage verteilt. */
+    let minH = 1531;
+    const avail = PAGE_H - MAR_T - MAR_B - 1960 - 420 - 700;
+    const lineH = (half, k) => sc(half, k) * 10 * 1.22 + 10;
+    const wraps = (text, half, w, k) => Math.max(1, Math.ceil((String(text).length * sc(half, k) * 10 * 0.56) / w));
+    const need = (d, k) => {
+      const textW = c3 - 220 - TEXT_TAB;
+      const right = d.items.reduce((h, it) => {
+        const w = textW - (it.place ? it.place.length * sc(SZ.place, k) * 10 * 0.52 + 200 : 0);
+        const lines = wraps(it.title + (it.paren ? ` (${it.paren})` : '') + (it.zel ? ` | Z: ${it.zel}` : ''), SZ.main, Math.max(1500, w), k);
+        return h + lines * lineH(SZ.main, k) + [it.bis, it.musik, it.note].filter(Boolean).reduce((x, t) => x + wraps(t, SZ.sub, textW, k) * lineH(SZ.sub, k), 0);
+      }, 0);
+      const left = lineH(SZ.wd, k) + 30 + d.info.reduce((h, t) => h + wraps(plain(t), SZ.info, c1 - 200, k) * lineH(SZ.info, k), 0);
+      return Math.max(minH, Math.max(right, left) + 120);
+    };
+    let k = 1;
+    /* Zuerst die Mindesthöhe der Tage bis 2,1 cm senken, die Schrift bleibt; erst dann wird sie kleiner */
+    while (minH > 1190 && days.reduce((h, d) => h + need(d, k), 0) > avail) minH -= 30;
+    while (k > 0.5 && days.reduce((h, d) => h + need(d, k), 0) > avail) k = Math.round((k - 0.03) * 100) / 100;
+    const base = days.map((d) => need(d, k));
+    const extra = Math.max(0, Math.floor((avail - base.reduce((h, v) => h + v, 0)) / days.length));
+    const rows = days.map((d, i) => {
       const col = d.red ? RED : NAVY;
-      const info = d.info.map((s) => para(run(plain(s), { sz: 16 }), { after: 10 })).join('');
-      const items = d.items.length ? d.items.map((it) => itemParas(it, c3 - 220)).join('') : para('');
-      return `<w:tr><w:trPr><w:cantSplit/><w:trHeight w:val="${rowH}" w:hRule="atLeast"/></w:trPr>` +
-        cell(c1, para(run(d.wd, { b: true, sz: 24, color: col }), { after: 30 }) + info) +
-        cell(c2, para(run(String(d.date.getDate()), { b: true, sz: 76, color: d.red ? 'FFFFFF' : NAVY }), { jc: 'center' }), { fill: d.red ? RED : undefined, vAlign: 'center' }) +
+      const info = d.info.map((t) => para(run(plain(t), { sz: sc(SZ.info, k) }), { after: 10 })).join('');
+      const items = d.items.length ? d.items.map((it) => itemParas(it, c3 - 220, k)).join('') : para('');
+      return `<w:tr><w:trPr><w:cantSplit/><w:trHeight w:val="${base[i] + extra}" w:hRule="atLeast"/></w:trPr>` +
+        cell(c1, para(run(d.wd, { b: true, sz: sc(SZ.wd, k), color: col }), { after: 30 }) + info) +
+        cell(c2, para(run(String(d.date.getDate()), { b: true, sz: sc(SZ.num, k), color: d.red ? 'FFFFFF' : NAVY }), { jc: 'center' }), { fill: d.red ? RED : undefined, vAlign: 'center' }) +
         cell(c3, items) + '</w:tr>';
     }).join('');
     const pad = (n) => String(n).padStart(2, '0');
     const dmy = (dt) => `${pad(dt.getDate())}.${pad(dt.getMonth() + 1)}.${dt.getFullYear()}`;
     const headL = para(run('Wochenkalender der', { b: true, sz: 36 })) +
       para(run('Wiener Augustinerkirche', { b: true, sz: 64 })) +
-      para(run(`${dmy(days[0].date)}–${dmy(days[days.length - 1].date)}`, { b: true, sz: 40 }), { after: 120 });
+      para(run(`${dmy(days[0].date)} – ${dmy(days[days.length - 1].date)}`, { b: true, sz: 40 }), { after: 120 });
     const none = ['top', 'left', 'bottom', 'right'].map((s) => `<w:${s} w:val="nil"/>`).join('');
     const head = `<w:tbl><w:tblPr><w:tblW w:w="${CONTENT_W}" w:type="dxa"/><w:tblBorders>${none}</w:tblBorders><w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid><w:gridCol w:w="${CONTENT_W - 1700}"/><w:gridCol w:w="1700"/></w:tblGrid><w:tr>` +
       `<w:tc><w:tcPr><w:tcW w:w="${CONTENT_W - 1700}" w:type="dxa"/></w:tcPr>${headL}</w:tc>` +
@@ -130,6 +157,9 @@
 
   async function toWord(montag, items, opts = {}) {
     const days = WP.model(montag, items, opts);
+    const hex = (h, d) => (/^#[0-9a-f]{6}$/i.test(h || '') ? h.slice(1).toUpperCase() : d);
+    NAVY = hex(opts.colors && opts.colors.main, '1A1680');
+    RED = hex(opts.colors && opts.colors.accent, 'E03C1E');
     const logo = WP.logo();
     let png = null;
     if (/^data:image\/png;base64,/.test(logo)) {

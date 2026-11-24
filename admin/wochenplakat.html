@@ -44,6 +44,19 @@
       <select class="adm-input" id="wp-select"><option value="">Wird geladen …</option></select>
       <span class="adm-hint">Fehlt oder stimmt etwas nicht, im Wochenkalender ergänzen (Zelebrant, Musik, Ort, Heilige).</span>
     </div>
+    <div class="wp-farben" role="group" aria-label="Farben des Plakats">
+      <div class="wp-fhead"><b>Farben des Plakats</b><button type="button" class="wp-reset" id="wp-creset">Standardfarben</button></div>
+      <div class="wp-frow">
+        <div class="wp-fl"><b>Hauptfarbe</b><small>Schrift, Rahmen, Logo</small></div>
+        <div class="ds-swatches" id="wp-sw1"></div>
+        <label class="wp-own" title="Eigene Farbe wählen"><input type="color" id="wp-c1" value="#1a1680" aria-label="Eigene Hauptfarbe"/><span>Eigene</span></label>
+      </div>
+      <div class="wp-frow">
+        <div class="wp-fl"><b>Akzentfarbe</b><small>Sonntag, Hochamt</small></div>
+        <div class="ds-swatches" id="wp-sw2"></div>
+        <label class="wp-own" title="Eigene Farbe wählen"><input type="color" id="wp-c2" value="#e03c1e" aria-label="Eigene Akzentfarbe"/><span>Eigene</span></label>
+      </div>
+    </div>
     <label class="adm-check"><input type="checkbox" id="wp-sun" checked/>Sonntag davor mitnehmen (Aushang von Sonntag bis Sonntag)</label>
   </section>
 

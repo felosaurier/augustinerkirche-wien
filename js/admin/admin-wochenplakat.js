@@ -20,6 +20,11 @@
 
   let items = [];
   let poster = null;
+  const DEF = { main: '#1a1680', accent: '#e03c1e' };
+  /* Farben des Kirchenjahres: Weiß/Gold (Weihnachten, Ostern), Rot (Pfingsten, Märtyrer), Grün (Jahreskreis), Violett (Advent, Fastenzeit), Rosa (Gaudete, Laetare), Blau (Marienfeste) */
+  const MAIN = [['#1a1680', 'Augustinerblau'], ['#1b2a4a', 'Marine'], ['#4a2370', 'Dunkelviolett (Advent, Fastenzeit)'], ['#1f3b2d', 'Tannengrün (Jahreskreis)'], ['#6e1f2b', 'Bordeaux'], ['#8a6a14', 'Dunkelgold (Weihnachten, Ostern)'], ['#9c1c1c', 'Dunkelrot (Pfingsten, Märtyrer)'], ['#10192e', 'Dunkelblau'], ['#0f5257', 'Petrol'], ['#5a3a22', 'Braun'], ['#2f2f35', 'Anthrazit'], ['#4b1d3f', 'Aubergine'], ['#111111', 'Schwarz']];
+  const ACCENT = [['#e03c1e', 'Rot (Pfingsten, Märtyrer)'], ['#c9a24d', 'Gold (Weihnachten, Ostern)'], ['#6a2c91', 'Violett (Advent, Fastenzeit)'], ['#2e7d4f', 'Grün (Jahreskreis)'], ['#d9638b', 'Rosa (Gaudete, Laetare)'], ['#2f6fb5', 'Blau (Marienfeste)'], ['#e07a1e', 'Orange'], ['#a8324a', 'Weinrot'], ['#c0287a', 'Magenta'], ['#1a8a8a', 'Türkis'], ['#6e1f2b', 'Bordeaux'], ['#1a1680', 'Augustinerblau'], ['#7a7a82', 'Grau'], ['#111111', 'Schwarz']];
+  const colors = () => ({ main: $('wp-c1').value, accent: $('wp-c2').value });
 
   const addDays = (dt, n) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + n);
   const mondayOf = (dt) => addDays(dt, -((dt.getDay() + 6) % 7));
@@ -51,10 +56,10 @@
   }
 
   async function show() {
-    await WP.prepare();
+    await WP.prepare(colors().main);
     const stage = $('wp-stage');
     $('wp-panel').hidden = false;
-    stage.innerHTML = WP.build(monday(), items, { sonntag: $('wp-sun').checked });
+    stage.innerHTML = WP.build(monday(), items, { sonntag: $('wp-sun').checked, colors: colors() });
     poster = stage.firstElementChild;
     const s = WP.fit(poster);
     $('wp-fit').textContent = s < 1 ? `Es sind viele Termine: die Schrift wurde auf ${Math.round(s * 100)} % verkleinert.` : '';
@@ -74,7 +79,7 @@
   async function download(kind) {
     let blob = null;
     try {
-      blob = kind === 'pdf' ? await WP.toPdf(poster) : kind === 'word' ? await WP.toWord(monday(), items, { sonntag: $('wp-sun').checked }) : await png(2);
+      blob = kind === 'pdf' ? await WP.toPdf(poster) : kind === 'word' ? await WP.toWord(monday(), items, { sonntag: $('wp-sun').checked, colors: colors() }) : await png(2);
     } catch (err) {
       A.toast(`Die Datei konnte nicht erstellt werden: ${err.message}`, 'err');
     }
@@ -133,7 +138,20 @@
       return;
     }
     $('wp-select').addEventListener('change', show);
-    $('wp-sun').addEventListener('change', show);
+    try { const v = localStorage.getItem('wp-sonntag'); if (v !== null) $('wp-sun').checked = v === '1'; } catch { /* Standard */ }
+    $('wp-sun').addEventListener('change', () => { try { localStorage.setItem('wp-sonntag', $('wp-sun').checked ? '1' : '0'); } catch { /* egal */ } show(); });
+    try { const c = JSON.parse(localStorage.getItem('wp-farben') || 'null'); if (c) { $('wp-c1').value = c.main; $('wp-c2').value = c.accent; } } catch { /* Standard */ }
+    const mark = () => [['wp-sw1', 'wp-c1'], ['wp-sw2', 'wp-c2']].forEach(([b, i]) => document.querySelectorAll(`#${b} .ds-swatch`).forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.farbe === $(i).value.toLowerCase()))));
+    const colorChanged = () => { mark(); save(); };
+    [['wp-sw1', 'wp-c1', MAIN], ['wp-sw2', 'wp-c2', ACCENT]].forEach(([b, i, list]) => {
+      $(b).innerHTML = list.map(([hex, name]) => `<button type="button" class="ds-swatch" data-farbe="${hex}" aria-pressed="false" title="${name}" style="--c:${hex}"><span class="visually-hidden">${name}</span></button>`).join('');
+      $(b).addEventListener('click', (e) => { const x = e.target.closest('.ds-swatch'); if (x) { $(i).value = x.dataset.farbe; colorChanged(); } });
+    });
+    const save = () => { try { localStorage.setItem('wp-farben', JSON.stringify(colors())); } catch { /* egal */ } show(); };
+    mark();
+    $('wp-c1').addEventListener('input', colorChanged);
+    $('wp-c2').addEventListener('input', colorChanged);
+    $('wp-creset').addEventListener('click', () => { $('wp-c1').value = DEF.main; $('wp-c2').value = DEF.accent; colorChanged(); });
     $('wp-pdf').addEventListener('click', () => download('pdf'));
     $('wp-word').addEventListener('click', () => download('word'));
     $('wp-png').addEventListener('click', () => download('png'));

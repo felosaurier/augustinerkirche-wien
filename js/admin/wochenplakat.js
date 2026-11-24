@@ -6,7 +6,7 @@
    Die Termine kommen aus js/gemeinsam/kalender-daten.js (dieselben wie im Wochenkalender
    der Verwaltung); Sonn- und Samstage sind rot, die Tageszahl des Sonntags steht auf Rot.
    WochenPlakat.build(montag, items, opts) liefert das Plakat als HTML (feste Größe 794 × 1122 px,
-   Schrift wird bei vielen Terminen automatisch kleiner), dazu toPng() und toPdf().
+   Tage mindestens 2,7 cm hoch und mit dem Inhalt wachsend, Schrift wird bei vielen Terminen automatisch kleiner), dazu toPng() und toPdf().
    Benötigt js/gemeinsam/hochaemter-data.js und js/gemeinsam/kalender-daten.js.
    ============================================================ */
 (function () {
@@ -29,6 +29,8 @@
 
   /* Logo einmal als Daten-Adresse laden: so enthält das Plakat alles und lässt sich als Bild speichern */
   let logoData = '';
+  let logoColor = '';
+  const hexRgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   /* Das Logo wird in der Farbe des Plakats (Marineblau der Schrift) neu eingefärbt */
   async function tint(url, rgb) {
     const img = new Image();
@@ -48,15 +50,23 @@
     x.putImageData(d, 0, 0);
     return c.toDataURL('image/png');
   }
-  async function prepare() {
+  /* main: Hauptfarbe (#rrggbb), in der auch das Logo eingefärbt wird */
+  async function prepare(main = '#1a1680') {
     if (!cssText) { try { cssText = await (await fetch(CSS_URL)).text(); } catch { cssText = ''; } }
-    if (logoData) return;
+    if (logoData && logoColor === main) return;
     try {
-      logoData = await tint(LOGO, [26, 22, 128]);
+      logoData = await tint(LOGO, hexRgb(main));
     } catch { logoData = LOGO; }
+    logoColor = main;
   }
 
   const timeText = (it) => (it.label ? it.label : it.time ? `${it.time.replace(/^0/, '')} Uhr` : '');
+
+  /* Zelebrant nur mit Vornamen: "Dechant P. Mag. Matthias Schlögl OSA" wird "P. Matthias" (andere Titel bleiben) */
+  const zelKurz = (z) => {
+    const m = /P\.\s+(?:(?:M?Mag|DDr|Dr|Prof)\.\s*)*([A-ZÄÖÜ][\p{L}-]*)/u.exec(z);
+    return m ? `P. ${m[1]}` : z;
+  };
 
   /* Die Angaben eines Termins für das Plakat (HTML und Word) */
   function itemData(it, dayRed) {
@@ -82,7 +92,7 @@
       if (!place) place = 'Augustinerkirche';
     }
     const red = dayRed && (it.group === 'hochamt' || it.group === 'gottesdienst');
-    return { time: timeText(it), title, paren, zel: d.zelebrant || '', bis: bisZeile, musik: d.musik || '', note, place, red };
+    return { time: timeText(it), title, paren, zel: zelKurz(d.zelebrant || ''), bis: bisZeile, musik: d.musik || '', note, place, red };
   }
   function itemHTMLOf(x) {
     return `<div class="wp-it${x.red ? ' red' : ''}"><span class="wp-t">${esc(x.time)}</span>` +
@@ -119,9 +129,10 @@
         `<div class="wp-n">${day.date.getDate()}</div>` +
         `<div class="wp-r">${day.items.map((x) => itemHTMLOf(x)).join('')}</div></div>`;
     }).join('');
-    return `<div class="wp">` +
+    const c = opts.colors || {};
+    return `<div class="wp"${c.main ? ` style="--c1:${esc(c.main)};--c2:${esc(c.accent || '#e03c1e')}"` : ''}>` +
       '<div class="wp-head"><div class="wp-h1">Wochenkalender der</div><div class="wp-h2">Wiener Augustinerkirche</div>' +
-      `<div class="wp-h3">${dmy(days[0].date)}–${dmy(days[days.length - 1].date)}</div><img class="wp-logo" src="${esc(logoData || LOGO)}" alt=""/></div>` +
+      `<div class="wp-h3">${dmy(days[0].date)} – ${dmy(days[days.length - 1].date)}</div><img class="wp-logo" src="${esc(logoData || LOGO)}" alt=""/></div>` +
       `<div class="wp-rows">${rows}</div>` +
       '<div class="wp-foot">Z = Zelebrant des Gottesdienstes | P = Pater | D = Diakon | Pr = Predigt | ♫ = Musikalische Gestaltung | Änderungen vorbehalten</div></div>';
   }
@@ -137,7 +148,9 @@
       const need = Math.max(...Array.from(poster.querySelectorAll('.wp-l')).map((e) => e.getBoundingClientRect().width / (poster.getBoundingClientRect().width / W)));
       if (need > 250) poster.classList.add('wrapinf');
       poster.style.setProperty('--lw', `${Math.ceil(Math.min(need, 250))}px`);
-      if (rows.scrollHeight <= rows.clientHeight + 1) return s;
+      /* Alle Tage sind gleich hoch; die Schrift wird so lange kleiner, bis der Inhalt jedes Tages in seine Zeile passt */
+      const ok = Array.from(rows.children).every((r) => Math.max(r.querySelector('.wp-r').scrollHeight, r.querySelector('.wp-l').scrollHeight) <= r.clientHeight + 1);
+      if (ok) return s;
     }
     return 0.55;
   }
