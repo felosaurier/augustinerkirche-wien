@@ -1,0 +1,28 @@
+.wp{box-sizing:border-box;width:794px;height:1122px;background:#fff;color:#1a1680;font-family:Calibri,Carlito,'Segoe UI',Arial,sans-serif;padding:26px 44px 14px;display:flex;flex-direction:column;overflow:hidden;position:relative;text-align:left}
+.wp *{box-sizing:border-box;margin:0;padding:0}
+.wp-head{position:relative;height:132px;flex:none}
+.wp-h1{font-size:36px;font-weight:700;line-height:1;letter-spacing:-.5px;padding-top:2px}
+.wp-h2{font-size:58px;font-weight:800;line-height:.98;letter-spacing:-2px;margin-top:-2px;text-shadow:1px 1px 0 rgba(26,22,128,.25)}
+.wp-h3{font-size:41px;font-weight:700;line-height:1;letter-spacing:-1.5px;margin-top:2px}
+.wp-logo{position:absolute;right:0;top:6px;width:112px;height:112px;object-fit:contain}
+.wp-rows{flex:1 1 auto;min-height:0;margin-top:10px;border:3px solid #1a1680;display:flex;flex-direction:column;overflow:hidden}
+.wp-row{flex:1 1 auto;display:flex;border-top:2px solid #1a1680;min-height:0}
+.wp-row:first-child{border-top:0}
+.wp-l{width:var(--lw,max-content);flex:none;padding:6px 8px 4px;border-right:2px solid #1a1680}
+.wp-wd{font-size:calc(17px*var(--s,1));font-weight:700;letter-spacing:.2px}
+.wp-inf{white-space:nowrap;font-size:calc(12px*var(--s,1));line-height:1.3;margin-top:3px;color:#1a1680}
+.wp-n{width:108px;flex:none;display:flex;align-items:center;justify-content:center;border-right:2px solid #1a1680;font-size:calc(66px*var(--s,1));font-weight:800;line-height:1;letter-spacing:-2px}
+.wp-row.red .wp-n{background:#e03c1e;color:#fff}
+.wp-row.red .wp-wd{color:#e03c1e}
+.wp-r{flex:1;min-width:0;padding:5px 8px 3px 10px}
+.wp-it{display:grid;grid-template-columns:70px 1fr auto;column-gap:8px;align-items:baseline;font-size:calc(15.5px*var(--s,1));line-height:1.22;padding:1px 0}
+.wp-t{text-align:right;font-weight:700;white-space:nowrap}
+.wp-b b{font-weight:700}
+.wp-p{font-size:calc(12px*var(--s,1));text-align:right;white-space:nowrap;padding-left:6px}
+.wp-m,.wp-x{display:block;font-size:calc(12.8px*var(--s,1));line-height:1.2}
+.wp-x{font-style:italic}
+.wp-m i{font-style:normal;color:#e03c1e;margin-right:2px}
+.wp-it.red .wp-t,.wp-it.red .wp-b b{color:#e03c1e}
+.wp-none{font-size:calc(12px*var(--s,1));opacity:.45;padding:4px 0}
+.wp-foot{flex:none;text-align:center;font-size:10px;color:#222;padding-top:6px}
+.wp.wrapinf .wp-inf{white-space:normal}

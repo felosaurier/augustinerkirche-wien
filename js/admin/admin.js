@@ -159,6 +159,7 @@
     { key: 'mitbrueder', label: 'Mitbrüder', group: 'Pfarre & Kloster', page: 'personen.html' },
     { key: 'qrcode', label: 'QR-Codes erstellen', group: 'Werkzeuge', page: 'qrcode.html' },
     { key: 'plakat', label: 'Plakat für ein Hochamt', group: 'Werkzeuge', page: 'plakat.html' },
+    { key: 'wochenplakat', label: 'Plakat für den Wochenkalender', group: 'Werkzeuge', page: 'wochenplakat.html' },
     { key: 'farben', label: 'Farben der Website ändern', group: 'Werkzeuge', page: 'farben.html' },
   ];
   /* "Runden" gehoert zu Pfarre & Kloster, steht aber wegen der Einzelauswahl getrennt */
@@ -2228,6 +2229,7 @@
     { label: 'Werkzeuge', items: [
       ['qrcode.html', 'QR-Codes', 'qr', 'QR Code Plakat Flyer Link Barcode PNG SVG transparent Farbe Logo Download'],
       ['plakat.html', 'Plakat Hochamt', 'image', 'Plakat Hochamt Word docx Aushang Drucken Messe Programm'],
+      ['wochenplakat.html', 'Plakat Wochenkalender', 'calendar', 'Wochenkalender Wochenplakat Aushang Plakat Woche Drucken PDF PNG Bild der Woche'],
       ['farben.html', 'Farben', 'palette', 'Farbcodes HEX RGB CMYK Farbpalette Gold Blau Druck Plakat Flyer ändern Design']
     ] },
     { label: 'Verwaltung', items: [

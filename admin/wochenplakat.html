@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Plakat für den Wochenkalender — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<link rel="stylesheet" href="../css/wochenplakat.css"/>
+<script src="../js/gemeinsam/hochaemter-data.js"></script>
+<script src="../js/gemeinsam/kalender-daten.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/wochenplakat.js"></script>
+<script src="../js/admin/wochenplakat-word.js"></script>
+<script src="../js/admin/admin-wochenplakat.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Werkzeuge</div>
+      <h1 class="ph-title">Plakat für den <em>Wochenkalender</em></h1>
+      <p class="ph-sub">Woche auswählen: das Plakat entsteht aus den Terminen im <a href="wochenkalender.html">Wochenkalender</a> (A4 hoch, wie der Aushang). Als PDF, Word (zum Weiterbearbeiten) oder Bild herunterladen, oder als „Bild der Woche“ auf die Website übernehmen. Das Plakat selbst wird nicht gespeichert.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <section class="adm-panel">
+    <div class="adm-field">
+      <label class="adm-label" for="wp-select">Woche</label>
+      <select class="adm-input" id="wp-select"><option value="">Wird geladen …</option></select>
+      <span class="adm-hint">Fehlt oder stimmt etwas nicht, im Wochenkalender ergänzen (Zelebrant, Musik, Ort, Heilige).</span>
+    </div>
+    <label class="adm-check"><input type="checkbox" id="wp-sun" checked/>Sonntag davor mitnehmen (Aushang von Sonntag bis Sonntag)</label>
+  </section>
+
+  <section class="adm-panel" id="wp-panel" hidden>
+    <h2 class="adm-panel-title">So sieht das Plakat aus</h2>
+    <p class="adm-hint" id="wp-fit"></p>
+    <div id="wp-wrap" style="overflow:hidden;border:1px solid var(--line)"><div id="wp-stage" style="transform-origin:0 0"></div></div>
+    <p class="wk-bild-actions" style="margin-top:1rem">
+      <button type="button" class="btn btn-gold" id="wp-pdf" data-icon="download">Als PDF laden</button>
+      <button type="button" class="btn btn-gold" id="wp-word" data-icon="download">Als Word laden</button>
+      <button type="button" class="btn btn-outline" id="wp-png" data-icon="download">Als Bild laden (PNG)</button>
+      <button type="button" class="btn btn-outline" id="wp-take" data-icon="check">Als Bild der Woche übernehmen</button>
+    </p>
+  </section>
+</main>
+
+</body>
+</html>
