@@ -1430,7 +1430,7 @@
 
   /* ---------- Zahlen auf der Startseite: zaehlen beim Einblenden hoch ---------- */
   function initZahlen() {
-    const felder = qsa('.zahl-n');
+    const felder = qsa('.zahl-n[data-zaehlen], .zahl-n[data-seit]');
     if (!felder.length) return;
     /* data-seit: Jahre seit einem Jahr (immer aktuell); data-zaehlen: feste Zahl; data-plus: mit "+" */
     const ziel = (el) => (el.dataset.seit ? new Date().getFullYear() - Number(el.dataset.seit) : Number(el.dataset.zaehlen));
