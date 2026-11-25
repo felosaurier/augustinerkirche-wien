@@ -27,8 +27,17 @@
 
   const MONATE = ['Jänner', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
   const WOCHENTAGE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
-  const GOLD = '966E00';
-  const NAVY = '000064';
+  /* Farben der Vorlage; layout() und makeDocx() setzen sie je Plakat (opts.colors: Hauptfarbe fuer Schrift,
+     Akzentfarbe fuer Datum, Komponist, Striche) */
+  const DEF_GOLD = '966E00';
+  const DEF_NAVY = '000064';
+  let GOLD = DEF_GOLD;
+  let NAVY = DEF_NAVY;
+  const hex6 = (h, d) => (/^#?[0-9a-f]{6}$/i.test(h || '') ? h.replace('#', '').toUpperCase() : d);
+  function setColors(c = {}) {
+    NAVY = hex6(c.main, DEF_NAVY);
+    GOLD = hex6(c.accent, DEF_GOLD);
+  }
   const GREY = '808080';
 
   /* ---------- Zeichenbreiten (Calibri, je 1000 em) zum Einpassen langer Texte ---------- */
@@ -285,6 +294,7 @@
   const LEADER_TABS = '<w:tabs><w:tab w:val="center" w:leader="underscore" w:pos="5102"/><w:tab w:val="right" w:leader="underscore" w:pos="10204"/></w:tabs>';
 
   function layout(m, opts = {}) {
+    setColors(opts.colors);
     const warn = [];
     /* ----- Kopf: Tag, Monat, Zeit, Anlass ----- */
     const kopfTag = para('<w:spacing w:line="2000" w:lineRule="exact"/><w:ind w:left="-109"/>',
@@ -487,6 +497,7 @@
   /* Vorlage mit den Absaetzen fuellen */
   function fillTemplate(template, L) {
     return template
+      .replace(/w:color="966E00"/g, `w:color="${GOLD}"`)
       .replace('<!--KOPF_TAG-->', () => L.kopf.tag)
       .replace('<!--KOPF_MONAT-->', () => L.kopf.monat)
       .replace('<!--KOPF_ZEIT-->', () => L.kopf.zeit)
@@ -551,19 +562,25 @@
   ];
 
   /* fetchPart(pfad) -> Uint8Array; people: Mitbrueder aus data/personen.json (fuer die Rolle des Zelebranten) */
-  async function makeDocx(e, { people = [], lookup, fetchPart }) {
+  /* colors: {main, accent} (#rrggbb); images: {'word/media/image1.png': Uint8Array, …} ersetzen Bilder der Vorlage
+     (Logo, Zeichnung und QR-Codes in den gewaehlten Farben, erzeugt in js/admin/admin-plakat.js) */
+  async function makeDocx(e, { people = [], lookup, fetchPart, colors, images = {} }) {
     const m = parse(e, people, lookup);
-    const L = layout(m);
+    const L = layout(m, { colors });
     const files = [];
     for (const name of PARTS) {
-      let data = await fetchPart(name);
+      let data = images[name] || await fetchPart(name);
       if (name === 'word/document.xml') data = new TextEncoder().encode(fillTemplate(new TextDecoder().decode(data), L));
+      if (name === 'word/footer1.xml') {
+        data = new TextEncoder().encode(new TextDecoder().decode(data)
+          .replace(/w:val="000064"/g, `w:val="${NAVY}"`).replace(/w:val="966E00"/g, `w:val="${GOLD}"`));
+      }
       files.push({ name, data });
     }
     return { parts: zip(files), name: fileName(e, m), warnings: L.warn, model: m };
   }
 
-  const api = { parse, layout, fillTemplate, fileName, makeDocx, textWidth, mixedWidth, PARTS };
+  const api = { parse, layout, fillTemplate, fileName, makeDocx, textWidth, mixedWidth, PARTS, colors: () => ({ main: `#${NAVY}`, accent: `#${GOLD}` }), DEF: { main: `#${DEF_NAVY}`, accent: `#${DEF_GOLD}` } };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else root.Plakat = api;
 })(typeof window !== 'undefined' ? window : globalThis);

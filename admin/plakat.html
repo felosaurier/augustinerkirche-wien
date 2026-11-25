@@ -16,7 +16,10 @@
 <link rel="stylesheet" href="../css/admin.css"/>
 <script src="../js/gemeinsam/hochaemter-data.js"></script>
 <script src="../js/admin/admin.js"></script>
+<script src="../js/admin/qr-encoder.js" defer></script>
 <script src="../js/admin/plakat.js" defer></script>
+<script src="../js/admin/plakat-bilder.js" defer></script>
+<script src="../js/admin/plakat-vorschau.js" defer></script>
 <script src="../js/admin/admin-plakat.js" defer></script>
 </head>
 <body class="adm">
@@ -28,7 +31,7 @@
     <div>
       <div class="ph-tag">Werkzeuge</div>
       <h1 class="ph-title">Plakat für ein <em>Hochamt</em></h1>
-      <p class="ph-sub">Hochamt auswählen und das Plakat als Word-Datei herunterladen. Es ist gestaltet wie die bisherigen Plakate und lässt sich in Word noch ändern. Alles passiert in deinem Browser, es wird nichts gespeichert.</p>
+      <p class="ph-sub">Hochamt auswählen, Farben wählen, Plakat ansehen und als Word-Datei herunterladen. Es ist gestaltet wie die bisherigen Plakate und lässt sich in Word noch ändern. Alles passiert in deinem Browser, es wird nichts gespeichert.</p>
     </div>
   </div>
 </div>
@@ -40,13 +43,30 @@
       <select class="adm-input" id="pl-select" aria-describedby="pl-hint"><option value="">Wird geladen …</option></select>
       <span class="adm-hint" id="pl-hint">Die Angaben kommen aus Aktuelles → Hochämter. Fehlt etwas auf dem Plakat, dort ergänzen.</span>
     </div>
+    <div class="pl-farben" role="group" aria-labelledby="pl-farben-h">
+      <div class="wp-fhead"><b id="pl-farben-h">Farben des Plakats</b><small class="adm-muted">Schrift und Akzent passen immer zusammen (Farben des Kirchenjahres)</small></div>
+      <div class="pl-paare" id="pl-paare"></div>
+      <div class="pl-eigen" id="pl-eigen">
+        <span class="pl-eigen-t">Eigene Farben</span>
+        <label class="wp-own" title="Schrift, Werk, QR-Codes"><input type="color" id="pl-c1" value="#000064" aria-label="Eigene Schriftfarbe"/><span>Schrift</span></label>
+        <label class="wp-own" title="Datum, Komponist, Logo, Zeichnung"><input type="color" id="pl-c2" value="#966e00" aria-label="Eigene Akzentfarbe"/><span>Akzent</span></label>
+        <small class="adm-muted">Ein Klick auf ein Farbfeld wählt eine eigene Farbe; die Farbpaare oben stellen es wieder zurück.</small>
+      </div>
+    </div>
   </section>
 
   <section class="adm-panel" id="pl-preview" hidden>
-    <h2 class="adm-panel-title">Das steht auf dem Plakat</h2>
-    <dl class="pl-list" id="pl-list"></dl>
+    <h2 class="adm-panel-title">So sieht das Plakat aus</h2>
     <p class="adm-muted" id="pl-warn" hidden></p>
-    <p><button type="button" class="btn btn-gold" id="pl-make" data-icon="download">Plakat erstellen (Word)</button></p>
+    <div class="pl-grid">
+      <div class="pv-wrap" id="pl-wrap"><div class="pv-stage" id="pl-stage"></div></div>
+      <div>
+        <p><button type="button" class="btn btn-gold" id="pl-make" data-icon="download">Plakat herunterladen (Word)</button></p>
+        <p class="adm-hint">Die Vorschau zeigt das Plakat so, wie es in Word aussieht. Kleine Abweichungen bei Schrift und Zeilenumbruch sind möglich, wenn Calibri auf diesem Gerät fehlt.</p>
+        <h3 class="adm-group-title" style="margin-top:1.4rem">Das steht auf dem Plakat</h3>
+        <dl class="pl-list" id="pl-list"></dl>
+      </div>
+    </div>
   </section>
 </main>
 
