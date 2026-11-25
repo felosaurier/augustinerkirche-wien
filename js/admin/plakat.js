@@ -462,8 +462,8 @@
 
     /* ----- Seite fuellen wie im Beispiel -----
        fest: Kopf (91,3) und die Fusszeile (Absatz mit Wasserzeichen 42,7, Adressen 46,75, Schlussmarke 1,2).
-       Zu langes Programm: Zwischenraeume schrumpfen (bis ein Viertel). Kurzes Programm: sie wachsen
-       (bis zum Vierfachen), damit der Inhalt wie im Beispiel die Seite bis zum Fuss fuellt. */
+       Zu langes Programm: Zwischenraeume schrumpfen (bis ein Viertel). Sonst bleiben sie immer gleich gross
+       (Vorgabe der Kirchenmusik: 15, 35, 10 pt); der Rest der Seite bleibt vor dem Fuss frei. */
     const z = (sz) => Math.max(6, Math.round(sz * f));
     const fixed = 91.3 + spacerPt(70) + 46.75 + 1.2;
     const total = (x) => {
@@ -472,14 +472,15 @@
     };
     let f = 1;
     while (total(f) > PAGE_PT && f > 0.25) f = Math.round((f - 0.05) * 100) / 100;
-    while (f < 4 && total(f + 0.05) <= PAGE_PT - 3) f = Math.round((f + 0.05) * 100) / 100;
     if (total(f) > PAGE_PT) warn.push('Das Programm ist sehr lang: Es passt nur knapp oder nicht mehr auf eine Seite.');
     let koerper = spacer(z(30), '');
     blocks.forEach((b, i) => {
       if (i) koerper += spacer(z(b.spSz), b.kind === 'right' || b.kind === 'left' ? b.kind : '');
       koerper += b.xml;
     });
-    koerper += spacer(z(22), '');
+    /* Die Platzhalter haben immer dieselbe Groesse (15, 35, 10 pt); bleibt Platz uebrig, fuellt ihn der letzte Platzhalter vor dem Fuss */
+    const rest = Math.max(0, PAGE_PT - 3 - total(f));
+    koerper += spacer(Math.min(1638, z(22) + Math.floor((rest / LINE) * 2)), '');
     return { kopf: { tag: kopfTag, monat: kopfMonat, zeit: kopfZeit, art: kopfArt }, koerper, warn, factor: f, height: total(f) };
   }
 

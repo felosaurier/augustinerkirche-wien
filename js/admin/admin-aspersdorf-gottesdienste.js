@@ -4,8 +4,10 @@
    Aspersdorf pflegen (admin/aspersdorf-gottesdienste.html). Quelle ist
    data/aspersdorf-gottesdienste.json:
      {regelmaessig: [{tag, zeit, name, hinweis}], termine: [{datum, zeit, name, hinweis}]}
-   tag: so, mo, di, mi, do, fr, sa. Fehlt die Datei, gilt die Tabelle in
-   pages/aspersdorf.html; sie steht unten als Vorgabe (VORGABE) und wird
+   tag: so, mo, di, mi, do, fr, sa; rhythmus und pause (wann im Kalender) sowie art ('entfaellt')
+   siehe js/gemeinsam/aspersdorf-daten.js. Die Angaben fuers Monatsblatt (details, licht) pflegt
+   admin/aspersdorf-monatsblatt.html; sie bleiben beim Speichern hier unveraendert.
+   Fehlt die Datei, gilt die Tabelle in pages/aspersdorf.html; sie steht unten als Vorgabe (VORGABE) und wird
    beim ersten Speichern zur Datei. Anzeige: js/gemeinsam/inhalte.js (aspGottesdienste).
    Benoetigt js/gemeinsam/hochaemter-data.js und js/admin/admin.js.
    ============================================================ */
@@ -27,6 +29,13 @@
     ],
     termine: []
   };
+
+  /* Wann ein regelmaessiger Gottesdienst im Kalender steht (js/gemeinsam/aspersdorf-daten.js) */
+  const RHYTHMEN = [['', 'jede Woche'], ['1', '1. im Monat'], ['2', '2. im Monat'], ['3', '3. im Monat'], ['4', '4. im Monat'],
+    ['L', 'letzter im Monat'], ['1,3', '1. und 3. im Monat'], ['2,4', '2. und 4. im Monat'], ['aus', 'nicht automatisch (als besondere Termine eintragen)']];
+  const PAUSEN = [['', 'keine'], ['7,8', 'Juli und August'], ['8', 'August'], ['7', 'Juli']];
+  const pauseKey = (t) => (Array.isArray(t.pause) ? t.pause.join(',') : String(t.pause || ''));
+  const ARTEN = [['', 'Termin'], ['entfaellt', 'Entfällt']];
 
   let neu = false;        /* true = Datei gibt es noch nicht */
   let ready = false;
@@ -51,7 +60,11 @@
       `<input class="adm-input" type="time" data-key="zeit" aria-label="Uhrzeit" value="${esc(t.zeit || '')}"/>` +
       `<input class="adm-input" type="text" data-key="name" aria-label="Bezeichnung" maxlength="120" placeholder="z. B. Heilige Messe" value="${esc(t.name || '')}"/>` +
       `<input class="adm-input" type="text" data-key="hinweis" aria-label="Hinweis" maxlength="300" placeholder="optional, z. B. Ort" value="${esc(t.hinweis || '')}"/>` +
-      tools('Gottesdienst');
+      tools('Gottesdienst') +
+      '<div class="ag-more">' +
+        `<label><span>Im Kalender</span><select class="adm-input" data-key="rhythmus">${RHYTHMEN.map(([v, n]) => `<option value="${v}"${String(t.rhythmus || '') === v ? ' selected' : ''}>${n}</option>`).join('')}</select></label>` +
+        `<label><span>Pause</span><select class="adm-input" data-key="pause">${PAUSEN.map(([v, n]) => `<option value="${v}"${pauseKey(t) === v ? ' selected' : ''}>${n}</option>`).join('')}</select></label>` +
+      '</div>';
     return row;
   }
 
@@ -60,6 +73,7 @@
     row.className = 'adm-list-row ag-row ag-termin';
     row.innerHTML =
       `<input class="adm-input" type="date" data-key="datum" aria-label="Datum" value="${esc(t.datum || '')}"/>` +
+      `<select class="adm-input" data-key="art" aria-label="Art">${ARTEN.map(([v, n]) => `<option value="${v}"${(t.art || '') === v ? ' selected' : ''}>${n}</option>`).join('')}</select>` +
       `<input class="adm-input" type="time" data-key="zeit" aria-label="Uhrzeit" value="${esc(t.zeit || '')}"/>` +
       `<input class="adm-input" type="text" data-key="name" aria-label="Bezeichnung" maxlength="120" placeholder="z. B. Christmette" value="${esc(t.name || '')}"/>` +
       `<input class="adm-input" type="text" data-key="hinweis" aria-label="Hinweis" maxlength="300" placeholder="optional, z. B. Ort oder Mitwirkende" value="${esc(t.hinweis || '')}"/>` +
@@ -72,6 +86,14 @@
   function markPast(row) {
     const d = row.querySelector('[data-key="datum"]');
     if (d) row.classList.toggle('is-past', !!d.value && d.value < A.isoToday());
+    const art = row.querySelector('[data-key="art"]');
+    if (art) {
+      row.classList.toggle('is-off', art.value === 'entfaellt');
+      const name = row.querySelector('[data-key="name"]');
+      const hinweis = row.querySelector('[data-key="hinweis"]');
+      name.placeholder = art.value === 'entfaellt' ? 'welcher Gottesdienst, z. B. Heilige Messe' : 'z. B. Christmette';
+      hinweis.placeholder = art.value === 'entfaellt' ? 'Grund, z. B. Pfarrausflug' : 'optional, z. B. Ort oder Mitwirkende';
+    }
   }
 
   const values = (host) => Array.from(host.querySelectorAll('.ag-row')).map((row) => {
@@ -146,9 +168,19 @@
     }
     const filled = (t) => t.name || t.hinweis;
     const data = {
-      regelmaessig: values($('ag-regel')).filter(filled).map((t) => ({ tag: t.tag, zeit: t.zeit, name: t.name, hinweis: t.hinweis })).sort(byDay),
-      termine: values($('ag-termine')).filter(filled).map((t) => ({ datum: t.datum, zeit: t.zeit, name: t.name, hinweis: t.hinweis })).sort(byDate)
+      regelmaessig: values($('ag-regel')).filter(filled).map((t) => ({
+        tag: t.tag, zeit: t.zeit, name: t.name, hinweis: t.hinweis,
+        ...(t.rhythmus ? { rhythmus: t.rhythmus } : {}),
+        ...(t.pause ? { pause: t.pause.split(',').map(Number) } : {})
+      })).sort(byDay),
+      termine: values($('ag-termine')).filter(filled).map((t) => ({ datum: t.datum, zeit: t.zeit, name: t.name, hinweis: t.hinweis, ...(t.art ? { art: t.art } : {}) })).sort(byDate),
     };
+    /* Intention, Lektoren, Ewiges Licht … pflegt die Seite Monatsblatt: aus der Datei, wie sie jetzt ist, uebernehmen */
+    try {
+      const jetzt = await A.readJSON(PATH);
+      if (jetzt && jetzt.details) data.details = jetzt.details;
+      if (jetzt && jetzt.licht) data.licht = jetzt.licht;
+    } catch { /* Datei gibt es noch nicht */ }
     const btn = $('ag-save');
     btn.disabled = true;
     try {
@@ -188,7 +220,11 @@
       if (row) markPast(row);
       showState();
     });
-    $('ag-form').addEventListener('change', showState);
+    $('ag-form').addEventListener('change', (ev) => {
+      const row = ev.target.closest('.ag-termin');
+      if (row) markPast(row);
+      showState();
+    });
     $('ag-form').addEventListener('submit', save);
     A.guard(() => ready && state() !== snap);
     A.folder.on((s) => { if (s === 'ok') load(); });

@@ -1,7 +1,7 @@
 /* ============================================================
    Augustinerkirche Wien — admin-fotos.js
    Fotos der Seiten austauschen (admin/fotos.html): alle Fotos mit data-foto="…" (an <figure>
-   oder direkt am <img>) auf den Seiten der Website, nach Seiten geordnet. Je Foto ein neues Bild, der Bildtext
+   oder direkt am <img>) auf den Seiten der Website, nach Seiten geordnet. Je Foto ein neues Bild, die Überschrift des Abschnitts, der Bildtext
    (unter dem Foto) und eine kurze Beschreibung (fuer Screenreader). Gleicher Schluessel an
    mehreren Stellen (z. B. Gruppenbild der Mitbrueder) = ein Foto fuer alle diese Stellen.
    Gespeichert in data/fotos.json: {fotos: {schluessel: {bild, breite, hoehe, alt, bildtext}}};
@@ -149,6 +149,10 @@
     const own = cur(edit);
     $('fo-dlg-title').textContent = textVon(edit) || edit.alt || edit.key;
     $('fo-dlg-tag').textContent = stelleText(edit.stellen[0]);
+    /* Die Ueberschrift gilt nur, wenn das Foto an einer einzigen Stelle steht */
+    $('fo-titel-feld').hidden = edit.stellen.length > 1 || !edit.bereich;
+    $('fo-titel').value = (own && own.titel) || edit.bereich;
+    $('fo-titel').placeholder = edit.bereich;
     $('fo-text').value = (own && own.bildtext) || edit.bildtext;
     $('fo-text').placeholder = edit.bildtext || 'Kein Bildtext';
     $('fo-alt').value = (own && own.alt) || edit.alt;
@@ -206,7 +210,8 @@
     const old = cur(f);
     const bildtext = clean($('fo-text').value);
     const alt = clean($('fo-alt').value);
-    if (!image && !old && bildtext === f.bildtext && alt === f.alt) {
+    const titel = $('fo-titel-feld').hidden ? '' : clean($('fo-titel').value);
+    if (!image && !old && bildtext === f.bildtext && alt === f.alt && (!titel || titel === f.bereich)) {
       $('fo-dlg').close();
       return;
     }
@@ -222,8 +227,9 @@
       }
       eintrag.bildtext = bildtext === f.bildtext ? '' : bildtext;
       eintrag.alt = alt === f.alt ? '' : alt;
+      eintrag.titel = titel === f.bereich ? '' : titel;
       const next = { ...eigen };
-      if (!eintrag.bild && !eintrag.bildtext && !eintrag.alt) delete next[f.key];
+      if (!eintrag.bild && !eintrag.bildtext && !eintrag.alt && !eintrag.titel) delete next[f.key];
       else next[f.key] = eintrag;
       const direct = await persist(next);
       if (image && old && old.bild !== eintrag.bild) await dropOld(old.bild);

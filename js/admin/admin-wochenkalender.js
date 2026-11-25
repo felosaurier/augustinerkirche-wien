@@ -40,11 +40,12 @@
 
   const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const addDays = (dt, n) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + n);
-  const mondayOf = (dt) => addDays(dt, -((dt.getDay() + 6) % 7));
+  /* Woche von Sonntag bis Sonntag, gespeichert unter dem Montag dazwischen; am Sonntag beginnt die neue */
+  const mondayOf = (dt) => addDays(dt, -((dt.getDay() + 6) % 7) + (dt.getDay() === 0 ? 7 : 0));
   const iso = A.isoOf;
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
   const dayOf = (d) => tage.find((x) => x.datum === d) || null;
-  const weekIsos = () => Array.from({ length: 7 }, (_, i) => iso(addDays(monday, i)));
+  const weekIsos = () => Array.from({ length: 8 }, (_, i) => iso(addDays(monday, i - 1)));
   const whenOf = (it) => it.time || it.label || '';
   /* Platz des Termins im Tag: Uhrzeit, bei "anschließend" die Uhrzeit davor mit ~ */
   const slotOfTermin = (t) => (HD.isoTime(t.zeit) ? HD.isoTime(t.zeit) : `${HD.isoTime(t.nach)}~`);
@@ -96,12 +97,13 @@
   function render() {
     const days = weekIsos();
     const sun = addDays(monday, 6);
+    const start = addDays(monday, -1);   /* Sonntag davor */
     const m = HD.MONTHS;
-    $('wk-title').textContent = monday.getMonth() === sun.getMonth()
-      ? `${monday.getDate()}.–${sun.getDate()}. ${m[sun.getMonth()]} ${sun.getFullYear()}`
-      : `${monday.getDate()}. ${m[monday.getMonth()]} – ${sun.getDate()}. ${m[sun.getMonth()]} ${sun.getFullYear()}`;
+    $('wk-title').textContent = start.getMonth() === sun.getMonth()
+      ? `${start.getDate()}.–${sun.getDate()}. ${m[sun.getMonth()]} ${sun.getFullYear()}`
+      : `${start.getDate()}. ${m[start.getMonth()]} – ${sun.getDate()}. ${m[sun.getMonth()]} ${sun.getFullYear()}`;
     $('wk-date').value = iso(monday);
-    const inWeek = items.filter((it) => it.date >= days[0] && it.date <= days[6]);
+    const inWeek = items.filter((it) => it.date >= days[0] && it.date <= days[7]);
     const shown = inWeek.filter((it) => !it.hidden).length;
     $('wk-count').textContent = `${plural(shown, 'Termin', 'Termine')} im Wochenkalender` +
       (inWeek.length > shown ? `, ${inWeek.length - shown} entfallen (durchgestrichen)` : '');

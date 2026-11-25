@@ -1,0 +1,37 @@
+/* Monatsblatt Aspersdorf (js/admin/aspersdorf-monatsblatt.js) nach der Vorlage der Pfarre:
+   A5 hoch, Calibri, schwarz; Vorschau in der Verwaltung, beim Drucken nur das Blatt */
+.mb-stage{overflow:auto;padding:1.2rem;background:#e9e7e1;border:1px solid var(--line)}
+.mb-blatt{width:148mm;min-height:210mm;margin:0 auto;padding:8mm 10mm 8mm;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.15);font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif;color:#000;font-size:10.5pt;line-height:1.15}
+.mb-blatt b{font-weight:700}
+.mb-kopf{display:flex;justify-content:space-between;align-items:flex-start;gap:4mm;margin-bottom:6mm}
+.mb-titel{font-size:16pt;font-weight:400;line-height:1.1}
+.mb-monat{margin-top:2.5mm;font-size:12.5pt;font-weight:700}
+.mb-kontakt{margin-top:2.5mm;font-size:7.5pt;line-height:1.25}
+.mb-logo{width:46mm;height:auto;flex:none}
+.mb-band{margin:5mm 0 3mm;font-size:10pt;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:.02em}
+.mb-licht{display:flex;justify-content:flex-end;align-items:flex-end;gap:1mm;margin:4mm 0 1.5mm;font-size:10pt;line-height:1.15;text-align:right}
+.mb-licht img{width:2.4mm;height:auto}
+.mb-tag{display:grid;grid-template-columns:8mm 11mm minmax(0,1fr);column-gap:1mm;margin-bottom:3.2mm;break-inside:avoid}
+.mb-wt,.mb-dat{font-size:10.5pt}
+.mb-dat{text-align:right;padding-right:1mm}
+.mb-fett .mb-wt,.mb-fett .mb-dat,.mb-fett .mb-z{font-weight:700}
+.mb-its{display:flex;flex-direction:column;gap:1mm}
+.mb-it{display:grid;grid-template-columns:16mm minmax(0,1fr);column-gap:2mm}
+.mb-z{text-align:right;white-space:nowrap}
+.mb-kopfzeile{display:flex;justify-content:space-between;align-items:baseline;gap:3mm}
+.mb-n{flex:0 1 auto;white-space:nowrap}
+.mb-r{flex:0 1 auto;min-width:0}
+.mb-r{font-size:9pt;text-align:right;line-height:1.2}
+.mb-r b{font-size:9.5pt}
+.mb-h{font-size:10pt}
+.mb-fuer{font-style:italic}
+.mb-dienste{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);column-gap:2mm;margin-top:.6mm;font-size:9.5pt;line-height:1.15}
+.mb-zusatz{margin-top:1mm;font-weight:700}
+.mb-leer{padding:8mm 0;color:#555}
+.mb-legende{margin-top:5mm;padding-top:1.5mm;border-top:.5pt solid #999;font-size:6.8pt;color:#333;text-align:center}
+@media print{
+  @page{size:A5;margin:8mm 10mm}
+  body.mb-druck>*:not(.mb-print-host){display:none!important}
+  body.mb-druck .mb-print-host{display:block!important;position:static}
+  body.mb-druck .mb-blatt{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}
+}

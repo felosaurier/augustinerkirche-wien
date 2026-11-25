@@ -35,7 +35,13 @@
           "cds",
           "galerie",
           "musik-personen",
-          "repertoire"
+          "repertoire",
+          "musik-texte",
+          "startseite",
+          "qrcode",
+          "plakat",
+          "wochenplakat",
+          "farben"
         ],
         "runden": []
       }

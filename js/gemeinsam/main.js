@@ -947,13 +947,8 @@
     heroCount = () => { count.textContent = `${cur + 1} / ${slides.length}`; };
     heroCount();
 
-    /* Balken unten: zeigt, wann das Foto wechselt; steht still, solange die Pfeile da sind */
-    const bar = document.createElement('div');
-    bar.className = 'hero-timer';
-    bar.setAttribute('aria-hidden', 'true');
-    const fill = document.createElement('span');
-    bar.append(fill);
-    box.append(bar);
+    /* Zeitgeber fuer den Bildwechsel; steht still, solange die Pfeile da sind. Den goldenen Balken
+       unten gibt es nicht mehr (wirkte unruhig); dass es mehrere Fotos gibt, zeigt der Zaehler "1 / 9" */
     const STEP = 100;
     let elapsed = 0;
     let shown = -1;
@@ -962,16 +957,12 @@
         shown = cur;
         elapsed = 0;
       }
-      bar.hidden = reducedMotion.matches;
       if (paused || reducedMotion.matches || document.hidden || box.classList.contains('show-arrows') || box.contains(document.activeElement)) return;
       elapsed += STEP;
       if (elapsed >= secs * 1000) {
         elapsed = 0;
-        fill.style.transform = 'scaleX(1)';
         go(cur + 1);
-        return;
       }
-      fill.style.transform = `scaleX(${elapsed / (secs * 1000)})`;
     }, STEP);
   }
 

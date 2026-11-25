@@ -1,0 +1,247 @@
+{
+  "regelmaessig": [
+    {
+      "tag": "so",
+      "zeit": "08:30",
+      "name": "Heilige Messe",
+      "hinweis": "Pfarrkirche St. Georg, Aspersdorf"
+    },
+    {
+      "tag": "mi",
+      "zeit": "14:00",
+      "name": "Mittwochstreff im Pfarrhaus",
+      "hinweis": "",
+      "rhythmus": "1"
+    },
+    {
+      "tag": "do",
+      "zeit": "17:30",
+      "name": "Rosenkranz | Beichtgelegenheit",
+      "hinweis": ""
+    },
+    {
+      "tag": "do",
+      "zeit": "18:00",
+      "name": "Heilige Messe",
+      "hinweis": ""
+    },
+    {
+      "tag": "do",
+      "zeit": "19:00",
+      "name": "Sprechstunde des Pfarrvikars (bis 19:30 Uhr)",
+      "hinweis": ""
+    }
+  ],
+  "termine": [
+    {
+      "datum": "2026-10-01",
+      "zeit": "19:00",
+      "name": "Info-Abend zur Firmung 2027",
+      "hinweis": "Ort: Gartenstadtkirche HL"
+    },
+    {
+      "datum": "2026-10-03",
+      "zeit": "17:00",
+      "name": "Heilige Messe",
+      "hinweis": "zum Erntedank"
+    },
+    {
+      "datum": "2026-10-04",
+      "zeit": "08:30",
+      "name": "Heilige Messe",
+      "hinweis": "Vorabendmesse am Samstag",
+      "art": "entfaellt"
+    },
+    {
+      "datum": "2026-10-10",
+      "zeit": "10:00",
+      "name": "Pfarr-Flohmarkt im Pfarrhaus (bis 15:00 Uhr)",
+      "hinweis": ""
+    },
+    {
+      "datum": "2026-10-10",
+      "zeit": "17:00",
+      "name": "Heilige Messe",
+      "hinweis": ""
+    },
+    {
+      "datum": "2026-10-11",
+      "zeit": "08:30",
+      "name": "Heilige Messe",
+      "hinweis": "Vorabendmesse am Samstag",
+      "art": "entfaellt"
+    },
+    {
+      "datum": "2026-10-11",
+      "zeit": "10:00",
+      "name": "Pfarr-Flohmarkt im Pfarrhaus (bis 15:00 Uhr)",
+      "hinweis": ""
+    },
+    {
+      "datum": "2026-10-29",
+      "zeit": "17:30",
+      "name": "Rosenkranz | Beichtgelegenheit",
+      "hinweis": "diese Woche am Freitag",
+      "art": "entfaellt"
+    },
+    {
+      "datum": "2026-10-29",
+      "zeit": "18:00",
+      "name": "Heilige Messe",
+      "hinweis": "diese Woche am Freitag",
+      "art": "entfaellt"
+    },
+    {
+      "datum": "2026-10-29",
+      "zeit": "19:00",
+      "name": "Sprechstunde des Pfarrvikars (bis 19:30 Uhr)",
+      "hinweis": "diese Woche am Freitag",
+      "art": "entfaellt"
+    },
+    {
+      "datum": "2026-10-30",
+      "zeit": "17:30",
+      "name": "Rosenkranz | Beichtgelegenheit",
+      "hinweis": ""
+    },
+    {
+      "datum": "2026-10-30",
+      "zeit": "18:00",
+      "name": "Heilige Messe",
+      "hinweis": ""
+    },
+    {
+      "datum": "2026-10-30",
+      "zeit": "19:00",
+      "name": "Sprechstunde des Pfarrvikars (bis 19:30 Uhr)",
+      "hinweis": ""
+    },
+    {
+      "datum": "2026-11-01",
+      "zeit": "08:30",
+      "name": "Heilige Messe",
+      "hinweis": "Allerheiligen: Messe um 14:30 Uhr",
+      "art": "entfaellt"
+    },
+    {
+      "datum": "2026-11-01",
+      "zeit": "14:30",
+      "name": "Heilige Messe",
+      "hinweis": ""
+    },
+    {
+      "datum": "2026-11-02",
+      "zeit": "09:00",
+      "name": "Heilige Messe",
+      "hinweis": ""
+    }
+  ],
+  "details": {
+    "2026-10-01 17:30 Rosenkranz | Beichtgelegenheit": {
+      "rechts": "Hl. Theresia vom Kinde Jesus | Ordensfrau, Kirchenlehrerin"
+    },
+    "2026-10-01 18:00 Heilige Messe": {
+      "lk": "Weber",
+      "l1": "Ijob 19,1.21-27",
+      "ev": "Lk 10,1-12"
+    },
+    "2026-10-03 17:00 Heilige Messe": {
+      "fuer": "+ Gattin Maria Wiehart",
+      "lk": "Lechner-Fent, Rockenbauer",
+      "kh": "Schmalhofer",
+      "mini": "I + II",
+      "l1": "Jes 5,1-7",
+      "l2": "Phil 4,6-9",
+      "ev": "Mt 21,33-42.44.43",
+      "zusatz": "anschl. Erntedank-Agape im und um den Augustinerkeller"
+    },
+    "2026-10-08 17:30 Rosenkranz | Beichtgelegenheit": {
+      "rechts": "-"
+    },
+    "2026-10-08 18:00 Heilige Messe": {
+      "l1": "Gal 3,1-5",
+      "ev": "Lk 11,5-13"
+    },
+    "2026-10-10 10:00 Pfarr-Flohmarkt im Pfarrhaus (bis 15:00 Uhr)": {
+      "rechts": "-"
+    },
+    "2026-10-10 17:00 Heilige Messe": {
+      "fuer": "+ Eltern Franziska und Franz Mattes",
+      "lk": "Strobach, Weber S.",
+      "kh": "Spitzer",
+      "mini": "I",
+      "l1": "Jes 25,6-10a",
+      "l2": "Phil 4,12-14.19-20",
+      "ev": "Mt 22,1-14"
+    },
+    "2026-10-11 10:00 Pfarr-Flohmarkt im Pfarrhaus (bis 15:00 Uhr)": {
+      "rechts": "-"
+    },
+    "2026-10-15 17:30 Rosenkranz | Beichtgelegenheit": {
+      "rechts": "Hl. Theresia von Jesus | (von Ávila) Ordensfrau, Kirchenlehrerin"
+    },
+    "2026-10-15 18:00 Heilige Messe": {
+      "l1": "Eph 1,1-10",
+      "ev": "Lk 11,47-54"
+    },
+    "2026-10-18 08:30 Heilige Messe": {
+      "fuer": "+ Maria Zeinler von Elli und Anni",
+      "lk": "Rauchberger, Weiß",
+      "kh": "Weber",
+      "mini": "I",
+      "l1": "Jes 45,1.4-6",
+      "l2": "1 Thess 1,1-5b",
+      "ev": "Mt 22,15-21",
+      "zusatz": "Weltmissionssonntag"
+    },
+    "2026-10-22 17:30 Rosenkranz | Beichtgelegenheit": {
+      "rechts": "Hl. Johannes Paul II. | Papst"
+    },
+    "2026-10-22 18:00 Heilige Messe": {
+      "lk": "Strobach",
+      "l1": "Eph 3,14–21",
+      "ev": "Lk 12,49–53"
+    },
+    "2026-10-25 08:30 Heilige Messe": {
+      "lk": "Hudelist, Niedermayer",
+      "kh": "Schmalhofer",
+      "mini": "II",
+      "l1": "Ex 22,20-26",
+      "l2": "1 Thess 1,5c-10",
+      "ev": "Mt 22,34-40"
+    },
+    "2026-10-30 17:30 Rosenkranz | Beichtgelegenheit": {
+      "rechts": "-"
+    },
+    "2026-10-30 18:00 Heilige Messe": {
+      "lk": "Weber",
+      "l1": "Phil 1,1-11",
+      "ev": "Lk 14,1-6"
+    },
+    "2026-11-01 14:30 Heilige Messe": {
+      "lk": "Strobach, Weber S.",
+      "kh": "Spitzer",
+      "mini": "I + II",
+      "l1": "Offb 7,2-4.9-14",
+      "l2": "1 Joh 3,1-3",
+      "ev": "Mt 5,1-12a",
+      "zusatz": "Toten-Gedenken • Gräber-Gang & Gräber-Segnung"
+    },
+    "2026-11-02 09:00 Heilige Messe": {
+      "fuer": "die Verstorbenen der Pfarre Aspersdorf",
+      "lk": "Lechner-Fent, Rockenbauer",
+      "kh": "Weber",
+      "mini": "I + II",
+      "l1": "2 Makk 12,43-45",
+      "l2": "1 Thess 4,13-18",
+      "ev": "Joh 5,24-29",
+      "zusatz": "Gräber-Gang & Gräber-Segnung",
+      "rechts": "Allerseelen"
+    }
+  },
+  "licht": {
+    "2026-10-04": "Herrn Erich Wiehart",
+    "2026-10-11": "Frau Eleonore Spitzer",
+    "2026-10-18": "Elli und Anni"
+  }
+}

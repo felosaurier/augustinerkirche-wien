@@ -234,7 +234,7 @@
   }
 
   /* ---------- Fotos der Seiten (Verwaltung: Website → Fotos der Seiten) ----------
-     <figure data-foto="schluessel"> oder <img data-foto="schluessel"> im HTML; data/fotos.json: {fotos: {schluessel: {bild, breite, hoehe, alt, bildtext}}}.
+     <figure data-foto="schluessel"> oder <img data-foto="schluessel"> im HTML; data/fotos.json: {fotos: {schluessel: {bild, breite, hoehe, alt, bildtext, titel}}}.
      Gleicher Schluessel an mehreren Stellen (z. B. Gruppenbild der Mitbrueder) = ein Foto fuer alle.
      Bildtext und Beschreibung nur auf den deutschen Seiten; die uebersetzten behalten ihre eigenen. */
   async function fotos() {
@@ -243,6 +243,16 @@
     const map = ((await load('fotos.json')) || {}).fotos || {};
     for (const fig of figs) {
       const f = map[fig.dataset.foto];
+      /* Ueberschrift des Abschnitts (Reiter bzw. Bereich), in dem das Foto steht */
+      if (f && LANG === 'de' && String(f.titel || '').trim()) {
+        const pane = fig.closest('.tab-pane, section');
+        const h = pane && pane.querySelector('h1, h2');
+        if (h) {
+          const first = [...h.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim());
+          if (first) first.textContent = `${f.titel.trim()} `;
+          else if (!h.children.length) h.textContent = f.titel.trim();
+        }
+      }
       const src = f && typeof f.bild === 'string' && /^assets\/[^?#]+\.(webp|jpe?g|png)$/i.test(f.bild) ? url(f.bild) : '';
       if (!src) continue;
       const img = fig.tagName === 'IMG' ? fig : fig.querySelector('img');
@@ -324,7 +334,7 @@
         el.insertAdjacentHTML('beforebegin', '<div class="people-index" role="navigation" aria-label="Übersicht">' + list.map((p, i) => {
           const src = url(p.bild);
           return `<a href="#person-${esc(el.dataset.personen)}-${i + 1}">` +
-            (src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async"/>` : '') +
+            (src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async"/>` : `<i class="people-index-ph" aria-hidden="true" style="--logo:url('${esc(url('assets/logo-gold.png'))}')"></i>`) +
             `<span><b>${esc(p.name)}</b>${p.rolle ? `<small>${esc(p.rolle)}</small>` : ''}</span></a>`;
         }).join('') + '</div>');
         /* Am Anfang nur die Vorschau: die Karte einer Person erscheint erst auf Klick (nochmal klicken schliesst sie) */
@@ -560,7 +570,13 @@
     const data = await load('aspersdorf-wochen.json');
     const list = (data.wochen || []).filter((w) => w && url(w.datei))
       .sort((a, b) => String(b.datum).localeCompare(String(a.datum)));
-    const name = (w) => w.titel || (w.datum ? `Gottesdienste der Woche vom ${longDate(w.datum)}` : 'Wochenblatt');
+    /* Monat eines Blatts: aus dem Titel nach "|" ("… | Juli & August 2026"), sonst aus dem Datum */
+    const monat = (w) => {
+      const t = String(w.titel || '');
+      if (t.includes('|')) return t.split('|').pop().trim();
+      const d = HD.dateFromIso(w.datum);
+      return d ? `${HD.MONTHS[d.getMonth()]} ${d.getFullYear()}` : t || 'Gottesdienstordnung';
+    };
     for (const el of hosts) {
       if (!list.length) {
         el.hidden = true;
@@ -577,18 +593,18 @@
         if (!years.length || years[years.length - 1].y !== y) years.push({ y, list: [] });
         years[years.length - 1].list.push(w);
       }
+      /* Knopf "Gottesdienste & Termine" mit dem Monat daneben ("November 2026", "Juli & August 2026") */
+      const pfeil = '<svg class="asp-blatt-arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v14M6 12l6 6 6-6"/></svg>';
       el.innerHTML =
-        `<div class="asp-woche-now${img ? ' has-img' : ''}">` +
-          (img
-            ? `<a class="asp-woche-img" href="${esc(url(now.datei))}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="${esc(img)}" alt="" loading="lazy" decoding="async"/></a>`
-            : '<div class="asp-woche-icon" aria-hidden="true">PDF</div>') +
-          `<div class="asp-woche-text"><div class="asp-woche-kicker">Gottesdienstordnung &amp; Termine</div><div class="asp-woche-titel">${esc(name(now))}</div></div>` +
-          `<a class="btn btn-dark" href="${esc(url(now.datei))}" target="_blank" rel="noopener">Wochenblatt öffnen</a>` +
-        '</div>' +
+        '<h3 class="pane-sub">Gottesdienstordnung zum Herunterladen</h3>' +
+        `<a class="asp-blatt" href="${esc(url(now.datei))}" target="_blank" rel="noopener">` +
+          (img ? `<img class="asp-blatt-img" src="${esc(img)}" alt="" loading="lazy" decoding="async"/>` : '<span class="asp-blatt-ico" aria-hidden="true">PDF</span>') +
+          `<span class="asp-blatt-txt"><span class="asp-blatt-t">Gottesdienste &amp; Termine</span><span class="asp-blatt-m">${esc(monat(now))}</span></span>${pfeil}` +
+        '</a>' +
         (older.length
-          ? `<details class="asp-woche-older"><summary>Archiv <span>${older.length}</span></summary>` +
+          ? `<details class="asp-woche-older"><summary>Frühere Monate <span>${older.length}</span></summary>` +
             years.map((g) => `<div class="asp-woche-year"><h4>${esc(g.y)}</h4><ul>` +
-              g.list.map((w) => `<li><a href="${esc(url(w.datei))}" target="_blank" rel="noopener">${esc(name(w))}</a></li>`).join('') + '</ul></div>').join('') +
+              g.list.map((w) => `<li><a href="${esc(url(w.datei))}" target="_blank" rel="noopener">Gottesdienste &amp; Termine · ${esc(monat(w))}</a></li>`).join('') + '</ul></div>').join('') +
             '</details>'
           : '');
       el.hidden = false;
@@ -610,8 +626,12 @@
       for (const el of tables) {
         el.innerHTML = regel.map((t, i, arr) => {
           const gleich = i > 0 && arr[i - 1].tag === t.tag;
+          /* wann (z. B. "am 1. und 3. im Monat"), sofern der Hinweis es nicht schon sagt */
+          const AD = window.AspersdorfDaten;
+          const wann = AD && !/monat|juli|august|sommer/i.test(t.hinweis || '') ? AD.rhythmusText(t) : '';
+          const note = [t.hinweis ? rich(t.hinweis) : '', wann ? esc(wann) : ''].filter(Boolean).join(', ');
           return `<tr${gleich ? ' class="gd-same"' : ''}><td class="gd-day">${gleich ? '' : esc(DAYS[t.tag])}</td><td class="gd-time">${esc(HD.uhr(t.zeit))}</td>` +
-            `<td><div class="gd-name">${esc(t.name)}</div>${t.hinweis ? `<div class="gd-note">${rich(t.hinweis)}</div>` : ''}</td></tr>`;
+            `<td><div class="gd-name">${esc(t.name)}</div>${note ? `<div class="gd-note">${note}</div>` : ''}</td></tr>`;
         }).join('');
       }
     }
@@ -630,7 +650,7 @@
         const tag = d ? `${HD.WEEKDAYS[d.getDay()]}, ${d.getDate()}. ${HD.MONTHS[d.getMonth()]}` : t.datum;
         return '<li class="asp-termin">' +
           `<div class="asp-termin-when"><span class="asp-termin-date">${esc(tag)}</span>${t.zeit ? `<span class="asp-termin-time">${esc(HD.uhr(t.zeit))}</span>` : ''}</div>` +
-          `<div class="asp-termin-what"><div class="gd-name">${esc(t.name)}</div>${t.hinweis ? `<div class="gd-note">${rich(t.hinweis)}</div>` : ''}</div></li>`;
+          `<div class="asp-termin-what"><div class="gd-name">${t.art === 'entfaellt' ? `<s>${esc(t.name)}</s> <span class="asp-entfaellt">entfällt</span>` : esc(t.name)}</div>${t.hinweis ? `<div class="gd-note">${rich(t.hinweis)}</div>` : ''}</div></li>`;
       }).join('') + '</ul>';
       el.hidden = false;
     }

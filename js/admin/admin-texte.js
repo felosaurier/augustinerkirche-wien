@@ -32,8 +32,16 @@
       ['Gemeindeleben', ['kirche-sakramente', 'kirche-sakr-taufe', 'kirche-sakr-eucharistie', 'kirche-sakr-firmung', 'kirche-sakr-busse', 'kirche-sakr-trauung', 'kirche-sakr-weihe', 'kirche-sakr-krankensalbung', 'kirche-sakr-sterbebegleitung', 'kirche-wiedereintritt']],
       ['Augustinerkirche', ['kirche-geschichte', 'kirche-fuehrungen']]
     ],
+    aspersdorf: [
+      ['Leitung & Gremien', ['asp-leitung', 'asp-pgr', 'asp-vwr']],
+      ['Pfarrkirche St. Georg', ['asp-kirche', 'asp-kirche-karten', 'asp-ort']],
+      ['Gottesdienste & Kalender', ['asp-anstoss']],
+      ['Sakramente & Pfarrleben', ['asp-sakramente', 'asp-sakr-taufe', 'asp-sakr-eucharistie', 'asp-sakr-firmung', 'asp-sakr-busse', 'asp-sakr-trauung', 'asp-sakr-weihe', 'asp-sakr-krankensalbung', 'asp-sakr-sterbefall', 'asp-wiedereintritt', 'asp-dienste']],
+      ['Pfarrfriedhof', ['asp-friedhof']]
+    ],
     musik: [
       ['Hochämter', ['musik-hochaemter']],
+      ['Leitung der Kirchenmusik', ['musik-leitung']],
       ['Solisten', ['musik-solisten']],
       ['Chor & Orchester', ['musik-chor', 'musik-kammerchor', 'musik-orchester']],
       ['Orgeln: Überblick (Reiter auf der Kirchenmusik-Seite)', ['musik-orgeln', 'musik-orgeln-rieger-daten', 'musik-orgeln-reil-daten']],

@@ -234,6 +234,10 @@
           href: 'aspersdorf-gottesdienste.html', ico: 'clock', title: 'Gottesdienste &amp; Termine',
           stat: ag ? [plural(count(ag.regelmaessig), 'Gottesdienst', 'Gottesdienste'), plural(count((ag.termine || []).filter((t) => t && t.datum >= A.isoToday())), 'Termin', 'Termine')].join(' · ') : 'Wie auf der Seite'
         }),
+        can('asp-gottesdienste') && row({
+          href: 'aspersdorf-monatsblatt.html', ico: 'calendar', title: 'Monatsblatt',
+          stat: ag && ag.details ? plural(Object.keys(ag.details).length, 'Gottesdienst mit Angaben', 'Gottesdienste mit Angaben') : 'Noch keine Angaben'
+        }),
         can('asp-wochen') && row({
           href: 'aspersdorf-wochen.html', ico: 'calendarWeek', title: 'Wochenblätter (PDF)', flag: weekOld,
           stat: wo ? plural(count(wo.wochen), 'Wochenblatt', 'Wochenblätter') : none,
@@ -245,7 +249,7 @@
           addHref: 'aspersdorf-friedhof.html?neu=1', addLabel: 'Neue Tabelle'
         }),
         can('asp-texte') && row({
-          href: 'texte.html?bereich=aspersdorf', ico: 'book', title: 'Texte (Friedhof)',
+          href: 'texte.html?bereich=aspersdorf', ico: 'book', title: 'Texte der Seiten',
           stat: geaendert('asp-') ? plural(geaendert('asp-'), 'Abschnitt geändert', 'Abschnitte geändert') : 'Wie ursprünglich'
         })
       ]],

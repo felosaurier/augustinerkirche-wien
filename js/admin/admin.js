@@ -141,14 +141,14 @@
     { key: 'cds', label: 'CDs', group: 'Kirchenmusik', page: 'cds.html' },
     { key: 'galerie', label: 'Galerie (Fotos, Videos, Aufnahmen)', group: 'Kirchenmusik', page: 'galerie.html' },
     { key: 'musik-personen', label: 'Leitung & Organisten', group: 'Kirchenmusik', page: 'personen.html' },
-    { key: 'musik-texte', label: 'Texte der Kirchenmusik (Chor, Orchester, Orgeln …)', group: 'Kirchenmusik', page: 'texte.html' },
+    { key: 'musik-texte', label: 'Texte der Kirchenmusik (Leitung, Chor, Orchester, Orgeln …)', group: 'Kirchenmusik', page: 'texte.html' },
     { key: 'repertoire', label: 'Repertoire & Komponisten (Lebensdaten)', group: 'Kirchenmusik', page: 'repertoire.html' },
     { key: 'asp-personen', label: 'Aspersdorf: Pfarrer & Leitung', group: 'Pfarre Aspersdorf', page: 'personen.html' },
     { key: 'asp-gremien', label: 'Aspersdorf: Pfarrgemeinderat & Vermögensverwaltungsrat', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gremien.html' },
-    { key: 'asp-gottesdienste', label: 'Aspersdorf: Gottesdienste & Termine', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gottesdienste.html' },
+    { key: 'asp-gottesdienste', label: 'Aspersdorf: Gottesdienste & Termine (mit Monatsblatt)', group: 'Pfarre Aspersdorf', page: 'aspersdorf-gottesdienste.html' },
     { key: 'asp-wochen', label: 'Aspersdorf: Wochenblätter (PDF)', group: 'Pfarre Aspersdorf', page: 'aspersdorf-wochen.html' },
     { key: 'asp-friedhof', label: 'Aspersdorf: Friedhofsgebühren', group: 'Pfarre Aspersdorf', page: 'aspersdorf-friedhof.html' },
-    { key: 'asp-texte', label: 'Aspersdorf: Texte (Friedhofsordnung)', group: 'Pfarre Aspersdorf', page: 'texte.html' },
+    { key: 'asp-texte', label: 'Aspersdorf: Texte der Seiten (Leitung, Kirche, Sakramente, Friedhof …)', group: 'Pfarre Aspersdorf', page: 'texte.html' },
     { key: 'gottesdienste', label: 'Gottesdienstzeiten', group: 'Pfarre & Kloster', page: 'gottesdienste.html' },
     { key: 'wochenkalender', label: 'Wochenkalender', group: 'Pfarre & Kloster', page: 'wochenkalender.html' },
     { key: 'kontakt', label: 'Pfarrkanzlei & Kontakt', group: 'Pfarre & Kloster', page: 'kontakt.html' },
@@ -203,6 +203,8 @@
     if (page === 'entdecken.html') return 'startseite';
     /* Fotos der Seiten gehoeren ebenfalls zu den Titelfotos (Recht fuer Fotos der Website) */
     if (page === 'fotos.html') return 'startseite';
+    /* Das Monatsblatt gehoert zu den Gottesdiensten & Terminen von Aspersdorf (dieselbe Datei) */
+    if (page === 'aspersdorf-monatsblatt.html') return 'asp-gottesdienste';
     /* Der Heiligenkalender gehoert zum Wochenkalender */
     if (page === 'heiligenkalender.html') return 'wochenkalender';
     if (page === 'personen.html') return personenKey(personenBereich());
@@ -2200,7 +2202,7 @@
     { label: 'Kirchenmusik', items: [
       ['solisten.html', 'Solisten', 'mic', 'Sänger Sopran Alt Tenor Bass Foto'],
       ['repertoire.html', 'Repertoire & Komponisten', 'book', 'Komponisten Werke Messen Chor Lebensdaten Jahreszahlen Geburt Tod Schreibweisen Hochamt Programm Weitere Musik'],
-      ['texte.html?bereich=musik', 'Texte der Kirchenmusik', 'book', 'Texte ändern Kirchenmusik Chor Orchester Orgeln Solisten Patenschaft'],
+      ['texte.html?bereich=musik', 'Texte der Kirchenmusik', 'book', 'Texte ändern Kirchenmusik Leitung Kirchenmusikdirektor Einleitung Chor Kammerchor Orchester Orgeln Solisten Patenschaft'],
       ['personen.html?bereich=musik', 'Leitung & Organisten', 'user', 'Dirigent Chorleiter Organist Orgel Gastdirigenten'],
       ['paten.html', 'Paten & Ehrenpaten', 'heart', 'Patenschaft Ehrenpaten Förderer Spender'],
       ['spenden.html', 'Spendenmöglichkeiten', 'heart', 'Patenschaft Spenden PayPal Beträge Preise Förderer Stifter'],
@@ -2211,9 +2213,10 @@
       ['personen.html?bereich=aspersdorf', 'Pfarrer & Leitung', 'user', 'Aspersdorf Pfarrmoderator Pfarrvikar Pfarrer Leitung'],
       ['aspersdorf-gremien.html', 'Pfarrgemeinderat & Vermögensverwaltungsrat', 'users', 'Aspersdorf PGR Vermögensverwaltungsrat VWR Mitglieder Gremien'],
       ['aspersdorf-gottesdienste.html', 'Gottesdienste & Termine', 'clock', 'Aspersdorf Gottesdienste Messen Termine Kalender Feiertage Wochentag Uhrzeit Beichte'],
+      ['aspersdorf-monatsblatt.html', 'Monatsblatt', 'calendar', 'Aspersdorf Monatsblatt Gottesdienstordnung Intention Lektoren LK KH Kommunionhelfer Ministranten Lesungen Ewiges Licht Drucken PDF Word'],
       ['aspersdorf-wochen.html', 'Wochenblätter (PDF)', 'calendarWeek', 'Aspersdorf Woche Gottesdienste Kalender PDF Pfarrblatt hochladen'],
       ['aspersdorf-friedhof.html', 'Friedhofsgebühren', 'book', 'Aspersdorf Friedhof Gebühren Gräber Tabellen Preise'],
-      ['texte.html?bereich=aspersdorf', 'Texte (Friedhof)', 'book', 'Aspersdorf Texte ändern Friedhofsordnung Friedhofsverwaltung Pfarrfriedhof']
+      ['texte.html?bereich=aspersdorf', 'Texte der Seiten', 'book', 'Aspersdorf Texte ändern Leitung Pfarrgemeinderat Kirche St. Georg Glocken Ort Sakramente Taufe Trauung Wiedereintritt Dienste Friedhofsordnung Friedhofsverwaltung Pfarrfriedhof ANSTOSS']
     ] },
     { label: 'Website', items: [
       ['startseite.html', 'Titelfotos', 'image', 'Startseite Fotos Vollbild Einstellungen'],

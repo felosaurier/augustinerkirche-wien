@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'"/>
+<meta name="color-scheme" content="light"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="referrer" content="same-origin"/>
+<meta name="theme-color" content="#10192e"/>
+<link rel="icon" href="../favicon.ico" sizes="any"/>
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"/>
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png"/>
+<title>Aspersdorf: Monatsblatt — Verwaltung Augustinerkirche Wien</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link rel="stylesheet" href="../css/admin.css"/>
+<link rel="stylesheet" href="../css/monatsblatt.css"/>
+<script src="../js/gemeinsam/hochaemter-data.js"></script>
+<script src="../js/gemeinsam/kalender-daten.js"></script>
+<script src="../js/gemeinsam/aspersdorf-daten.js"></script>
+<script src="../js/admin/admin.js"></script>
+<script src="../js/admin/aspersdorf-monatsblatt.js"></script>
+<script src="../js/admin/admin-aspersdorf-monatsblatt.js" defer></script>
+</head>
+<body class="adm">
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<header class="adm-top" id="adm-top"></header>
+
+<div class="adm-head">
+  <div class="adm-head-in">
+    <div>
+      <div class="ph-tag">Verwaltung</div>
+      <h1 class="ph-title">Monatsblatt <em>Aspersdorf</em></h1>
+      <p class="ph-sub">Das Blatt „Gottesdienste &amp; Termine der Pfarre St. Georg“ für einen Monat, wie bisher in Word, aber von selbst aus den <a href="aspersdorf-gottesdienste.html">Gottesdiensten &amp; Terminen</a>. Hier nur noch ergänzen: je Gottesdienst Intention, Lektoren, Kommunionhelfer, Ministranten und Lesungen, je Woche, wer das Ewige Licht spendet. Kirchenjahr und Tagesheilige stehen von selbst rechts.</p>
+    </div>
+  </div>
+</div>
+
+<main class="adm-main" id="main">
+  <div data-adm-folder></div>
+  <form id="mb-form" novalidate autocomplete="off">
+    <div class="ag-mb-bar">
+      <label class="adm-label" for="ag-mb-monat">Monat</label>
+      <select class="adm-input" id="ag-mb-monat"></select>
+      <button type="button" class="btn btn-dark" id="ag-mb-druck" data-icon="download">Drucken oder als PDF speichern</button>
+      <button type="button" class="btn btn-outline" id="ag-mb-word" data-icon="download">Word herunterladen</button>
+    </div>
+    <p class="adm-hint mb-schritte">So geht’s: 1. Monat wählen · 2. links bei jedem Gottesdienst „Angaben ergänzen“ aufklappen und ausfüllen · 3. Speichern · 4. als PDF speichern (Papier A5) und unter <a href="aspersdorf-wochen.html">Wochenblätter</a> hochladen, oder Word herunterladen und dort weiterbearbeiten. Fehlt ein Termin oder fällt eine Messe aus, das unter <a href="aspersdorf-gottesdienste.html">Gottesdienste &amp; Termine</a> eintragen.</p>
+    <div class="ag-mb-grid">
+      <div class="ag-mb-edit" id="ag-mb-edit" aria-label="Angaben fürs Monatsblatt"><p class="adm-muted">Wird geladen …</p></div>
+      <div class="mb-stage" id="ag-mb-stage"></div>
+    </div>
+    <div class="adm-inline-foot">
+      <span class="adm-muted" id="mb-state"></span>
+      <button type="submit" class="btn btn-dark" id="mb-save" data-icon="check">Speichern</button>
+    </div>
+  </form>
+</main>
+
+</body>
+</html>

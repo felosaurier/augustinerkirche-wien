@@ -139,9 +139,9 @@
     /* Pause an diesem Tag? Sie gilt nur für die Wochentage, die bei ihr stehen */
     const inFerien = (iso, tag) => ferien.some((f) => iso >= f.von && iso <= f.bis && f.tage.includes(tag));
     const now = new Date();
-    /* ab dem Monatsersten, mindestens aber ab dem Montag dieser Woche (Wochenueberblick) */
+    /* ab dem Monatsersten, mindestens aber ab dem Sonntag vor dieser Woche (Wochenueberblick) */
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((now.getDay() + 6) % 7));
+    const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((now.getDay() + 6) % 7) - 1);
     if (monday < start) start.setTime(monday.getTime());
     const end = new Date(now.getFullYear(), now.getMonth() + 13, 0);
     for (const d = start; d <= end; d.setDate(d.getDate() + 1)) {

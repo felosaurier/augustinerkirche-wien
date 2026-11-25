@@ -138,6 +138,8 @@
         <div class="mega-group">
           <span class="mega-group-label">Chor &amp; Orchester</span>
           <a href="musik.html#p-chor">Chor von St. Augustin</a>
+          <a href="musik.html#p-kammerchor">Kammerchor von St. Augustin</a>
+          <a href="musik.html#p-orchester">Orchester von St. Augustin</a>
         </div>
         <div class="mega-group">
           <span class="mega-group-label">Orgeln</span>
@@ -147,7 +149,6 @@
         <div class="mega-group">
           <span class="mega-group-label">Förderung</span>
           <a href="musik.html#p-patenschaft">Patenschaftsverein</a>
-          <a href="musik.html#p-paten">Paten</a>
         </div>
       </div>
     </div>
@@ -193,7 +194,7 @@
 <section class="section section-ruled" aria-labelledby="aktuelles-h">
   <div class="inner">
     <div class="sec-head">
-      <h2 class="s-title" id="aktuelles-h">Aktuelles <span class="s-title-sub">aus der Kirchenmusik</span></h2>
+      <h2 class="s-title" id="aktuelles-h">Aktuelles · Fotogalerie</h2>
     </div>
     <div class="news-grid" id="news-grid" data-base="../" data-seite="kirchenmusik" data-hide-empty aria-live="polite">
       <p class="s-text">Die aktuellen Neuigkeiten finden Sie im <a class="link-arr" href="archiv.html">Archiv</a>.</p>
@@ -219,8 +220,8 @@
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Chor &amp; Orchester</span>
         <button type="button" class="sidebar-item" data-pane="p-chor">Chor von St. Augustin</button>
-        <button type="button" class="sidebar-item" data-pane="p-kammerchor" hidden>Kammerchor</button>
-        <button type="button" class="sidebar-item" data-pane="p-orchester" hidden>Orchester</button>
+        <button type="button" class="sidebar-item" data-pane="p-kammerchor">Kammerchor von St. Augustin</button>
+        <button type="button" class="sidebar-item" data-pane="p-orchester">Orchester von St. Augustin</button>
         <button type="button" class="sidebar-item" data-pane="p-repertoire" hidden>Repertoire</button>
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Orgeln</span>
@@ -230,7 +231,6 @@
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Förderung</span>
         <button type="button" class="sidebar-item" data-pane="p-patenschaft">Patenschaftsverein</button>
-        <button type="button" class="sidebar-item" data-pane="p-paten">Paten</button>
         <button type="button" class="sidebar-item" data-pane="p-cds" hidden>CDs</button>
       </aside>
 
@@ -336,7 +336,9 @@
 
         <div class="tab-pane" id="p-leitung">
           <h2 class="s-title">Leitung der Kirchenmusik</h2>
-          <p class="s-text">Kirchenmusikdirektor und Pfarrer leiten die Kirchenmusik von St. Augustin gemeinsam. Beide sorgen dafür, dass die jahrhundertealte Tradition der Musica sacra in der Augustinerkirche Sonntag für Sonntag erklingt, zur Ehre Gottes und zur Freude der Menschen.</p>
+          <div data-text="musik-leitung" data-text-titel="Leitung der Kirchenmusik: Einleitung">
+            <p class="s-text">Kirchenmusikdirektor und Pfarrer leiten die Kirchenmusik von St. Augustin gemeinsam. Beide sorgen dafür, dass die jahrhundertealte Tradition der Musica sacra in der Augustinerkirche Sonntag für Sonntag erklingt, zur Ehre Gottes und zur Freude der Menschen.</p>
+          </div>
           <div class="people-stack" data-personen="leitung">
             <div class="person-card-wide">
               <img src="../assets/img/personen/dirigenten/kmd-tiefengraber.webp" alt="Peter Tiefengraber" loading="lazy" width="706" height="1000" decoding="async"/>
@@ -560,11 +562,11 @@
           </div>
 
           <h3 class="pane-sub">Paten von St. Augustin</h3>
-          <p class="bio-p">Wir danken allen Patinnen und Paten für die freundliche Unterstützung. <a href="#p-paten">Zur Liste der Paten von St. Augustin</a></p>
+          <p class="bio-p">Wir danken allen Patinnen und Paten für die freundliche Unterstützung.</p>
 
         </div>
 
-        <div class="tab-pane" id="p-paten">
+        <div class="tab-pane" id="p-paten" hidden style="display:none!important">
           <h2 class="s-title">Paten von St. Augustin</h2>
           <p class="bio-p">Wir danken für die freundliche Unterstützung.<span data-inhalt="ehrenpaten"> Ehrenpaten sind Dr. Otto von Habsburg-Lothringen und Karl von Habsburg-Lothringen.</span></p>
           <ol class="paten-list" data-inhalt="paten">

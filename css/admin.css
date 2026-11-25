@@ -1545,16 +1545,49 @@ label.fb-swatch:focus-within{outline:2px solid var(--blue);outline-offset:2px}
 
 /* Aspersdorf: Gottesdienste & Termine (admin/aspersdorf-gottesdienste.html) */
 .ag-row,.ag-head{grid-template-columns:minmax(0,9.5rem) minmax(0,7rem) minmax(0,1fr) minmax(0,1.3fr) auto}
+.ag-termin.ag-row,.ag-termin.ag-head{grid-template-columns:minmax(0,9.5rem) minmax(0,7rem) minmax(0,6rem) minmax(0,1fr) minmax(0,1.2fr) auto}
 .ag-head{display:grid;gap:.5rem;margin-bottom:.35rem;font-size:.85rem;font-weight:600;color:var(--text-mid)}
 .ag-head span:last-child{width:2.6rem}
 #ag-regel+.adm-list-add,#ag-termine+.adm-list-add{margin-top:.6rem}
 .ag-row.is-past .adm-input{color:var(--text-light);background:var(--bg-soft)}
+.ag-mb-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin-bottom:1rem}
+.ag-mb-bar .adm-label{margin:0}
+.ag-mb-bar .adm-input{width:auto;min-width:12rem}
+.ag-mb-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1.2rem;align-items:start}
+.ag-mb-grid .mb-stage{position:sticky;top:1rem;max-height:calc(100vh - 2rem)}
+/* Vorschau neben den Eingaben verkleinert, damit beide Platz haben (gedruckt wird in voller Groesse) */
+.ag-mb-grid .mb-stage .mb-blatt{zoom:.72}
+@media(max-width:1200px){.ag-mb-grid .mb-stage .mb-blatt{zoom:1}}
+@media(max-width:1200px){.ag-mb-grid{grid-template-columns:minmax(0,1fr)}.ag-mb-grid .mb-stage{position:static;max-height:none}}
+.ag-mb-week{margin:0 0 1rem;padding:.8rem 1rem;border:1px solid var(--line);background:var(--surface,#fff)}
+.ag-mb-week h3{margin:0 0 .5rem;font-size:1rem;font-weight:700;color:var(--heading)}
+.ag-mb-licht{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.6rem;font-size:.85rem;font-weight:600;color:var(--text-mid)}
+.ag-mb-licht .adm-input{width:100%}
+.ag-mb-it{border-top:1px solid var(--line)}
+.ag-mb-it>summary{display:flex;flex-wrap:wrap;gap:.1rem .6rem;align-items:baseline;padding:.55rem 0;cursor:pointer;font-size:.95rem}
+.ag-mb-it>summary b{min-width:6.5rem;white-space:nowrap}
+.ag-mb-it>summary .ag-mb-ok{margin-left:auto;font-size:.8rem;white-space:nowrap;color:var(--text-light)}
+.ag-mb-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem .8rem;padding:.2rem 0 .8rem}
+.ag-mb-fields label{display:flex;flex-direction:column;gap:.15rem;font-size:.8rem;font-weight:600;color:var(--text-mid)}
+.ag-mb-fields label.full{grid-column:1/-1}
+.ag-mb-fields .adm-input{min-height:2.1rem;padding-block:.2rem;font-size:.92rem}
+@media(max-width:600px){.ag-mb-fields{grid-template-columns:minmax(0,1fr)}}
+.ag-more{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin:-.1rem 0 .5rem}
+.ag-more label{display:flex;align-items:center;gap:.5rem;font-size:.85rem;font-weight:600;color:var(--text-mid)}
+.ag-more .adm-input{width:auto;min-height:2.1rem;padding-block:.2rem;font-size:.9rem}
+.ag-termin [data-key="art"]{min-width:0}
+.ag-termin.is-off [data-key="name"],.ag-termin.is-off [data-key="zeit"]{text-decoration:line-through}
 @media(max-width:900px){
   .ag-row{grid-template-columns:minmax(0,9.5rem) minmax(0,7rem) minmax(0,1fr) auto}
   .ag-row>[data-key="hinweis"]{grid-row:2;grid-column:1/4}
   .ag-row>.adm-list-tools{grid-row:1;grid-column:4}
   .ag-head span:nth-child(4){display:none}
   .ag-head{grid-template-columns:minmax(0,9.5rem) minmax(0,7rem) minmax(0,1fr) auto}
+  .ag-termin.ag-row{grid-template-columns:minmax(0,9.5rem) minmax(0,8rem) minmax(0,7rem) minmax(0,1fr) auto}
+  .ag-termin.ag-row>[data-key="name"]{grid-row:2;grid-column:1/5}
+  .ag-termin.ag-row>[data-key="hinweis"]{grid-row:3;grid-column:1/5}
+  .ag-termin.ag-row>.adm-list-tools{grid-row:1;grid-column:5}
+  .ag-head.ag-termin{display:none}
 }
 @media(max-width:600px){
   .ag-head{display:none}
@@ -1562,6 +1595,14 @@ label.fb-swatch:focus-within{outline:2px solid var(--blue);outline-offset:2px}
   .ag-row>[data-key="name"]{grid-row:2;grid-column:1/-1}
   .ag-row>[data-key="hinweis"]{grid-row:3;grid-column:1/-1}
   .ag-row>.adm-list-tools{grid-row:1;grid-column:3}
+  .ag-termin.ag-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+  .ag-termin.ag-row>[data-key="art"]{grid-row:2;grid-column:1}
+  .ag-termin.ag-row>[data-key="zeit"]{grid-row:2;grid-column:2}
+  .ag-termin.ag-row>[data-key="name"]{grid-row:3;grid-column:1/-1}
+  .ag-termin.ag-row>[data-key="hinweis"]{grid-row:4;grid-column:1/-1}
+  .ag-termin.ag-row>.adm-list-tools{grid-column:3}
+  .ag-more{flex-direction:column;align-items:stretch}
+  .ag-more label{justify-content:space-between}
 }
 
 /* Texte der Seiten (admin/texte.html): Editor im Aussehen der Website */

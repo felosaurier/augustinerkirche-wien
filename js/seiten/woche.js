@@ -1,7 +1,7 @@
 /* ============================================================
    Augustinerkirche Wien — woche.js
    Wochenüberblick im Kalender (pages/kalender.html#woche): alle Termine einer
-   Kalenderwoche, dieselben wie im Monat (js/gemeinsam/kalender-daten.js), Montag bis
+   Kalenderwoche, dieselben wie im Monat (js/gemeinsam/kalender-daten.js), Sonntag bis
    Sonntag, auch Tage ohne Termin. Woche wählen: Pfeile (vier Wochen zurück,
    ein Jahr voraus) und „Zur aktuellen Woche“; dazu der Filter nach
    Wochentag. Oben die Umschaltung Monat / Woche (.cal-views). Aufruf mit
@@ -22,7 +22,7 @@
   const T = window.AugT || ((s, v) => String(s).replace(/\{(\w+)\}/g, (m, k) => (v && k in v ? v[k] : m)));
   const LANG = T.lang || 'de';
   const base = root.dataset.base || '';
-  const DAY_KEYS = ['mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];
+  const DAY_KEYS = ['so', 'mo', 'di', 'mi', 'do', 'fr', 'sa', 'so'];   /* Sonntag bis Sonntag */
   const BACK = 4;       /* so viele Wochen zurueck */
   const AHEAD = 52;     /* so viele voraus */
 
@@ -35,17 +35,21 @@
 
   const isoOf = KD.isoOf;
   const addDays = (dt, n) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + n);
-  const mondayOf = (dt) => addDays(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()), -((dt.getDay() + 6) % 7));
+  /* Eine Woche geht von Sonntag bis Sonntag; gespeichert wird sie unter dem Montag dazwischen.
+     Am Sonntag beginnt die neue Woche. */
+  const isoMonday = (dt) => addDays(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()), -((dt.getDay() + 6) % 7));
+  const mondayOf = (dt) => isoMonday(dt.getDay() === 0 ? addDays(dt, 1) : dt);
   const thisMonday = () => mondayOf(new Date());
   /* Kalenderwoche nach ISO 8601 (die Woche mit dem ersten Donnerstag ist KW 1) */
   function weekNo(mon) {
     const thu = addDays(mon, 3);
     const jan4 = new Date(thu.getFullYear(), 0, 4);
-    return 1 + Math.round((thu - mondayOf(jan4)) / 604800000);
+    return 1 + Math.round((thu - isoMonday(jan4)) / 604800000);
   }
   /* „12.–18. Oktober 2026“, über den Monatswechsel „28. September – 4. Oktober 2026“ */
   function rangeText(mon) {
     const sun = addDays(mon, 6);
+    mon = addDays(mon, -1);   /* beginnt am Sonntag davor */
     const m = (d) => MONTHS[d.getMonth()];
     /* Tag mit Monat (und Jahr): Deutsch "12. Oktober 2026", Spanisch "12 de octubre de 2026", sonst "12 October 2026" */
     const dm = (d, jahr) => (LANG === 'de' ? `${d.getDate()}. ${m(d)}${jahr ? ` ${d.getFullYear()}` : ''}`
@@ -61,6 +65,7 @@
   function render(focusSel) {
     const today = isoOf(new Date());
     const from = isoOf(monday);
+    const first = isoOf(addDays(monday, -1));
     const to = isoOf(addDays(monday, 6));
     const rel = { 0: T('Diese Woche'), 1: T('Nächste Woche'), '-1': T('Letzte Woche') }[Math.round((monday - thisMonday()) / 604800000)];
     root.querySelector('.wk-range').innerHTML = `${T('KW {n}', { n: weekNo(monday) })} · ${rangeText(monday)}${rel ? `<span class="wk-rel">${rel}</span>` : ''}`;
@@ -69,8 +74,8 @@
     for (const b of root.querySelectorAll('[data-wk="prev"]')) b.disabled = from <= isoOf(addDays(thisMonday(), -BACK * 7));
     for (const b of root.querySelectorAll('[data-wk="next"]')) b.disabled = from >= isoOf(addDays(thisMonday(), AHEAD * 7));
 
-    const inWeek = items.filter((it) => it.date >= from && it.date <= to);
-    const days = DAY_KEYS.map((key, i) => ({ key, iso: isoOf(addDays(monday, i)) }))
+    const inWeek = items.filter((it) => it.date >= first && it.date <= to);
+    const days = DAY_KEYS.map((key, i) => ({ key, iso: isoOf(addDays(monday, i - 1)) }))
       .filter((d) => day === 'alle' || d.key === day);
     root.querySelector('.wk-list').innerHTML = days.map(({ key, iso }) =>
       KD.dayHTML(iso, inWeek.filter((it) => it.date === iso), today, { base, empty: T('Keine Termine'), extraClass: `wk-day d-${key}`, id: `woche-${iso}` })).join('');

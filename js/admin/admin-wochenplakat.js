@@ -35,10 +35,11 @@
   }
   function range(mon) {
     const sun = addDays(mon, 6);
+    const st = addDays(mon, -1);   /* Woche von Sonntag bis Sonntag */
     const m = HD.MONTHS;
-    return mon.getMonth() === sun.getMonth()
-      ? `${mon.getDate()}.–${sun.getDate()}. ${m[sun.getMonth()]} ${sun.getFullYear()}`
-      : `${mon.getDate()}. ${m[mon.getMonth()]} – ${sun.getDate()}. ${m[sun.getMonth()]} ${sun.getFullYear()}`;
+    return st.getMonth() === sun.getMonth()
+      ? `${st.getDate()}.–${sun.getDate()}. ${m[sun.getMonth()]} ${sun.getFullYear()}`
+      : `${st.getDate()}. ${m[st.getMonth()]} – ${sun.getDate()}. ${m[sun.getMonth()]} ${sun.getFullYear()}`;
   }
   const monday = () => HD.dateFromIso($('wp-select').value);
 
