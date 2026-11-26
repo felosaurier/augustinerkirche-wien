@@ -54,7 +54,9 @@
           <span class="mega-group-label">Pfarre Aspersdorf</span>
           <a href="aspersdorf.html#p-leitung">Leitung</a>
           <a href="aspersdorf.html#p-kirche">Pfarrkirche St. Georg</a>
-          <a href="aspersdorf.html#p-gottesdienste">Gottesdienste &amp; Kalender</a>
+          <a href="aspersdorf.html#p-gottesdienste">Gottesdienste</a>
+          <a href="aspersdorf.html#p-wochenkalender">Wochenkalender</a>
+          <a href="aspersdorf.html#p-monatsblatt">Monatsblatt</a>
         </div>
       </div>
     </div>
@@ -144,7 +146,7 @@
     <h1 class="hero-h1">Im Glauben verwurzelt.<br>Im Leben verbunden.</h1>
     <p class="hero-sub">Entdecken Sie eine lebendige Pfarrgemeinde, in der Glaube und Gemeinschaft ihren Platz haben, Traditionen gepflegt werden und Menschen miteinander Kirche gestalten.</p>
     <div class="hero-actions">
-      <a class="btn btn-gold" href="#p-gottesdienste">Gottesdienste &amp; Kalender</a>
+      <a class="btn btn-gold" href="#p-gottesdienste">Gottesdienste</a>
       <a class="btn btn-outline-w" href="#p-kirche">Pfarrkirche St. Georg</a>
     </div>
   </div>
@@ -169,7 +171,9 @@
         <span class="sidebar-group-label">Pfarre Aspersdorf</span>
         <button type="button" class="sidebar-item active" data-pane="p-leitung">Leitung</button>
         <button type="button" class="sidebar-item" data-pane="p-kirche">Pfarrkirche St. Georg</button>
-        <button type="button" class="sidebar-item" data-pane="p-gottesdienste">Gottesdienste &amp; Kalender</button>
+        <button type="button" class="sidebar-item" data-pane="p-gottesdienste">Gottesdienste</button>
+        <button type="button" class="sidebar-item" data-pane="p-wochenkalender">Wochenkalender</button>
+        <button type="button" class="sidebar-item" data-pane="p-monatsblatt">Monatsblatt</button>
         <div class="sidebar-divider"></div>
         <span class="sidebar-group-label">Sakramente &amp; Pfarrleben</span>
         <button type="button" class="sidebar-item" data-pane="p-sakramente">Sakramente</button>
@@ -293,23 +297,26 @@
         </div>
 
         <div class="tab-pane" id="p-gottesdienste">
-          <div class="s-label">St. Georg &amp; Wieselsfeld</div>
-          <h2 class="s-title">Gottesdienste &amp; Kalender</h2>
-          <h3 class="pane-sub asp-regel-h">Regelmäßige Gottesdienste</h3>
+          <h2 class="s-title">Gottesdienste</h2>
           <div style="max-width:680px">
-            <!-- Regelmaessige Gottesdienste und besondere Termine: data/aspersdorf-gottesdienste.json (Verwaltung → Aspersdorf: Gottesdienste & Termine); ohne Datei gilt diese Tabelle -->
+            <!-- Regelmaessige Gottesdienste: data/aspersdorf-gottesdienste.json (Verwaltung → Aspersdorf: Gottesdienste & Termine); ohne Datei gilt diese Tabelle -->
             <table class="gd-table" data-inhalt="asp-gottesdienste">
               <tr><td class="gd-day">Sonntag</td><td class="gd-time">08:30</td><td><div class="gd-name">Heilige Messe</div><div class="gd-note">Pfarrkirche St. Georg, Aspersdorf</div></td></tr>
               <tr><td class="gd-day">Mittwoch</td><td class="gd-time">17:30</td><td><div class="gd-name">Beichtgelegenheit</div><div class="gd-note">vor den Werktags- und Vorabendmessen</div></td></tr>
               <tr class="gd-same"><td class="gd-day"></td><td class="gd-time">18:00</td><td><div class="gd-name">Heilige Messe</div><div class="gd-note">monatlich, außer Juli/August — abwechselnd in Wieselsfeld</div></td></tr>
               <tr><td class="gd-day">Samstag</td><td class="gd-time">18:00</td><td><div class="gd-name">Vorabendmesse</div><div class="gd-note">in der Regel 1. und 3. Samstag im Monat, anstelle der Sonntagsmesse</div></td></tr>
             </table>
+            <div class="gd-links"><a class="btn btn-dark" href="#p-wochenkalender">Zum Wochenkalender</a><a class="btn btn-outline" href="#p-monatsblatt">Zum Monatsblatt</a></div>
           </div>
 
+        </div>
+
+        <div class="tab-pane" id="p-wochenkalender">
+          <h2 class="s-title">Wochenkalender</h2>
           <!-- Kalender: Woche (Sonntag bis Sonntag) und Monat, aus denselben Angaben (js/seiten/aspersdorf-kalender.js) -->
           <div class="asp-kal" id="asp-kal" data-base="../" hidden>
             <div class="asp-kal-top">
-              <h3 class="pane-sub">Kalender</h3>
+              <span></span>
               <div class="cal-views" role="group" aria-label="Ansicht">
                 <button type="button" class="cal-view" data-view="woche" aria-current="true">Woche</button>
                 <button type="button" class="cal-view" data-view="monat">Monat</button>
@@ -325,8 +332,10 @@
             <div class="wk-list"><p class="cal-empty">Die Termine werden geladen …</p></div>
           </div>
 
-          <div class="asp-termine" data-inhalt="asp-termine" hidden></div>
+        </div>
 
+        <div class="tab-pane" id="p-monatsblatt">
+          <h2 class="s-title">Monatsblatt</h2>
           <div class="asp-wochen" data-inhalt="asp-wochen" hidden></div>
 
           <div data-text="asp-anstoss" data-text-titel="ANSTOSS – Magazin des Pfarrverbandes">

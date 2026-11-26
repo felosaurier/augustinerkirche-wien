@@ -1,18 +1,18 @@
 {
   "adresse": "Augustinerstraße 3",
   "ort": "1010 Wien",
-  "eingang": "Eingang Kirche: Josefsplatz",
+  "eingang": "Hofburg - Josefsplatz",
   "telefon": [
-    {
-      "nummer": "+43 (0)1 533 70 99",
-      "bezeichnung": "Pfarre"
-    },
     {
       "nummer": "+43 (0)1 533 09 47",
       "bezeichnung": "Kloster"
+    },
+    {
+      "nummer": "+43 (0)1 533 70 99",
+      "bezeichnung": "Pfarre"
     }
   ],
-  "email": "[[mail:ta.ehcrikrenitsugua|errafp]]",
+  "email": "[[mail:ta.ehcrikrenitsugua|ofni]]",
   "kanzlei": [
     {
       "tage": "Dienstag & Freitag",
@@ -20,7 +20,8 @@
     },
     {
       "tage": "",
-      "zeit": "bzw. auch nach telefonischer Vereinbarung"
+      "zeit": "und nach telefonischer Vereinbarung"
     }
-  ]
+  ],
+  "email2": "[[mail:ta.ehcrikrenitsugua|errafp]]"
 }

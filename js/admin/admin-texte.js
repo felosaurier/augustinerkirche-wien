@@ -35,7 +35,7 @@
     aspersdorf: [
       ['Leitung & Gremien', ['asp-leitung', 'asp-pgr', 'asp-vwr']],
       ['Pfarrkirche St. Georg', ['asp-kirche', 'asp-kirche-karten', 'asp-ort']],
-      ['Gottesdienste & Kalender', ['asp-anstoss']],
+      ['Monatsblatt', ['asp-anstoss']],
       ['Sakramente & Pfarrleben', ['asp-sakramente', 'asp-sakr-taufe', 'asp-sakr-eucharistie', 'asp-sakr-firmung', 'asp-sakr-busse', 'asp-sakr-trauung', 'asp-sakr-weihe', 'asp-sakr-krankensalbung', 'asp-sakr-sterbefall', 'asp-wiedereintritt', 'asp-dienste']],
       ['Pfarrfriedhof', ['asp-friedhof']]
     ],

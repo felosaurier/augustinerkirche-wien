@@ -22,6 +22,7 @@
     hours.set((kontakt.kanzlei || []).length ? kontakt.kanzlei : [{}]);
     phones.set((kontakt.telefon || []).length ? kontakt.telefon : [{}]);
     $('kt-email').value = kontakt.email || '';
+    $('kt-email2').value = kontakt.email2 || '';
     $('kt-adresse').value = kontakt.adresse || '';
     $('kt-ort').value = kontakt.ort || '';
     $('kt-eingang').value = kontakt.eingang || '';
@@ -43,8 +44,10 @@
     const form = $('kt-form');
     const email = clean($('kt-email').value);
     A.clearErrors(form);
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      A.showErrors(form, [[$('kt-email'), 'Diese E-Mail-Adresse sieht nicht richtig aus.']]);
+    const email2 = clean($('kt-email2').value);
+    const bad = [['kt-email', email], ['kt-email2', email2]].filter(([, v]) => v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+    if (bad.length) {
+      A.showErrors(form, bad.map(([id]) => [$(id), 'Diese E-Mail-Adresse sieht nicht richtig aus.']));
       return;
     }
     if (!await A.checkBlankRows([hours])) return;
@@ -52,6 +55,7 @@
       adresse: clean($('kt-adresse').value), ort: clean($('kt-ort').value), eingang: clean($('kt-eingang').value),
       telefon: phones.values().filter((t) => t.nummer).map((t) => ({ nummer: clean(t.nummer), bezeichnung: clean(t.bezeichnung) })),
       email,
+      email2,
       kanzlei: hours.values().filter((h) => h.tage || h.zeit || A.isBlankRow(h)).map((h) => ({ tage: clean(h.tage), zeit: clean(h.zeit) }))
     };
     try {

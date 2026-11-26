@@ -262,6 +262,8 @@
       if (f.breite && f.hoehe) {
         img.width = HD.num(f.breite, img.width);
         img.height = HD.num(f.hoehe, img.height);
+        /* Hochformat bleibt schmal, ein Querformat (auch ein getauschtes Foto) bekommt die volle Breite */
+        if (fig.matches('figure.pane-fig')) fig.classList.toggle('hoch', img.height > img.width);
       }
       const link = fig.closest('a[data-lightbox]') || fig.querySelector('a[data-lightbox]');
       if (link) link.href = src;
@@ -381,14 +383,14 @@
     for (const el of strips) {
       el.innerHTML =
         `<div><div class="cs-label">${esc(T('Adresse'))}</div><div class="cs-val">` +
-          /* Eingang der Kirche (Josefsplatz) zuerst, dann die Anschrift des Klosters und der Pfarrkanzlei */
-          (k.eingang ? `<span class="cs-note">${esc(T(k.eingang))}</span><br>${esc(T('Kloster'))}: ` : '') +
-          `${esc(k.adresse)}, ${esc(k.ort)}</div></div>` +
+          /* Untereinander: Eingang der Kirche (Josefsplatz), dann das Kloster */
+          (k.eingang ? `<span class="cs-note">${esc(T('Augustinerkirche'))}:</span> ${esc(k.ort)}, ${esc(T(k.eingang))}<br>` : '') +
+          `<span class="cs-note">${esc(T('Augustinerkloster'))}:</span> ${esc(k.ort)}, ${esc(k.adresse)}</div></div>` +
         `<div><div class="cs-label">${esc(T('Telefon'))}</div><div class="cs-val">${(k.telefon || []).map((t) =>
           `<a href="${esc(HD.telHref(t.nummer))}">${esc(t.nummer)}</a>${t.bezeichnung ? ` <span class="cs-note">${esc(T(t.bezeichnung))}</span>` : ''}`).join('<br>')}</div></div>` +
-        `<div><div class="cs-label">${esc(T('E-Mail'))}</div><div class="cs-val">${HD.mailHTML(k.email)}</div></div>` +
-        `<div><div class="cs-label">${esc(T('Pfarrkanzlei'))}</div><div class="cs-val cs-hours">${hours.map((h) => (filled(h)
-          ? `<span>${esc(T(h.tage))}</span><span>${esc(T(h.zeit))}</span>` : '<span class="cs-gap" aria-hidden="true"></span>')).join('')}</div></div>`;
+        `<div><div class="cs-label">${esc(T('E-Mail'))}</div><div class="cs-val">${[k.email, k.email2].filter(Boolean).map((m) => HD.mailHTML(m)).join('<br>')}</div></div>` +
+        `<div><div class="cs-label">${esc(T('Pfarrkanzlei'))}</div><div class="cs-val">${esc(k.ort)}, ${esc(k.adresse)}<br>` +
+          hours.filter(filled).map((h) => (h.tage ? `${esc(T(h.tage))}: ${esc(T(h.zeit))}` : esc(T(h.zeit)))).join('<br>') + '</div></div>';
     }
     /* Grosse Knoepfe fuer das Handy: anrufen und die Route in der Karten-App planen */
     /* Route zur Kirche: der Eingang liegt am Josefsplatz */
