@@ -1697,3 +1697,14 @@ label.fb-swatch:focus-within{outline:2px solid var(--blue);outline-offset:2px}
 .pl-eigen.on{border:1px solid var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .pl-eigen-t{font-size:.9rem;font-weight:600}
 .pl-eigen small{flex-basis:100%;font-size:.76rem}
+
+/* Aspersdorf: vergangene Termine (nur Ansicht) */
+#ag-vergangen{margin-top:1.2rem}
+#ag-vergangen .adm-fold-body{padding-left:1.6rem}
+.ag-v-m{margin:1rem 0 .3rem;padding-bottom:.3rem;border-bottom:1px solid var(--line);font-family:var(--sans);font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-text)}
+.ag-v-list{margin:0;padding:0;list-style:none}
+.ag-v-list li{display:grid;grid-template-columns:4.5rem 3.6rem minmax(0,1fr);gap:0 .8rem;padding:.35rem 0;font-size:.95rem;color:var(--text-mid)}
+.ag-v-d{font-weight:600;color:var(--heading)}
+.ag-v-t{font-variant-numeric:tabular-nums}
+.ag-v-n s{color:var(--text-light)}
+.ag-v-n em{margin-left:.3rem;font-size:.85rem;color:var(--text-light)}

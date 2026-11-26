@@ -103,11 +103,43 @@
   });
   const state = () => JSON.stringify([values($('ag-regel')), values($('ag-termine'))]);
 
+  let vergangen = [];
+  /* Vergangene Termine: zum Aufklappen, nach Jahr und Monat (neueste zuerst), nur zum Ansehen */
+  function showVergangen() {
+    const host = $('ag-vergangen');
+    if (!vergangen.length) { host.innerHTML = ''; return; }
+    const sorted = vergangen.slice().sort((a, b) => byDate(b, a));
+    const years = [];
+    for (const t of sorted) {
+      const [y, m] = t.datum.split('-');
+      let yg = years.find((g) => g.y === y);
+      if (!yg) years.push(yg = { y, months: [] });
+      let mg = yg.months.find((g) => g.m === m);
+      if (!mg) yg.months.push(mg = { m, list: [] });
+      mg.list.push(t);
+    }
+    const row = (t) => {
+      const d = HD.dateFromIso(t.datum);
+      return `<li><span class="ag-v-d">${d ? `${HD.WEEKDAYS_SHORT[d.getDay()]}, ${d.getDate()}.` : esc(t.datum)}</span>` +
+        `<span class="ag-v-t">${t.zeit ? esc(HD.uhr(t.zeit)) : ''}</span>` +
+        `<span class="ag-v-n">${t.art === 'entfaellt' ? `<s>${esc(t.name)}</s> <em>entfällt</em>` : esc(t.name)}</span></li>`;
+    };
+    host.innerHTML = `<details class="adm-fold"><summary>Vergangene Termine <span class="adm-fold-meta">${vergangen.length}</span></summary><div class="adm-fold-body">` +
+      years.map((g) => `<details class="adm-fold sub"><summary>${esc(g.y)} <span class="adm-fold-meta">${g.months.reduce((n, x) => n + x.list.length, 0)}</span></summary><div class="adm-fold-body">` +
+        g.months.map((x) => `<h3 class="ag-v-m">${esc(HD.MONTHS[Number(x.m) - 1])}</h3><ul class="ag-v-list">${x.list.map(row).join('')}</ul>`).join('') +
+        '</div></details>').join('') + '</div></details>';
+  }
   function fill(data) {
     const regel = (Array.isArray(data.regelmaessig) ? data.regelmaessig : []).filter((t) => t && ORDER.includes(t.tag)).slice().sort(byDay);
-    const termine = (Array.isArray(data.termine) ? data.termine : []).filter((t) => t && HD.isoDate(t.datum)).slice().sort(byDate);
+    /* Vergangene Termine sind ausgeblendet; sie bleiben in der Datei und werden beim Speichern wieder mitgeschrieben */
+    const d0 = new Date();
+    const heute = `${d0.getFullYear()}-${String(d0.getMonth() + 1).padStart(2, '0')}-${String(d0.getDate()).padStart(2, '0')}`;
+    const alle = (Array.isArray(data.termine) ? data.termine : []).filter((t) => t && HD.isoDate(t.datum));
+    vergangen = alle.filter((t) => t.datum < heute);
+    const termine = alle.filter((t) => t.datum >= heute).sort(byDate);
     $('ag-regel').replaceChildren(...regel.map(regelRow));
     $('ag-termine').replaceChildren(...termine.map(terminRow));
+    showVergangen();
     snap = state();
     showState();
   }
@@ -173,7 +205,7 @@
         ...(t.rhythmus ? { rhythmus: t.rhythmus } : {}),
         ...(t.pause ? { pause: t.pause.split(',').map(Number) } : {})
       })).sort(byDay),
-      termine: values($('ag-termine')).filter(filled).map((t) => ({ datum: t.datum, zeit: t.zeit, name: t.name, hinweis: t.hinweis, ...(t.art ? { art: t.art } : {}) })).sort(byDate),
+      termine: values($('ag-termine')).filter(filled).map((t) => ({ datum: t.datum, zeit: t.zeit, name: t.name, hinweis: t.hinweis, ...(t.art ? { art: t.art } : {}) })).concat(vergangen).sort(byDate),
     };
     /* Intention, Lektoren, Ewiges Licht … pflegt die Seite Monatsblatt: aus der Datei, wie sie jetzt ist, uebernehmen */
     try {
